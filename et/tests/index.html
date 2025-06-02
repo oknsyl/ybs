@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Deneme Testleri</title>
-  <!-- Google Fonts: PT Sans -->
+  <!-- PT Sans ve buton/nav stili -->
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
   <style>
     body {
@@ -13,6 +13,24 @@
       background-color: #ffffff;
       color: #333;
     }
+    /* Ortak buton/nav stili (önceki örnekle aynı) */
+    .btn {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 8px 16px;
+      background-color: #4285f4;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: background-color 0.2s ease;
+    }
+    .btn:hover {
+      background-color: #306acb;
+    }
+    .navbar {
+      margin-bottom: 30px;
+    }
 
     h1 {
       text-align: center;
@@ -20,18 +38,15 @@
       margin-bottom: 30px;
       color: #2c3e50;
     }
-
     ul.test-list {
       list-style-type: none;
       padding: 0;
       max-width: 400px;
       margin: 0 auto;
     }
-
     ul.test-list li {
       margin: 10px 0;
     }
-
     ul.test-list li a {
       display: block;
       padding: 12px 20px;
@@ -41,13 +56,20 @@
       border-radius: 4px;
       transition: background-color 0.2s ease;
     }
-
     ul.test-list li a:hover {
       background-color: #d4d4d4;
     }
   </style>
 </head>
 <body>
+
+  <!-- ====== NAVBAR BAŞLANGICI ====== -->
+  <div class="navbar">
+    <!-- Ana index’e dönmek için: iki seviye yukarı (root) -->
+    <a class="btn" href="../../index.html">Ana Sayfa</a>
+  </div>
+  <!-- ====== NAVBAR SONU ====== -->
+
   <h1>Deneme Testleri</h1>
   <ul class="test-list">
     <li><a href="et-1.html" target="_blank">Test 1 (et-1.html)</a></li>

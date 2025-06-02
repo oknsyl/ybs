@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Sesli Ünite Özetleri</title>
-  <!-- Google Fonts: PT Sans -->
+  <!-- PT Sans ve buton/nav stili -->
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
   <style>
     body {
@@ -13,14 +13,29 @@
       background-color: #ffffff;
       color: #333;
     }
-
+    .btn {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 8px 16px;
+      background-color: #4285f4;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: background-color 0.2s ease;
+    }
+    .btn:hover {
+      background-color: #306acb;
+    }
+    .navbar {
+      margin-bottom: 30px;
+    }
     h1 {
       text-align: center;
       font-size: 2rem;
       margin-bottom: 30px;
       color: #2c3e50;
     }
-
     .audio-list {
       max-width: 600px;
       margin: 0 auto;
@@ -28,7 +43,6 @@
       flex-direction: column;
       gap: 20px;
     }
-
     .audio-item {
       background-color: #f1f1f1;
       padding: 15px;
@@ -37,13 +51,11 @@
       flex-direction: column;
       gap: 10px;
     }
-
     .audio-item label {
       font-weight: bold;
       margin-bottom: 5px;
       color: #2c3e50;
     }
-
     .audio-item audio {
       width: 100%;
       outline: none;
@@ -51,66 +63,74 @@
   </style>
 </head>
 <body>
+
+<!-- ====== NAVBAR BAŞLANGICI ====== -->
+  <div class="navbar">
+    <!-- Ana index’e dönmek için: iki seviye yukarı (root) -->
+    <a class="btn" href="../../index.html">Ana Sayfa</a>
+  </div>
+  <!-- ====== NAVBAR SONU ====== -->
+
   <h1>Sesli Ünite Özetleri</h1>
   <div class="audio-list">
     <div class="audio-item">
-      <label for="ses1">Ses 1 (et-1.mp3)</label>
+      <label for="ses1">Ses 1 (et-01.mp3)</label>
       <audio id="ses1" controls>
         <source src="et-01.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses2">Ses 2 (et-2.mp3)</label>
+      <label for="ses2">Ses 2 (et-02.mp3)</label>
       <audio id="ses2" controls>
         <source src="et-02.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses3">Ses 3 (et-3.mp3)</label>
+      <label for="ses3">Ses 3 (et-03.mp3)</label>
       <audio id="ses3" controls>
         <source src="et-03.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses4">Ses 4 (et-4.mp3)</label>
+      <label for="ses4">Ses 4 (et-04.mp3)</label>
       <audio id="ses4" controls>
         <source src="et-04.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses5">Ses 5 (et-5.mp3)</label>
+      <label for="ses5">Ses 5 (et-05.mp3)</label>
       <audio id="ses5" controls>
         <source src="et-05.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses6">Ses 6 (et-6.mp3)</label>
+      <label for="ses6">Ses 6 (et-06.mp3)</label>
       <audio id="ses6" controls>
         <source src="et-06.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses7">Ses 7 (et-7.mp3)</label>
+      <label for="ses7">Ses 7 (et-07.mp3)</label>
       <audio id="ses7" controls>
         <source src="et-07.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses8">Ses 8 (et-8.mp3)</label>
+      <label for="ses8">Ses 8 (et-08.mp3)</label>
       <audio id="ses8" controls>
         <source src="et-08.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
       </audio>
     </div>
     <div class="audio-item">
-      <label for="ses9">Ses 9 (et-9.mp3)</label>
+      <label for="ses9">Ses 9 (et-09.mp3)</label>
       <audio id="ses9" controls>
         <source src="et-09.mp3" type="audio/mpeg">
         Tarayıcınız audio elementini desteklemiyor.
