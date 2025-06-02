@@ -1,176 +1,210 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <title>Sesli Ünite Özetleri</title>
-  <!-- PT Sans ve buton/nav stili -->
-  <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'PT Sans', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #ffffff;
-      color: #333;
-    }
-    .btn {
-      display: inline-block;
-      margin-right: 10px;
-      padding: 8px 16px;
-      background-color: #4285f4;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 0.95rem;
-      transition: background-color 0.2s ease;
-    }
-    .btn:hover {
-      background-color: #306acb;
-    }
-    .navbar {
-      margin-bottom: 30px;
-    }
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 30px;
-      color: #2c3e50;
-    }
-    .audio-list {
-      max-width: 600px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .audio-item {
-      background-color: #f1f1f1;
-      padding: 15px;
-      border-radius: 5px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .audio-item label {
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #2c3e50;
-    }
-    .audio-item audio {
-      width: 100%;
-      outline: none;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sesli Ünite Özetleri</title>
+    <!-- PT Sans ve buton/nav stili -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "PT Sans", sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #ffffff;
+        color: #333;
+      }
+      .btn {
+        display: inline-block;
+        margin-right: 10px;
+        padding: 8px 16px;
+        background-color: #4285f4;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease;
+      }
+      .btn:hover {
+        background-color: #306acb;
+      }
+      .navbar {
+        margin-bottom: 30px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 30px;
+        color: #2c3e50;
+      }
+      .audio-list {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .audio-item {
+        background-color: #f1f1f1;
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .audio-item label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #2c3e50;
+      }
+      .audio-item audio {
+        width: 100%;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ====== NAVBAR BAŞLANGICI ====== -->
+    <div class="navbar">
+      <!-- Ana index’e dönmek için: iki seviye yukarı (root) -->
+      <a class="btn" href="../../index.html">Ana Sayfa</a>
+    </div>
+    <!-- ====== NAVBAR SONU ====== -->
 
-<!-- ====== NAVBAR BAŞLANGICI ====== -->
-  <div class="navbar">
-    <!-- Ana index’e dönmek için: iki seviye yukarı (root) -->
-    <a class="btn" href="../../index.html">Ana Sayfa</a>
-  </div>
-  <!-- ====== NAVBAR SONU ====== -->
+    <h1>Sesli Ünite Özetleri</h1>
+    <div class="audio-list">
+      <div class="audio-item">
+        <label for="ses01">1 - Elektronik Ticarete Giriş</label>
+        <audio id="ses01" controls>
+          <source src="et-01.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-01.mp3" download>İndir</a>
+      </div>
 
-  <h1>Sesli Ünite Özetleri</h1>
-  <div class="audio-list">
-    <div class="audio-item">
-      <label for="ses1">Ses 1 (et-01.mp3)</label>
-      <audio id="ses1" controls>
-        <source src="et-01.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
+      <div class="audio-item">
+        <label for="ses02">2 - Temel Kavramlar ve Yaklaşımlar</label>
+        <audio id="ses02" controls>
+          <source src="et-02.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-02.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses03">3 - Temel Kavramlar ve Yaklaşımlar & Ağ Altyapısı 1</label>
+        <audio id="ses03" controls>
+          <source src="et-03.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-03.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses04">4 - Ağ Altyapısı 2</label>
+        <audio id="ses04" controls>
+          <source src="et-04.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-04.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses05">5 - Satışa Yönelik Sistemler 1</label>
+        <audio id="ses05" controls>
+          <source src="et-05.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-05.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses06">6 - Satışa Yönelik Sistemler 2</label>
+        <audio id="ses06" controls>
+          <source src="et-06.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-06.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses07">7 - Kurumsal Bilişim Sistemleri 1</label>
+        <audio id="ses07" controls>
+          <source src="et-07.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-07.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses08">8 - Kurumsal Bilişim Sistemleri 2</label>
+        <audio id="ses08" controls>
+          <source src="et-08.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-08.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses09">9 - Veri ve Ağ Güvenliği</label>
+        <audio id="ses09" controls>
+          <source src="et-09.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-09.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses10">10 - Elektronik Ödeme Sistemleri 1</label>
+        <audio id="ses10" controls>
+          <source src="et-10.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-10.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses11-12">11-12 - Elektronik Ödeme Sistemleri 2 & Akıllı Kartlar & Pazarlama ve Reklam</label>
+        <audio id="ses11-12" controls>
+          <source src="et-11-12.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-11-12.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses13">13 - Veri Madenciliği & Elektronik Ticaretin Hukuksal Boyutları 1</label>
+        <audio id="ses13" controls>
+          <source src="et-13.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-13.mp3" download>İndir</a>
+      </div>
+
+      <div class="audio-item">
+        <label for="ses14">14 - Elektronik Ticaretin Hukuksal Boyutları 1 & E-Ticaretin Geleceği ve Politikalar</label>
+        <audio id="ses14" controls>
+          <source src="et-14.mp3" type="audio/mpeg" />
+          Tarayıcınız audio elementini desteklemiyor.
+        </audio>
+        <!-- İNDİR BUTONU -->
+        <a class="btn" href="et-14.mp3" download>İndir</a>
+      </div>
+      </div>
     </div>
-    <div class="audio-item">
-      <label for="ses2">Ses 2 (et-02.mp3)</label>
-      <audio id="ses2" controls>
-        <source src="et-02.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses3">Ses 3 (et-03.mp3)</label>
-      <audio id="ses3" controls>
-        <source src="et-03.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses4">Ses 4 (et-04.mp3)</label>
-      <audio id="ses4" controls>
-        <source src="et-04.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses5">Ses 5 (et-05.mp3)</label>
-      <audio id="ses5" controls>
-        <source src="et-05.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses6">Ses 6 (et-06.mp3)</label>
-      <audio id="ses6" controls>
-        <source src="et-06.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses7">Ses 7 (et-07.mp3)</label>
-      <audio id="ses7" controls>
-        <source src="et-07.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses8">Ses 8 (et-08.mp3)</label>
-      <audio id="ses8" controls>
-        <source src="et-08.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses9">Ses 9 (et-09.mp3)</label>
-      <audio id="ses9" controls>
-        <source src="et-09.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses10">Ses 10 (et-10.mp3)</label>
-      <audio id="ses10" controls>
-        <source src="et-10.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses11">Ses 11 (et-11.mp3)</label>
-      <audio id="ses11" controls>
-        <source src="et-11.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses12">Ses 12 (et-12.mp3)</label>
-      <audio id="ses12" controls>
-        <source src="et-12.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses13">Ses 13 (et-13.mp3)</label>
-      <audio id="ses13" controls>
-        <source src="et-13.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-    <div class="audio-item">
-      <label for="ses14">Ses 14 (et-14.mp3)</label>
-      <audio id="ses14" controls>
-        <source src="et-14.mp3" type="audio/mpeg">
-        Tarayıcınız audio elementini desteklemiyor.
-      </audio>
-    </div>
-  </div>
-</body>
+  </body>
 </html>
