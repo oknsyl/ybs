@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 2 - E-Ticarette Temel Kavramlar ve İş Modelleri (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 2 Sınavı (Elektronik Ticarette Temel Kavramlar ve İş Modelleri - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Klasik mağaza modelinin temel özelliklerinden hangisi, elektronik ticaret sistemlerinde 'web sitesi adresi veya URL' olarak karşılık bulur?",
+      options: [
+        ["Vitrin ve bina yapısı", "Bu, web sitesinin tasarımı ve kullanıcı arayüzü ile ilgilidir."],
+        ["Mağazanın adresi", "Web sitesi adresi (URL), e-ticarette mağazanın sanal adresidir."],
+        ["Çalışan elemanlar ve müşteri ile ilişkileri", "Bu, müşteri hizmetleri ve CRM sistemleriyle ilgilidir."],
+        ["Malın ambalajı ve teslim metodu", "Bu, lojistik ve ürün sunumuyla ilgilidir."],
+        ["Ödeme protokolü", "Bu, online ödeme sistemleriyle ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Klasik mağaza modelindeki 'mağazanın adresi' özelliği, elektronik ticarette web sitesinin URL'i (alan adı) olarak biçim değiştirmiştir."
+    },
+    {
+      q: "2. Klasik mağazalarda satın alma protokolünün ilk adımı nedir?",
+      options: [
+        ["Ödeme yapılması ve malın teslim edilmesi", "Bu sonraki adımlardandır."],
+        ["Müşterinin mağazaya girmesi", "Satın alma süreci müşterinin mağazaya girmesiyle başlar."],
+        ["Satıcı ve alıcı arasında satış üzerine güven oluşturulması", "Bu, ürün seçimi ve karar aşamasından sonra gelir."],
+        ["Müşterinin satın alacağı mal ve hizmeti seçmesi", "Mağazaya girdikten sonraki adımdır."],
+        ["Müşterinin işlemi sonlandırıp kayda geçirmesi", "Bu son adımlardandır."]
+      ],
+      answer: 1,
+      summary: "Klasik mağaza sisteminde bir alışverişin yapılabilmesi için gerçekleşen ilk adım 'Müşterinin mağazaya girmesi'dir."
+    },
+    {
+      q: "3. Elektronik ticaret modelleri matrisinde, bir firmanın son kullanıcıyı hedef alarak yürüttüğü ticari faaliyetler hangi kategoriye girer?",
+      options: [
+        ["B2B (Firmadan Firmaya)", "Bu, firmalar arası ticarettir."],
+        ["C2C (Tüketiciden Tüketiciye)", "Bu, tüketiciler arası ticarettir."],
+        ["C2B (Tüketiciden Firmaya)", "Bu, tüketicinin firmaya değer sunduğu modeldir."],
+        ["Firma İçi Elektronik Ticaret", "Bu, kurum içi faaliyetlerdir."],
+        ["B2C (Firmadan Tüketiciye)", "B2C, firmaların doğrudan son kullanıcılara satış yapmasıdır."]
+      ],
+      answer: 4,
+      summary: "B2C (Firmadan Tüketiciye Elektronik Ticaret): Herhangi bir firma ya da kurumun, son kullanıcıyı hedef alarak yürüttüğü ticari faaliyetlere denir."
+    },
+    {
+      q: "4. Firmalar arası (B2B) elektronik ticaretin, toplam elektronik ticaret içinde önemli bir bölümü oluşturmasının temel nedeni nedir?",
+      options: [
+        ["Bireysel tüketicilerin internet kullanımının az olması", "Bireysel internet kullanımı yüksektir."],
+        ["Firmaların kendi bünyelerinde bilgi teknolojilerini bir ölçüde hazmetmiş olması ve satışların genellikle toptan yapılması", "Bu iki faktör B2B ticaretin hacmini artırır."],
+        ["C2C modelindeki yasal düzenlemelerin yetersiz olması", "Bu B2B'nin payını doğrudan etkilemez."],
+        ["B2C modelindeki güvenlik açıklarının fazla olması", "Güvenlik her model için önemlidir."],
+        ["Devlet kurumlarının sadece B2B platformlarını kullanması", "Devlet farklı modellerde de yer alabilir."]
+      ],
+      answer: 1,
+      summary: "Firmalar arası elektronik ticaretin toplam elektronik ticaretin çok önemli bir bölümünü oluşturmasının başlıca nedeni, pek çok firmanın kendi bünyesinde bilgi teknolojilerini bir ölçüde hazmetmiş olması ve verimli olarak bir süreden beri kullanıyor olmasıdır. Ayrıca satışların genellikle toptan yapılması da bir etkendir."
+    },
+    {
+      q: "5. 'İş modeli' kavramı, elektronik ticaret bağlamında aşağıdakilerden hangisini tanımlar?",
+      options: [
+        ["Bir firmanın detaylı pazarlama stratejilerini ve reklam bütçesini", "Bu pazarlama modelinin bir parçasıdır."],
+        ["Sadece kullanılan teknolojik altyapıyı ve yazılımları", "İş modeli daha kapsamlıdır."],
+        ["Ürün, servis ya da bilgi akışını sağlayan, bu yapının içindeki çeşitli iş oyuncularını, rollerini, potansiyel kazanımlarını ve kazanç kaynaklarının tanımını içeren bir yapıyı", "Bu, iş modelinin doğru bir tanımıdır."],
+        ["Bir e-ticaret sitesinin kullanıcı arayüzü tasarımını ve renk şemasını", "Bu tasarım detaylarıdır."],
+        ["Firmanın yasal yükümlülüklerini ve vergi beyannamelerini", "Bunlar operasyonel ve hukuki süreçlerdir."]
+      ],
+      answer: 2,
+      summary: "İş modeli, ürün, servis ya da bilgi akışını sağlayan, bu yapının içindeki çeşitli iş oyuncularını, bunların rollerini, oyuncuların potansiyel kazanımlarının ve kazanç kaynaklarının tanımını içeren bir yapıdır."
+    },
+    {
+      q: "6. Porter'ın (1985) tanımladığı dokuz genel değer zinciri bileşeni arasında aşağıdakilerden hangisi yer almaz?",
+      options: [
+        ["Giriş desteği ve lojistik", "Porter'ın bileşenlerindendir."],
+        ["Satış-pazarlama", "Porter'ın bileşenlerindendir."],
+        ["Teknik geliştirme", "Porter'ın bileşenlerindendir."],
+        ["Rakip analizi ve fiyatlandırma stratejileri", "Bunlar pazarlama stratejileri kapsamındadır, Porter'ın 9 temel bileşeninden değildir."],
+        ["Firma altyapısı", "Porter'ın bileşenlerindendir."]
+      ],
+      answer: 3,
+      summary: "Porter(1985) dokuz adet genel değer zinciri bileşeni tanımlamıştır: Giriş desteği ve lojistik, İşletim, Çıkış desteği ve lojistik, Satış-pazarlama, Servis, Teknik geliştirme, Satınalma, İnsan kaynakları, Firma altyapısı."
+    },
+    {
+      q: "7. 'E-Dükkân (E-shop)' iş modelinin firma açısından sağladığı temel getirilerden biri nedir?",
+      options: [
+        ["Müşteri ile fiziksel temasın zorunlu olması", "E-dükkânlar dijitaldir."],
+        ["Sadece yerel pazarda rekabet edebilme imkanı", "Küresel pazara erişim sağlar."],
+        ["Talep artışı, coğrafi olarak geniş bir alana ekonomik bir şekilde hitap edebilme ve satış/tanıtımda maliyet düşmesi", "Bunlar e-dükkânların temel avantajlarıdır."],
+        ["İş saatlerinin klasik mağazalarla aynı olması", "E-dükkânlar 7/24 açıktır."],
+        ["Birebir pazarlama tekniklerinin kullanılamaması", "Tam tersine, birebir pazarlama için uygun bir ortamdır."]
+      ],
+      answer: 2,
+      summary: "Firma açısından e-dükkân yaklaşımının getirisi, talep artışı, coğrafi olarak geniş bir alana ekonomik bir şekilde hitap edebilme (tüm dünya), satış ve tanıtımda maliyet düşmesi olarak özetlenebilir."
+    },
+    {
+      q: "8. 'E-Satınalma (E-Procurement)' iş modelinin bir firma için sağladığı avantajlar arasında hangisi sayılamaz?",
+      options: [
+        ["Daha geniş bir tedarikçi yelpazesine erişilmesi", "Bu bir avantajdır."],
+        ["Satın alma ve ihale masraflarının düşürülmesi", "Bu bir avantajdır."],
+        ["Kırtasiye ve geliş gidişin azaltılması, daha az personel kullanımı", "Bu bir avantajdır."],
+        ["Klasik satın alma sistemlerine göre şeffaflığın tamamen ortadan kalkması", "Tam tersine, bir ölçüde şeffaflık sağlandığı için kötüye kullanım azalır."],
+        ["Daha düşük maliyetle mal bulunması", "Bu bir avantajdır."]
+      ],
+      answer: 3,
+      summary: "E-satınalma modelinin firma açısından avantajları; daha geniş tedarikçi yelpazesi, düşük maliyetle mal bulma, satın alma/ihale masraflarının düşmesi, kırtasiye ve personel kullanımının azalmasıdır. Bir ölçüde şeffaflık sağlar."
+    },
+    {
+      q: "9. 'E-Müzayede (E-Auction)' iş modelinin alıcılar ve satıcılar açısından ortak kazancı nedir?",
+      options: [
+        ["Sadece yüksek değerli antika eşyaların satılabilmesi", "Fiyatı küçük mallar da satılabilir."],
+        ["Müzayedeye katılım için mutlaka fiziksel olarak salonda bulunma zorunluluğu", "Elektronik müzayede seyahati gerektirmez."],
+        ["Satış veriminde artış, zaman tasarrufu, uzaklıkların aşılması ve tüm dünyaya erişebilirlik (küresellik)", "Bunlar e-müzayedenin ortak kazançlarıdır."],
+        ["Katılım maliyetlerinin klasik müzayedelerden her zaman daha yüksek olması", "Düşük katılım maliyeti bir avantajdır."],
+        ["Sadece ihraç fazlası ürünlerin satılabildiği bir platform olması", "İkinci el mallar için de verimlidir."]
+      ],
+      answer: 2,
+      summary: "E-müzayede sağlayıcısı açısından gelir kaynağı platformun satışıdır. Alıcılar ve satıcılar açısından kazançlar ise, satış veriminde artış, zaman tasarrufu, uzaklıkların aşılması ve tüm dünyaya erişebilirlik, küreselliktir."
+    },
+    {
+      q: "10. 'E-Çarşı (E-mall)' iş modelinde, çarşı sahibinin temel gelir kaynakları nelerdir?",
+      options: [
+        ["Sadece dükkânların yaptığı satışlardan alınan yüksek komisyonlar", "Komisyon bir gelir kaynağı olabilir ama tek ve yüksek olmak zorunda değildir."],
+        ["Çarşıdaki tüm dükkânların ürünlerini doğrudan kendisinin satması", "Çarşı sahibi genellikle doğrudan satış yapmaz."],
+        ["Kira, bakım ücretleri, reklam gelirleri ve bazı durumlarda satışlardan alınan komisyon", "Bunlar e-çarşı sahibinin tipik gelir kaynaklarıdır."],
+        ["Ziyaretçilerden alınan giriş ücretleri", "Genellikle e-çarşılara giriş ücretsizdir."],
+        ["Çarşı içindeki destek hizmetlerinin (noter, banka vb.) tüm gelirleri", "Bu hizmetlerden pay alabilir ama tüm geliri değildir."]
+      ],
+      answer: 2,
+      summary: "Çarşı modelinde genellikle çarşı sahibi, dükkân sahiplerinin yaptığı işle doğrudan ilgilenmez. Genelde çarşı sahibinin geliri, kira, bakım ve reklamdan, bazı durumlarda komisyondan gerçekleşir."
+    },
+    {
+      q: "11. 'Sanal Topluluklar' iş modelinde, firma sponsorluğunda oluşturulan toplulukların temel amacı nedir?",
+      options: [
+        ["Rakiplerin ürünleri hakkında olumsuz yorumlar yaymak", "Bu etik bir davranış değildir."],
+        ["Üyelerden yüksek aidatlar toplayarak kar elde etmek", "Firma sponsorluğundakiler genellikle ücretsizdir."],
+        ["Belirli bir firmanın ürünlerini satın alan müşteriler arasında marka benimsenmesini ve bağlılığını artırmak, sorunlarına çözüm bulmak, deneyimlerini paylaşmalarını sağlamak", "Firma sponsorluğundaki topluluklar bu amaçlara hizmet eder."],
+        ["Sadece firmanın kendi çalışanları arasında bir iletişim platformu oluşturmak", "Bu intranet veya iç iletişim aracı olurdu."],
+        ["Üçüncü şahısların ürünleri için bir pazar yeri oluşturmak", "Bu farklı bir iş modelidir."]
+      ],
+      answer: 2,
+      summary: "Belirli bir firmanın ürünlerini satın alan müşteriler arasında marka benimsenmesini ve bağlılığını arttırmak, müşterilerin satış sonrasındaki sorunlarına çözüm bulmak, deneyimlerini birbirleriyle paylaşmalarını sağlamak ve ürün hakkında şikâyet-öneri almak amacıyla sanal topluluklar oluşturulabilir."
+    },
+    {
+      q: "12. 'Değer Zinciri Tümleştiricisi (Value Chain Integrator)' iş modelinin temel hedefi nedir?",
+      options: [
+        ["Değer zincirinin sadece bir fonksiyonuna (örn: ödeme sistemleri) odaklanmak", "Bu Değer Zinciri Servis Sağlayıcısı'nın işidir."],
+        ["Değer zincirinin farklı aşamalarındaki bilgi akışının elektronik olarak ele alınması ve buradan verimlilik artışı ile birlikte kazanç elde edilmesi", "Tümleştirici, değer zincirini bütünsel olarak ele alır."],
+        ["Müşterilere sanal danışmanlık hizmetleri sunmak", "Bu E-İşbirliği Platformları'nın bir örneği olabilir."],
+        ["Arama motorları aracılığıyla bilgiye erişimi kolaylaştırmak", "Bu Bilgi Komisyonculuğu'nun işidir."],
+        ["Elektronik belgelerin yasal geçerliliğini sağlamak", "Bu E-Noter'in işidir."]
+      ],
+      answer: 1,
+      summary: "Değer Zinciri Tümleştiricisi iş modelinin hedefi, değer zincirinin farklı aşamalarındaki bilgi akışının elektronik olarak ele alınması ve buradan verimlilik artışı ile birlikte kazanç elde edilmesidir."
+    },
+    {
+      q: "13. Aşağıdakilerden hangisi 'Bilgi Komisyonculuğu' iş modeline bir örnek teşkil etmez?",
+      options: [
+        ["Arama motorları (Google, Bing vb.)", "Bilgiye erişim sağlarlar."],
+        ["Müşteri profili oluşturma sistemleri", "Özel bilgi ve analiz sunarlar."],
+        ["Online güvenlik sertifikası sağlayıcıları (Verisign vb.)", "Bu E-Noter ve benzeri servisler kapsamındadır."],
+        ["Yatırım öneri sistemleri", "Finansal bilgi ve analiz sunarlar."],
+        ["Firmalar arası dokümanlar üzerinde çalışan arama motorları", "Özel bilgiye erişim sağlarlar."]
+      ],
+      answer: 2,
+      summary: "Bilgi Komisyonculuğu; arama motorları, müşteri profili oluşturma sistemleri, yatırım öneri sistemleri, döküman sağlama sistemleri gibi örnekleri içerir. Güvenlik sertifikası sağlayıcıları ise E-Noter ve benzeri servisler modeline girer."
+    },
+    {
+      q: "14. İnternet tabanlı iş modelleri sınıflandırılırken 'fonksiyonel entegrasyon derecesi' neyi ifade eder?",
+      options: [
+        ["İş modelinin ne kadar yaratıcı ve yenilikçi olduğunu", "Bu 'yaratıcılık derecesi' boyutudur."],
+        ["Farklı fonksiyonların (satış, pazarlama, lojistik vb.) iş modeline ne kadar bütünleşik ve koordineli bir şekilde dahil edildiğini", "Fonksiyonel entegrasyon bunu ifade eder."],
+        ["İş modelinin ne kadar kullanıcı dostu bir arayüze sahip olduğunu", "Bu kullanılabilirlikle ilgilidir."],
+        ["İş modelinin ne kadar düşük bir başlangıç maliyeti gerektirdiğini", "Bu finansal bir göstergedir."],
+        ["İş modelinin sadece tek bir coğrafi pazarda mı yoksa küresel mi faaliyet gösterdiğini", "Bu pazar kapsamıyla ilgilidir."]
+      ],
+      answer: 1,
+      summary: "İnternet tabanlı iş modellerinin sınıflandırıldığı iki boyuttan biri 'fonksiyonel entegrasyon derecesi'dir. Bu boyut, farklı fonksiyonların iş modeline nasıl entegre edilebildiğini gösterir; bazı iş modelleri sadece bir tek fonksiyonu hedef alırken bazıları birçok fonksiyonu birlikte yürütür."
+    },
+    {
+      q: "15. Telefon ağının üç ana bileşeni aşağıdakilerden hangisinde doğru olarak verilmiştir?",
+      options: [
+        ["Modem, Yönlendirici ve Web Sunucusu", "Bunlar internet altyapı bileşenleridir."],
+        ["Telefon kabloları, Telefon santralı ve Telefonlar", "Bunlar telefon ağının temel bileşenleridir."],
+        ["Uydu, Baz İstasyonu ve Cep Telefonu", "Bunlar mobil iletişim ağı bileşenleridir."],
+        ["E-posta sunucusu, DNS sunucusu ve Alan Adı", "Bunlar internet servis bileşenleridir."],
+        ["Veritabanı, Yazılım ve Kullanıcı Arayüzü", "Bunlar bir bilişim sisteminin genel bileşenleridir."]
+      ],
+      answer: 1,
+      summary: "Telefon ağının üç ana bileşeni vardır: Telefon kabloları, Telefon santralı, Telefonlar."
+    },
+    {
+      q: "16. İnternet öncesi dönemde, merkezi bilgisayarların (mainframe) terminaller aracılığıyla firmanın ofislerinde farklı kişilerce aynı anda kullanılabilir hale gelmesinin temel nedeni nedir?",
+      options: [
+        ["Kişisel bilgisayarların çok yaygın ve ucuz olması", "O dönemde PC'ler yaygın değildi."],
+        ["Veri güvenliğini artırmak", "Merkezi yapı veri kontrolünü kolaylaştırabilir ama temel neden bu değildi."],
+        ["Bilgisayar kaynaklarının daha verimli kullanılmasını sağlamak ve daha fazla kişinin bu kaynaklara erişimini mümkün kılmak", "Terminaller, pahalı merkezi bilgisayarın birden fazla kullanıcıya hizmet vermesini sağladı."],
+        ["Firmalar arası veri alışverişini engellemek", "Bu iç kullanıma yönelikti."],
+        ["Telefon hatlarına olan ihtiyacı ortadan kaldırmak", "Terminaller genellikle telefon hatları veya özel kablolarla bağlanırdı."]
+      ],
+      answer: 2,
+      summary: "Başlangıçta bir firmanın yalnızca bir bilgisayarı ve operatör odası varken, daha sonra bu bilgisayar, terminaller aracılığı ile firmanın ofislerinde farklı kişilerce aynı anda kullanılabilir hale gelmiştir. Bu bilgisayarlara, merkezi bilgisayar (mainframe computer) denmektedir."
+    },
+    {
+      q: "17. İnternet'in çalışma prensibi olan 'paket anahtarlamalı' iletişim modeli, 'devre anahtarlamalı' modelden (örn: klasik telefon ağı) nasıl farklılaşır?",
+      options: [
+        ["Paket anahtarlamada iletişim başlamadan önce kesintisiz bir fiziksel bağlantı kurulur.", "Bu devre anahtarlamanın özelliğidir."],
+        ["Devre anahtarlamada bilgi küçük paketlere bölünerek gönderilir.", "Bu paket anahtarlamanın özelliğidir."],
+        ["Paket anahtarlamada bilgi paketleri ağ üzerinde farklı yollardan hedefe ulaşabilirken, devre anahtarlamada iletişim süresince sabit bir hat kullanılır.", "Bu temel farktır."],
+        ["Paket anahtarlama sadece ses iletimi için, devre anahtarlama ise veri iletimi için uygundur.", "Her ikisi de farklı veri türlerini iletebilir."],
+        ["Devre anahtarlamada gönderici ve alıcı adreslerine gerek yoktur.", "Her iki modelde de adresleme bir şekilde yapılır."]
+      ],
+      answer: 2,
+      summary: "İnternet, paket anahtarlamalı bir iletişim modeli üzerine iletişim sağlayan bir ağdır. Bilgi paketleri, üzerlerinde alıcı ve gönderici adresleri olduğu halde, ağ üzerinde çeşitli düğümlerden ve yönlendiricilerden geçerek yol alır ve hedeflerine ulaşırlar. Mevcut telefon ağı ise 'devre anahtarlamalı'dır, yani elektriksel bağlantı iki taraf arasında tam olarak sağlandıktan sonra veri iletişimi yapılır."
+    },
+    {
+      q: "18. Vinton Cerf ve Robert Kahn'ın İnternet'in gelişimine yaptıkları en önemli katkı nedir?",
+      options: [
+        ["İlk web tarayıcısını geliştirmek", "Web tarayıcısı Tim Berners-Lee ile ilgilidir."],
+        ["HTML dilini standartlaştırmak", "HTML W3C tarafından standartlaştırılır."],
+        ["TCP/IP protokol takımını tasarlamak ve geliştirmek", "Cerf ve Kahn, TCP/IP'nin mimarları olarak bilinir."],
+        ["İlk kişisel bilgisayarı icat etmek", "Bu farklı bir gelişimdir."],
+        ["Elektronik postayı yaygınlaştırmak", "E-posta daha eski bir teknolojidir."]
+      ],
+      answer: 2,
+      summary: "İnternet'in önemli protokolü olan TCP/IP'nin tasarımcıları arasında önemli iki kişi Dr. Vinton Cerf ve Dr. Robert Kahn'dır."
+    },
+    {
+      q: "19. Robert Kahn’ın 'açık mimari' için ortaya koyduğu prensiplerden 'Hatadan geri dönebilme' ne anlama gelir?",
+      options: [
+        ["Ağa bağlanan her bilgisayarın hatasız çalışması gerektiği", "Bu ideal bir durumdur ama prensibin anlamı bu değildir."],
+        ["Ağdaki herhangi bir hatanın tüm sistemi çökertmesi gerektiği", "Tam tersi, sistem dirençli olmalıdır."],
+        ["İletişim sırasında kaybolan veri paketlerinin yeniden gönderilebilmesi gerektiği", "Bu, güvenilir iletişim için bir mekanizmadır."],
+        ["Merkezi bir kontrol mekanizmasının tüm hataları anında düzeltmesi gerektiği", "Dağıtık yapıda merkezi kontrol yoktur."],
+        ["Ağdaki tüm yazılımların hata ayıklama modunda çalışması gerektiği", "Bu bir geliştirme sürecidir."]
+      ],
+      answer: 2,
+      summary: "Robert Kahn'ın açık mimari için ortaya koyduğu hedeflerden biri 'Hatadan geri dönebilme'dir: Kayıp paketlerin yeniden gönderilmesi mümkün olacaktır."
+    },
+    {
+      q: "20. İnternetin kısa tarihinde, 1990 yılında hangi önemli gelişme yaşanmıştır?",
+      options: [
+        ["ARPANET'in ilk 5 noktasının birbirine bağlanması", "Bu 1970'de olmuştur."],
+        ["TCP tanımlamasının Vinton Cerf tarafından yapılması", "Bu 1974'te olmuştur."],
+        ["DNS yaklaşımının ortaya atılması", "Bu 1984'te olmuştur."],
+        ["İlk ticari İnternet servis sağlayıcısının (world.std.com) faaliyete geçmesi", "Bu 1989'dadır, 1990'a yakın bir gelişme olarak PDF'te 1989-1990 aralığında verilmiş."],
+        ["WWW'nin kullanılmaya başlanması ve ilk reklam banner'ının yayınlanması", "Bu 1994'te olmuştur."]
+      ],
+      answer: 3, // PDF 1989'da ilk ticari servis sağlayıcı diyor, 1990'a en yakın ve önemli gelişme bu.
+      summary: "İnternetin Kısa Tarihi tablosunda 1989 için 'İlk ticari servis sağlayıcı: world.std.com' bilgisi yer almaktadır."
+    },
+    {
+      q: "21. 'C2B (Tüketiciden Firmaya)' elektronik ticaret modeline en iyi örnek aşağıdakilerden hangisidir?",
+      options: [
+        ["Bir firmanın web sitesinden son kullanıcıya ürün satması (Amazon.com)", "Bu B2C modelidir."],
+        ["Tüketicilerin bir online platformda ikinci el eşyalarını birbirlerine satması (Ebay'deki bireysel satıcılar)", "Bu C2C modelidir."],
+        ["Bir tüketicinin, bir firmanın web sitesindeki 'öneri kutusu'na ürün geliştirme fikri sunması veya bir platformda belirli bir fiyattan bir hizmet talep etmesi (Priceline benzeri)", "Bu C2B modeline örnektir."],
+        ["Bir firmanın başka bir firmadan hammadde satın alması (EDI ağları)", "Bu B2B modelidir."],
+        ["Devletin vatandaşlara online vergi ödeme imkanı sunması", "Bu G2C veya C2G olabilir."]
+      ],
+      answer: 2,
+      summary: "C2B (Tüketiciden Firmaya Elektronik Ticaret): Tüketicilerin görüş ve önerilerini, tercihlerini firmalara yönelttikleri, istedikleri mal ve hizmetleri sundukları elektronik ticaret modelidir. Genellikle tüketici sayfaları ya da 'arıyorum' sistemleri şeklinde gerçekleşmektedir."
+    },
+    {
+      q: "22. Firma içi elektronik ticaret faaliyetleri, diğer e-ticaret alanlarına göre neden 'ilk kabul edilen' olarak değerlendirilir?",
+      options: [
+        ["Çünkü internet tabanlı sistemlerden daha güvenlidirler.", "Güvenlik her zaman önemlidir."],
+        ["Çünkü daha az maliyetlidirler.", "Maliyet görecelidir."],
+        ["Çünkü firma içi ağlar ve merkezi bilgisayarlar, firmaların dışa açılmasından çok daha önce kullanılmaya başlanmıştır.", "Kurum içi otomasyon daha erken başlamıştır."],
+        ["Çünkü sadece büyük holdingler tarafından kullanılabilirler.", "Farklı ölçeklerde firmalar kullanır."],
+        ["Çünkü yasal düzenlemeleri daha azdır.", "İç sistemlerin de düzenlemeleri olabilir."]
+      ],
+      answer: 2,
+      summary: "Firma içi elektronik ticaret faaliyetleri, diğer elektronik ticaret alanları ile karşılaştırılacak olursa ilk kabul edilenidir. Firma içi ağlar ve merkezi bilgisayarlar, firmaların diğer firmalara ya da tüketiciye elektronik olarak ulaşmasından çok daha önce kullanılmaya başlanmıştır."
+    },
+    {
+      q: "23. 'Pazarlama Modeli' tanımı, 'İş Modeli' tanımından hangi temel unsuru ekleyerek farklılaşır?",
+      options: [
+        ["Teknolojik altyapıyı", "İş modelinde de dolaylı olarak vardır."],
+        ["Hedeflenen müşteri segmentini", "Bu pazarlama stratejisinin bir parçasıdır."],
+        ["Bir iş oyuncusunun bir pazarlama stratejisi ile birlikte oluşturduğu üçlüyü", "Pazarlama modeli, iş modeline strateji ve oyuncuyu ekler."],
+        ["Ürünün fiyatlandırma politikasını", "Bu pazarlama stratejisinin bir unsurudur."],
+        ["Yasal düzenlemelere uyumu", "Bu her iki model için de geçerlidir."]
+      ],
+      answer: 2,
+      summary: "Pazarlama Modeli, bir iş modeli ve bir iş oyuncusunun bir pazarlama stratejisi ile birlikte oluşturduğu üçlüdür."
+    },
+    {
+      q: "24. Değer zincirinin bileşenlerine ayrılması ve bu bileşenlerin farklı etkileşim şekilleriyle (bire bir, bire çok, çoka bir) incelenmesi neyi amaçlar?",
+      options: [
+        ["Sadece mevcut pazarları korumayı", "Yeni pazarların da keşfini hedefler."],
+        ["Yeni oluşabilecek elektronik pazarların varlığını ortaya koymayı ve iş modelleri geliştirmeyi", "Bu analitik yaklaşım yeni fırsatlar sunar."],
+        ["Teknolojik altyapı maliyetlerini hesaplamayı", "Bu finansal bir analizdir."],
+        ["Çalışanların performansını değerlendirmeyi", "Bu İK ile ilgilidir."],
+        ["Rakiplerin zayıf yönlerini belirlemeyi", "Bu rekabet analizidir."]
+      ],
+      answer: 1,
+      summary: "İş modellerinin ortaya konulmasında takip edilebilecek olan yol değer zincirlerinin sistematik olarak bileşenlerine ayrılması ve bileşenleri tek tek tanımladıktan sonra bunların farklı şekillerde birleşmelerinin incelenmesi şeklindedir. Bu şekilde yapılabilecek olan analitik yaklaşım, yeni oluşabilecek elektronik pazarların da varlığını ortaya koyar."
+    },
+    {
+      q: "25. Bir e-çarşıda (e-mall) bulunan ve görece meşhur bir firma için gelen ziyaretçinin, diğer (daha az bilinen) firmaları da ziyaret etme olasılığı, klasik çarşılara göre neden daha az önemli olabilir?",
+      options: [
+        ["Çünkü e-çarşılarda daha az sayıda dükkân bulunur.", "Dükkân sayısı değişebilir."],
+        ["Çünkü e-çarşı modeli İnternet tabanlı olduğu için ziyaretçiler zaten fiziksel seyahat ihtiyacı duymaz ve birkaç tıklama ile farklı yerlere kolayca ulaşabilir.", "Sanal seyahatin kolaylığı bu etkiyi azaltır."],
+        ["Çünkü e-çarşılardaki ürünler genellikle daha pahalıdır.", "Fiyatlandırma farklılık gösterebilir."],
+        ["Çünkü e-çarşı sahipleri bu tür bir etkileşimi engeller.", "Tam tersi, teşvik edebilirler."],
+        ["Çünkü meşhur firmalar genellikle e-çarşılarda yer almaz.", "Yer alabilirler."]
+      ],
+      answer: 1,
+      summary: "Klasik çarşılarda fiziksel seyahat sebebi ile çok daha önemli olan bu faktör (bir dükkana gelenin diğerlerini de gezmesi), e-çarşı modelinde önemli olmakla birlikte, göreceli olarak daha az önemlidir. Çünkü, e-çarşı modeli, Internet tabanlı olması sebebi ile ziyaretçilere zaten fiziksel bir seyahat ihtiyacı sunmamaktadır."
+    },
+    {
+      q: "26. KOBİ (Küçük ve Orta Boy İşletmeler) için e-çarşı platformlarında yer almanın temel avantajı nedir?",
+      options: [
+        ["Kendi özel web sitelerini kurma zorunluluğu getirmesi", "Tam tersi, bu ihtiyacı azaltabilir."],
+        ["Çok yüksek komisyon oranları ödemek zorunda kalmaları", "Maliyet etkin bir çözüm olabilir."],
+        ["İnternet tabanlı uygulamalarına çok fazla kaynak ayırmak istemeyen ya da ayıramayan firmaların daha ekonomik ve profesyonel bir şekilde sanal ortamda varlıklarını sağlamalarına olanak tanıması", "E-çarşılar KOBİ'ler için bu avantajı sunar."],
+        ["Sadece yerel müşterilere ulaşabilmeleri", "Geniş bir kitleye ulaşabilirler."],
+        ["Teknolojik altyapılarını tamamen kendilerinin yönetmesi", "E-çarşı sağlayıcısı altyapıyı sunar."]
+      ],
+      answer: 2,
+      summary: "Bu model (e-çarşı), internet tabanlı uygulamalarına çok fazla kaynak ayırmak istemeyen ya da ayırması mümkün olmayan firmaların daha ekonomik ve profesyonel bir şekilde sanal ortamda varlıklarını sağlamalarına olanak tanır. Buna örnek olarak KOBİ (Küçük ve Orta Boy İşletmeler) firmalarını hedef alan www.kobi.net gösterilebilir."
+    },
+    {
+      q: "27. 'Değer Zinciri Servis Sağlayıcısı' iş modeline en iyi örnek hangi tür kuruluşlardır?",
+      options: [
+        ["Ürünlerini doğrudan son tüketiciye satan e-dükkânlar", "Bu e-dükkân modelidir."],
+        ["Klasik ticaretin değer zincirlerine ödeme, lojistik gibi özel hizmetler sunan bankalar veya uzmanlaşmış üçüncü firmalar", "Bu model belirli bir fonksiyona odaklanır."],
+        ["Farklı firmaların ürünlerini tek bir çatı altında toplayan e-çarşılar", "Bu e-çarşı modelidir."],
+        ["Kullanıcıların kendi aralarında ikinci el ürün sattığı platformlar", "Bu C2C modelidir."],
+        ["Sadece bilgi ve içerik sunan haber portalları", "Bu bilgi komisyonculuğu olabilir."]
+      ],
+      answer: 1,
+      summary: "Değer Zinciri Servis Sağlayıcısı iş modelinde, değer zinciri üzerinde belirli bir fonksiyon hedef alınır. Bunlar arasında özellikle, ödeme sistemleri ve destek sistemleri başta gelir. Örneğin bankalar, varoluşları ile birlikte kendilerini klasik ticaretin değer zincirlerine servis sağlayıcı pozisyonunda tutmuşlardır."
+    },
+    {
+      q: "28. İnternet tabanlı iş modellerinin sınıflandırıldığı grafikte (PDF Sayfa 21), 'Değer Zinciri Tümleştiricisi' hangi konumda yer alır ve bu ne anlama gelir?",
+      options: [
+        ["Düşük yaratıcılık ve tek fonksiyonlu sol alt bölgede; klasik satış yöntemlerinin elektronik versiyonudur.", "Bu e-dükkân gibi modellerin konumudur."],
+        ["Yüksek yaratıcılık ve çok fonksiyonlu entegre sağ üst köşede; pek çok karmaşık ve farklı fonksiyonu üstlendiğini ve bilgi teknolojisine kritik olarak muhtaç olduğunu gösterir.", "Değer Zinciri Tümleştiricisi bu konumdadır."],
+        ["Orta bölgede; klasik yaklaşımlara teknolojik eklemeler yapıldığını gösterir.", "Bu e-noter gibi modellerin konumudur."],
+        ["Düşük yaratıcılık ve çok fonksiyonlu entegre sol üst bölgede; standartlaşmış ama kapsamlı hizmetler sunduğunu gösterir.", "Grafikteki konumu bu değildir."],
+        ["Yüksek yaratıcılık ve tek fonksiyonlu sağ alt bölgede; niş ve yenilikçi tek bir hizmet sunduğunu gösterir.", "Grafikteki konumu bu değildir."]
+      ],
+      answer: 1,
+      summary: "Şekilde görülen dağılım incelenecek olursa, karşı köşede (sağ üst) ise değer zinciri tümleştiricisinin pek çok karmaşık ve farklı fonksiyonu üstlendiği görülmektedir. Bu köşedeki iş modelleri, bilgi teknolojisinin desteğine kritik olarak muhtaçtır."
+    },
+    {
+      q: "29. 1960'lı yıllardan itibaren bankalar arası finans işlemleri ve firma-banka arası iletişimin elektronik olarak uygulanabilir duruma gelmesinin temel nedeni ne olmuştur?",
+      options: [
+        ["Kişisel bilgisayarların (PC) yaygınlaşması", "PC'ler daha sonra yaygınlaşmıştır, ilk dönemde merkezi bilgisayarlar vardı."],
+        ["Farklı firmaların farklı modeldeki bilgisayarlarının aynı dilden konuşarak anlaşabilmesi için donanım ve yazılım seviyelerinde belirli standartların oluşturulması", "Standartlaşma, sistemler arası iletişimi mümkün kılmıştır."],
+        ["İnternet'in tüm dünyaya yayılması", "İnternet daha sonra bu süreçleri hızlandırmıştır, ilk başlangıç özel ağlarladır."],
+        ["Telefon ağlarının tamamen dijitalleşmesi", "O dönemde telefon ağları kullanılıyordu ama temel etken standartlaşmaydı."],
+        ["Elektronik postanın icat edilmesi", "E-posta bir iletişim aracıdır, finansal işlem standardı değildir."]
+      ],
+      answer: 1,
+      summary: "Aynı firmanın farklı merkezi bilgisayarlarının veri alışverişinde başarılı uygulamalar ve yüksek ekonomik avantajlar sağlaması, farklı firmaların, farklı merkezi bilgisayarlarını veri alışverişine uyumlu hale getirmesi ve farklı firmalar arasında elektronik olarak bağlantı kurulması ile sonuçlanmıştır. Farklı firmaların, modelleri farklı olan bilgisayarlarının aynı dilden konuşarak anlaşması problemi, donanımda ve yazılım seviyelerinde belirli standartların oluşturulmasını gerekli kılmıştır."
+    },
+    {
+      q: "30. TCP/IP protokolünün farklı iletişim ortamlarında (bakır hatlardan kızılaltı ışınlara kadar) kullanılabilir olmasının temel nedeni nedir?",
+      options: [
+        ["Sadece tek bir firma tarafından geliştirilmiş olması", "Farklı kurum ve kişilerin katkısıyla gelişmiştir."],
+        ["Çok yüksek bir maliyete sahip olması", "Açık ve yaygın bir protokoldür."],
+        ["Yapısının esnek ve donanımdan bağımsız bir katmanlama prensibine dayanması", "TCP/IP'nin katmanlı yapısı, farklı fiziksel ortamlarda çalışabilmesini sağlar."],
+        ["Sadece belirli bir coğrafi bölgede standart olarak kabul edilmesi", "Küresel bir standarttır."],
+        ["Çok düşük hızlarda çalışacak şekilde tasarlanmış olması", "Farklı hızları destekleyebilir."]
+      ],
+      answer: 2,
+      summary: "Internet, yapısı gereği pek çok çeşitli iletişim sistemleri tarafından taşınabilir bir iletişim protokolüne sahiptir: TCP/IP. Bu iletişim protokolü, bakır hatlardan kızılaltı ışınlara kadar farklı iletişim ortamlarında kullanılabilir."
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

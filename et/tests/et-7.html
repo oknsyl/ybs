@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 7 - Kurumsal Bilişim Sistemleri (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 7 Sınavı (Kurumsal Bilişim Sistemleri - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Kurumsal yazılım sistemlerinin 'sıradan ürün' (raftan alınıp hemen kullanılamayan) olarak tasarlanmak zorunda olmasının temel nedeni nedir?",
+      options: [
+        ["Yazılım geliştirme maliyetlerinin çok yüksek olması", "Maliyet bir etken olsa da temel neden çeşitliliktir."],
+        ["Kurumların işlevsel ihtiyaçlarının ve çalışma biçimlerinin büyük farklılıklar göstermesi", "Her kurumun kendine özgü süreçleri özelleştirme gerektirir."],
+        ["Donanım sistemlerinin yazılımlarla uyumsuz olması", "Donanım ve yazılım uyumu sağlanır, temel neden bu değildir."],
+        ["Çalışanların yeni yazılımlara adaptasyonunun zor olması", "Bu bir eğitim ve yönetim konusudur."],
+        ["Tek bir yazılım firmasının tüm ihtiyaçları karşılayamaması", "Bu çeşitliliğin bir sonucudur, nedeni değil."]
+      ],
+      answer: 1,
+      summary: "Kurumsal boyutta, yazılım sistemleri, kurumların çok farklı biçimlerde çalışması ve dolayısı ile işlevsel ihtiyaçların büyük farklılıklar göstermesi nedeniyle donanım sistemlerine oranla çok daha fazla çeşitlilik gerektirirler. Bu çeşitlilik, kurumsal yazılım sistemleri alanını oldukça karlı ve geniş bir yazılım pazarı durumuna getirir. [cite: 6, 7]"
+    },
+    {
+      q: "2. Ofis otomasyon sistemleri olarak adlandırılan gelişmiş kurumsal yazılım sistemlerinin modern işyerlerindeki temel katkısı nedir?",
+      options: [
+        ["Sadece belge arşivleme kapasitesini artırmak", "Arşivleme bir parçasıdır, temel katkısı daha geniştir."],
+        ["Çalışanlar arası yüz yüze iletişimi tamamen ortadan kaldırmak", "İletişimi kolaylaştırır, ortadan kaldırmaz."],
+        ["İş süreçlerini kolaylaştırarak verimliliği artırmak ve işlemleri hızlandırmak", "Ofis otomasyonu verimlilik ve hız odaklıdır."],
+        ["Muhasebe kayıtlarının manuel tutulmasını zorunlu kılmak", "Tam tersine dijitalleşmeyi hedefler."],
+        ["Kurumun sadece dış müşterilerle iletişimini sağlamak", "Hem iç hem dış iletişimi kapsar."]
+      ],
+      answer: 2,
+      summary: "Gelişmiş kurumsal yazılım sistemleri ofis otomasyon sistemleri olarak adlandırılmaktadır. Ofis otomasyon sistemleri, modern işyerlerinde vazgeçilmez birer unsur olarak ortaya çıkmaktadır. [cite: 16]"
+    },
+    {
+      q: "3. Gelişmiş yazar kasaların, stok kontrol sistemi ve fiyatlandırma sistemi ile entegre çalışmasının en önemli faydası nedir?",
+      options: [
+        ["Müşterilerin daha uzun süre kasada beklemesini sağlamak", "İşlem hızını artırır."],
+        ["Her ürün satışında stok ve fiyatların manuel olarak güncellenmesi ihtiyacını doğurmak", "Manuel ihtiyacı ortadan kaldırır."],
+        ["Satış anında stoktan düşüm yaparak ve güncel fiyatları otomatik çekerek sayım sorunlarını ve fiyatlama hatalarını azaltmak", "Entegrasyon sayesinde anlık ve doğru veri akışı sağlanır."],
+        ["Kredi kartı ile ödeme alınmasını engellemek", "Kredi kartı işlemlerini destekleyebilir."],
+        ["Sadece vergi kaydı olmayan fiş basabilmek", "Vergi kaydına uygun çalışırlar."]
+      ],
+      answer: 2,
+      summary: "Gelişmiş yazar kasalar, stok kontrol sistemi ve fiyatlandırma sistemi ile birlikte çalışırlar. Malların son fiyatları otomatik olarak yazar kasaya iletilir. Her ürün satışında, stoktaki ürün sayısından bir eksilir. [cite: 28, 29, 30]"
+    },
+    {
+      q: "4. Portatif yazar kasalar en çok hangi tür satış ortamlarında tercih edilir?",
+      options: [
+        ["Büyük alışveriş merkezlerindeki sabit mağazalarda", "Sabit kasalar daha uygundur."],
+        ["Sadece online e-ticaret sitelerinde", "Fiziksel işlem gerektiren durumlarda kullanılır."],
+        ["Vergi mükellefi olmayan küçük işletmelerde", "Vergi kaydı için de kullanılabilir."],
+        ["Seyyar pazarlamacılar, açık alan veya depo gibi mobilite gerektiren satış ortamlarında", "Taşınabilirlikleri bu ortamlar için idealdir."],
+        ["Bankaların EFT ve havale işlemlerinde", "Bu işlemler için farklı sistemler kullanılır."]
+      ],
+      answer: 3,
+      summary: "Bazı yazar kasalar portatif olarak tasarlanırlar. Bu kasalar, çeşitli seyyar pazarlamacılar, açık alanda ya da depo benzeri ortamlarda bulunan firma görevlileri tarafından kullanılırlar. [cite: 40]"
+    },
+    {
+      q: "5. Elektronik muhasebe sistemlerinin firmalara sağladığı en temel ve yaygın fayda nedir?",
+      options: [
+        ["Muhasebe süreçlerinin daha karmaşık ve yavaş hale gelmesi", "Süreçleri basitleştirir ve hızlandırır."],
+        ["Kağıt tabanlı arşivleme ihtiyacını artırması", "Kağıtsız ofis hedefine katkıda bulunur."],
+        ["Hesap yoğunluklu aktivitelerde ve veri kaydında zaman ve emek tasarrufu sağlayarak hata oranını düşürmesi", "Otomasyon sayesinde verimlilik ve doğruluk artar."],
+        ["Sadece büyük ölçekli uluslararası firmalar tarafından kullanılabilmesi", "Küçük işletmeler de kullanabilir."],
+        ["Diğer kurumsal sistemlerle entegrasyonu imkansız kılması", "Entegrasyon önemlidir ve mümkündür."]
+      ],
+      answer: 2,
+      summary: "Muhasebe bilişim sistemleri, hesap yoğun olması nedeniyle bir firmada elektronik sistemlerin kullanılmaya başlandığı ilk seviyedir ve firmanın işleyişinde en yardımcı arka plan sistemi olarak kabul edilir. [cite: 51, 53] Bu sistemler zaman, emek ve hata oranının azaltılmasına yardımcı olur."
+    },
+    {
+      q: "6. Stok ve sipariş takip sistemlerinin müşteri memnuniyetine doğrudan katkısı nasıl olur?",
+      options: [
+        ["Müşterilere daha sık indirim kuponları göndererek", "Bu pazarlama aktivitesidir."],
+        ["Ürünlerin her zaman rafta bulunabilirliğini (sürekliliğini) sağlayarak müşterinin mağazayı tercih etmesini artırması", "Aranan ürünün bulunması müşteri memnuniyeti için kritiktir."],
+        ["Satılan ürünlerin garantisini otomatik olarak uzatarak", "Garanti koşulları farklı bir konudur."],
+        ["Sadece lüks tüketim ürünlerinin stok takibini yaparak", "Tüm ürünler için stok takibi önemlidir."],
+        ["Müşterilerin kişisel verilerini analiz ederek", "Bu CRM sistemlerinin alanıdır."]
+      ],
+      answer: 1,
+      summary: "Ürünlerin kesintisiz bir biçimde, her zaman müşterinin seçenekleri arasında sunulabilmesi müşterinin sürekli olarak aynı mağazayı tercih etmesini sağlayan faktörler arasındadır. Bu açıdan bakıldığında, müşteri memnuniyetini önemli ölçüde etkileyen bir bileşenin de stok ve sipariş sistemi olduğu ortaya çıkar. [cite: 71, 72]"
+    },
+    {
+      q: "7. İnsan Kaynakları (İK) Sistemlerinin temel amacı ve kapsamı nedir?",
+      options: [
+        ["Sadece aylık maaş bordrolarını basmak", "Bordro, İK sistemlerinin birçok fonksiyonundan sadece biridir."],
+        ["Çalışanların izin tarihleri, sigorta ödemeleri, performans değerlendirmeleri gibi personel ile ilgili işlemlerin otomasyonunu sağlamak ve kayıtlarını tutmak", "İK sistemleri geniş bir yelpazede personel verilerini yönetir."],
+        ["Firmanın pazarlama stratejilerini belirlemek", "Bu pazarlama departmanının görevidir."],
+        ["Üretim hattındaki makine arızalarını takip etmek", "Bu üretim bilişim sistemlerinin görevidir."],
+        ["Müşteri şikayetlerini toplamak ve çözüm üretmek", "Bu CRM veya müşteri hizmetleri sistemlerinin görevidir."]
+      ],
+      answer: 1,
+      summary: "Personel ile ilgili işlemlerin otomasyonunu sağlayan sistemlere, personel otomasyon sistemleri ya da son yıllarda moda haline gelen adı ile İnsan Kaynakları Sistemleri adı verilir. Çalışanların aldıkları ücretler, izin tarihleri, sigorta ya da emeklilik ödemeleri ve diğer sosyal haklarının kayıtları doğru ve güvenilir bir biçimde kayıt altında bulundurulmalıdır. [cite: 76, 77]"
+    },
+    {
+      q: "8. Yönetim Bilişim Sistemleri (YBS), yöneticilere nasıl bir destek sağlar?",
+      options: [
+        ["Günlük operasyonel işlerin detaylı dökümünü sunarak", "YBS, detaydan çok özet ve stratejik bilgi sunar."],
+        ["Çeşitli raporlama, analiz ve iletişim sistemlerini bir araya getirerek karar alma süreçlerini destekleyen özet bilgiler sunarak", "YBS, yöneticilerin karar vermesini kolaylaştırır."],
+        ["Sadece bilişim departmanı çalışanlarının kullanımına açık olarak", "Yönetim kademelerinin kullanımı içindir."],
+        ["Firmanın reklam ve tanıtım materyallerini hazırlayarak", "Bu pazarlama araçlarının işidir."],
+        ["Teknik servis personelinin arıza kayıtlarını tutarak", "Bu farklı bir operasyonel sistemdir."]
+      ],
+      answer: 1,
+      summary: "Yönetim bilişim sistemleri, kurum ve kuruluşlarda yönetim kademelerinde olan personelin kullanımı için tasarlanmış bilişim sistemleridir. Bu sistemler, çeşitli raporlama, analiz ve iletişim sistemlerinin bir araya gelmesi ile oluşurlar. [cite: 94, 95] Yöneticilerin genellikle detaylarla vakit kaybetmeden sonuçlara ulaşmalarını sağlayan sistemler başarılı olarak kabul edilmektedir. [cite: 97]"
+    },
+    {
+      q: "9. Karar Destek Sistemleri (KDS) en temel işleviyle ne yapar?",
+      options: [
+        ["Veritabanındaki tüm kayıtları siler", "Veri yönetimiyle ilgili değildir."],
+        ["Yöneticinin kararlar alırken istediği verilere kolaylıkla ulaşmasını, bu verilerin özetlenmesini, analiz edilmesini ve otomatik çıkarımlar yapılmasını sağlar", "KDS'nin temel işlevi budur."],
+        ["Sadece geçmişe yönelik finansal raporlar üretir", "Geleceğe yönelik analiz ve çıkarımlar da yapabilir."],
+        ["Çalışanların günlük görevlerini otomatik olarak atar", "Bu iş akış veya görev yönetimi sistemlerinin işidir."],
+        ["Bilgisayar ağının güvenliğini sağlar", "Bu güvenlik sistemlerinin işidir."]
+      ],
+      answer: 1,
+      summary: "Karar destek sistemi yöneticinin kararlar alırken istediği verilere kolaylıkla ulaşmasını, bu verilerin özetlenmesini ve analiz edilmesini, otomatik çıkarımlar yapılmasını sağlar. [cite: 101]"
+    },
+    {
+      q: "10. Aşağıdakilerden hangisi en basit anlamıyla bir Karar Destek Sistemi örneği olarak kabul edilebilir?",
+      options: [
+        ["Bir kelime işlemci programı (Microsoft Word)", "Bu doküman oluşturma aracıdır."],
+        ["Rakamları grafik olarak ekrana çıkaran bir tablolama programı (Microsoft Excel)", "Excel, basit analiz ve görselleştirme ile karar desteği sunabilir."],
+        ["Bir e-posta istemcisi (Outlook)", "Bu iletişim aracıdır."],
+        ["Bir sunum hazırlama yazılımı (PowerPoint)", "Bu sunum oluşturma aracıdır."],
+        ["Bir antivirüs programı", "Bu güvenlik yazılımıdır."]
+      ],
+      answer: 1,
+      summary: "En basit karar destek sistemi rakamsal verileri grafik olarak ekrana çıkaran bir tablolama programı olarak düşünülmelidir. (Microsoft Excel). [cite: 104]"
+    },
+    {
+      q: "11. Elektronik muhasebe sistemleri, aşağıdakilerden hangisi gibi belgelerin otomatik olarak oluşturulmasına ve süreçlerin dijitalleşmesine olanak tanır?",
+      options: [
+        ["Çalışanların performans değerlendirme formları", "Bu İK sistemlerinin alanıdır."],
+        ["Fatura, irsaliye ve diğer ticari belgeler", "Elektronik muhasebe bu belgeleri dijitalleştirir."],
+        ["Pazarlama kampanyası broşürleri", "Bu pazarlama araçlarıyla yapılır."],
+        ["Üretim bandı kalite kontrol raporları", "Bu üretim bilişim sistemleriyle ilgilidir."],
+        ["Yeni ürün tasarım çizimleri", "Bu CAD yazılımlarının alanıdır."]
+      ],
+      answer: 1,
+      summary: "Elektronik muhasebe sistemleri, fatura ve irsaliye gibi ticari belgelerin dijital ortama aktarılmasını ve kayıt süreçlerinin otomatik yürütülmesini sağlar. (Genel çıkarım, PDF'te doğrudan bu cümle yok ama muhasebenin hesap ve kayıt odaklı olduğu belirtiliyor [cite: 50, 51])"
+    },
+    {
+      q: "12. Kurumsal Kaynak Planlama (ERP) sistemlerini, diğer genel kurumsal yazılım sistemlerinden ayıran temel özellik nedir?",
+      options: [
+        ["Sadece insan kaynakları modülünü içermesi", "ERP çok daha kapsamlıdır."],
+        ["Yalnızca küçük ve orta ölçekli işletmeler için tasarlanmış olması", "Büyük işletmeler de yaygın olarak kullanır."],
+        ["Muhasebe, üretim, kalite yönetimi, satış ve dağıtım gibi birçok farklı kurumsal süreci tek bir entegre omurga altında birleştirmesi", "ERP'nin en temel özelliği bu entegrasyon ve geniş kapsamdır."],
+        ["Tamamen internetsiz (offline) çalışabilmesi", "Modern ERP'ler ağ bağlantılıdır."],
+        ["Sadece proje bazlı çalışan firmalar için uygun olması", "Farklı iş modellerine uyarlanabilir."]
+      ],
+      answer: 2,
+      summary: "Kurumsal kaynak planlama sistemleri, farklı alanlarda gerçekleşen firma süreçlerini (Muhasebe ve kontrol, Üretim ve madde yönetimi, Kalite yönetimi, Satış ve dağıtım, Proje yönetimi) tek bir omurga altında birleştiren yapıya verilen isimdir. [cite: 252, 253]"
+    },
+    {
+      q: "13. İnsan Kaynakları (İK) bilgi sistemleri, çalışanlarla ilgili aşağıdaki verilerden hangisinin takibini genellikle yapmaz?",
+      options: [
+        ["Çalışanın aldığı ücret ve primler", "İK sistemleri maaş ve ücret takibi yapar."],
+        ["Çalışanın kullandığı ve kalan izin günleri", "İK sistemleri izin takibi yapar."],
+        ["Çalışanın katıldığı eğitimler ve sertifikalar", "İK sistemleri eğitim geçmişini takip eder."],
+        ["Firmanın günlük döviz kuru hareketleri", "Bu finansal piyasa verisidir, İK sistemiyle doğrudan ilgili değildir."],
+        ["Çalışanın performans değerlendirme sonuçları", "İK sistemleri performans takibi yapar."]
+      ],
+      answer: 3,
+      summary: "İnsan kaynakları bilişim sistemlerinin başlıca görevleri arasında; çalışanların ücretleri, izin tarihleri, sigorta ödemeleri, performans değerlendirmeleri ve eğitim geçmişi gibi verilerin takibi bulunur. [cite: 77, 84]"
+    },
+    {
+      q: "14. Yönetim Bilişim Sistemleri (YBS), kurum içinde hangi seviyedeki personelin karar alma süreçlerini desteklemek üzere tasarlanmıştır?",
+      options: [
+        ["Sadece yeni işe başlayan stajyerlerin", "YBS stratejik karar alıcılar içindir."],
+        ["Sadece teknik destek ve bakım personelinin", "Bu personel operasyonel görevler yapar."],
+        ["Orta ve üst düzey yöneticilerin", "YBS, bu seviyedeki yöneticilere stratejik bilgi sağlar."],
+        ["Sadece satış ve pazarlama departmanı çalışanlarının", "YBS tüm kurumu kapsayan kararlar için bilgi sunar."],
+        ["Dışarıdan hizmet alınan danışmanların", "Öncelikle kurum içi yöneticiler hedeflenir."]
+      ],
+      answer: 2,
+      summary: "Yönetim bilişim sistemleri, kurum ve kuruluşlarda yönetim kademelerinde olan personelin kullanımı için tasarlanmış bilişim sistemleridir. [cite: 94]"
+    },
+    {
+      q: "15. Elektronik muhasebe sistemlerinin işletmelere sağladığı en önemli avantaj nedir?",
+      options: [
+        ["Veri girişlerinde hata olasılığını artırması", "Tam tersine hata oranını azaltır."],
+        ["Tüm muhasebe işlemlerinin daha fazla zaman alması", "İşlem süresini kısaltır."],
+        ["Zaman, emek ve maliyet tasarrufu sağlayarak hata oranını önemli ölçüde azaltması", "Otomasyon ve dijitalleşme bu faydaları sağlar."],
+        ["Sadece vergi beyannamelerinin hazırlanmasına odaklanması", "Daha geniş kapsamlıdır."],
+        ["Kağıt tüketimini ve arşivleme ihtiyacını çoğaltması", "Kağıtsız ofis hedefine katkıda bulunur."]
+      ],
+      answer: 2,
+      summary: "Elektronik sistemlerin kullanılmaya başlaması ile iş veriminin yükselmesi ve maliyetlerin azalması gibi hiç de azımsanamayacak büyük kazanımlar ortaya çıkmış, firmaları elektronik sistemleri kurum içinde kullanmaya yöneltmiştir. [cite: 14] Muhasebe bilişim sistemleri zaman, emek ve hata oranının azaltılmasına yardımcı olur."
+    },
+    {
+        q: "16. Gelişmiş yazar kasaların optik ürün kodu (barkod) tarayıcıları ile çalışabilmesinin en önemli pratik faydası nedir?",
+        options: [
+            ["Müşterilerin ürünleri kendilerinin taramasını sağlamak", "Bu self-checkout sistemlerinde olur."],
+            ["Ürünlerin fiyat etiketlerini daha büyük basma ihtiyacını doğurmak", "Etiket ihtiyacını farklılaştırır."],
+            ["Yazar kasa operatörünün ürün fiyatlarını tek tek elle girmesi ihtiyacını ortadan kaldırarak işlem hızını artırmak ve hataları azaltmak", "Barkod okuyucular bu faydayı sağlar."],
+            ["Sadece ithal ürünlerin satışına izin vermek", "Barkodlar yerli ürünlerde de kullanılır."],
+            ["Mağazanın elektrik tüketimini düşürmek", "Doğrudan bir etkisi yoktur."]
+        ],
+        answer: 2,
+        summary: "Gelişmiş olarak adlandırılan yazar kasalar, çoğu zaman ürünlerin üzerinde yer alan uluslararası çubuk optik kodlarını (bar code), laser tarayıcıları yardımı ile okuyabilirler. Böylelikle yazar kasa operatörünün, ürün fiyatlarını tek tek yazar kasa üzerinde kodlaması ihtiyacı ortadan kalkar ve çok büyük bir zaman tasarrufu sağlanır. [cite: 31, 32]"
+    },
+    {
+        q: "17. Türkiye'de kredi kartı sağlayıcılarının her birinin kendi yetkilendirme cihazını tercih etmesinin altında yatan nedenlerden biri aşağıdakilerden hangisi değildir?",
+        options: [
+            ["Bankalararası komisyonların yüksek ve kontrolsüz olması", "PDF'te bu bir neden olarak belirtilmiştir. [cite: 45]"],
+            ["Altyapıya ve veri gizliliğine olan güvensizlik", "PDF'te bu bir neden olarak belirtilmiştir. [cite: 45]"],
+            ["Farklı pazarlama yaklaşımları (örn: taksit, puan)", "PDF'te bu bir neden olarak belirtilmiştir. [cite: 45]"],
+            ["Tüm kredi kartlarının tek bir merkezden yönetilmesi", "Tam tersine, her sağlayıcının kendi sistemi olması bu duruma yol açar."],
+            ["Yasal düzenlemelerin tek bir ortak cihaz kullanımını zorunlu kılmaması", "Bu da dolaylı bir etkendir."]
+        ],
+        answer: 3,
+        summary: "Kredi kartı yapısı tam olarak oturmamış ülkelerde (örneğin Türkiye) ise her kredi kartı sağlayıcısının kendi yetkilendirme cihazı, farklı sebeplerle tercih edilmektedir. Bunlar, bankalararası komisyonların yüksek ve kontrolsüz olması, altyapıya ve veri gizliliğine olan güvensizlik, farklı pazarlama yaklaşımları olabilmektedir. [cite: 44, 45]"
+    },
+    {
+        q: "18. Stok ve sipariş takip sistemlerinde otomasyonun, gerekli olan personel sayısına etkisi nasıldır?",
+        options: [
+            ["Personel sayısını her zaman artırır.", "Otomasyon verimlilikle personel ihtiyacını optimize eder."],
+            ["Personel sayısında bir değişiklik yaratmaz.", "İş yükünü azalttığı için etkiler."],
+            ["Özellikle kayıtların tutulması, formların doldurulması ve saklanması amacıyla kullanılacak personel sayısını azaltır.", "Otomasyon, manuel işleri azaltarak personel ihtiyacını düşürür."],
+            ["Sadece yöneticilerin sayısını artırır.", "Bu doğru bir genelleme değildir."],
+            ["Stok sayımı için daha fazla personel gerektirir.", "Otomatik sistemler sayım ihtiyacını azaltır."]
+        ],
+        answer: 2,
+        summary: "Bu işlemlerin (mal teslimi, paketleme, stoktan düşme vb.) her adımında sağlanabilecek otomasyon, hem malların teslim süresini azaltacak hem de olası hataların oranını en aza indirebilecektir. Gerekli olan personel, özellikle kayıtların tutulması, formların doldurulması ve saklanması amacıyla kullanılacak olan personel, sayıca daha az olacaktır. [cite: 65, 66]"
+    },
+    {
+        q: "19. İnsan Kaynakları (İK) sistemlerinin, içinde bulunduğu ülkenin hukuksal yapısıyla uyumlu olmasının ve bu yapıdaki değişikliklere kolayca adapte olabilmesinin önemi nedir?",
+        options: [
+            ["Uluslararası yazılım firmalarının işini kolaylaştırmak", "Tam tersine bu durum ulusal firmalara avantaj sağlayabilir."],
+            ["Yazılımın daha karmaşık ve pahalı olmasını sağlamak", "Amaç uyumluluk ve sürdürülebilirliktir."],
+            ["Firmanın yasal yükümlülüklerini doğru bir şekilde yerine getirmesini sağlamak ve olası cezalardan kaçınmak", "Hukuksal uyum, firmalar için zorunludur."],
+            ["Çalışanların sendikal faaliyetlerini kısıtlamak", "Bu İK sistemlerinin etik bir amacı değildir."],
+            ["Muhasebe sistemleriyle entegrasyonu engellemek", "Entegrasyon önemlidir."]
+        ],
+        answer: 2,
+        summary: "İnsan kaynakları sistemleri, içinde bulunduğu ülkenin hukuksal yapısı ile iç içe olmalı, özellikle değişken olan hukuksal uyulamalara kolaylıkla uyum sağlayabilmelidir. Kanunlarda meydana gelebilecek değişikliklerin, yazılım güncellemeleri yardımı ile sisteme yansıtılabilmesi, sil baştan programlamaya neden olmaması gereklidir. [cite: 89, 90]"
+    },
+    {
+        q: "20. Karar Destek Sistemleri (KDS) hangi tür verileri analiz ederek yöneticilere yardımcı olur?",
+        options: [
+            ["Sadece çalışanların kişisel sosyal medya paylaşımlarını", "Bu tür veriler genellikle KDS kapsamında değildir."],
+            ["Firmanın finansal verileri, satış rakamları, pazar trendleri gibi işle ilgili verileri", "KDS, bu tür verileri analiz ederek karar sürecine katkı sağlar."],
+            ["Rakiplerin gizli ticari sırlarını", "Bu etik ve yasal değildir."],
+            ["Hava durumu tahminlerini ve astrolojik yorumları", "İş kararları için temel veri kaynakları değildir."],
+            ["Sadece yöneticilerin kişisel tercihlerini ve sezgilerini", "KDS veriye dayalıdır, sezgiyi destekleyebilir ama temeli veri değildir."]
+        ],
+        answer: 1,
+        summary: "Karar destek sistemi yöneticinin kararlar alırken istediği verilere kolaylıkla ulaşmasını, bu verilerin özetlenmesini ve analiz edilmesini, otomatik çıkarımlar yapılmasını sağlar. [cite: 101]"
+    },
+    {
+        q: "21. Aşağıdakilerden hangisi bir Kurumsal Kaynak Planlama (ERP) sisteminin kapsadığı temel süreçlerden biri değildir?",
+        options: [
+            ["Muhasebe ve kontrol", "ERP'nin temel modüllerindendir. [cite: 253]"],
+            ["Üretim ve madde yönetimi", "ERP'nin temel modüllerindendir. [cite: 253]"],
+            ["Sosyal medya içerik yönetimi", "Bu genellikle ayrı pazarlama araçlarıyla yapılır, temel ERP süreci değildir."],
+            ["Satış ve dağıtım", "ERP'nin temel modüllerindendir. [cite: 253]"],
+            ["Kalite yönetimi", "ERP'nin temel modüllerindendir. [cite: 253]"]
+        ],
+        answer: 2,
+        summary: "ERP sistemlerinin kapsadığı başlıca süreçler; Muhasebe ve kontrol, Üretim ve madde yönetimi, Kalite yönetimi, Satış ve dağıtım, Proje yönetimi olarak sıralanabilir. [cite: 253]"
+    },
+    {
+        q: "22. Klasik mağaza ortamında, elektronik sistemler olmadan işlerin yürütülmesinde temel olarak hangi araçlar kullanılır?",
+        options: [
+            ["Bulut tabanlı sunucular ve yapay zeka", "Bunlar modern teknolojilerdir."],
+            ["Alım satım defterleri, nakit/çek kasaları ve bordro defterleri", "Klasik mağazalar kağıt kökenli bu tür sistemleri kullanır."],
+            ["Mobil uygulamalar ve QR kod okuyucular", "Bunlar modern teknolojilerdir."],
+            ["Video konferans sistemleri ve sanal gerçeklik", "Bunlar modern iletişim ve sunum araçlarıdır."],
+            ["Elektronik yazar kasalar ve POS cihazları", "Bunlar elektronik sistemlerdir."]
+        ],
+        answer: 1,
+        summary: "Klasik mağaza ortamı, alım satım defterlerinin, nakit ve çek senet kasalarının, bordro defterlerinin bulunduğu bir büro köşesi içerir. Klasik mağazalar, kağıt kökenli sistemlerle, temel fonksiyonları yürütebilirler. [cite: 11, 13]"
+    },
+    {
+        q: "23. Bir firmanın 'Telecommuting' (işe elektronik olarak gidip gelme) modelini benimsemesi hangi kurumsal sistemle yakından ilgilidir?",
+        options: [
+            ["Gelişmiş Yazar Kasa Sistemleri", "Bu perakende satışla ilgilidir."],
+            ["Sanal Ofisler", "Telecommuting, sanal ofislerin temelini oluşturur."],
+            ["Proje Yönetim Sistemleri", "Proje yönetimi uzaktan çalışmayı destekleyebilir ama telecommuting'in kendisi değildir."],
+            ["Elektronik Muhasebe Sistemleri", "Muhasebe uzaktan erişilebilir ama telecommuting'in ana konsepti farklıdır."],
+            ["Stok ve Sipariş Takip Sistemleri", "Bu lojistik ve operasyonla ilgilidir."]
+        ],
+        answer: 1,
+        summary: "Çalışanların coğrafi olarak farklı yerlerde olmaları durumunda, fiziksel olarak firma içinde bulunmadan firmada çalışabilmelerini sağlayan sistemlere sanal ofisler denir. Bu şekilde çalışma modeline İngilizce'de \"Telecommuting\" adı verilmektedir. [cite: 176, 184]"
+    },
+    {
+        q: "24. İçsel dokümanların (firma içi süreçlerde kullanılan) yönetiminde doküman yönetim sistemlerinin sağladığı temel fayda nedir?",
+        options: [
+            ["Dokümanların tüm çalışanlar tarafından serbestçe değiştirilebilmesi", "Sürüm kontrolü ve yetkilendirme önemlidir."],
+            ["Dokümanların sadece basılı kopya olarak saklanması", "Dijital yönetim esastır."],
+            ["Dokümanların güncelliğinin, sınıflandırılmasının ve arşivlenmesinin kontrol altında tutulması, istenen versiyona erişim sağlanması", "Doküman yönetim sistemleri bu faydaları sağlar."],
+            ["Müşterilere otomatik e-posta gönderilmesi", "Bu farklı bir iletişim sistemidir."],
+            ["Dokümanların şifrelenerek tamamen erişilemez hale getirilmesi", "Yetkili erişimi sağlar."]
+        ],
+        answer: 2,
+        summary: "İçsel dökümanlar firma ve kurum içindeki süreçlerin devam edebilmesi amacıyla kullanılan dökümanlardır. Döküman yönetim sistemi, bu dökümanların güncelliklerini, sınıflandırılmasını ve arşivlenmesini kontrol altında tutar. Herhangi bir çalışan, istediği dökümanın istediği tarihteki versiyonuna erişebilir. [cite: 201, 202, 203]"
+    },
+    {
+        q: "25. 1970'li ve 80'li yılların ortalarına kadar olan dönemde şubelerin, bilişim sistemine erişimi genellikle nasıl sağlanıyordu?",
+        options: [
+            ["Her şubede bağımsız ve güçlü sunucular kurularak", "Bu daha sonraki bir yaklaşımdır."],
+            ["Merkezde bulunan bilgisayara bağlanan terminaller aracılığı ile", "O dönemdeki yaygın yaklaşım buydu."],
+            ["İnternet tabanlı VPN bağlantılarıyla", "VPN daha sonraki bir teknolojidir."],
+            ["Mobil uygulamalar ve bulut bilişimle", "Bunlar günümüz teknolojileridir."],
+            ["Hiçbir şekilde bilişim sistemine erişim sağlanamıyordu.", "Erişim kısıtlı da olsa mümkündü."]
+        ],
+        answer: 1,
+        summary: "1970'li ve 80'li yılların ortalarına kadar şubeler, bilişim sistemine -eğer firma sahip olabilmişse- yalnızca merkezde bulunan bilgisayara bağlanan terminaller aracılığı ile erişebilirler ve tüm işlemlerini, firmanın genel merkezinde bulunan bilgisayar üzerinde gerçekleştirirlerdi. [cite: 232]"
+    },
+    {
+        q: "26. Bir 'bilgi tabanlı karar destek sistemi' veya 'uzman sistem' nasıl çalışır?",
+        options: [
+            ["Sadece yöneticilerin sezgisel tahminlerini analiz ederek", "Veri ve kural tabanlıdır."],
+            ["Rastgele veriler üreterek farklı senaryolar oluşturur", "Rastgele değil, tanımlı kurallara göre çalışır."],
+            ["Üzerinde karar verilebilecek bütün durumların ve seçeneklerin önceden belirlenmiş kurallar çerçevesinde program aracılığı ile otomatik olarak değerlendirilmesiyle", "Uzman sistemler bu prensiple çalışır."],
+            ["Sadece Microsoft Excel makrolarını kullanarak", "Excel basit bir örnek olabilir ama uzman sistemler daha karmaşıktır."],
+            ["Çalışanların performans verilerini toplayarak prim hesaplar", "Bu İK veya performans yönetimiyle ilgilidir."]
+        ],
+        answer: 2,
+        summary: "Karar destek sistemleri, \"bilgi tabanlı\", \"uzman sistemler\" adı verilen yapı ile oluşturulabilirler. Bu yapı, üzerinde karar verilebilecek bütün durumların ve seçeneklerin toplam kümesini kapsar. Bütün bu durum ve seçenekler önceden sistem tasarımcısı ve uzmanlar tarafından belirlenmiş kurallar çerçevesinde program aracılığı ile otomatik olarak değerlendirilir. [cite: 109, 110, 111]"
+    },
+    {
+        q: "27. Kurumsal entegre bilişim sistemleri kurulurken, tüm sistemi yeni baştan oluşturmak yerine mevcut sistemlerle entegrasyonun tercih edilmesinin temel sebebi nedir?",
+        options: [
+            ["Yeni teknolojilerin her zaman daha güvensiz olması", "Bu doğru bir genelleme değildir."],
+            ["Çözüm ortaklarının sadece eski sistemler üzerinde uzmanlaşmış olması", "Çözüm ortakları yeni teknolojilere de hakimdir."],
+            ["Mevcut yatırımların korunması ve daha ekonomik bir çözüm sunması", "Entegrasyon, mevcut kaynakların değerini korur."],
+            ["Entegrasyonun her zaman daha uzun sürmesi ve karmaşık olması", "Duruma göre değişir, bazen daha hızlı olabilir."],
+            ["Yeni sistemlerin çalışanlar tarafından öğrenilmesinin imkansız olması", "Eğitimle adaptasyon sağlanır."]
+        ],
+        answer: 2,
+        summary: "Her çözümde, bütün sistemin yeni baştan oluşturulması ekonomik olmayabilir. Mevcut sistemlerle entegrasyon daha ekonomik bir çözüm olarak ortaya çıkabilir. Böylelikle mevcut yatırımların çöpe atılması engellenmiş olur. [cite: 269, 271]"
+    },
+    {
+        q: "28. Aşağıdakilerden hangisi İnsan Kaynakları (İK) Sistemlerinin sahip olması gereken temel özelliklerden biri değildir?",
+        options: [
+            ["İstenildiği zaman çalışan personelin kayıtlarına kolay ulaşım sağlanmalıdır", "Bu temel bir özelliktir. [cite: 93]"],
+            ["Maaş ödemeleri otomatik olarak yapılmalıdır", "Bu temel bir özelliktir. [cite: 93]"],
+            ["Stratejik planlama ve ihtiyaç belirlenmesi yapılabilmelidir", "Bu temel bir özelliktir. [cite: 93]"],
+            ["Sadece tek bir kullanıcı tarafından erişilebilir olmalıdır", "Rol bazlı çoklu kullanıcı erişimi gereklidir."],
+            ["Devletin kanunlarına yüzde yüz uyumlu, gelişmelere adapte olabilen yapıda olmalıdır", "Bu temel bir özelliktir. [cite: 93]"]
+        ],
+        answer: 3,
+        summary: "İnsan kaynakları sistemleri; istenildiği zaman çalışan personelin kayıtlarına kolay ulaşım, otomatik maaş ödemeleri, stratejik planlama, diğer uygulamalarla entegrasyon ve yasal uyumluluk gibi özelliklere sahip olmalıdır. [cite: 93]"
+    },
+    {
+        q: "29. Tedarik zincirinde 'üretim kararları' hangi süreçleri kapsar?",
+        options: [
+            ["Sadece fabrikanın fiziksel yerleşim planını", "Bu yerleşim kararlarıyla ilgilidir."],
+            ["Hangi ürünün üretileceği, hammaddenin tesislere ayrılması, dağıtım kanallarına gönderilmesi ve son kullanıcıya erişim süreçlerini", "Üretim kararları bu geniş kapsamı içerir."],
+            ["Stok maliyetlerinin hesaplanması ve envanter sayımını", "Bu stok kararlarıyla ilgilidir."],
+            ["Ürünlerin hangi nakliye yöntemiyle taşınacağının belirlenmesini", "Bu nakliye kararlarıyla ilgilidir."],
+            ["Müşteri geri bildirimlerinin toplanması ve analiz edilmesini", "Bu pazarlama veya CRM ile ilgilidir."]
+        ],
+        answer: 1,
+        summary: "Üretim kararları, hangi ürünün üretileceği, bu ürünler için gereken hammaddenin tesislere ayrılması, dağıtım kanallarına gönderilmesi ve dağıtımcıların son kullanıcıya erişmesi süreçleri üzerine odaklanmıştır. [cite: 157]"
+    },
+    {
+        q: "30. Kurumsal yazılım sistemlerinin, kurumların çok farklı çalışma biçimleri ve işlevsel ihtiyaçları nedeniyle gösterdiği temel özellik nedir?",
+        options: [
+            ["Her zaman en düşük maliyetli olmaları", "Özelleştirme maliyeti artırabilir."],
+            ["Donanım sistemlerinden daha az çeşitlilik göstermeleri", "Tam tersine daha fazla çeşitlilik gösterirler."],
+            ["Çoğu zaman 'sıradan ürün' olmayıp, kuruma özel olarak tasarlanma veya özelleştirilme zorunluluğu", "Bu, kurumsal yazılımların temel bir özelliğidir."],
+            ["Sadece büyük holdingler tarafından kullanılabilmeleri", "Farklı ölçeklerdeki kurumlar kullanabilir."],
+            ["Tek bir global standartta üretilmeleri", "Çeşitlilik ve özelleştirme esastır."]
+        ],
+        answer: 2,
+        summary: "Kurumsal boyutta, yazılım sistemleri, kurumların çok farklı biçimlerde çalışması ve dolayısı ile işlevsel ihtiyaçların büyük farklılıklar göstermesi nedeniyle donanım sistemlerine oranla çok daha fazla çeşitlilik gerektirirler. Bir başka deyişle pek çok kurumsal yazılım sistemi günümüzde \"sıradan ürün\" olmayan, yani raftan alınıp hemen kullanılamayan bir biçimde tasarlanmak zorundadır. [cite: 6, 9]"
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

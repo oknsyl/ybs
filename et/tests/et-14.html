@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 14 - Veri Madenciliği ve Hukuksal Boyutlar (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 14 Sınavı (Veri Madenciliği ve Elektronik Ticaretin Hukuksal Boyutları - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Veri madenciliği uygulamalarının, klasik karar destek sistemlerine göre temel üstünlüğü nedir?",
+      options: [
+        ["Sadece geçmiş verileri analiz etmesi", "Veri madenciliği geleceğe yönelik tahminler de yapar."],
+        ["Daha az işlemci gücü gerektirmesi", "Genellikle ciddi işlemci gücü gerektirir."],
+        ["Geleceğe yönelik tahminler yapabilmesi ve veritabanlarında doğrudan anlaşılamayan gizli bilgilere ulaşabilmesi", "Bu, veri madenciliğinin temel üstünlüğüdür."],
+        ["Mevcut veritabanı sistemleriyle entegre edilememesi", "Kolaylıkla entegre edilebilir."],
+        ["Sadece küçük veri setleri üzerinde etkili olması", "Büyük veri setlerinde daha etkilidir."]
+      ],
+      answer: 2,
+      summary: "Geleceğe yönelik tahminler yapan veri madenciliği uygulamaları, klasik yaklaşımda sıklıkla kullanılan karar destek sistemleri uygulamalarının eskiye yönelik analizlerinin sınırlamalarını aşabilmekte ve ileriye daha gerçekçi olarak bakabilmektedir. [cite: 220] Veri madenciliği yaklaşımı ile normalde uzmanların gözden kaçırabileceği, veritabanlarında doğrudan anlaşılamayan verilere ulaşılıp bu verilerin değerlendirilmesi mümkün olmaktadır. [cite: 222]"
+    },
+    {
+      q: "2. Veri madenciliğinin günümüzde yaygınlaşmasını sağlayan üç ana teknolojik gelişme hangileridir?",
+      options: [
+        ["Analog veri depolama, mekanik hesaplayıcılar, telgraf ağları", "Bunlar eski teknolojilerdir."],
+        ["Büyük miktarda veri toplayabilme/depolayabilme, güçlü/çok işlemcili bilgisayarlar, özel geliştirilmiş veri madenciliği algoritmaları", "Bu üç teknoloji veri madenciliğinin temelini oluşturur."],
+        ["Kişisel ajandalar, cep hesap makineleri, yerel telefon hatları", "Bu araçlar veri madenciliği için yetersizdir."],
+        ["Manyetik şeritli kartlar, çevirmeli ağ bağlantısı, basit istatistik programları", "Bunlar sınırlı kapasiteye sahiptir."],
+        ["Sosyal medya platformları, giyilebilir teknolojiler, yapay zeka sohbet botları", "Bunlar veri kaynağı veya uygulama alanı olabilir, temel teknoloji değil."]
+      ],
+      answer: 1,
+      summary: "Veri madenciliğinin iş dünyasının hemen uygulamaya alabileceği bir yaklaşım olmasının başlıca nedeni aşağıda verilen üç ana teknolojinin zaten yeterli düzeyde geliştiği düşüncesinin kabul görüyor olmasıdır: Büyük miktarda veri toplayabilme ve depolayabilme; Güçlü ve çok işlemcili bilgisayarların varlığı; Özel geliştirilmiş veri madenciliği algoritmaları. [cite: 235]"
+    },
+    {
+      q: "3. Veri madenciliğinde 'Daha Önce Bilinmeyen Özelliklerin Otomatik Olarak Belirlenmesi' ilkesine bir örnek olarak ne verilebilir?",
+      options: [
+        ["Bir sonraki ay hangi ürünün daha çok satacağını tahmin etmek", "Bu eğilim tahminidir."],
+        ["Perakende satış analizleri sonucunda, birbiriyle ilişkisiz sanılan ürünler arasında (örneğin bebek bezi ile bira) satınalma desenlerinin ortaya çıkarılması", "Bu, gizli kalmış ilişkilerin keşfidir."],
+        ["Müşterilerin yaş, cinsiyet gibi demografik bilgilerini toplamak", "Bu veri toplamadır."],
+        ["Bir pazarlama kampanyasının maliyetini hesaplamak", "Bu bütçelemedir."],
+        ["Kredi kartı ekstresindeki harcamaları listelemek", "Bu raporlamadır."]
+      ],
+      answer: 1,
+      summary: "Veri madenciliği uygulamaları veri tabanlarını tarayarak daha önce ortaya çıkarılamamış bilgileri tek bir aşamada ortaya çıkarabilirler. Buna en sık verilen örnek, perakende satışlarda yapılan analizler sonucunda daha önceden birbirleri arasında ilişki olmadığı düşünülen ürünler arasında gözlenebilecek ciddi ilşikilerin ve bunlarda gözlenen satınalma desenlerinin ortaya çıkarılmasıdır. [cite: 259, 260]"
+    },
+    {
+      q: "4. Veri madenciliği açısından bir veritabanının 'satır sayısı'nın (örnekleme sayısı) fazla olmasının önemi nedir?",
+      options: [
+        ["Analiz süresini her zaman kısaltması", "Çok fazla satır süreyi uzatabilir, ancak sonuç kalitesini artırır."],
+        ["Hata oranını ve standart sapmaları düşürerek sonuçların daha doğru olmasını sağlaması ve küçük ilişkilerin ortaya çıkarılabilmesi", "Daha fazla örnek, daha güvenilir sonuçlar demektir."],
+        ["Veritabanının yönetimini kolaylaştırması", "Büyük veritabanları daha karmaşık yönetim gerektirebilir."],
+        ["Sadece tek bir değişkenin analizine izin vermesi", "Çok sayıda değişken analiz edilebilir."],
+        ["Modelin karmaşıklığını azaltması", "Daha karmaşık modeller kurulabilir."]
+      ],
+      answer: 1,
+      summary: "Daha çok sayıda mevcut olan örnekler, hata oranını ve standart sapmaları düşürür ve sonuçların daha doğru olmasını sağlar. Dolayısıyla çok sayıda örnek olmadığı koşullarda hata bandı içinde kaybolan bazı küçük ilişkiler, çok sayıda örnekleme sonucunda ortaya çıkarılabilir. [cite: 276, 277]"
+    },
+    {
+      q: "5. 'Genetik algoritmalar' veri madenciliğinde hangi amaçla kullanılır?",
+      options: [
+        ["Verileri ağaç yapısında sınıflandırmak için", "Bu Karar Ağaçları'nın işidir."],
+        ["Bir optimizasyon tekniği olarak, birleşme, mutasyon ve doğal seçilim gibi özellikleri kullanarak istenen algoritmanın veya nesnelerin evrimleşerek daha iyi bir biçime gelmesini sağlamak için", "Genetik algoritmalar bu evrimsel yaklaşımı kullanır."],
+        ["Mevcut verilerdeki istatistiksel özelliklere dayanarak IF-THEN-ELSE formatında kurallar oluşturmak için", "Bu Kural Yüklemesi tekniğidir."],
+        ["Doğrusal olmayan tahmin modelleri oluşturmak için", "Bu Yapay Sinir Ağları'nın işidir."],
+        ["Ortalama değeri yakın olan veri gruplarını kümelemek için", "Bu K-Ortalama Değer Kümeleri tekniğidir."]
+      ],
+      answer: 1,
+      summary: "Genetik algoritmalar bir optimizasyon tekniği olarak adlandırılabilecek olan genetik algoritmalar, birleşme, mutasyon ve doğal seçilim gibi özellikleri kullanarak, istenen algoritmanın ya da nesnelerin evrimleşme süreci içinde daha iyi biçime gelmesini hedef alır. [cite: 288]"
+    },
+    {
+      q: "6. Veri madenciliğinde 'modelleme' süreci, daha önce işletilmiş altın madenleri örneğiyle nasıl açıklanabilir?",
+      options: [
+        ["Yeni bir altın madeni bulmak için rastgele kazı yapmakla.", "Modelleme rastgele değildir."],
+        ["Daha önce işletilmiş altın madenlerinin yerleri ve özelliklerinden (model) yola çıkarak yeni arama yapılacak en uygun noktaları belirlemekle.", "Bu, modellemenin temel prensibini açıklar."],
+        ["Sadece mevcut altın madenlerindeki altın miktarını hesaplamakla.", "Modelleme geleceğe yönelik çıkarım yapar."],
+        ["Altının kimyasal özelliklerini teorik olarak incelemekle.", "Model, gerçek verilere ve teorik bilgilere dayanır."],
+        ["Tüm potansiyel altın yataklarını aynı anda işletmeye açmakla.", "Model, en uygun noktaları belirler."]
+      ],
+      answer: 1,
+      summary: "Modelleme, yanıtını bildiğimiz belirli bir durumu kullanarak oluşturulan yapının, yanıtını bilmediğimiz bir durumun incelenmesi amacıyla kullanılmasıdır. Örneğin altın madeni araması yaparken öncelikle daha önce işletilmiş olan altın madenleri ve yerleri hakkında bilgi toplanması gerekir. Belirli özelliklerin bir arada kendini göstermesi, modelin oluşturulmasındaki temel bilgiyi sağlar. Model oluştuktan sonra arama yapılabilecek en uygun noktalar belirlenebilir. [cite: 297, 298, 299, 300]"
+    },
+    {
+      q: "7. Bir veri madenciliği modelinin doğruluğu nasıl test edilir?",
+      options: [
+        ["Modelin ne kadar sürede oluşturulduğuna bakılarak.", "Süre, doğruluk ölçütü değildir."],
+        ["Modelden elde edilen sonuçların, daha önceden bilinen ve modelden izole edilmiş verilerle karşılaştırılmasıyla.", "Bu yöntem, modelin tahmin gücünü sınar."],
+        ["Modeli oluşturan yazılımın popülerliğine göre.", "Popülerlik, doğruluk garantisi vermez."],
+        ["Modelin sadece en son teknoloji algoritmaları kullanıp kullanmadığına bakılarak.", "Algoritma seçimi önemlidir ama tek başına doğruluk kanıtı değildir."],
+        ["Modelin ürettiği raporların görsel çekiciliğine göre.", "Görsellik, doğrulukla ilgili değildir."]
+      ],
+      answer: 1,
+      summary: "Veri madenciliği modelleri, verilerin bir bölümü modelden izole edilerek uygulanır ve modelin doğruluğunun test edilmesi amacıyla izole edilmiş verilerle, model sonucunda oluşan veriler karşılaştırılır. [cite: 321]"
+    },
+    {
+      q: "8. Başarılı bir veri madenciliği uygulamasının, firmanın diğer sistemleriyle ilişkisi nasıl olmalıdır?",
+      options: [
+        ["Tamamen bağımsız çalışmalı, diğer sistemlerle veri alışverişi yapmamalıdır.", "Entegrasyon önemlidir."],
+        ["Sadece veri ambarından veri almalı, sonuçlarını başka birimlerle paylaşmamalıdır.", "Sonuçlar ilgili birimlerce kullanılmalıdır."],
+        ["Mevcut sistemlerle tümleşik olarak çalışabilmeli, ilave aşamalar ve veri aktarımı sorunları yaşamamalı ve elde edilen veriler firmanın bütün sistemleri tarafından kolaylıkla kullanılabilmelidir.", "Bu, ideal entegrasyonu tanımlar."],
+        ["Veri madenciliği sonuçları sadece üst yönetim tarafından görülebilmelidir.", "Farklı bölümler de kullanabilmelidir."],
+        ["Diğer sistemlerden veri almadan, kendi özel verilerini oluşturmalıdır.", "Mevcut verilerden yararlanır."]
+      ],
+      answer: 2,
+      summary: "Başarılı bir veri madenciliği uygulaması, mevcut sistemlerle tümleşik olarak çalışabilmeli ve ilave aşamalar ve veri aktarımı sorunları yaşamamalıdır. [cite: 325, 326] Veri madenciliği yardımıyla elde edilen veriler ise, firmanın bütün sistemleri tarafından kolaylıkla kullanılabilmelidir. [cite: 327]"
+    },
+    {
+      q: "9. OLAP (On-Line Analytical Processing) sunucusunun veri madenciliği mimarisindeki temel rolü nedir?",
+      options: [
+        ["Veri ambarındaki tüm verileri yedeklemek.", "Bu veri yönetimi görevidir."],
+        ["Son kullanıcının, oluşturulan modelleri veri ambarı üzerinde kolaylıkla uygulamasını ve çok boyutlu veri analizleri yapmasını sağlamak.", "OLAP, interaktif analiz imkanı sunar."],
+        ["Yeni veri madenciliği algoritmaları tasarlamak.", "Bu Ar-Ge faaliyetidir."],
+        ["Veri madenciliği için gerekli olan paralel bilgisayar sistemlerini yönetmek.", "Bu sistem yönetimi görevidir."],
+        ["Müşteri bilgilerini doğrudan toplamak ve veri ambarına aktarmak.", "Bu veri toplama ve ETL süreçleridir."]
+      ],
+      answer: 1,
+      summary: "OLAP (On-Line Analytical Processing), Türkçe karşılığı ile online analitik işlem, sunucusu; oluşturulan modellerin veri ambarı üzerinde son kullanıcı tarafından kolaylıkla uygulanabilmesine olanak tanır. [cite: 334, 335]"
+    },
+    {
+      q: "10. Veri madenciliğinin uygulanacağı bir firmada aranan iki temel özellik hangisidir?",
+      options: [
+        ["Sadece küçük bir müşteri tabanına ve basit bir iş sürecine sahip olması.", "Geniş veri ve tanımlı süreç gereklidir."],
+        ["Geniş ve bütünlük arz eden bir veri ambarına ve veri madenciliği yapılacak olan iş sürecinin tanımlanmış bir yapısına (örn: kampanya) sahip olması.", "Bu iki özellik veri madenciliği için kritik öneme sahiptir."],
+        ["En son model bilgisayar donanımlarına ve en pahalı yazılımlara sahip olması.", "Donanım/yazılım önemli olsa da veri ve süreç daha temeldir."],
+        ["Çok sayıda farklı ve birbiriyle entegre olmayan veritabanına sahip olması.", "Bütünlük arz eden veri ambarı tercih edilir."],
+        ["Hiçbir geçmiş veriye sahip olmaması ve tüm analizleri sıfırdan yapması.", "Geçmiş veriler modelleme için önemlidir."]
+      ],
+      answer: 1,
+      summary: "Veri madenciliği yapılacak olan firmada iki önemli özelliğin bulunması gerekmektedir: Geniş ve aynı zamanda bütünlük arz eden veri ambarı. Veri madenciliği yapılacak olan iş sürecinin tanımlanmış bir yapısı. [cite: 346, 347]"
+    },
+    {
+      q: "11. Borçlar Kanunu'na göre bir sözleşmenin kurulabilmesi için gerekli olan temel şartlar nelerdir?",
+      options: [
+        ["Sözleşmenin yazılı olması ve noter tarafından onaylanması.", "Her sözleşme için bu şartlar aranmaz."],
+        ["Tarafların aynı anda aynı yerde bulunması.", "Elektronik ortamda bu şart aranmaz."],
+        ["Sözleşme taraflarının olması, irade beyanlarının birbirine uygunluğu ve irade beyanlarının karşılıklı olması.", "Bunlar sözleşmenin temel kurucu unsurlarıdır."],
+        ["En az üç tanık huzurunda imzalanması.", "Bu özel bazı sözleşmeler için geçerli olabilir."],
+        ["Sözleşme bedelinin peşin olarak ödenmesi.", "Ödeme şekli sözleşme türüne göre değişir."]
+      ],
+      answer: 2,
+      summary: "Bir sözleşmenin kurulabilmesi için bazı şartların olması gerektiği sonucuna ulaşılabilir. Bu şartlar, sözleşme tarafları, irade beyanlarının birbirine uygunluğu ve irade beyanlarının karşılıklı olmasıdır. [cite: 3, 4]"
+    },
+    {
+      q: "12. Elektronik ortamda yapılan bir ticari sözleşme ne zaman hüküm ve sonuçlarını doğurmaya başlar?",
+      options: [
+        ["İcapçının (teklif edenin) kabul beyanını öğrendiği anda.", "Bu akdin kurulma anıdır, hüküm doğurma anı farklı olabilir."],
+        ["Kabul beyanının muhatap (kabul eden) tarafından gönderildiği anda.", "Kabul beyanının gönderildiği anda sözleşme hükümlerini doğurmaya başlar."],
+        ["Sözleşmenin elektronik noter tarafından onaylandığı anda.", "Elektronik noter onayı farklı bir işlemdir."],
+        ["Ödemenin tamamının yapıldığı anda.", "Ödeme, sözleşmenin bir gereğidir, hüküm doğurma anı değildir."],
+        ["Malın veya hizmetin teslim edildiği anda.", "Teslimat, sözleşmenin ifasıyla ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Kabul beyanının muhatap tarafından gönderildiği anda, ticari sözleşme hükümlerini doğurmaya başlar. [cite: 8]"
+    },
+    {
+      q: "13. Elektronik noterlik iş modelinin ortaya çıkmasının temel nedeni nedir?",
+      options: [
+        ["Elektronik imzaların yasal geçerliliğinin olmaması.", "Elektronik imzalar yasaldır, noterlik destekleyici bir unsurdur."],
+        ["Elektronik ortamdaki bilgilerin doğruluğunun kanıtlanması için belgeleme yetkililerine gereksinim olması.", "Elektronik noter bu belgeleme ve doğrulama ihtiyacını karşılar."],
+        ["Onay kurumlarının (CA) yetersiz kalması.", "Elektronik noter, CA'ların işlevini tamamlayıcı bir roldedir."],
+        ["Sözleşmelerin sadece fiziksel ortamda yapılabilmesi.", "Elektronik sözleşmeler mümkündür."],
+        ["Uluslararası kanun çatışmalarını çözmek.", "Bu farklı bir hukuki sorundur."]
+      ],
+      answer: 1,
+      summary: "Elektronik ticarette, onay kurumlarının yanı sıra gerçekleştirilen ticari işlemi geleneksel noterlik sistemine benzer şekilde onaylayan, işlemin zaman boyutuna geçerlilik kazandıran elektronik noterlik gibi bir iş modelinden daha önceki bölümlerde bahsedilmiştir. Bunun nedeni, elektronik ortamdaki bilgilerin doğruluğunun kanıtlanması için belgeleme yetkililerine gereksinim olmasıdır. [cite: 12, 13]"
+    },
+    {
+      q: "14. Alman Sayısal İmza Yasası'nda 'zaman kaydı' nasıl tanımlanmıştır?",
+      options: [
+        ["Bir elektronik belgenin oluşturulduğu kesin tarih ve saat.", "Tanım daha spesifiktir."],
+        ["Onay makamının, kendisine gelen özel sayısal verilerin geliş zamanını belgeleyen, üzerinde sayısal imza bulunan sayısal bir onayı.", "Bu, Alman Sayısal İmza Yasası'ndaki tanımdır."],
+        ["Elektronik noter tarafından tutulan tüm işlemlerin kronolojik listesi.", "Bu genel bir kayıt tutma işlemidir."],
+        ["Bir sözleşmenin taraflarca kabul edildiği anın GPS koordinatları ile belirlenmesi.", "Bu farklı bir tekniktir."],
+        ["Sayısal bir sertifikanın geçerlilik süresinin başlangıç ve bitiş tarihleri.", "Bu sertifika geçerliliği ile ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Elektronik alanda ise örneğin Alman Sayısal İmza Yasası'nda, onay makamlarına talep üzerine sayısal bilgilere bir zaman kaydı verme yetkisi de tanınmıştır. Yasada yapılan tanımlamaya göre zaman kaydı; sertifika veren kurumun kendisine gelen özel sayısal verilerin geliş zamanını belgeleyen, üzerinde sayısal imza bulunan sayısal bir onaydır. [cite: 25, 26]"
+    },
+    {
+      q: "15. Elektronik ticarette, farklı ülke vatandaşlarının ticari ilişkilerinde hangi ülke yasalarının uygulanacağı konusu neden bir sorun teşkil etmektedir?",
+      options: [
+        ["Çünkü tüm ülkelerin ticaret yasaları birbiriyle tamamen aynıdır.", "Yasalar farklılık gösterir."],
+        ["Çünkü elektronik ticaret sadece tek bir ülkede yapılabilir.", "E-ticaret küreseldir."],
+        ["Çünkü elektronik ticaret doğası gereği ülkeler arasındaki fiziki sınırları kaldırdığından, yasaların uygulanması açısından belirsizlikler ve çatışmalar yaratabilir.", "Sınırların kalkması, yasal yetki sorunları doğurur."],
+        ["Çünkü uluslararası bir ticaret mahkemesi henüz kurulmamıştır.", "Uyuşmazlık çözüm mekanizmaları vardır ama temel sorun yetkili hukuktur."],
+        ["Çünkü elektronik ortamda yapılan sözleşmelerin hiçbir yasal geçerliliği yoktur.", "Elektronik sözleşmelerin yasal geçerliliği vardır."]
+      ],
+      answer: 2,
+      summary: "Elektronik ticaret, doğası gereği ülkeler arasındaki fiziki sınırları kaldırdığından kullanıcılar için sonsuz ticari imkanlar sunmaktadır. Bununla birlikte, ülkeler arasındaki sınırların kalkıyor olması yasaların uygulanması açısından sorun yaratabilecektir. Değişik ülke vatandaşlarının elektronik ortamdaki ticari ilişkilerinde hangi ülke yasalarının uygulanacağı konusu halen tartışma yaratan konulardan biridir. [cite: 30, 31, 32]"
+    },
+    {
+        q: "16. Medeni Usul Hukukumuza göre 'kesin deliller'in özelliği nedir?",
+        options: [
+            ["Hakimin takdir yetkisine bağlı olmaları", "Bunlar takdiri delillerdir."],
+            ["Hakimi bağlayıcı nitelikte olmaları ve hakimin bu delilleri takdir yetkisinin bulunmaması", "Kesin deliller hakimi bağlar."],
+            ["Sadece tanık beyanlarından oluşmaları", "Tanık takdiri delildir."],
+            ["Yalnızca elektronik kayıtlardan elde edilmeleri", "Elektronik deliller genellikle takdiri sayılır."],
+            ["Her zaman bilirkişi incelemesi gerektirmeleri", "Bilirkişi takdiri delildir."]
+        ],
+        answer: 1,
+        summary: "Kesin deliller, hakimi bağlayıcı nitelikte olduğundan hakimin bu delilleri takdir yetkisi bulunmamaktadır. Kesin delillerden biri ile ispat edilen olay doğru olarak kabul edilmektedir. [cite: 35, 36]"
+    },
+    {
+        q: "17. Anglo-Sakson hukuk sisteminin etkisiyle yapılan uluslararası düzenlemelerde elektronik kayıtlar genellikle nasıl bir hukuki statüye sahip olması önerilmektedir?",
+        options: [
+            ["Her zaman takdiri delil olarak kabul edilmesi", "Kesin delil olarak kabul edilmesi önerilir."],
+            ["Hiçbir zaman delil olarak kabul edilmemesi", "Delil niteliği vardır."],
+            ["Yazılı belgeye (senede) eş nitelikte kesin delil olarak kabul edilmesi", "Uluslararası düzenlemelerde bu yönde bir eğilim vardır."],
+            ["Sadece ceza davalarında delil olarak kullanılması", "Hukuk davalarında da kullanılabilir."],
+            ["Sadece yeminli bir uzman tarafından onaylanırsa delil sayılması", "Bu ek bir şart olabilir, temel statüyü değiştirmez."]
+        ],
+        answer: 2,
+        summary: "Yapılan uluslararası düzenlemelerde, Anglo-Sakson hukuk sisteminin etkisiyle elektronik kayıtların yazılı belgeye (senede) eş nitelikte kesin delil olarak kabul edilmesi önerilmektedir. [cite: 41]"
+    },
+    {
+        q: "18. Türk Ceza Kanunu'na (TCK) göre, bilgileri otomatik olarak işleme tabi tutmuş bir sistemden programları, verileri veya diğer herhangi bir unsuru hukuka aykırı olarak ele geçiren kimseye hangi ceza verilir?",
+        options: [
+            ["Sadece para cezası", "Hapis cezası da öngörülmüştür."],
+            ["Bir yıldan üç yıla kadar hapis ve para cezası", "TCK Madde 525/a'ya göre bu ceza verilir."],
+            ["İki yıldan altı yıla kadar hapis ve para cezası", "Bu, verileri tahrip etme veya değiştirme suçunun cezasıdır."],
+            ["Altı aydan iki yıla kadar hapis cezası", "Bu, tahrif edilmiş belgeleri bilerek kullanmanın cezasıdır."],
+            ["Meslek veya sanattan yasaklanma cezası", "Bu ek bir ceza olarak verilebilir."]
+        ],
+        answer: 1,
+        summary: "TCK Madde 525/a: Bilgileri otomatik olarak işleme tabi tutmuş bir sistemden, programları, verileri veya diğer herhangi bir unsuru hukuka aykırı olarak ele geçiren kimseye bir yıldan üç yıla kadar hapis ve birmilyon liradan onbeşmilyon liraya kadar ağır para cezası verilir. [cite: 58]"
+    },
+    {
+        q: "19. TCK'da başkasına ait mektup, kapalı zarf, telgraf ve telefonların açılması/dinlenmesi suç olarak düzenlenmişken, elektronik verilerle ilgili durum nedir?",
+        options: [
+            ["Elektronik veriler için hiçbir yasal koruma yoktur.", "Ceza Kanunu Tasarısı'nda düzenlemeler vardır."],
+            ["Elektronik veriler mektup veya telgraf ile aynı hukuki statüye sahip değildir.", "Kanunun yaklaşımına göre benzer şekilde değerlendirilebilir."],
+            ["Ceza kanununda elektronik veri tanımı geçmemekle birlikte, tasarılar arasında bu konuda günümüz koşullarına uygun değişiklikler yer almıştır ve veri suçlarında sistem yöneticisinin sorumluluğu daha fazla olabilir.", "Bu, PDF'teki açıklamayı yansıtmaktadır."],
+            ["Sistem yöneticileri elektronik verilere sınırsız erişim hakkına sahiptir.", "Sorumlulukları vardır."],
+            ["Elektronik verilerin dinlenmesi veya ele geçirilmesi hiçbir zaman suç teşkil etmez.", "Suç teşkil edebilir."]
+        ],
+        answer: 2,
+        summary: "Dolayısı ile, elektronik veriler başkasına ait olarak değerlendirilecek olursa, ceza kanununda elektronik veri tanımı geçmemekle birlikte tasarılar arasında bu değişiklik günümüz koşullarına uygunluk bakımından yer almıştır. Kanunun yaklaşımına göre veri suçlarında, sistem yöneticisinin ceza sorumluluğu diğer kişilere göre daha fazla olacaktır. [cite: 66, 67]"
+    },
+    {
+        q: "20. Adalet Bakanlığı'nın 'Kişisel Verilerin Korunması Kanun Tasarısı Taslağı'nda ve Ceza Kanunu Tasarısı'nda kişisel verilerin onaysız toplanması veya işlenmesi için ne tür yaptırımlar öngörülmüştür?",
+        options: [
+            ["Sadece uyarı cezası", "Hapis cezaları da öngörülmüştür."],
+            ["Kişinin onayı olmadan veya kanunlara uyulmadan bilişim sistemlerine kişisel veri sokma ve işleme eylemleri için 6 ay ile 3 yıl arası hapis cezası", "Ceza Kanunu Tasarısı bu cezayı önermektedir."],
+            ["Verilerin korunması için güvenlik tedbiri almama durumunda sadece idari para cezası", "Hapis cezası da öngörülmüştür."],
+            ["Hassas kişisel verilerin (dini inanç, sağlık durumu vb.) işlenmesi için hiçbir ceza öngörülmemiştir.", "Bu tür eylemler için de hapis cezası öngörülmüştür."],
+            ["Kişisel verilerin yetkisiz kişilere açıklanması durumunda sadece kınama cezası", "2-5 yıl arası hapis cezası öngörülmüştür."]
+        ],
+        answer: 1,
+        summary: "Ceza Kanunu Tasarısı \"Kişisel Verilerin Toplanması\" başlığı altında, kişisel verilerin kişinin onayı olmadan ya da kanunların öngördüğü şekillere uyulmadan bilişim sistemlerine kişisel veri sokma ve işlemeyi suç saymış ve 6 ay ile 3 yıl arası hapis cezası önermiştir. [cite: 80]"
+    },
+    {
+      q: "21. Elektronik ticaretin hacmi, gelişme hızı gibi konularda istatistik bilgi üretmenin temel güçlüğü nedir?",
+      options: [
+        ["Elektronik ortamda veri toplamanın imkansız olması.", "Tam tersine, veri toplamak daha kolay olabilir."],
+        ["Elektronik ticaretin işgücü, üretkenlik, büyüklük ve gelişme hızı kapsamında tanımının net olmaması ve klasik ticaretle ayrımının belirsizliği.", "Bu tanımsal belirsizlikler istatistik üretmeyi güçleştirir."],
+        ["Uluslararası kuruluşların (UNSTAT, EUROSTAT) bu konuda hiçbir standardının olmaması.", "Standartlar vardır ama uyum ve tanım sorunları yaşanır."],
+        ["Firmaların elektronik ticaret verilerini paylaşmak istememesi.", "Bu bir etken olabilir ama temel güçlük tanımsaldır."],
+        ["İstatistiksel analiz yapacak uzman personel eksikliği.", "Bu bir kaynak sorunudur, temel güçlük değildir."]
+      ],
+      answer: 1,
+      summary: "Elektronik ortamda yapılan ticaretin ölçülebilmesi için elektronik ticaretin işgücü, üretkenlik, büyüklük ve gelişme hızı kapsamında tanımının ortaya konulması, elektronik ticaret ile klasik anlamdaki ticaretin ayrımı, elektronik ticaretin niteliklerinin belirlenmesi ve büyüme hızı konularındaki belirsizlikler nedeniyle istatistik üretmek güçleşmektedir. [cite: 87]"
+    },
+    {
+      q: "22. Yeni kabul edilen Tüketicinin Korunması Kanunu'nda 'mal' tanımı, elektronik ortamda kullanılmak üzere hazırlanan hangi unsurları da kapsamaktadır?",
+      options: [
+        ["Sadece fiziksel olarak taşınabilir eşyaları.", "Tanım daha geniştir."],
+        ["Yazılım, ses, görüntü ve benzeri gayri maddi malları.", "Kanun, bu dijital unsurları da mal olarak tanımlar."],
+        ["Sadece konut ve tatil amaçlı taşınmaz malları.", "Taşınır ve dijital malları da kapsar."],
+        ["Hizmet sözleşmelerini.", "Mal tanımı farklıdır, hizmet ayrıdır."],
+        ["Sadece ikinci el elektronik eşyaları.", "Yeni ürünleri de kapsar."]
+      ],
+      answer: 1,
+      summary: "Madde 3ce Mal: Alışverişe konu olan taşınır eşyayı, konut ve tatil amaçlı taşınmaz malları ve elektronik ortamda kullanılmak üzere hazırlanan yazılım, ses, görüntü ve benzeri gayri maddi malları, ifade eder. [cite: 94]"
+    },
+    {
+      q: "23. Tüketicinin Korunması Kanunu'na eklenen Madde 9/A'ya göre 'mesafeli sözleşmeler' nasıl tanımlanmıştır?",
+      options: [
+        ["Sadece telefonla yapılan ve malın hemen teslim edildiği sözleşmeler.", "Daha geniş iletişim araçlarını kapsar."],
+        ["Yazılı, görsel, telefon ve elektronik ortamda veya diğer iletişim araçları kullanılarak ve tüketicilerle karşı karşıya gelinmeksizin yapılan ve malın/hizmetin tüketiciye anında/sonradan teslimi/ifası kararlaştırılan sözleşmeler.", "Bu, kanundaki tanımdır."],
+        ["Sadece uluslararası ticarette geçerli olan sözleşmeler.", "İç ticareti de kapsar."],
+        ["Tarafların noter huzurunda imzaladığı sözleşmeler.", "Karşı karşıya gelinmeksizin yapılır."],
+        ["Sadece abonelik gerektiren hizmet sözleşmeleri.", "Mal satışını da kapsar."]
+      ],
+      answer: 1,
+      summary: "Madde 9/A- Mesafeli sözleşmeler; yazılı, görsel, telefon ve elektronik ortamda veya diğer iletişim araçları kullanılarak ve tüketicilerle karşı karşıya gelinmeksizin yapılan ve malın veya hizmetin tüketiciye anında veya sonradan teslimi veya ifası kararlaştırılan sözleşmelerdir. [cite: 95, 96]"
+    },
+    {
+      q: "24. 'Küreselleşme (Globalleşme)' kavramı, Dünya Ticaret Örgütü (WTO) Kuruluş Anlaşması bağlamında neyi hedefler?",
+      options: [
+        ["Her ülkenin kendi iç pazarına kapanmasını.", "Serbest ticareti hedefler."],
+        ["Serbest ticaret normunu bütün dünyada egemen kılmayı ve fikri mülkiyet haklarının korunmasını.", "WTO Anlaşması bu hedeflere yöneliktir."],
+        ["Devletlerin ekonomik etkinlik alanlarına sınırsız destek sağlamasını.", "Devlet desteklerini kurallara bağlar."],
+        ["Sadece gelişmiş ülkeler arasında bir ticaret birliği oluşturmayı.", "Tüm üye ülkeleri kapsar."],
+        ["Enformasyon teknolojisinin yayılmasını yavaşlatmayı.", "Teknolojinin yayılması küreselleşmenin bir parçasıdır."]
+      ],
+      answer: 1,
+      summary: "Serbest ticaret normunu, bütün dünyada egemen kılmayı amaçlayan birçok ülkenin onayıyla 1995'te yürürlüğe giren Dünya Ticaret Örgütü (WTO) Kuruluş Anlaşması, küreselleşme hedefi doğrultusunda atılmış önemli adım olarak kabul edilmektedir. Uruguay Turu Nihaî Senedi, patent ve benzeri fikri mülkiyet haklarının korunmasını bütün dünyada güvence altına alan bir hukuk düzenini de birlikte getirmektedir. [cite: 102, 104]"
+    },
+    {
+      q: "25. Kişisel verilerin korunması konusunda Avrupa Konseyi'nin 108 sayılı Sözleşmesi'nde yer alan temel ilkelerden biri değildir?",
+      options: [
+        ["Kişisel veriler ancak özel bir maksatla toplanabilir ve başka amaçlarla kullanılamaz.", "Bu bir ilkedir."],
+        ["Veriler güncel, amaca uygun olmalı ve ancak gerektiği sürece muhafaza edilmelidir.", "Bu bir ilkedir."],
+        ["Hakkında veri toplanan kişi bunları öğrenme ve gerektiğinde yanlış olanlarını düzeltme hakkına sahiptir.", "Bu bir ilkedir."],
+        ["Kişilerin dini, siyasi inancı gibi hassas veriler hiçbir surette toplanamaz ve işlenemez.", "Bu tür veriler 'özel yöntemlerle korunmalıdır', tamamen yasaklanmamıştır."],
+        ["Kişilerin özel niteliği olan hassas verileri özel yöntemlerle korunmalıdır.", "Bu bir ilkedir."]
+      ],
+      answer: 3,
+      summary: "Avrupa Konseyi Sözleşmesi kişisel verilerin dürüst ve yasal bir şekilde toplanarak kullanılması konusunda bir dizi ilke ihtiva etmektedir. Bunlar arasında; verilerin özel bir maksatla toplanması, güncel ve amaca uygun olması, kişinin verilerini öğrenme/düzeltme hakkı ve hassas verilerin özel yöntemlerle korunması yer alır. [cite: 123, 125, 126, 127, 128]"
+    },
+    {
+      q: "26. Elektronik ticaretin geliştirilmesi açısından devlete düşen iki temel görev nedir?",
+      options: [
+        ["Tüm e-ticaret sitelerini kendisi işletmek ve özel sektörü bu alandan çıkarmak.", "Özel sektör öncülüğü esastır."],
+        ["Asli görevlerinin yürütülmesinde e-ticaret imkânlarını azami ölçüde kullanmak ve e-ticaret için gerekli fiziksel/yasal altyapıyı oluşturmak.", "Devletin temel görevleri bunlardır."],
+        ["İnternet erişimini vergilendirerek e-ticaretin yayılmasını kontrol altında tutmak.", "Teşvik edici olmalıdır."],
+        ["Sadece büyük şirketlerin e-ticaret yapmasına izin vermek.", "KOBİ'ler de desteklenmelidir."],
+        ["Uluslararası e-ticaret anlaşmalarını reddetmek.", "Uluslararası uyum önemlidir."]
+      ],
+      answer: 1,
+      summary: "Elektronik ticaretin geliştirilmesi açısından devlete iki görev düşmektedir. Bunlardan birincisi; devletin asli görevlerinin yürütülmesinde elektronik ticaretin sağladığı imkânların azami ölçüde kullanılmasıdır. Devletin bu konudaki ikinci, fakat ilkinden daha önemli temel görevi ise elektronik ticaret için gerekli fiziksel ve yasal altyapıyı oluşturmaktır. [cite: 156, 157, 160]"
+    },
+    {
+      q: "27. Elektronik ticaret konusunda yapılacak yasal düzenlemeler için belirlenmiş temel ilkelerden hangisi yanlıştır?",
+      options: [
+        ["Devlet, özel sektöre destek olmalı ve sistemin kendi kendini düzenlemesini teşvik etmelidir.", "Bu doğru bir ilkedir."],
+        ["Devlet, yeni ve gereksiz düzenlemelerden, ilave bürokratik işlemlerden ve vergilerden mümkün olduğunca kaçınmalıdır.", "Bu doğru bir ilkedir."],
+        ["Devlet düzenlemeleri her zaman maksimum düzeyde kısıtlayıcı ve detaylı olmalıdır.", "Düzenlemeler yönlendirici, tutarlı, anlaşılabilir ve en alt düzeyde yapılmalıdır."],
+        ["Yapılacak düzenlemeler uluslararası normlara uygun olmalı ve dünya ticaretini geliştirmelidir.", "Bu doğru bir ilkedir."],
+        ["Açık ağ kullanımı yaygınlaştırılmalı, KOBİ'ler e-ticaret konusunda bilinçlendirilmelidir.", "Bu doğru bir ilkedir."]
+      ],
+      answer: 2,
+      summary: "Elektronik ticaret konusunda yapılacak düzenlemeler için belirlenmiş ilkeler arasında; devletin özel sektöre destek olması, gereksiz düzenlemelerden kaçınması, düzenlemelerin yönlendirici ve en alt düzeyde olması, uluslararası normlara uyum ve açık ağ kullanımının yaygınlaştırılması yer alır. [cite: 166, 167, 168, 171, 172]"
+    },
+    {
+      q: "28. Veri iletim altyapısının düzenlenmesinde karşılaşılan iki temel sorun noktası nedir?",
+      options: [
+        ["İnternet hızının çok yüksek olması ve alan adı fiyatlarının çok düşük olması.", "Bunlar sorun değil, olumlu durumlardır."],
+        ["Fiziksel veri iletim altyapısının rekabete açık bir yapıya kavuşturulması ve alan isimleri tahsis/kullanımının güvenliği sağlayacak şekilde düzenlenmesi.", "Bu iki nokta temel sorun alanlarıdır."],
+        ["Telekomünikasyon tekellerinin çok sayıda olması ve rekabetin aşırı artması.", "Tekellerin varlığı ve rekabet eksikliği sorundur."],
+        ["Kullanıcıların kişisel verilerini paylaşmak istememesi ve şifreleme teknolojilerinin yetersiz kalması.", "Bunlar farklı güvenlik ve gizlilik sorunlarıdır."],
+        ["Devletin interneti tamamen ücretsiz hale getirmesi ve tüm kontrolü özel sektöre bırakması.", "Bu bir politika tercihidir, sorun noktası olmak zorunda değildir."]
+      ],
+      answer: 1,
+      summary: "Veri iletim altyapısında, genel olarak iki sorun noktası bulunmaktadır. Bunlardan birincisi, fiziksel veri iletim altyapısının rekabete açık bir yapıya kavuşturulması, diğeri ise açık ağlarda kullanıcıların ya da servis sağlayıcıların adreslerini belirten alan isimleri tahsis ve kullanımının, sistemin güvenliğini ve güvenirliğini en üst düzeyde sağlayacak şekilde düzenlenmesidir. [cite: 191]"
+    },
+    {
+      q: "29. Telekomünikasyon hizmetlerinin serbestleştirilmesinin elektronik ticaretin geliştirilmesi açısından beklenen temel sonucu nedir?",
+      options: [
+        ["Sektörde rekabetin azalması ve hizmet kalitesinin düşmesi.", "Rekabetin artması ve kalitenin yükselmesi beklenir."],
+        ["Hizmet maliyetlerinin artması ve sisteme erişimin zorlaşması.", "Maliyetlerin düşmesi ve erişimin kolaylaşması beklenir."],
+        ["Sektör rekabete açılarak hizmetin kalitesinin artırılması, maliyetlerin düşürülmesi ve sisteme erişim kolaylığı sağlanarak kullanımın yaygınlaştırılması.", "Serbestleşmenin temel beklentileri bunlardır."],
+        ["Devletin telekomünikasyon sektöründeki işletmeci rolünün güçlenmesi.", "Devletin işletmeci rolünden sıyrılması hedeflenir."],
+        ["Sadece büyük şehirlerde altyapının gelişmesi, kırsal bölgelerin ihmal edilmesi.", "'Herkese, her zaman, her yerde adil ve yaygın erişim hakkı' ilkesi önemlidir."]
+      ],
+      answer: 2,
+      summary: "Telekomünikasyon hizmetlerinin serbestleştirilmesi, elektronik ticaretin geliştirilmesi açısından önem taşımaktadır. Böylece; sektör rekabete açılarak hizmetin kalitesi artırılacak, maliyetler düşürülecek ve sisteme erişim kolaylığı sağlanarak kullanımın yaygınlaştırılması mümkün olacaktır. [cite: 203, 204]"
+    },
+    {
+      q: "30. Elektronik ticarette kontrol mekanizmaları ve denetim açısından karşılaşılan temel zorluklardan biri nedir?",
+      options: [
+        ["Tüm işlemlerin fiziksel belgelerle yapılması zorunluluğu.", "Elektronik işlemler esastır."],
+        ["Vergilerin toplanamaması ve tüm e-ticaret firmalarının kayıt dışı çalışması.", "Denetim vardır ama zorluklar da vardır."],
+        ["Mikro ödemeler gibi işlemlerle ilgili hesapların denetiminin klasik fatura yaklaşımı ile kolay çözülememesi ve bilgi satışında yetkisiz satıcıların tespitinin zorluğu.", "Bunlar e-ticarete özgü denetim zorluklarıdır."],
+        ["Sayısal imza ve sertifika sistemlerinin hiç kullanılamaması.", "Kullanılmaktadır ama yaygınlaşması ve etkin denetimi önemlidir."],
+        ["Elektronik dükkânların vergi levhası asma zorunluluğunun olmaması.", "Sayısal yetki belgeleri kullanılabilir."]
+      ],
+      answer: 2,
+      summary: "Elektronik ticarete özgü bazı sorunlar bu konuda da çözümü beklemektedir. Özellikle mikro ödemeler gibi ödemelerle ilgili hesapların denetimi, klasik fatura yaklaşımı ile kolaylıkla çözülemeyecek sorunları beraberinde getirir. Bir diğer kontrol sorunu, bilgi satışlarında ve iletiminde, iletilen bilginin sahibi tarafından mı yoksa yetkisiz bir kişi tarafından mı satıldığının kolaylıkla anlaşılamaması sorunudur. [cite: 211, 212, 214]"
+    },
+    {
+        q: "31. Borçlar Kanunu'na göre, bir sözleşmenin elektronik ortamda kurulması için 'icap' (teklif) nasıl tanımlanır?",
+        options: [
+            ["Muhatabın teklifi kabul ettiğini elektronik ortamda iletmesi", "Bu 'kabul' beyanıdır."],
+            ["Kişinin elektronik bir imza ile göndermiş olduğu sözleşme yapma teklifi", "Bu, elektronik ortamda 'icap' olarak tanımlanır."],
+            ["Tarafların fiziksel olarak bir araya gelerek anlaşması", "Bu klasik sözleşme yöntemidir."],
+            ["Sözleşme şartlarının bir web sitesinde yayınlanması", "Bu bir teklife davet olabilir, tek başına icap değildir."],
+            ["Ödemenin elektronik olarak yapılması", "Bu sözleşmenin ifasıyla ilgilidir."]
+        ],
+        answer: 1,
+        summary: "Kişinin elektronik bir imza ile göndermiş olduğu sözleşme yapma teklifi icap, muhatabın bu teklifi kabul ettiğini elektronik ortamda iletmesi ise kabuldur. [cite: 6]"
+    },
+    {
+        q: "32. Elektronik noterlerin, uluslararası karşılıklı çalışabilirliği ve tanınmasının gerekliliğinin temel nedeni nedir?",
+        options: [
+            ["Sadece yerel işlemlerde geçerli olmalarını sağlamak", "Uluslararası tanınma, sınır ötesi işlemler için gereklidir."],
+            ["Elektronik ticaretin küresel doğası ve farklı ülkelerdeki işlemlerin de belgelenmesi ihtiyacı", "Bu, uluslararası çalışabilirliğin temel nedenidir."],
+            ["Onay kurumlarının sayısını azaltmak", "Bu bir sonuç değildir."],
+            ["Elektronik imza kullanımını zorlaştırmak", "Kolaylaştırmayı hedefler."],
+            ["Sadece fiziksel belgelerin onaylanmasına odaklanmak", "Elektronik belgelerle ilgilidir."]
+        ],
+        answer: 1,
+        summary: "Durumun özelliği, elektronik noterlerin uluslararası karşılıklı çalışabilirliğini ve karşılıklı tanınmasını gerektirmektedir. [cite: 20]"
+    },
+    {
+        q: "33. Yabancı ülkelerde usulüne uygun olarak düzenlenen veya tasdik edilen belgelerin Türkiye'de resmi senet niteliği kazanabilmesi için temel şart nedir? (HUMK'a göre)",
+        options: [
+            ["Belgenin İngilizce olarak düzenlenmiş olması", "Dil şartı bu şekilde değildir."],
+            ["Belgenin ilgili ülkedeki Türk Konsolosu tarafından o ülkenin kanunlarına uygun olduğunun onaylanması", "HUMK bu şartı öngörmektedir."],
+            ["Belgenin en az iki tanık tarafından imzalanmış olması", "Bu genel bir şart değildir."],
+            ["Belgenin elektronik imza ile oluşturulmuş olması", "Bu tek başına yeterli değildir."],
+            ["Belgenin bir örneğinin Türk Ticaret Sicili Gazetesi'nde yayınlanması", "Bu farklı bir prosedürdür."]
+        ],
+        answer: 1,
+        summary: "İlgili kanun maddelerine göre (HUMK) yabancı ülkelerde usulüne uygun olarak yetkili makamlar tarafından düzenlenen veya tasdik edilen belgelerin Türkiye'de resmi senet niteliğini kazanabilmesi ve ispat aracı olarak kullanılabilmesi, bu belgelerin, ilgili ülkedeki Türk Konsolosu tarafından o ülkenin yürürlükteki kanunlarına uygun olduğunun onaylanmasını gerektirmektedir. [cite: 45]"
+    },
+    {
+        q: "34. Türk Ceza Kanunu (TCK) Madde 525/b'ye göre, başkasına zarar vermek veya kendisine yarar sağlamak maksadıyla, bilgileri otomatik işleme tabi tutmuş bir sistemi veya verileri tahrip eden kişiye hangi ceza öngörülmüştür?",
+        options: [
+            ["Bir yıldan üç yıla kadar hapis ve para cezası", "Bu, verileri hukuka aykırı ele geçirmenin cezasıdır."],
+            ["İki yıldan altı yıla kadar hapis ve para cezası", "TCK Madde 525/b bu cezayı öngörür."],
+            ["Sadece ağır para cezası", "Hapis cezası da vardır."],
+            ["Altı aydan iki yıla kadar hapis cezası", "Bu, tahrif edilmiş belgeleri bilerek kullanmanın cezasıdır."],
+            ["Meslekten men cezası", "Bu ek bir ceza olabilir."]
+        ],
+        answer: 1,
+        summary: "Madde 525/b: Başkasına zarar vermek veya kendisine veya başkasına yarar sağlamak maksadıyla, bilgileri otomatik işleme tabi tutmuş bir sistemi veya verileri veya diğer herhangi bir unsuru kısmen veya tamamen tahrip eden veya değiştiren veya silen veya sistemin işlemesine engel olan veya yanlış biçimde işlemesini sağlayan kimseye iki yıldan altı yıla kadar hapis ve beşmilyon liradan ellimilyon liraya kadar ağır para cezası verilir. [cite: 60]"
+    },
+    {
+        q: "35. Avrupa Konseyi'nin 'Kişisel Verilerin Otomatik İşleme Tabi Tutulması Karşısında Bireylerin Korunması'na ilişkin 108 sayılı Sözleşmesi'nin temel amacı nedir?",
+        options: [
+            ["Üye ülkeler arasında sınır ötesi bilgi akışını tamamen yasaklamak.", "Düzenlemeyi ve korumayı amaçlar."],
+            ["Kişisel verilerin dürüst ve yasal bir şekilde toplanarak kullanılması konusunda bir dizi ilke belirlemek ve bireylerin özel hayatını korumak.", "Sözleşmenin temel amacı budur."],
+            ["Sadece kamu sektöründeki elektronik bilgi bankalarını denetlemek.", "Hem özel hem kamu sektörünü kapsar."],
+            ["Elektronik imza kullanımını tüm üye ülkelerde zorunlu hale getirmek.", "Bu farklı bir konudur."],
+            ["Bilişim suçları için ortak bir ceza kanunu oluşturmak.", "Kişisel verilerin korunmasına odaklıdır."]
+        ],
+        answer: 1,
+        summary: "Avrupa Konseyi Sözleşmesi kişisel verilerin dürüst ve yasal bir şekilde toplanarak kullanılması konusunda bir dizi ilke ihtiva etmektedir. [cite: 123]"
+    },
+    {
+        q: "36. Elektronik ticaretin geliştirilmesi açısından devletin, asli görevlerinin yürütülmesinde e-ticaret imkanlarını kullanmasına bir örnek ne olabilir?",
+        options: [
+            ["Tüm özel sektör e-ticaret sitelerini denetlemek.", "Bu düzenleyici bir roldür."],
+            ["Nüfus ve vatandaşlık bilgilerinin gerekli olduğu hizmetlerin, vergi tahakkuku ve tahsilatının online olarak yapılması.", "Bu, devletin e-ticareti kendi hizmetlerinde kullanmasına bir örnektir."],
+            ["İnternet erişimini tamamen ücretsiz hale getirmek.", "Bu bir politika tercihidir."],
+            ["Yabancı e-ticaret sitelerine erişimi engellemek.", "Bu kısıtlayıcı bir yaklaşımdır."],
+            ["Kendi e-ticaret platformunu kurarak özel sektörle rekabet etmek.", "Bu farklı bir yaklaşımdır."]
+        ],
+        answer: 1,
+        summary: "Devletin asli görevlerinin yürütülmesinde elektronik ticaretin sağladığı imkânların azami ölçüde kullanılmasıdır. Bu çerçevede; yürütme erkini elinde bulunduran hükümetler, idare ve hizmet etme işlevlerini yerine getirirken elektronik ticaretin sunduğu imkânları kullanmalı ve geliştirmelidirler. Nüfus ve vatandaşlık bilgilerinin gerekli olduğu hizmetler, vergi tahakkuku ve tahsilatı, kamu mal ve hizmet alımları buna örnek olarak gösterilebilir. [cite: 157, 158, 159]"
+    },
+    {
+        q: "37. Elektronik ticaretin düzenlenmesi ile ilgili uluslararası forumlarda belirlenen temel ilkelerden biri nedir?",
+        options: [
+            ["Devlet, ticari işlemlere her zaman doğrudan müdahale etmeli ve tüm kuralları kendi belirlemelidir.", "Müdahale en alt düzeyde olmalıdır."],
+            ["Elektronik ticarete, geleneksel ticarete göre her zaman daha fazla vergi uygulanmalıdır.", "Eşitlik veya avantajsızlık ilkesi önemlidir."],
+            ["Devlet, yeni ve gereksiz düzenlemeler yapmaktan, ilave bürokratik işlemler ve vergiler uygulamaktan mümkün olduğunca kaçınmalıdır.", "Bu, belirlenen temel ilkelerdendir."],
+            ["Yapılacak düzenlemeler sadece ulusal çıkarları gözetmeli, uluslararası normlar dikkate alınmamalıdır.", "Uluslararası uyum önemlidir."],
+            ["Açık ağ kullanımı kısıtlanmalı, sadece belirli kurumların elektronik ticaret yapmasına izin verilmelidir.", "Açık ağ kullanımı yaygınlaştırılmalıdır."]
+        ],
+        answer: 2,
+        summary: "Devlet, yeni ve gereksiz düzenlemeler yapmaktan, ticari işlemlere ilave bürokratik işlemler, vergiler, tarifeler uygulamaktan mümkün olduğunca kaçınmalıdır. [cite: 167]"
+    },
+    {
+        q: "38. Telekomünikasyon sektörünün serbest rekabete açılmasının, elektronik ticaretin gelişimi açısından beklenen faydası nedir?",
+        options: [
+            ["Hizmet kalitesinin düşmesi ve maliyetlerin artması.", "Tam tersi beklenir."],
+            ["Sektör rekabete açılarak hizmetin kalitesi artırılacak, maliyetler düşürülecek ve sisteme erişim kolaylığı sağlanarak kullanımın yaygınlaştırılması.", "Serbestleşmenin temel beklentileri bunlardır."],
+            ["Sadece devlet kurumlarının telekomünikasyon hizmetlerinden faydalanabilmesi.", "Herkese adil erişim hedeflenir."],
+            ["Yabancı yatırımcıların sektöre girişinin engellenmesi.", "Rekabet ve yatırım teşvik edilir."],
+            ["İnternet hızlarının düşürülerek daha kontrollü bir yapı oluşturulması.", "Kalite ve hız artışı beklenir."]
+        ],
+        answer: 1,
+        summary: "Telekomünikasyon hizmetlerinin serbestleştirilmesi, elektronik ticaretin geliştirilmesi açısından önem taşımaktadır. Böylece; sektör rekabete açılarak hizmetin kalitesi artırılacak, maliyetler düşürülecek ve sisteme erişim kolaylığı sağlanarak kullanımın yaygınlaştırılması mümkün olacaktır. [cite: 203, 204]"
+    },
+    {
+        q: "39. Elektronik ticaret yapan bir firmanın, klasik dükkân modelindeki gibi 'vergi levhası ve izin belgelerini' dijital ortamda nasıl sunması beklenir?",
+        options: [
+            ["Bu tür belgelere elektronik ortamda gerek yoktur.", "Güven ve yasal uyum için gereklidir."],
+            ["Sadece talep eden müşterilere e-posta ile göndermesi.", "Daha görünür olmalıdır."],
+            ["Sayısal imza ile imzalanmış yetki belgelerinin sistemin kullanıcı tarafından kolaylıkla görülebileceği bir yerine yerleştirilmesi.", "Bu, dijital ortamda güven ve şeffaflık sağlar."],
+            ["Web sitesinin her sayfasına bu belgelerin resimlerini eklemesi.", "Bu pratik olmayabilir, özel bir bölüm daha uygundur."],
+            ["Bu bilgileri sadece telefonla müşteri hizmetlerinden vermesi.", "Kolay erişilebilir olmalıdır."]
+        ],
+        answer: 2,
+        summary: "Alışveriş yapılan bir firmanın nasıl vergi levhası ve izin belgesi (belgeleri) klasik dükkân modelinde görünür bir yere asılıyorsa, elektronik dükkân modelinde de sayısal imza ile imzalanmış yetki belgelerinin sistemin kullanıcı tarafından kolaylıkla görülebileceği bir yerine yerleştirilmesi gerekmektedir. [cite: 216]"
+    },
+    {
+        q: "40. Elektronik ortamda sözleşme kurulurken, icapçının (teklif eden) muhatabın kabul beyanını çeşitli sebeplerle (izin, hastalık vb.) aynı gün öğrenememesi durumunda sözleşme ne zaman kurulmuş sayılır?",
+        options: [
+            ["Kabul beyanının gönderildiği tarihte kurulmuş sayılır ve o anda hüküm doğurur.", "Hüküm doğurma anı gönderilme anıdır, kurulma anı öğrenilme anıdır."],
+            ["Kabul beyanının icapçı tarafından öğrenilmesi ile akit kurulacak, muhatap tarafından kabul beyanının gönderildiği tarihte ise ticari sözleşme hükümlerini doğurmaya başlayacaktır.", "Bu, PDF'teki açıklamadır."],
+            ["Sözleşme hiçbir zaman kurulmuş sayılmaz, yeni bir teklif gerekir.", "Sözleşme kurulabilir."],
+            ["İcapçının kabul beyanını öğrenmesinden bir hafta sonra kurulmuş sayılır.", "Öğrenme anı kritiktir."],
+            ["Elektronik noter onayı olmadan sözleşme kurulmaz.", "Noter onayı her sözleşme için zorunlu değildir."]
+        ],
+        answer: 1,
+        summary: "Ancak icapçının, muhatabın kabul beyanını gönderdiği zamanda çeşitli sebeplerle (izin, hastalık vb. benzeri) kabul beyanını aynı gün öğrenememesi mümkündür. Bu takdirde, kabul beyanının icapcı tarafından öğrenilmesi ile akit kurulacak, muhatap tarafından kabul beyanın gönderildiği tarihte ise ticari sözleşme hükümlerini doğurmaya başlayacaktır. [cite: 10, 11]"
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

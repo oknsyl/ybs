@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 9 - Elektronik Ticarette Veri ve Ağ Güvenliği (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 9 Sınavı (Elektronik Ticarette Veri ve Ağ Güvenliği - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Elektronik ticaretin yürütüldüğü altyapının kötü kullanıma ve olası hatalara karşı genellikle dirençsiz olması ne gibi sorunlara yol açabilir?",
+      options: [
+        ["Sadece küçük çaplı teknik aksaklıklara", "Sorunlar ciddi ticari kayıplara yol açabilir."],
+        ["Gelir kayıpları, sistem kesintileri, firma itibarının sarsılması ve müşteri güveninin kaybı gibi ciddi ticari sorunlara", "Güvenlik açıkları bu tür büyük sorunlara neden olabilir."],
+        ["Yalnızca çalışanların motivasyon düşüklüğüne", "Daha geniş kapsamlı etkileri vardır."],
+        ["Reklam maliyetlerinde beklenmedik artışlara", "Doğrudan bir bağlantı yoktur."],
+        ["Ürünlerin fiziksel olarak zarar görmesine", "Genellikle veri ve işlem güvenliği ile ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Elektronik ticaretin yürütüldüğü altyapı, kötü kullanıma ve olası hatalara karşı genellikle dirençsizdir. Bu dirençsizlik, ciddi ticari sorunlara yol açabilir. Bunların arasında gelir kayıpları, sistemin kesintileri sonucunda kaybedilen iş imkanları, firma isminin kötüye çıkması ve müşteri güveninin sarsılması gösterilebilir."
+    },
+    {
+      q: "2. Genel olarak elektronik güvenlik, aşağıdaki temel hedeflerden hangisini sağlamayı amaçlamaz?",
+      options: [
+        ["Bilgiye yalnızca yetkili kişilerin erişmesini sağlamak", "Bu temel bir güvenlik hedefidir."],
+        ["Yetkisi olmayan kişilerin veriler üzerinde, yaratma, değiştirme ve silme işlemleri yapmasını engellemek", "Bu temel bir güvenlik hedefidir."],
+        ["Tüm kullanıcıların her veriye sınırsız erişimini sağlamak", "Bu, güvenlik anlayışına aykırıdır; erişim yetkilendirilmelidir."],
+        ["Yetkili kullanıcıların verilere erişmesinde problem yaratmamak", "Bu temel bir güvenlik hedefidir."],
+        ["Kaynakların doğru ve yerli yerinde kullanılmasını sağlamak", "Bu temel bir güvenlik hedefidir."]
+      ],
+      answer: 2,
+      summary: "Genel olarak elektronik güvenlik; bilgiye yalnızca yetkili kişilerin erişmesi, yetkisiz kişilerin veri manipülasyonunu engellemesi, yetkili kullanıcıların erişiminde sorun yaşanmaması ve kaynakların doğru kullanılması hedeflerini içerir."
+    },
+    {
+      q: "3. Aşağıdakilerden hangisi 'Fiziksel Güvenlik' kapsamında değerlendirilen bir önlemdir?",
+      options: [
+        ["Çalışanların güvenlik soruşturması", "Bu Çalışan Güvenliği kapsamındadır."],
+        ["Gizli verilerin çoğaltılmasının engellenmesi", "Bu Veri Güvenliği kapsamındadır."],
+        ["Kilitler, kapılar, yaka kartları ve giriş kontrol sistemleri", "Bunlar fiziksel erişimi kontrol eden önlemlerdir."],
+        ["Online verilere erişimin kontrol altında tutulması", "Bu Online Güvenlik kapsamındadır."],
+        ["Güvenliği zayıf noktaların bulunması süreci", "Bu İdari Güvenlik kapsamındadır."]
+      ],
+      answer: 2,
+      summary: "Fiziksel Güvenlik; kilitler, kapılar, yaka kartları, giriş kontrol sistemleri gibi önlemleri içerir."
+    },
+    {
+      q: "4. Bir saldırganın, daha sonraki saldırılarda kullanmak amacıyla sistemde fark edilmeyen bir yapı (örn: Truva atı) bırakması hangi tür güvenlik riskine örnektir?",
+      options: [
+        ["İletişim Dinleme", "Bu, veri trafiğini izlemektir."],
+        ["Yerleşme", "Sisteme kalıcı bir zararlı yazılım veya arka kapı bırakılması bu kapsama girer."],
+        ["Kandırma", "Bu, sahte kimlik veya arayüzlerle kullanıcıyı yanıltmaktır."],
+        ["Hizmetin Reddedilmesi", "Bu, sistemin normal kullanıcılar tarafından erişilemez hale getirilmesidir."],
+        ["İnkar", "Bu, yapılan bir işlemi reddetmektir."]
+      ],
+      answer: 1,
+      summary: "Yerleşme riski, bir saldırganın daha sonra saldırılarda bulunabilmek amacıyla sistemde henüz farkedilmeyen bir yapı (Truva atları bu gruba girer) bırakmasıdır."
+    },
+    {
+      q: "5. 'Veri Bütünlüğü Servisleri'nin temel amacı nedir?",
+      options: [
+        ["Gizli kalması gereken bilgilerin yetkisiz ellere geçmesini engellemek", "Bu Gizlilik Servisleri'nin amacıdır."],
+        ["Veriler üzerinde yetkisiz değişiklik yapılmasını engellemek", "Veri bütünlüğü, verinin doğruluğunu ve değiştirilmemiş olmasını hedefler."],
+        ["Elektronik işlemlerden sonra taraflardan birinin yapılan işlemi inkar edememesini sağlamak", "Bu İnkar Edememe Servisleri'nin amacıdır."],
+        ["Erişim yapanın yetkilendirilme amacıyla tanınmasını sağlamak", "Bu Tanıma Servisleri'nin amacıdır."],
+        ["Kaynakların yetkisiz erişime karşı korunmasını sağlamak", "Bu Erişim Servisleri'nin amacıdır."]
+      ],
+      answer: 1,
+      summary: "Veri Bütünlüğü Servisleri, veriler üzerinde (yetkisiz) değişiklik yapılmasını engellemek amacıyla oluşturulmuş servislerdir."
+    },
+    {
+      q: "6. DES (Digital Encryption Standard) şifreleme sistemi hangi tür anahtar yaklaşımını kullanır?",
+      options: [
+        ["Açık anahtar ve gizli anahtar çiftini (asimetrik)", "DES simetrik bir sistemdir."],
+        ["Sadece açık anahtar (asimetrik)", "DES simetrik bir sistemdir."],
+        ["Taraflar arasında önceden anlaşılan gizli bir anahtar kodu (simetrik)", "DES, gizli (simetrik) bir anahtar kullanır."],
+        ["Anahtarsız şifreleme", "DES anahtar tabanlıdır."],
+        ["Dinamik olarak değişen çoklu anahtarlar", "DES sabit bir gizli anahtar kullanır."]
+      ],
+      answer: 2,
+      summary: "DES (Digital Encryption Standard) standart sistemi, veri alışverişi yapmak isteyen varlıklar arasında gizli bir anahtar kod üzerinde önceden anlaşıldığı simetrik bir sanal anahtar yaklaşımıdır."
+    },
+    {
+      q: "7. RSA açık-anahtar şifreleme sisteminde kullanılan iki anahtar türü ve temel işlevleri nedir?",
+      options: [
+        ["İki adet rastgele oluşturulmuş geçici anahtar; sadece veri bütünlüğü için kullanılır.", "RSA'da açık ve gizli anahtar vardır."],
+        ["Tek bir genel anahtar; herkes tarafından bilinir ve hem şifreleme hem çözümleme için kullanılır.", "Bu simetrik sistem tanımıdır."],
+        ["Herkes tarafından öğrenilebilen 'açık anahtar' ve yalnızca mesaj gönderici/alıcı tarafından bilinen 'gizli anahtar'; biriyle şifrelenen diğeriyle çözülür.", "RSA bu prensiple çalışır, kimlik doğrulama ve şifreleme sağlar."],
+        ["Bir 'ana anahtar' ve çok sayıda 'alt anahtar'; hiyerarşik erişim kontrolü sağlar.", "RSA'nın temel yapısı bu değildir."],
+        ["Şifreleme için 'DES anahtarı', kimlik doğrulama için 'MD5 anahtarı'.", "Bunlar farklı algoritmalardır."]
+      ],
+      answer: 2,
+      summary: "RSA açık-anahtar şifreleme sistemi birbiriyle eşli tasarlanmış iki anahtar kullanır: Herkes tarafından öğrenilebilen 'açık anahtar' ve yalnızca mesaj sahibi tarafından bilinen 'gizli anahtar'. Bu yöntemde hem iletişimde veri gizliliği sağlanmış hem de gönderenin kimliği doğrulanmış olur."
+    },
+    {
+      q: "8. Simetrik şifreleme yönteminin asimetrik şifrelemeye göre temel avantajı ve dezavantajı nedir?",
+      options: [
+        ["Avantajı: Daha güvenlidir; Dezavantajı: Daha yavaştır.", "Asimetrik genellikle daha güvenli kabul edilir (anahtar yönetimi açısından) ama daha yavaştır."],
+        ["Avantajı: Daha hızlı çalışır; Dezavantajı: Gizli anahtarın güvenli paylaşımı zordur ve ele geçmesi daha kolaydır.", "Simetrik şifreleme hızlıdır ancak anahtar dağıtımı temel bir sorundur."],
+        ["Avantajı: Anahtar dağıtımı kolaydır; Dezavantajı: Yalnızca metin verilerini şifreleyebilir.", "Anahtar dağıtımı zordur."],
+        ["Avantajı: Herkes tarafından bilinen açık anahtarlar kullanır; Dezavantajı: Yasal sorunlara yol açabilir.", "Bu asimetrik sistemin özelliğidir."],
+        ["Avantajı: Şifreleme için anahtara ihtiyaç duymaz; Dezavantajı: Çözümleme çok karmaşıktır.", "Simetrik şifreleme anahtar kullanır."]
+      ],
+      answer: 1,
+      summary: "Simetrik şifrelemede her iki taraf da gizli olarak sakladıkları ortak şifre anahtarını kullanırlar. Simetrik şifreleme daha hızlı çalışır ancak gizli anahtarın ele geçmesi daha kolay olduğu için (ve güvenli dağıtımı zor olduğu için) asimetrik sistemlere göre daha az kullanışlı olabilir."
+    },
+    {
+      q: "9. Sayısal imzanın temel işlevi aşağıdakilerden hangisidir?",
+      options: [
+        ["Elektronik mesajın içeriğini gizlemek (şifrelemek)", "Sayısal imza şifreleme yapmaz, doğrulama yapar."],
+        ["Gönderilen mesajın alıcıya ulaşıp ulaşmadığını takip etmek", "Bu teslimat bildirimi ile ilgilidir."],
+        ["Mesajı yaratanın kimliğini doğrulamak ve mesajın değiştirilmediğini kanıtlamak", "Sayısal imza bu iki temel işlevi yerine getirir."],
+        ["Mesajın sadece belirli bir coğrafi bölgeden gönderilebilmesini sağlamak", "Bu tür bir kısıtlama sağlamaz."],
+        ["Mesajın boyutunu küçülterek daha hızlı iletilmesini sağlamak", "Bu sıkıştırma ile ilgilidir."]
+      ],
+      answer: 2,
+      summary: "Sayısal imza, bir elektronik mesajı ya da dökümanı yaratan ve gönderenin kimliğinin doğrulanması, mesaj ya da dökümanın yazıldığı ve imzalandığı andan sonra değişikliğe uğramadığını kanıtlamak amacıyla kullanılan elektronik işaretleme yöntemine verilen isimdir."
+    },
+    {
+      q: "10. Sayısal sertifikayı oluşturan ve geçerliliğini onaylayan kuruluş aşağıdakilerden hangisidir?",
+      options: [
+        ["Sertifika sahibi birey veya kurum", "Sertifika sahibi adına sertifika oluşturulur."],
+        ["Mesajı alan taraf", "Alıcı sertifikayı doğrular."],
+        ["İnternet Servis Sağlayıcısı (ISP)", "ISP bağlantı sağlar, sertifika vermez."],
+        ["Sertifika Sağlayıcı Kuruluş (CA - Certificate Authority)", "CA'lar sayısal sertifikaları üretir ve imzalar."],
+        ["Devletin güvenlik birimleri", "Devlet kurumları da CA olabilir ancak genel tanım CA'dır."]
+      ],
+      answer: 3,
+      summary: "Sayısal imza, kişi ya da nesneye ait değil, sertifikayı veren yetkili sertifika sağlayıcı kuruluşun (CA-Certificate Authority) imzasıdır."
+    },
+    {
+      q: "11. Bir sayısal sertifikanın içerisinde aşağıdaki bilgilerden hangisi tipik olarak bulunmaz?",
+      options: [
+        ["Sertifika sahibinin açık anahtarı", "Bu, sertifikanın temel bileşenlerindendir."],
+        ["Sertifika sahibinin gizli anahtarı", "Gizli anahtar hiçbir zaman sertifika içinde yer almaz; sahibi tarafından gizli tutulur."],
+        ["Sertifikanın geçerlilik süresi", "Sertifikaların bir son kullanma tarihi vardır."],
+        ["Sertifika sağlayıcı kuruluşun (CA) adı", "Sertifikayı kimin verdiği bilgisi önemlidir."],
+        ["Sertifika sahibinin ismi veya elektronik posta adresi", "Sertifika sahibini tanımlayan bilgiler içerir."]
+      ],
+      answer: 1,
+      summary: "Bir sayısal sertifika tipik olarak; sertifika sahibinin ismi, e-posta adresi, açık anahtarı, sertifikanın geçerlilik süresi, sertifika sağlayıcı kuruluşun adı ve sağlayıcının imzasını içerir. Gizli anahtar içermez."
+    },
+    {
+      q: "12. Sayısal kimliklerin (sertifikaların) klasik kullanıcı adı ve şifre yöntemlerine göre sağladığı avantajlardan biri nedir?",
+      options: [
+        ["Daha kolay tahmin edilebilir olmaları", "Tam tersine daha güvenlidirler."],
+        ["Kullanıcıların şifre unutma gibi sorunlarla karşılaşmaması ve sistem yöneticilerinin şifre sıfırlama ile zaman kaybetmemesi", "Sayısal kimlikler bu tür sorunları azaltır."],
+        ["Sadece firma içi intranet erişimlerinde kullanılabilmeleri", "Geniş bir kullanım alanları vardır."],
+        ["Kart basım maliyeti, plastik kaplama gibi ek masraflar gerektirmeleri", "Sayısal oldukları için bu masrafları gerektirmezler."],
+        ["Her web uygulaması için ayrı bir sayısal kimlik gerektirmeleri", "Tek bir kimlik birçok yerde kullanılabilir."]
+      ],
+      answer: 1,
+      summary: "Sayısal kimlik sistemi ile kullanıcılar şifre unutma, unutulan şifrelerin tekrar e-posta yoluyla ya da diğer yollarla tekrar elde edilmesi gibi sorunlarla karşılaşmak zorunda değillerdir. Sistem yöneticileri, kaybedilen şifrelerin kullanıcılara bildirilmesi ile zaman kaybetmez."
+    },
+    {
+      q: "13. En yaygın kullanılan sayısal sertifika formatı standardı hangisidir?",
+      options: [
+        ["ISO 9001", "Bu kalite yönetim standardıdır."],
+        ["HTML5", "Bu web sayfası dilidir."],
+        ["X.509", "X.509, sayısal sertifikalar için yaygın bir formattır."],
+        ["TCP/IP", "Bu ağ iletişim protokolüdür."],
+        ["MIME", "Bu e-posta ekleri için bir standarttır."]
+      ],
+      answer: 2,
+      summary: "En yaygın olarak kullanılan sayısal sertifika formatı ISO X.509 standartında belirtilmektedir."
+    },
+    {
+      q: "14. Bir sayısal sertifikanın iptal edilmesi (geçersiz hale getirilmesi) gerektiğinde bu işlem kimin sorumluluğundadır?",
+      options: [
+        ["Sertifika sahibinin kendisi", "Sahibi talep edebilir ancak iptal yetkisi başkasındadır."],
+        ["Sertifikayı kullanan web tarayıcısı", "Tarayıcılar iptal listelerini kontrol eder."],
+        ["Sertifikayı veren Sertifika Sağlayıcısı (CA)", "İptal işlemi CA'nın sorumluluğundadır."],
+        ["İnternet Tahsisli Sayılar ve İsimler Kurumu (ICANN)", "ICANN alan adları ve IP adresleriyle ilgilidir."],
+        ["Yerel ağ yöneticisi", "Yerel yetkileri vardır, genel sertifika iptali yapamaz."]
+      ],
+      answer: 2,
+      summary: "Sertifikanın iptal edilmesi, bütünüyle sertifikayı veren sertifika sağlayıcısının sorumluluğuna bırakılmıştır."
+    },
+    {
+      q: "15. Parola tabanlı sistemlerde sıkça rastlanan 'parolanın saldırgan tarafından öğrenilmesi' riskini artıran kullanıcı davranışlarından biri nedir?",
+      options: [
+        ["Parolayı düzenli aralıklarla değiştirmek", "Bu güvenliği artırır."],
+        ["Karmaşık ve uzun parolalar kullanmak", "Bu güvenliği artırır."],
+        ["Parolaları küçük kağıtlara yazmak veya kolay tahmin edilebilir (çocuk ismi, doğum yılı vb.) bilgilerden oluşturmak", "Bu tür davranışlar parolanın ele geçirilmesini kolaylaştırır."],
+        ["İki faktörlü kimlik doğrulama kullanmak", "Bu güvenliği artırır."],
+        ["Her farklı sistem için farklı parola kullanmak", "Bu güvenliği artırır."]
+      ],
+      answer: 2,
+      summary: "Parola saldırgan tarafından öğrenilebilir. Parolalar bazı kişiler tarafından küçük kağıtlara ya da dökümanlara yazılmış olabilir. Ağızdan söylenmiş ya da duyulmuş olabilir. Kolayca tahmin edilebilen parolalar (takma isimler, çocuk isimleri, doğum yılları vb.) öğrenilebilir."
+    },
+    {
+        q: "16. MIME (Multipurpose Internet Mail Extensions) standardının temel işlevi nedir?",
+        options: [
+            ["İnternet bağlantı hızını artırmak", "Bağlantı hızıyla ilgili değildir."],
+            ["E-posta mesajlarının güvenliğini sağlamak", "Bu S/MIME'ın işlevidir, temel MIME'ın değil."],
+            ["İnternet üzerinde karmaşık yapıdaki mesajların ve eklerin (resim, ses dosyası vb.) gönderilmesini sağlamak", "MIME, e-postalarda farklı içerik türlerinin kullanılabilmesini sağlar."],
+            ["Web sayfalarını tasarlamak için bir dil sağlamak", "Bu HTML'in işlevidir."],
+            ["Ağ trafiğini şifrelemek", "Bu SSL gibi protokollerin işlevidir."]
+        ],
+        answer: 2,
+        summary: "İngilizce'de \"Multipurpose Internet Mail Extensions\" tanımının kısaltılmışı olan MIME, çok amaçlı Internet posta ekleri olarak açıklanabilir. Internet üzerinde karmaşık yapıdaki mesajların ve eklerin gönderilmesinde kullanılan MIME, günümüzde endüstri standartı olarak kabul edilmiştir."
+    },
+    {
+        q: "17. SSL (Secure Sockets Layer) protokolü, istemci-sunucu iletişiminde hangi güvenlik servisini sağlamaz?",
+        options: [
+            ["Sunucu Tanıma (Server Authentication)", "SSL, sunucunun kimliğini doğrular."],
+            ["Veri Bütünlüğü (Data Integrity)", "SSL, verilerin iletişim sırasında değiştirilmesini engeller."],
+            ["Gizlilik (Confidentiality)", "SSL, verilerin şifrelenerek gizli kalmasını sağlar."],
+            ["Uygulama katmanı güvenlik açığı denetimi", "SSL iletişim katmanında güvenlik sağlar, uygulama katmanındaki spesifik açıkları denetlemez."],
+            ["İstemci Tanıma (Client Authentication) (isteğe bağlı)", "SSL, istemcinin de kimliğini doğrulayabilir."]
+        ],
+        answer: 3,
+        summary: "SSL istemci-sunucu iletişiminde; Sunucu Tanıma, İstemci Tanıma (isteğe bağlı), Veri Bütünlüğü ve Gizlilik servislerini sağlar."
+    },
+    {
+        q: "18. S-HTTP (Secure HTTP) protokolünün SSL'den temel farkı nedir?",
+        options: [
+            ["S-HTTP yalnızca Netscape tarayıcıları tarafından desteklenir.", "Bu doğru değildir, farklı bir protokoldür."],
+            ["S-HTTP, TCP/IP kullanan her türlü iletişim protokolü tarafından kullanılabilirken, SSL sadece HTTP içindir.", "Tam tersi, SSL daha geneldir, S-HTTP ise HTTP'ye özeldir."],
+            ["S-HTTP, S/MIME'da olduğu gibi her bir HTTP isteminin ve cevabının korunmasını, bunları birer mesaj olarak görerek yapar; SSL ise oturum bazlı koruma sağlar.", "Bu temel bir farktır; S-HTTP mesaj bazlı, SSL oturum bazlıdır."],
+            ["S-HTTP, sayısal imza desteklemezken SSL destekler.", "Her ikisi de farklı şekillerde destekleyebilir."],
+            ["S-HTTP, S/MIME ile tamamen aynı protokoldür.", "Benzer prensipleri olsa da farklı protokollerdir."]
+        ],
+        answer: 2,
+        summary: "S-HTTP, pek çok açıdan SSL protokolüne benzer. Ancak özel olarak HTTP protokolü için geliştirilmiştir. S-HTTP, S/MIME de olduğu gibi her bir HTTP isteminin ve cevabının korunmasını, bunları birer mesaj olarak görerek yapar. SSL ise daha çok oturum bazlı bir koruma sağlar."
+    },
+    {
+        q: "19. EDI (Elektronik Veri Değişimi) bilgilerinin İnternet üzerinden güvenli bir şekilde gönderilmesi için hangi standart mesaj güvenlik protokolü kullanılabilir?",
+        options: [
+            ["FTP (File Transfer Protocol)", "FTP'nin kendisi güvenli değildir, SFTP güvenlidir."],
+            ["HTTP (HyperText Transfer Protocol)", "HTTP'nin kendisi güvenli değildir, HTTPS güvenlidir."],
+            ["S/MIME (Secure Multipurpose Internet Mail Extensions)", "EDI içerik tipleri MIME ile uyumlu olduğundan S/MIME ile şifreli gönderim mümkündür."],
+            ["POP3 (Post Office Protocol version 3)", "Bu e-posta alma protokolüdür."],
+            ["SMTP (Simple Mail Transfer Protocol)", "Bu e-posta gönderme protokolüdür."]
+        ],
+        answer: 2,
+        summary: "Halen EDI bilgilerinin standart mesaj güvenlik protokolleri yardımı ile (S/MIME) şifreli olarak gönderilmesi ve alınması mümkündür. EDI içerik tipleri, MIME içerik tipleri ile uyumlu olduğundan S/MIME iletişimi EDI formatına kolaylıkla uyarlanabilir."
+    },
+    {
+        q: "20. SET (Secure Electronic Transaction) protokolünün geliştirilme amacı nedir?",
+        options: [
+            ["Genel ağ trafiğini hızlandırmak", "Ödeme güvenliğine odaklıdır."],
+            ["E-posta mesajlarının gizliliğini sağlamak", "Bu S/MIME gibi protokollerin amacıdır."],
+            ["Banka kartı ödemelerinin İnternet ağını güvenli bir şekilde kullanabilmelerini sağlamak", "SET, online kartlı ödemelerin güvenliği için tasarlanmıştır."],
+            ["Kablosuz ağların güvenliğini artırmak", "Bu WPA gibi protokollerin amacıdır."],
+            ["Veritabanı erişimlerini denetlemek", "Bu farklı bir güvenlik alanıdır."]
+        ],
+        answer: 2,
+        summary: "SET (Secure Electronic Transactions) protokolü, banka kartı ödemelerinin Internet ağını kullanabilmeleri amacıyla tasarlanmış olan bir iletişim güvenliği protokolüdür."
+    },
+    {
+        q: "21. Tipik bir SET işlemi sırasında, ödeme bilgilerinin kritik bir kısmının satıcının eline geçmeden işlemin tamamlanmasını sağlayan temel mekanizma nedir?",
+        options: [
+            ["Satıcının tüm işlemi kendi sunucularında yürütmesi", "Bu, bilgilerin satıcıya geçmesine neden olabilir."],
+            ["Kart sahibinin ödeme bilgilerini doğrudan satıcıya e-posta ile göndermesi", "Bu güvensiz bir yöntemdir."],
+            ["Satıcının, gereken finans kuruluşu ile bir ağ geçidi (payment gateway) yardımıyla haberleşerek ödeme talimatını geçmesi", "Bu mekanizma, hassas bilgilerin doğrudan satıcıya gitmesini engeller."],
+            ["Tüm ödeme bilgilerinin açık metin olarak iletilmesi", "Bu son derece güvensizdir."],
+            ["İşlemin yalnızca fiziksel POS cihazları üzerinden yapılması", "SET, online işlemler içindir."]
+        ],
+        answer: 2,
+        summary: "Tipik bir SET işleminde banka kartı sahibi, satıcıdan bir malı almaya karar verdikten sonra satıcıya online ödemeyi yapabilmek için gerekli talimatları verir. Bunun ardından satıcı, gereken finans kuruluşu ile bir ağ geçidi yardımıyla haberleşerek ödeme talimatını geçer. Yetkilendirme sonucunda satıcı malın teslimini yapar. İşlemlerin kaydı finans kuruluşu tarafından tutulur ve böylece kritik bilgiler satıcının eline geçmeden işlem tamamlanmış olur."
+    },
+    {
+        q: "22. Elektronik güvenlikte 'Hizmetin Reddedilmesi (Denial of Service - DoS)' saldırısının temel amacı nedir?",
+        options: [
+            ["Sistemdeki gizli verilere erişmek", "Bu veri hırsızlığı amacıdır."],
+            ["Yetkili olan normal kullanıcıların sisteme veya bir hizmete erişimini engellemek", "DoS saldırıları sistem kaynaklarını tüketerek veya bağlantıları keserek erişimi engeller."],
+            ["Sisteme zararlı yazılım bulaştırmak", "Bu farklı bir saldırı türüdür."],
+            ["Kullanıcıların parolalarını ele geçirmek", "Bu kimlik hırsızlığı amacıdır."],
+            ["Yapılan bir işlemi inkar etmek", "Bu farklı bir güvenlik sorunudur."]
+        ],
+        answer: 1,
+        summary: "Hizmetin Reddedilmesi saldırısında, saldırgan, yetkili olan normal kullanıcıların sisteme erişimini engeller."
+    },
+    {
+        q: "23. Asimetrik şifrelemede, gizli anahtarla şifrelenmiş bir mesajın açık anahtarla çözülmesi hangi güvenlik hizmetini sağlar?",
+        options: [
+            ["Veri sıkıştırma", "Bu şifrelemenin amacı değildir."],
+            ["Mesaj gizliliği", "Açık anahtarla şifreleme gizlilik sağlar; gizli anahtarla şifreleme ise kimlik doğrulamaya yöneliktir."],
+            ["Kimlik doğrulama (mesajın kaynağının doğrulanması)", "Gizli anahtar sadece sahibinde olduğu için, onunla şifrelenmiş mesajın o kaynaktan geldiği doğrulanır."],
+            ["Hata düzeltme", "Bu farklı bir iletişim katmanı işlevidir."],
+            ["Ağ trafiği analizi", "Bu bir izleme tekniğidir."]
+        ],
+        answer: 2,
+        summary: "Asimetrik şifrelemede, gizli anahtarla şifrelenmiş bir mesaj, açık anahtarla çözüldüğünde, kimlik doğrulaması yapılmış olur (mesajın gerçekten o gizli anahtarın sahibinden geldiği anlaşılır)."
+    },
+    {
+        q: "24. Sayısal imza oluşturulurken kullanılan 'Tek Yönlü Güvenli Hash Fonksiyonu'nun temel özelliği nedir?",
+        options: [
+            ["Hash değerinden orijinal mesaja geri dönülebilmesi", "Hash fonksiyonları tek yönlüdür, geri dönülemez."],
+            ["Mesajın boyutunu her zaman iki katına çıkarması", "Sabit veya değişken boyutlu özet üretir, boyutu iki katına çıkarmaz."],
+            ["Mesaj üzerinde yapılan küçük bir değişikliğin bile hash değerini tamamen farklılaştırması ve sabit uzunlukta bir özet üretmesi", "Bu, hash fonksiyonlarının temel özelliklerindendir ve veri bütünlüğü için kritiktir."],
+            ["Sadece metin tabanlı mesajlar için kullanılabilmesi", "Her türlü dijital veri için kullanılabilir."],
+            ["Mesajı otomatik olarak şifrelemesi", "Hashleme şifreleme değildir, bir özet çıkarma işlemidir."]
+        ],
+        answer: 2,
+        summary: "Sayısal imza sürecinde mesaj önce tek yönlü güvenli bir hash fonksiyonundan geçirilir. Bu fonksiyon, mesajdan sabit uzunlukta bir 'özet' çıkarır ve mesajdaki en küçük bir değişiklik bile çok farklı bir özet değeri üretir. Bu özet daha sonra göndericinin gizli anahtarıyla şifrelenerek imza oluşturulur."
+    },
+    {
+        q: "25. Sayısal sertifikaların dağıtımında kullanılan 'Sertifika Dizin Servisi'nin amacı nedir?",
+        options: [
+            ["Sertifikaların fiziksel olarak postalanmasını sağlamak", "Bu eski bir yöntemdir."],
+            ["İptal edilmiş sertifikaların listesini yayınlamak", "Bu CRL'nin (Sertifika İptal Listesi) amacıdır."],
+            ["Mesaj gönderilecek kişilerin açık anahtarlarının kolayca bulunmasını ve edinilmesini sağlamak", "Dizin servisleri, açık anahtarlara erişimi kolaylaştırır."],
+            ["Sertifika sağlayıcı kuruluşların (CA) reklamını yapmak", "Temel amacı bu değildir."],
+            ["Kullanıcıların gizli anahtarlarını güvenli bir şekilde saklamak", "Gizli anahtarlar kullanıcıda kalır."]
+        ],
+        answer: 2,
+        summary: "Açık anahtar teknolojisinde, mesaj gönderen kişiler öncelikle mesaj gönderecekleri kişilerin açık anahtarlarını edinmek zorundadırlar. Dizin servisleri ve bu sistemlerden bilgi alabilen mesaj yazma sistemleri (e-posta vb) entegre çalışarak mesaj gönderilen kişinin sertifikasının (ve dolayısıyla açık anahtarının) bulunmasını kolaylaştırır."
+    },
+    {
+        q: "26. Parola tabanlı sistemlerde, saldırganların sözlük programları yardımıyla otomatik olarak tüm olası kelimeleri deneyerek parolayı bulmaya çalışması hangi tür saldırıya örnektir?",
+        options: [
+            ["Sosyal mühendislik", "Bu, insanları manipüle etmektir."],
+            ["Tahmin (Sözlük saldırısı dahil)", "Sözlük saldırısı, yaygın tahmin yöntemlerinden biridir."],
+            ["Yeniden Verme (Replay) saldırısı", "Bu, ele geçirilen şifrelenmiş parolanın tekrar kullanılmasıdır."],
+            ["Dinleme (Eavesdropping)", "Bu, iletişimi gizlice izlemektir."],
+            ["Sunucuya Erişme", "Bu, parolanın kaynağından çalınmasıdır."]
+        ],
+        answer: 1,
+        summary: "Kolayca tahmin edilebilen parolalar öğrenilebilir. Bazı saldırganlar, sözlük programları yardımıyla otomatik olarak sözlükteki bütün sözcükleri denerler. Bu 'Tahmin' saldırısı türüne girer."
+    },
+    {
+        q: "27. SSL protokolü bir web sitesinde kullanıldığında, tarayıcının adres çubuğunda genellikle hangi ön ek görülür?",
+        options: [
+            ["http://", "Bu güvenli olmayan bağlantıyı gösterir."],
+            ["ftp://", "Bu dosya transfer protokolünü gösterir."],
+            ["https://", "Bu 's' harfi güvenli (SSL/TLS ile şifrelenmiş) bağlantıyı ifade eder."],
+            ["smtp://", "Bu e-posta gönderme protokolünü gösterir."],
+            ["telnet://", "Bu uzaktan erişim protokolünü gösterir."]
+        ],
+        answer: 2,
+        summary: "Web adreslerinde görülen http:// ön eki eğer https:// olarak bir \"s\" harfi içeriyorsa iletişim güvenli kanaldan (SSL/TLS kullanılarak) yapılıyor anlamına gelir."
+    },
+    {
+        q: "28. EDI verilerinin İnternet üzerinden gönderilmesinde güvenlik endişelerini artıran temel faktör nedir?",
+        options: [
+            ["EDI formatının çok karmaşık olması", "Formatın karmaşıklığı doğrudan güvenlik açığı yaratmaz."],
+            ["İnternet'in genel kullanıma açık, sahibi olmayan ve kontrolü zor bir ağ olması", "İnternetin bu yapısı, özel güvenlik önlemleri gerektirir."],
+            ["S/MIME protokolünün EDI ile uyumsuz olması", "Tam tersine, S/MIME EDI ile kullanılabilir."],
+            ["EDI sistemlerinin çok yüksek maliyetli olması", "Maliyet güvenlik açığı nedeni değildir, İnternet kullanımı maliyeti düşürebilir."],
+            ["Virüslerin sadece EDI trafiğini hedef alması", "Virüsler genel bir tehdittir."]
+        ],
+        answer: 1,
+        summary: "İnternet genel kullanıma açıktır ve başlangıçta güvenlik pek fazla düşünülmeden tasarlandığı için üzerinden EDI bilgilerinin gönderilmesi için özel güvenlik yöntemleri uygulamak gerekir. İnternet'in sahibinin olmaması ve yüzde yüz çalışırlık garantisinin verilememesi gibi faktörler endişe yaratır."
+    },
+    {
+        q: "29. Güvenlik sisteminin genel güvenilirliği neye göre değerlendirilir?",
+        options: [
+            ["Kullanılan en gelişmiş şifreleme algoritmasına göre", "Bu önemli bir faktördür ama tek başına yeterli değildir."],
+            ["Sistemdeki en güçlü güvenlik duvarına göre", "Bu da önemli bir unsurdur."],
+            ["Sistemin en zayıf öğesinin güvenliğine göre", "Bir zincirin gücü en zayıf halkası kadardır prensibi geçerlidir."],
+            ["Toplam güvenlik harcamalarının miktarına göre", "Para miktarı her zaman güvenliği garanti etmez."],
+            ["Sistemdeki kullanıcı sayısına göre", "Kullanıcı sayısı riskleri etkileyebilir ama güvenilirliği belirlemez."]
+        ],
+        answer: 2,
+        summary: "Bir güvenlik sisteminin güvenliği, sistemin en zayıf öğesinin güvenliği ile değerlendirilir."
+    },
+    {
+        q: "30. 'İdari Güvenlik' kavramı, elektronik güvenlik şartları arasında neyi ifade eder?",
+        options: [
+            ["Kilitler ve kapılarla fiziksel erişimin engellenmesi", "Bu Fiziksel Güvenliktir."],
+            ["Çalışanların güvenlik soruşturmalarının yapılması", "Bu Çalışan Güvenliğidir."],
+            ["Güvenliği zayıf noktaların bulunması ve değerlendirilmesi sürecini", "İdari güvenlik, politika ve prosedürlerle ilgilidir."],
+            ["Gizli verilerin yetkisiz kopyalanmasının önlenmesi", "Bu Veri Güvenliğidir."],
+            ["Online verilere erişimin şifrelerle kontrol edilmesi", "Bu Online Güvenliktir."]
+        ],
+        answer: 2,
+        summary: "İdari Güvenlik, güvenliği zayıf noktaların bulunması sürecini ifade eder."
+    },
+    {
+        q: "31. Bir saldırganın, sokakta korsan bir bankamatik (ATM) inşa ederek kişilerin ATM şifrelerini toplaması hangi tür güvenlik riskine en iyi örnektir?",
+        options: [
+            ["Yerleşme (Truva Atı)", "Bu, sisteme zararlı yazılım bırakmaktır."],
+            ["İletişim Dinleme", "Bu, veri akışını izlemektir."],
+            ["Kandırma (Spoofing/Phishing)", "Kullanıcıları sahte bir arayüz veya sistemle yanıltarak bilgi elde etmektir."],
+            ["Hizmetin Reddedilmesi", "Bu, sisteme erişimi engellemektir."],
+            ["İnkar", "Bu, yapılan bir işlemi reddetmektir."]
+        ],
+        answer: 2,
+        summary: "Kandırma saldırısında saldırgan, iletişim süreci sırasında verilerle oynayarak veya sahte sistemler kurarak, gizli bilgilere yetkisi varmış gibi ulaşabilir. Örneğin, sokakta korsan bir bankamatik inşa ederek kişilerin ATM şifrelerinin toplandığı görülmüştür."
+    },
+    {
+        q: "32. Aşağıdakilerden hangisi günümüzde kullanılan başlıca şifreleme algoritmalarından biri değildir? (PDF Ders 9'a göre)",
+        options: [
+            ["DES", "PDF'te listelenmiştir."],
+            ["AES", "PDF'te listelenmiştir."],
+            ["HTML", "HTML bir işaretleme dilidir, şifreleme algoritması değildir."],
+            ["RSA", "PDF'te listelenmiştir."],
+            ["ECC", "PDF'te listelenmiştir."]
+        ],
+        answer: 2,
+        summary: "Günümüzde kullanılan başlıca şifreleme algoritmaları arasında DES, 3DES, AES, IDEA, FEAL, RSA(RC2), ECC, CAST gösterilebilir."
+    },
+    {
+        q: "33. Sayısal sertifika edinmek isteyen bir kişiden, sertifika sağlayıcı kuruluşun isteyebileceği belgeler arasında aşağıdakilerden hangisi bulunmaz?",
+        options: [
+            ["Nüfus cüzdanının aslı veya pasaport", "Kimlik bildirimi için istenebilir."],
+            ["Geçerli bir telefon numarası veya vergi kaydı", "Kimlik teyidi için istenebilir."],
+            ["En son okuduğu kitabın özeti", "Bu tür kişisel ve alakasız bir bilgi istenmez."],
+            ["Ticaret odası belgesi (kurumsal başvurularda)", "Kurumsal kimlik için istenebilir."],
+            ["Kişisel başvuru (şahsen müracaat)", "Bazı durumlarda kişisel başvuru gerekebilir."]
+        ],
+        answer: 2,
+        summary: "Sayısal sertifika edinmek için kişisel başvuru, kimlik bildirim dökümanları (nüfus kartı, pasaport, ehliyet), geçerli telefon numarası, vergi kayıtları, tapu, ticaret odası belgesi gibi dökümanlar istenebilir."
+    },
+    {
+        q: "34. Sertifika Sağlayıcı Kuruluşlar (CA) için aşağıdakilerden hangisi söylenemez?",
+        options: [
+            ["Çalışmalarını güvenilir temellere oturtmuş olduklarını belirten belgelere sahip olmaları beklenir.", "Güvenilirlikleri önemlidir."],
+            ["Sayısal sertifikaların verilmesi ve iptalinde kontrolü tamamen firmalara devredebilirler.", "Firma ile anlaşma çerçevesinde bazı yönetim işlemlerini firma yapabilir ancak tam devir söz konusu olmayabilir; CA'nın sorumluluğu devam eder."],
+            ["Genellikle çeşitli şifreleme teknikleri ve yüksek güvenlikli bilgi işlem merkezlerine sahiptirler.", "Bu, operasyonları için gereklidir."],
+            ["Sayısal sertifikaları imzalayarak geçerliliklerini onaylarlar.", "Temel görevlerindendir."],
+            ["X.509 gibi standart sertifika formatlarını kullanırlar.", "Standartlara uyum önemlidir."]
+        ],
+        answer: 1,
+        summary: "Sertifika sağlayıcıları güvenilir olmalı, yüksek güvenlikli merkezlere sahip olmalı ve sertifikaları imzalayarak onaylamalıdır. Firmalarla işbirliği yapsalar da sertifika yönetiminin temel sorumluluğu CA'dadır."
+    },
+    {
+        q: "35. Internet üzerinden iletilen mesajların güvenliği neden özellikle önemlidir?",
+        options: [
+            ["Çünkü İnternet mesajları her zaman çok yavaş iletilir.", "Hız değil, güvenlik odaklı bir sorudur."],
+            ["Çünkü İnternet, sahibi olmayan, farklı ağlardan ve bilinmeyen geçitlerden oluşan bir yapıdır ve mesajlar bu güzergahlardan geçer.", "İnternetin bu açık ve dağıtık yapısı güvenlik risklerini artırır."],
+            ["Çünkü İnternet mesajları sadece metin tabanlı olabilir.", "MIME ile karmaşık yapılar gönderilebilir."],
+            ["Çünkü İnternet bağlantısı çok pahalıdır.", "Maliyet güvenlik ihtiyacını ortadan kaldırmaz."],
+            ["Çünkü tüm İnternet kullanıcıları güvenlik uzmanıdır.", "Bu doğru değildir, genel kullanıcıların çoğu uzman değildir."]
+        ],
+        answer: 1,
+        summary: "Internet, genel kullanım amaçlı, sahibi olmayan, farklı ağlarda, kim tarafından yönetildiği bilinmeyen geçitler içeren bir yapıdır. Internet üzerinden iletilen mesajlar, bu bilinmeyen ağdan, daha önceden kesin belli olmayan güzergahlardan geçerek hedeflerine ulaşırlar. Bu durum güvenlik ihtiyacını artırır."
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

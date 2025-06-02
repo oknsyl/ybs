@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 6 - E-Ticaret Destek Sistemleri (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+	button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 6 Sınavı (E-Ticaret Destek Sistemleri - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+
+<script>
+  const questions = [
+    {
+      q: "1. Dolaylı satış sistemlerinin temel amacı nedir?",
+      options: [
+        ["Mal ya da hizmetin sistem kullanımı sırasında satış işleminin doğrudan gerçekleşmesini sağlamak", "Bu doğrudan satışın amacıdır."],
+        ["Müşterilerin diğer satış sistemlerinden ya da klasik dükkânlardan satın alma kararlarını olumlu yönde etkilemek veya satın almalarını sağlamak", "Dolaylı satış, yönlendirme ve etkileme üzerine kuruludur."],
+        ["Sadece yüksek teknolojili ürünlerin tanıtımını yapmak", "Fiyatı yüksek olan çeşitli ürünler için kullanılabilir."],
+        ["Müşterilere online ödeme altyapısı sunmak", "Dolaylı satış sistemleri genellikle ödeme altyapısı içermez."],
+        ["Satış sonrası teknik destek hizmeti vermek", "Bu servis ve destek kapsamındadır."]
+      ],
+      answer: 1,
+      summary: "Dolaylı satış sistemleri, müşteri ya da ziyaretçilerin, ilgi duydukları mal ve hizmetleri, diğer satış sistemlerinden ya da klasik dükkânlardan satın alma kararlarını olumlu yönde etkilemek, ya da satın almalarını sağlamak amacı ile oluşturulur."
+    },
+    {
+      q: "2. Mikro site yaklaşımı, bir firmanın pazarlama ve satış stratejisine nasıl bir katkı sağlar?",
+      options: [
+        ["Tamamen yeni ve bağımsız bir e-ticaret platformu kurarak geniş bir kitleye ulaşmak", "Mikro site, mevcut sitelere entegre olur."],
+        ["Reklam yapılan yerde satışın da yapılabildiği bir model oluşturarak, müşterilerin ilgisini doğrudan satışa dönüştürmek", "Mikro site, reklam ve satışı birleştirir."],
+        ["Sadece ürünlerin teknik özelliklerini detaylı bir şekilde sergilemek", "Hem tanıtım hem satış amaçlı olabilir."],
+        ["Müşteri hizmetleri ve destek süreçlerini otomatikleştirmek", "Bu CRM veya destek sistemlerinin işlevidir."],
+        ["Ana firmanın tüm ürün yelpazesini küçük bir alanda sunmak", "Genellikle belirli ürün veya kampanyalara odaklanır."]
+      ],
+      answer: 1,
+      summary: "Mikrosite yaklaşımı, herhangi bir firmanın, diğer firmaların sistemlerinde küçük parçalar biçiminde bulunması olarak tanımlanır. Böylece, reklam yapılan yerde satışın da yapıldığı bir yaklaşım geliştirilmiş olur."
+    },
+    {
+      q: "3. Müşteri profili oluşturulurken aşağıdaki bilgilerden hangisi 'dinamik müşteri profili' kapsamında değerlendirilir?",
+      options: [
+        ["Yaş ve cinsiyet gibi demografik bilgiler", "Bunlar genellikle statik bilgilerdir."],
+        ["Müşterinin elektronik satış sistemi içerisinde gösterdiği davranışlar, daha önceden aldığı ya da ilgilendiği mallar", "Bu tür davranışsal veriler dinamik profil oluşturmada kullanılır."],
+        ["Eğitim durumu ve mesleği", "Bunlar genellikle statik bilgilerdir."],
+        ["Yerleşim bölgesi ve adres bilgileri", "Adres statik olabilir, ancak yerleşke bilgisi mal profilinde de kullanılabilir."],
+        ["Yıllık gelir seviyesi", "Bu genellikle statik bir bilgidir."]
+      ],
+      answer: 1,
+      summary: "Müşterinin elektronik satış sistemi içerisinde gösterdiği davranışlar, daha önceden aldığı ya da ilgilendiği mallar, müşteri profilinin belirlenmesinde rol oynayabilir. Bunlar dinamik müşteri profili oluşturulmasında kullanılır."
+    },
+    {
+      q: "4. Firmalar arası (B2B) elektronik satış sistemlerinin tasarımında, son kullanıcıya yönelik (B2C) sistemlere göre daha az önem verilen unsur hangisidir?",
+      options: [
+        ["Sistemin güvenliği ve veri gizliliği", "Güvenlik B2B'de de çok önemlidir."],
+        ["Kullanıcıların sistemi kullanırken zaman tasarrufu sağlaması", "B2B'de verimlilik ve hız kritiktir."],
+        ["Ürünler hakkında detaylı ve doğru bilgi sunulması", "B2B alıcıları detaylı bilgiye ihtiyaç duyar."],
+        ["Müşteriyi heyecanlandırma, eğlendirme gibi ek hizmetler ve kullanıcı arayüzünün aşırı görselliği", "B2B'de işlevsellik ve sadelik, eğlenceden daha önemlidir."],
+        ["Sık işlem yapan kurumsal müşteriler için özel kestirmeler ve tekrarlayan işlemlerden kaçınılması", "Bu B2B'de kullanıcı deneyimi için önemlidir."]
+      ],
+      answer: 3,
+      summary: "Firmalar arası satış sistemleri kullanıcıları daha motive kullanıcılardır. Yüksek motivasyon, son kullanıcıya satış sistemlerindeki, müşteriyi heyecanlandırma, motivasyonunu yüksek tutma, eğlendirme gibi ek hizmetleri gereksiz duruma getirir. Daha sade bir kullanıcı arayüzü tasarımı ve daha detaylı bilgi içerir."
+    },
+    {
+      q: "5. Elektronik satış sistemlerinde 'prematüre ölüm' olarak adlandırılan sorunun temel nedeni nedir?",
+      options: [
+        ["Sistemin çok hızlı bir şekilde popüler olması ve aşırı yüklenmesi", "Bu farklı bir sorundur."],
+        ["Reklam ve tanıtımı için yeterince kaynak ayrılmamış olması ve sistemin gelir sağlayamaması", "Yetersiz tanıtım ve gelir eksikliği sistemin terk edilmesine yol açabilir."],
+        ["Personel eğitiminin çok uzun sürmesi ve maliyetli olması", "Bu bir sorundur ama prematüre ölümün doğrudan tanımı değildir."],
+        ["Kullanıcı arayüzünün çok basit ve sade olması", "Karmaşık arayüzler sorun olabilir, sadelik değil."],
+        ["Güvenlik önlemlerinin aşırı sıkı olması ve kullanıcıyı yorması", "Güvenlik önemlidir ama aşırısı kullanılabilirliği etkileyebilir."]
+      ],
+      answer: 1,
+      summary: "Reklam ve tanıtımı için yeterince kaynak ayrılmamış ve reklamı yapılmamış elektronik satış sistemleri, oluşturulmalarının ardından belirli bir süre içinde firma için bir gelir sağlayamamaları durumunda, güncellenmeleri için görevlendirilmiş personel diğer görevlere atanır. Böylece sistem hiçbir zaman ayağa kalkamaz."
+    },
+    {
+      q: "6. CRM (Müşteri İlişkileri Yönetimi) bilişim alanında nasıl tanımlanır?",
+      options: [
+        ["Sadece müşteri şikayetlerini toplayan bir yazılım olarak", "CRM daha kapsamlıdır."],
+        ["Firmaların muhasebe ve finans kayıtlarını tutan bir sistem olarak", "Bu ERP veya muhasebe yazılımlarının işidir."],
+        ["Satış, pazarlama ve servis alanlarında, müşteri merkezli iş süreçlerinin otomasyonu ve elektronik sistemler aracılığı ile geliştirilmesi olarak", "Bu, CRM'in bilişim alanındaki kapsamlı bir tanımıdır."],
+        ["Sadece web sitesi trafiğini analiz eden bir araç olarak", "Bu web analitiği araçlarının işidir."],
+        ["Çalışanların performansını değerlendiren bir sistem olarak", "Bu İK sistemlerinin bir modülüdür."]
+      ],
+      answer: 2,
+      summary: "Bilişim alanında geçerli kabul edilen CRM tanımı: Satış, pazarlama ve servis alanlarında, müşteri merkezli iş süreçlerinin otomasyonu ve elektronik sistemler aracılığı ile geliştirilmesidir."
+    },
+    {
+      q: "7. Başarılı bir Müşteri İlişkileri Yönetimi (CRM) uygulamasının, bir bilgisayar firmasından satın alınabilecek bir ürün paketinden ziyade bir 'iş felsefesi' olarak tanımlanmasının nedeni nedir?",
+      options: [
+        ["Çünkü CRM yazılımları çok pahalıdır.", "Maliyet bir faktör olabilir ama temel neden bu değildir."],
+        ["Çünkü CRM sadece büyük ölçekli firmalar için geçerlidir.", "Her ölçekte firma CRM'den faydalanabilir."],
+        ["Çünkü CRM, firmanın pek çok farklı organını (üst yönetim, farklı birimler) işin içine sokan, firma çapında koordinasyon, haberleşme ve adanmışlık gerektiren bir yaklaşımdır.", "CRM, teknolojik bir araç olmanın ötesinde, bütünsel bir kurumsal yaklaşım gerektirir."],
+        ["Çünkü CRM uygulamaları için özel bir donanıma ihtiyaç duyulmaz.", "Donanım ihtiyacı olabilir."],
+        ["Çünkü CRM, ERP sistemlerinin yerini tamamen almıştır.", "CRM ve ERP birbirini tamamlayabilir."]
+      ],
+      answer: 2,
+      summary: "Müşteri ilişkileri yönetiminin daha çok bir iş felsefesi olarak tanımlanması gerekmektedir. Bu iş felsefesi, firmanın pek çok farklı organını işin içine sokar. Üst yönetim ve idari yapı, farklı birimleri işin içine sokan müşteri ilişkileri yönetimini benimsemeli ve bu felsefenin sadece bir teknoloji uygulamasından ibaret olmadığını kabul etmelidir."
+    },
+    {
+      q: "8. Müşteri İlişkileri Yönetimi (CRM) fonksiyonu hangi üç ana öğeden oluşur?",
+      options: [
+        ["Üretim, Lojistik ve Finans", "Bunlar ERP ile daha çok ilgilidir."],
+        ["Satış, Pazarlama ve Servis", "CRM bu üç temel müşteri etkileşim noktasını kapsar."],
+        ["İnsan Kaynakları, Ar-Ge ve Muhasebe", "Bunlar farklı kurumsal fonksiyonlardır."],
+        ["Veri Depolama, Ağ Yönetimi ve Yazılım Geliştirme", "Bunlar BT altyapı öğeleridir."],
+        ["Reklam, Halkla İlişkiler ve Sosyal Medya", "Bunlar pazarlamanın alt dallarıdır."]
+      ],
+      answer: 1,
+      summary: "Müşteri ilişkileri yönetimi fonksiyonu üç ana öğeden oluşur: Satış, Pazarlama, Servis."
+    },
+    {
+      q: "9. CRM'de 'Pazarlama Otomasyonu' hangi işlemleri kapsar?",
+      options: [
+        ["Sadece satış sonrası müşteri anketlerini göndermeyi", "Bu servis veya geri bildirimle ilgilidir."],
+        ["Müşterilerin firmaya çekilmesi, hedef kitlelere özel kampanyalar yapılması ve kişiye özel pazarlama stratejileri oluşturulması", "Pazarlama otomasyonu bu tür faaliyetleri içerir."],
+        ["Satış personelinin performansını değerlendirmeyi", "Bu satış yönetimi veya İK ile ilgilidir."],
+        ["Muhasebe kayıtlarının otomatik olarak güncellenmesini", "Bu muhasebe sistemiyle ilgilidir."],
+        ["Ürünlerin depolanması ve sevkiyatının planlanmasını", "Bu lojistik ve SCM ile ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Pazarlama otomasyonu, müşterilerin firmaya çekilmesi işlemlerini ele alır. Müşterilerin çekilmesi, çekilen müşterilerin içeri alınması ve telefon ya da e-posta gibi diğer elektronik yöntemlerle pazarlama işlemleri bunların başlıcalarıdır. Kişiye özel pazarlama, müşteri profillerine göre pazarlama stratejileri oluşturmayı içerir."
+    },
+    {
+      q: "10. Müşteri ilişkileri yönetiminin 'Servis' bölümünde, müşterinin kendi kendine sağladığı (self-servis) hizmetlere bir örnek ne olabilir?",
+      options: [
+        ["Müşterinin çağrı merkezini arayarak bir temsilciyle görüşmesi", "Bu temsilci destekli bir servistir."],
+        ["Müşterinin web tabanlı bir sistem aracılığıyla siparişinin durumunu (örn: kargoya verilip verilmediğini) takip edebilmesi", "Bu bir self-servis örneğidir."],
+        ["Bir satış elemanının müşteriyi evinde ziyaret ederek ürün tanıtması", "Bu yüz yüze satıştır."],
+        ["Firmanın müşteriye basılı bir kullanım kılavuzu göndermesi", "Bu fiziksel bir dokümantasyondur."],
+        ["Müşterinin bir mağazaya giderek ürünü iade etmesi", "Bu fiziksel bir işlemdir."]
+      ],
+      answer: 1,
+      summary: "Müşterinin kendi kendine sağladığı, self servis denebilecek hizmetler de servis ilişkilerinde tercih edilen bir yöntem olmaya başlamıştır. Örneğin, müşteri, web tabanlı sistem aracılığı ile, siparişinin postaya verilip verilmediğini, postaya verildi ise şu anda nerede olduğunu takip edebilir."
+    },
+    {
+      q: "11. Müşteri İlişkileri Yönetimi (CRM) sistemlerinde, farklı departmanların (satış, pazarlama, servis) ortak bir müşteri veritabanına sahip olmasının temel faydası nedir?",
+      options: [
+        ["Her departmanın kendi özel verilerini diğerlerinden gizlemesini sağlamak", "Ortak veritabanı paylaşımı hedefler."],
+        ["Müşteri bilgilerinde tutarsızlıklar, mükerrer kayıtlar ve güncel olmayan bilgiler oluşmasını teşvik etmek", "Tam tersine bu sorunları önler."],
+        ["Firma çapında müşteri etkileşimlerinin bir arada ve organize bir biçimde yürütülmesini, tüm müşteri ilişkilerinin tek bir yapıda, uyumlu ve koordineli yönetilmesini sağlamak", "Ortak veritabanı bu entegrasyonu ve tutarlılığı sağlar."],
+        ["Sadece satış departmanının müşteri verilerine erişebilmesini sağlamak", "İlgili tüm departmanların erişimi hedeflenir."],
+        ["Veritabanı maliyetlerini artırmak", "Verimlilik ve etkinlik artışıyla maliyet avantajı sağlayabilir."]
+      ],
+      answer: 2,
+      summary: "Teorik olarak herhangi bir müşteri ilişkileri yönetim sisteminin bölümlerarası ortak müşteri veritabanına sahip olması esastır. Farklı bölümlerindeki veritabanlarını birleştirmemiş olan firmalarda, tutarsızlıklar, aynı müşteri için birden fazla farklı kayıtlar, bazı bilgilerin eski veya geçersizliği büyük ölçüde söz konusudur. Bu tutarsızlıklar, bütün firmanın etkinliğini ve işleyişini olumsuz olarak etkiler."
+    },
+    {
+      q: "12. CRM sistemlerinin 'analiz yeteneği', firmaya hangi temel konuda yardımcı olur?",
+      options: [
+        ["Sadece günlük operasyonel raporların üretilmesinde", "Stratejik analizler de yapar."],
+        ["Müşterinin firma için olan ticari değerini optimize etme amacı taşıyan, gerçek zamanlı ve derinlemesine analizler yaparak yönetime karar desteği sunmada", "CRM analizleri müşteri değerini ve memnuniyetini artırmaya yöneliktir."],
+        ["Çalışanların sosyal medya kullanımını denetlemede", "Bu farklı bir konudur."],
+        ["Rakiplerin finansal tablolarını incelemede", "Bu rekabet analizidir, CRM'in doğrudan işlevi değildir."],
+        ["Web sitesinin sunucu yükünü azaltmada", "Bu teknik bir konudur."]
+      ],
+      answer: 1,
+      summary: "Müşteri ilişkileri yönetiminin bir başka boyutu da firmanın sahip olduğu analiz yeteneğidir. Analizler, müşterinin firma için olan ticari değerini optimize etme amacı taşır. Gerçek zamanda (anında, real-time) yapılan analizler, günümüzde müşteri ilişkileri yönetiminin zaten önemli olan klasik raporlama sistemlerine yardımcı olarak yürütülmekte ve hem nitel hem de nicel açıdan sonuçlara ulaşılmasını sağlamaktadır."
+    },
+    {
+      q: "13. Elektronik ticaret uygulamalarını hayata geçirirken birçok firmanın ihmal ettiği temel müşteri ilişkileri prensibi nedir?",
+      options: [
+        ["Ürün fiyatlarını mümkün olduğunca yüksek tutmak", "Bu bir fiyatlandırma stratejisidir."],
+        ["Müşteri şikayetlerini dikkate almamak", "Bu olumsuz bir yaklaşımdır."],
+        ["Elektronik ticaret uygulamasını, müşteri ilişkileri uygulamasından tamamen ya da kısmen bağımsız olarak algılamak ve entegre etmemek", "Bu, yaygın bir ihmal ve sorundur."],
+        ["Sadece e-posta yoluyla müşteri desteği sunmak", "Çok kanallı destek önemlidir."],
+        ["Web sitesini karmaşık ve anlaşılması zor bir şekilde tasarlamak", "Kullanıcı dostu tasarım önemlidir."]
+      ],
+      answer: 2,
+      summary: "Birçok firmanın, müşterilerle olan ilişkide en kritik noktada bulunan elektronik ticaret uygulamalarını hayata geçirirken, temel müşteri ilişkileri prensiplerini ihmal ediyor olmasıdır. Birçok firma, elektronik ticaret uygulamasını, müşteri ilişkileri uygulamasından tamamen ya da kısmen bağımsız olarak algılamaktadır."
+    },
+    {
+      q: "14. Müşteri ilişkileri yönetiminde 'Entegrasyon ve Tutarlılık' neden önemlidir?",
+      options: [
+        ["Müşterilerin farklı kanallardan farklı ve çelişkili bilgiler almasını sağlamak için", "Tam tersine tutarlı bilgi hedeflenir."],
+        ["Firma içinde gereksiz iş yüklerinin oluşmasına ve satış fırsatlarının kaçırılmasına yol açmak için", "Bu, entegrasyonsuzluğun bir sonucudur."],
+        ["Müşterilere her iletişim kanalında (telefon, internet, mağaza) aynı kalitede, tutarlı hizmet ve bilgi sunmak; firma içi eşgüdümü sağlamak için", "Entegrasyon ve tutarlılık müşteri memnuniyeti ve operasyonel verimlilik için kritiktir."],
+        ["Sadece web sitesindeki fiyatların güncel olmasını sağlamak, diğer kanalları göz ardı etmek için", "Tüm kanallarda tutarlılık önemlidir."],
+        ["Müşteri verilerinin farklı departmanlarda ayrı ayrı ve senkronize olmadan tutulması için", "Bu veri tutarsızlığına yol açar."]
+      ],
+      answer: 2,
+      summary: "Bir firma ile ilişkide bulunan müşteriler, yüksek kalitede ve her müşteriye aynı uygulanan hizmeti arayacaklardır. Bu kalitenin, ilişkide bulundukları metoda bağlı olmamasını isteyeceklerdir. Ürün ve firma bilgisi her kanalda aynı şekilde tutarlı olarak verilmelidir. Entegre olamayan sistemler, yalnızca müşteriyi kızdırmakla kalmaz, firma içinde gereksiz iş yüklerinin oluşmasına ve bazı satış fırsatlarının kaçırılmasına yol açar."
+    },
+    {
+      q: "15. Sanal müşteri gruplarının, ürünü satan firma tarafından oluşturulması hangi durumda sakıncalı olabilir?",
+      options: [
+        ["Ürün çok popüler ve sorunsuz olduğunda", "Bu durumda faydalı olabilir."],
+        ["Memnuniyetsiz müşteri sayısı belirli bir oranın üzerinde ve ürünlerde bilinen sorunlar varsa (bu sorunlar giderilmeden önce)", "Bu durumda olumsuz bir şikayet ortamı oluşabilir."],
+        ["Firmanın güçlü bir resmi müşteri destek hattı olduğunda", "Bu durumda bile sanal gruplar farklı bir işlev görebilir."],
+        ["Rakiplerin de sanal müşteri grupları olduğunda", "Bu bir rekabet unsuru olabilir."],
+        ["Müşterilerin ürün hakkında çok fazla bilgiye sahip olduğu durumlarda", "Bilgi paylaşımı faydalı olabilir."]
+      ],
+      answer: 1,
+      summary: "Eğer memnuniyetsiz müşteri sayısı belirli bir oranın üzerinde ve ürünlerde bilinen sorunlar varsa, bu sorunlar giderilmeden ve belirli bir güven kazanılmadan önce, sanal kullanıcı gruplarının oluşturulması sakıncalıdır. Olumsuz deneyimleri olan kullanıcılar daha çok seslerini duyururlar ve sonuçta bir şikâyet ortamı ile karşı karşıya kalmak mümkündür."
+    }
+  ];
+
+  // Add 15 more questions based on the remaining PDF content to reach 30.
+  // Focus on:
+  // - Dolaylı Satış details (payment, who creates them)
+  // - Mikro Site (relationship models: kira, komisyon, barter; when it's NOT suitable)
+  // - Mal Profilleri (how they are created, dynamic info usage)
+  // - B2B Satış (specific design considerations like avoiding repetitive details)
+  // - E-Satış Sorunları (Altyapı Maliyeti, Personel Eğitimi, Güvenlik, Ölçeklenebilirlik, Döküman Yön., Satış Aksaklıkları)
+  // - CRM (Satış Gücü Otomasyonu details, Pazarlama Otomasyonu (içerik yön., birebir pazarlama), Servis (self-servis), Müşteri Verileri, İş Kuralları, Firma/Ürün Bilgisi tutarlılığı, CRM Pazarı (firmalar), CRM Sonuçları/Avantajları)
+
+
+  questions.push(
+    {
+      q: "16. Dolaylı satış sistemleri genellikle hangi tür ödeme altyapısını kullanır veya müşteriyi nereye yönlendirir?",
+      options: [
+        ["Sistem içinde entegre kredi kartı ve online bankacılık modülleri", "Dolaylı satış sistemleri genellikle ödeme altyapısı içermez."],
+        ["Müşteriyi gerekli kişilerle buluşturmak için randevu sistemi veya basit adres/telefon bilgisi; satış farklı bir kanaldan gerçekleşir", "Bu, dolaylı satışın tipik işleyişidir."],
+        ["Sadece ön ödemeli kartlar ve elektronik para", "Ödeme altyapısı genellikle bulunmaz."],
+        ["Kripto para cüzdanları ve blockchain tabanlı ödemeler", "Bu çok spesifik bir ödeme türüdür."],
+        ["Fiziksel mağazada kapıda ödeme seçeneği", "Yönlendirme yapar, doğrudan ödeme almaz."]
+      ],
+      answer: 1,
+      summary: "Dolaylı satış sistemleri, mal ya da hizmetin satış işleminin gerçekleşmesi için gerekli olan ödeme altyapısını içermezler. Bunun yerine, müşteri ya da ziyaretçiyi gerekli kişilerle buluşturmak için randevu sistemine ya da basit olarak adres telefon bilgisine sahiptirler. Satış işlemi, bir başka zaman diliminde farklı bir kanaldan gerçekleştirilir."
+    },
+    {
+      q: "17. Mikro site sahibi bir firma ile ana site sahibi firma arasındaki ilişki modellerinden hangisi, yapılan satışlardan elde edilen kazançtan pay alma prensibine dayanır?",
+      options: [
+        ["Kira (belirli bir süre için sabit ödeme)", "Bu sabit bir ödemedir."],
+        ["Komisyon (kazançtan hisse)", "Komisyon, satış başına pay almaktır."],
+        ["Barter (karşılıklı çıkar değiş tokuşu)", "Bu mal/hizmet takasıdır."],
+        ["Sponsorluk (marka bilinirliği için ödeme)", "Bu farklı bir pazarlama anlaşmasıdır."],
+        ["Reklam Geliri Paylaşımı (ana sitenin reklamlarından pay alma)", "Bu farklı bir modeldir."]
+      ],
+      answer: 1,
+      summary: "Mikro site sahibi aşağıdaki modellerde ana firma ile ilişki kurar: Kira (belirli bir süre için sabit ödeme), Komisyon (kazançtan hisse), Barter (karşılıklı çıkar değiş tokuşu)."
+    },
+    {
+      q: "18. Mal profilleri oluşturulurken, belirli statüdeki (örn: cinsiyet) müşterilerin satın alma bilgileri ne amaçla kullanılır?",
+      options: [
+        ["Müşterilere rastgele ürünler önermek için", "Hedefli öneriler amaçlanır."],
+        ["Bu müşterilerin yöneldiği malların belirlenmesi ve bu verilere göre mal profillerinin düzenlenmesi amacıyla", "Müşteri davranışları mal profillerini şekillendirir."],
+        ["Sadece en pahalı ürünlerin listelenmesi için", "Fiyat tek kriter değildir."],
+        ["Stokta kalmış ürünlerin eritilmesi için", "Bu farklı bir satış stratejisidir."],
+        ["Rakiplerin ürünlerini kopyalamak için", "Bu etik bir yaklaşım değildir."]
+      ],
+      answer: 1,
+      summary: "Belirli statik profildeki (örneğin belirli cinsiyetteki) müşterilerin satınalma bilgileri, bu müşterilerin yöneldiği malların belirlenmesi amacıyla kullanılır. Bu verilere ve bilgi tabanlı kriterlere bakılarak mal profilleri düzenlenir."
+    },
+    {
+      q: "19. Firmalar arası (B2B) elektronik satış sistemlerinde, her gün alışveriş yapan bir kurumsal müşteriye her satış işleminin sonunda tekrar tekrar adres sorulmaması neden önemlidir?",
+      options: [
+        ["Müşterinin adresini unutmasını sağlamak için", "Bu mantıksızdır."],
+        ["Sistemin veri depolama kapasitesini test etmek için", "Bu bir test yöntemi değildir."],
+        ["Kullanıcının sistemi kullanırken zaman tasarrufu sağlamasına özen gösterilmesi ve bezginlik veren detayların tekrarlanmaması için", "Kullanıcı deneyimi ve verimlilik için önemlidir."],
+        ["Adres bilgilerinin güvenliğini artırmak için", "Bu farklı bir güvenlik konusudur."],
+        ["Müşteriyi başka bir adrese yönlendirmek için", "Bu bir yönlendirme stratejisi değildir."]
+      ],
+      answer: 2,
+      summary: "Çok sık sisteme giren kullanıcılar için özel kestirmelerin bulunması ve bu kullanıcıların çok fazla yapıldığında bezginlik veren detayları tekrar tekrar yapması istenmemelidir. Örneğin, her gün alışveriş yapan bir kurumsal müşteriye her satış işleminin sonunda adres sorulmamalıdır."
+    },
+    {
+      q: "20. Elektronik satış sistemlerinde karşılaşılan 'altyapı maliyeti' sorunu ne zaman iş planının uygulanabilirliğini olanaksız kılar?",
+      options: [
+        ["Altyapı maliyeti, yıllık cironun %10'unu geçtiğinde", "Bu genel bir kural değildir."],
+        ["Sistemi oluşturmak için gereken altyapı maliyeti, sistemi kullanarak elde edilebilecek getiriden daha fazla olduğunda", "Getiri, maliyeti karşılamıyorsa yatırım anlamsızlaşır."],
+        ["Rakiplerin altyapı maliyetlerinden daha düşük olduğunda", "Bu rekabet avantajı olabilir."],
+        ["Sadece bulut tabanlı bir altyapı kullanıldığında", "Bulut maliyet etkin olabilir."],
+        ["Personel eğitim maliyetleri sıfır olduğunda", "Bu farklı bir maliyet kalemidir."]
+      ],
+      answer: 1,
+      summary: "Altyapı Maliyeti: Sistemi oluşturmak için gereken altyapı maliyeti, sistemi kullanarak elde edilebilecek getiriden daha fazla olabilir. Bu durumda iş planının uygulanabilirliğinden söz etmek olanaksız olacaktır."
+    },
+    {
+        q: "21. CRM'in 'Satış Gücü Otomasyonu' (Sales Force Automation) kapsamında aşağıdaki işlemlerden hangisi yer alır?",
+        options: [
+            ["Müşteri hizmetleri personelinin vardiya planlaması", "Bu operasyonel bir İK görevidir."],
+            ["Web sitesi için içerik üretimi ve yönetimi", "Bu içerik yönetimi veya pazarlama ile ilgilidir."],
+            ["Satış süreci içerisinde öngörüler oluşturma, iletişim ve fiyatlandırma işlemleri, teklif hazırlama ve kazanç/kayıp analizleri", "Bunlar satış gücü otomasyonunun temel işlevleridir."],
+            ["Firmanın muhasebe defterlerinin tutulması ve vergi beyannamelerinin hazırlanması", "Bu muhasebe sistemlerinin görevidir."],
+            ["Yeni ürünlerin araştırma ve geliştirme süreçleri", "Bu Ar-Ge faaliyetidir."]
+        ],
+        answer: 2,
+        summary: "Satış gücü otomasyonu (Sales Force Automation) terimi; satış süreci içerisinde öngörüler oluşturması, iletişim ve fiyat çakarması işlemleri, teklif hazırlanması, kazanç/kayıp analizlerinin gerçekleştirilmesi gibi işlemleri içerir."
+    },
+    {
+        q: "22. Pazarlama otomasyonunda 'kişiye özel pazarlama' stratejisinin temel dayanağı nedir?",
+        options: [
+            ["Tüm müşterilere aynı standart mesajların gönderilmesi", "Bu kitle pazarlamasıdır."],
+            ["Sadece en çok satan ürünlerin tanıtımının yapılması", "Bu ürün odaklı bir yaklaşımdır."],
+            ["Müşterilerin satın alma alışkanlıkları, kişisel tercihleri ve ihtiyaçlarına göre özelleştirilmiş pazarlama yapılması", "Kişiye özel pazarlama, müşteri verilerine dayanır."],
+            ["Rastgele seçilen müşterilere indirim kuponları dağıtılması", "Bu hedefli bir yaklaşım değildir."],
+            ["Reklam bütçesinin tüm pazarlama kanallarına eşit olarak dağıtılması", "Bu bir bütçe dağıtım stratejisidir."]
+        ],
+        answer: 2,
+        summary: "İçerik yönetimi ve birebir pazarlama, müşterilerin kendi satın alma alışkanlıklarına, kişisel tercihlerine ve ihtiyaçlarına göre özelleştirilmiş pazarlama yapısının kullanılması ile birlikte önem kazanmıştır."
+    },
+    {
+        q: "23. Müşteri İlişkileri Yönetimi (CRM) ve Elektronik Ticaret sistemlerinin entegre ve eşgüdümlü çalışmasının firmaya sağladığı en önemli fayda nedir?",
+        options: [
+            ["Müşteri verilerinin farklı sistemlerde tutularak güvenliğinin artırılması", "Entegrasyon tek ve tutarlı veri hedefler."],
+            ["Her iki sistemin de birbirinden bağımsız olarak daha hızlı çalışması", "Entegrasyon sinerji yaratır."],
+            ["Firmaya müşterilerin geniş bir perspektifte değerlendirilmesini ve satış kanalları arasında uyum sağlanmasını sağlaması", "Entegre yaklaşım bütünsel bir müşteri görünümü sunar."],
+            ["Müşteri şikayetlerinin sayısını artırması", "Müşteri memnuniyetini artırmayı hedefler."],
+            ["Sadece e-ticaret kanalından gelen müşterilere odaklanılması", "Tüm kanalları kapsar."]
+        ],
+        answer: 2,
+        summary: "Elektronik ticaret ve müşteri İlişkileri yönetimi uygulamalarının birlikte ve eşgüdümlü bir biçimde çalışması, firmaya müşterilerin geniş bir perspektifte değerlendirilmesini sağlayabilmektedir. Böylece, satış kanalları arasında uyumsuzluk olmayacak ve müşteri ilişkilerinde optimum kazanç sağlanacaktır."
+    },
+    {
+        q: "24. CRM stratejisinde 'Müşteri Verileri'nin güncel ve firma içinde ihtiyacı olan herkesin erişebileceği şekilde düzenlenmesinin temel amacı nedir?",
+        options: [
+            ["Veritabanı boyutunu küçültmek için eski verileri silmek", "Güncellik ve erişilebilirlik önemlidir."],
+            ["Müşterinin firma ile her iletişim kurduğunda tüm hikayesini baştan anlatmasını sağlamak", "Tam tersi, önceki olaylar personelin önünde hazır olmalıdır."],
+            ["Belirli bir müşteri ile ilişkide mevcut sorunların (örn: iade edilen mal) çok dikkatli ve görülür biçimde işaretlenmesi ve önceki olayların personelin önünde hazır bulunması", "Bu, etkili müşteri yönetimi için kritiktir."],
+            ["Sadece yöneticilerin müşteri verilerine erişimini sağlamak", "İhtiyacı olan her kişinin erişimi hedeflenir."],
+            ["Müşterilerin ekonomik alım güçlerini gizlemek", "Bu tür bilgiler analize dahil edilir."]
+        ],
+        answer: 2,
+        summary: "Müşterilerin, ekonomik alım güçleri, harcama profilleri ve mevcut demografik (toplum içindeki özellikleri) güncel bir biçimde saklanması temel hedef olarak kabul edilmelidir. Bu bilgiler ayrıca, firma bünyesinde müşteri ile iletişim halinde olan ve ihtiyacı olan her kişinin, rahatlıkla ulaşabileceği bir biçimde düzenlenmelidir."
+    },
+    {
+        q: "25. Bir firmada, farklı bölümlerin (satış, pazarlama, servis) müşteriyle ilgili iş kurallarında farklılıklar olması ne gibi bir soruna yol açabilir?",
+        options: [
+            ["Müşteri memnuniyetinin her zaman artmasına", "Çelişkiler memnuniyetsizliğe yol açar."],
+            ["İstenmeden de olsa, çeşitli kararların verilmesinde çelişkilere ve tutarsızlıklara yol açabilir.", "Farklı iş kuralları uyumsuzluk yaratır."],
+            ["Tüm iş süreçlerinin otomatik olarak hızlanmasına", "Çelişkiler süreçleri yavaşlatabilir."],
+            ["Firmanın pazarlama maliyetlerinin düşmesine", "Verimsizlik maliyetleri artırabilir."],
+            ["Sadece klasik (arka plan) modüllerin etkilenmesine, e-ticaretin etkilenmemesine", "Tüm müşteri etkileşim noktaları etkilenebilir."]
+        ],
+        answer: 1,
+        summary: "Firma çapında iş kuralları, bazen farklı bölümlerde değişiklikler gösterir. Bu değişiklikler, istenmeden de olsa, çeşitli kararların verilmesinde, çelişkilere yol açabilir."
+    },
+    {
+        q: "26. Müşteri İlişkileri Yönetimi (CRM) pazarında, klasik arka plan yazılım firmalarının (örn: Oracle, Logo) avantajı nedir?",
+        options: [
+            ["Sadece en yeni teknolojilere sahip olmaları", "Mevcut sistemleri ve müşteri tabanları da önemlidir."],
+            ["CRM konusunda hiçbir deneyimlerinin olmaması", "Mevcut sistemleri CRM ile entegre edebilirler."],
+            ["Ellerinde olan mevcut arka plan yazılımlarını kolaylıkla yeni çözümde tümleşik olarak kullanabilecek olmaları ve ellerinde hazır müşteri firmaların bulunması", "Bu, pazara girişte önemli bir avantajdır."],
+            ["Donanım ve altyapı konusunda uzman olmaları", "Bu daha çok donanım firmalarının avantajıdır."],
+            ["Sadece küçük ölçekli firmalara hizmet vermeleri", "Geniş bir müşteri yelpazeleri olabilir."]
+        ],
+        answer: 2,
+        summary: "Klasik arka plan yazılım firmalarının avantajı, ellerinde olan mevcut arka plan yazılımlarını kolaylıkla yeni çözümde tümleşik olarak kullanabilecek olmaları ve ellerinde hazır müşteri firmaların bulunmasıdır."
+    },
+    {
+        q: "27. Sistem entegrasyonu firmalarının karmaşık CRM çözümlerinde önemli bir rol oynamasının nedeni nedir?",
+        options: [
+            ["CRM yazılımlarının fiyatını düşürmek", "Entegrasyon ek bir maliyettir."],
+            ["Mevcut sistemlerle tümleşik çalışan CRM sistemlerinin oluşturulmasının yoğun bilgi, beceri ve çalışma gerektirmesi", "Sistem entegrasyonu uzmanlık gerektirir."],
+            ["Sadece donanım tedariki sağlamak", "Yazılım ve süreç entegrasyonu da yaparlar."],
+            ["Çağrı merkezi yazılımlarını yeniden adlandırmak", "Bu yanıltıcı bir pazarlama taktiğidir."],
+            ["Microsoft gibi büyük firmalarla rekabet etmek", "Rekabet bir sonuçtur, rolün nedeni değildir."]
+        ],
+        answer: 1,
+        summary: "Karmaşık müşteri ilişkileri yönetimi çözümleri, özellikle mevcut sistemlerle tümleşik çalışan sistemlerin oluşturulması oldukça yoğun bilgi, beceri ve çalışma gerektiren bir işlemdir. Yapılan analizlerde, sistem entegrasyonu masraflarının, müşteri ilişkileri yazılımı yanında 2 ile 10 kat arasında daha yüksek olduğu görülmektedir."
+    },
+    {
+        q: "28. İstatistiklere göre, firmaların kârlarının büyük bir çoğunluğu (%80 civarı) hangi müşteri grubundan sağlanmaktadır?",
+        options: [
+            ["İlk kez alışveriş yapan yeni müşterilerden", "Yeni müşteri kazanımı maliyetlidir."],
+            ["Rakip firmalardan transfer edilen müşterilerden", "Bu da bir müşteri kazanım şeklidir."],
+            ["Tekrar gelen eski (mevcut) müşterilerden", "Mevcut müşterileri tutmak genellikle daha kârlıdır."],
+            ["Sadece online kanallardan gelen müşterilerden", "Kanal bağımsız bir durumdur."],
+            ["Yurt dışından gelen yabancı müşterilerden", "Bu pazar segmentine bağlıdır."]
+        ],
+        answer: 2,
+        summary: "Yine istatistiklere bakıldığında, firmaların kârlarının yüzde 80'inin tekrar gelen eski müşterilerden sağlandığı ortaya çıkmaktadır."
+    },
+    {
+        q: "29. Müşteri bilgilerinin etkin bir şekilde kullanılmasının firmaya sağladığı avantajlardan biri aşağıdakilerden hangisidir?",
+        options: [
+            ["Tüm müşterilere standart ve aynı hizmetin sunulması", "Kişiselleştirilmiş hizmet hedeflenir."],
+            ["Pazarlama maliyetlerinin her zaman artması", "Hedeflenmiş pazarlama ile maliyetler düşürülebilir."],
+            ["En çok kâr bırakan müşterilerin belirlenip, onlara daha dikkatle yaklaşılması", "Bu, kârlılığı artıran önemli bir stratejidir."],
+            ["Satış sürecinin her zaman daha uzun sürmesi", "Verimlilikle süreç kısalabilir."],
+            ["Farklı bölümlerin aynı müşteri hakkında farklı bilgilere sahip olması", "Tek ve tutarlı bilgi hedeflenir."]
+        ],
+        answer: 2,
+        summary: "Müşteri bilgilerine sahip ve bunları kolaylıkla kullandıracak uygulamalara sahip bir firma; en çok kar bırakan müşterilerin belirlenip, onlara daha dikkatle yaklaşılması gibi avantajlara sahiptir."
+    },
+    {
+        q: "30. Sanal müşteri gruplarının, firmayla ilgisi olmayan üçüncü bir firma tarafından oluşturulmasının ardındaki iş modeli ne olabilir?",
+        options: [
+            ["Sadece hayır amaçlı, gönüllülük esasına dayalı bir yapı", "Bu bir olasılıktır ama tek model değildir."],
+            ["Ürünü satan firmanın gizli bir pazarlama taktiği", "Bu da olabilir ama PDF'teki ifade farklıdır."],
+            ["Reklam ve diğer yan ürünlerin pazarlanması ile gelir elde etme", "Üçüncü firmalar bu tür gelir modelleriyle sanal gruplar oluşturabilir."],
+            ["Rakipler hakkında istihbarat toplama", "Bu etik bir yaklaşım değildir."],
+            ["Kullanıcıların kişisel verilerini satma", "Bu gizlilik ihlalidir."]
+        ],
+        answer: 2,
+        summary: "Sanal müşteri grupları, tamamen vakıf sistemi ile çalıştıkları gibi, üçüncü firma reklam ve diğer yan ürünlerin pazarlanması ile oluşturulmuş bir iş modeli çerçevesinde de oluşturabilir."
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+  
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

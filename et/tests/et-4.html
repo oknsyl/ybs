@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 4 - İnternet ve Mobil İletişim (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 4 Sınavı (İnternet ve Mobil İletişim Teknolojileri - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Robert Kahn ilkelerinin İnternet'in ticari bir faktör olmasında oynadığı rol nedir?",
+      options: [
+        ["İnternet'in sadece tek bir ülke tarafından kontrol edilmesini sağlaması", "Açık mimari, merkezi kontrole karşıdır."],
+        ["Tüm standartların belirli büyük firmaların hakimiyetinde olmasını teşvik etmesi", "Bu, ticari risk yaratır ve açık mimariyle çelişir."],
+        ["İnternet'in bir sahibi olmaması ve herkes tarafından uygulanabilir bir mimariye sahip olmasıyla ticari risk faktörünü en aza indirmesi", "Açık mimari, bağımsız yapıları destekler ve riski azaltır."],
+        ["İnternet erişim maliyetlerini bilinçli olarak yüksek tutması", "Bu, yaygınlaşmayı engeller."],
+        ["Sadece devlet kurumlarının İnternet'i kullanabilmesini sağlaması", "Açık mimari herkese açıktır."]
+      ],
+      answer: 2,
+      summary: "Internet'in bir sahibi olmaması ve açık mimariye, yani herkes tarafından uygulanabilir bir mimariye sahip olması, ticari risk faktörünü en aza indirmiştir."
+    },
+    {
+      q: "2. Aşağıdakilerden hangisi İnternet uygulamalarında ortaya çıkan yeni alanlardan biri olarak kabul edilemez?",
+      options: [
+        ["Mobil iletişim ve cep telefonlarının İnternet uygulamaları", "Bu yeni ve önemli bir alandır."],
+        ["Akıllı evler ve ev aletlerinin İnternet'e bağlanması", "Nesnelerin İnterneti (IoT) kapsamında yeni bir alandır."],
+        ["Geleneksel posta (mektup) gönderim hizmetleri", "Bu, İnternet öncesi bir iletişim yöntemidir ve İnternet uygulaması değildir."],
+        ["İnternet robotları ve sanal sekreterler", "Yapay zeka ve otomasyon tabanlı yeni uygulamalardır."],
+        ["Elektronik ticaret uygulamaları", "İnternet'in en önemli uygulama alanlarındandır."]
+      ],
+      answer: 2,
+      summary: "Bilinen dosya paylaşımı, elektronik posta ve web servisleri dışında İnternet; mobil iletişim, e-ticaret, akıllı evler, İnternet robotları gibi daha özgün uygulamalara sahne olmaya başlamıştır. Geleneksel posta ise İnternet öncesi bir yöntemdir."
+    },
+    {
+      q: "3. İnternet'in elektronik ticarete olan temel etkilerinden biri aşağıdakilerden hangisidir?",
+      options: [
+        ["Mal ve hizmet akışında bilgi iletişim hızını olağanüstü yükseltmesi ve yeni pazarlama modellerinin gelişmesine yol açması", "İnternet, ticarette hızı ve pazarlama yöntemlerini dönüştürmüştür."],
+        ["Çok şubeli firmaların özel ağlar kurma ihtiyacını artırması", "VPN gibi teknolojilerle özel ağ ihtiyacı azalmıştır."],
+        ["Sadece büyük ölçekli firmaların e-ticaret yapabilmesini sağlaması", "Küçük firmalar için de fırsatlar sunar."],
+        ["HTML dilinin kullanımını gereksiz kılması", "HTML, web içeriğinin temelidir."],
+        ["Firmaların bilişim altyapılarını kullanma ihtiyacını azaltması", "E-ticaret bilişim altyapısı gerektirir."]
+      ],
+      answer: 0,
+      summary: "Internet, mal ve hizmet akışında bilgi iletişim hızını olağanüstü yükseltmiş, yeni pazarlama modellerinin gelişmesine yol açmıştır."
+    },
+    {
+      q: "4. İnternet'in sunduğu ticari fırsatlar göz önüne alındığında, 'Internet dükkânı' kurmanın temel avantajı nedir?",
+      options: [
+        ["Sadece yerel müşterilere ulaşım imkanı sunması", "İnternet küresel erişim sağlar."],
+        ["Yüksek yatırım maliyetleri gerektirmesi", "Çok az bir yatırım gerektirebilir."],
+        ["Çok az bir yatırımla potansiyel olarak 800 milyondan fazla kişiye (müşteriye) ulaşma imkanı sunması", "Geniş kitlelere düşük maliyetle erişim temel avantajdır."],
+        ["Dil ve tanıtım sorunlarını tamamen ortadan kaldırması", "Bu sorunlar devam eder ancak fırsatlar büyüktür."],
+        ["Sadece belirli teknoloji firmalarının yararlanabileceği bir platform olması", "Her türden firma yararlanabilir."]
+      ],
+      answer: 2,
+      summary: "Çok az bir yatırım gerektiren bir \"Internet dükkânı\" kendisini bir anda 800 milyon kişinin önünde bulabilir. Bu büyüklük başka hiçbir modelde yakalanması mümkün olmayan bir büyüklüktür."
+    },
+    {
+      q: "5. Mobil iletişim ağlarının, özellikle altyapının gelişmemiş olduğu veya yatırımın zor olduğu bölgelerde tercih edilmesinin temel nedeni nedir?",
+      options: [
+        ["Sadece sesli iletişim için uygun olması", "Veri iletişimi de sağlar."],
+        ["Diğer iletişim imkanları ile ulaşılamayan noktalara erişim sağlaması ve bu noktalarda ekonomik faaliyetleri mümkün kılması", "Mobil iletişim, altyapı eksikliğini gidererek erişim sağlar."],
+        ["Her zaman sabit hatlardan daha yüksek maliyetli olması", "Bazı durumlarda daha düşük maliyetli olabilir."],
+        ["Sadece büyük şehirlerde ve yoğun nüfuslu alanlarda çalışabilmesi", "Altyapının yetersiz olduğu her yerde çözüm olabilir."],
+        ["Bluetooth teknolojisi ile aynı kapsama alanına sahip olması", "GSM gibi teknolojiler çok daha geniş kapsama alanına sahiptir."]
+      ],
+      answer: 1,
+      summary: "Mobil iletişim, başka iletişim imkanları ile ulaşılması olanaksız olan noktalara ulaşımı sağlamış ve bu noktalarda ekonomik faaliyelerin yapılmasını bereberinde getirmiştir. Özellikle altyapının gelişiminin olanaksız ya da büyük yatırım gerektirdiği durumlarda mobil iletişim tercih edilmektedir."
+    },
+    {
+      q: "6. Bluetooth teknolojisinin temel kullanım amacı ve özelliği nedir?",
+      options: [
+        ["Uzak mesafeler arasında yüksek hızlı veri transferi sağlamak", "Bluetooth kısa mesafelidir."],
+        ["Mobil cihazların İnternet'e sürekli bağlı kalmasını sağlamak", "Bu GPRS gibi teknolojilerin işlevidir."],
+        ["Yakın mesafedeki cihazlar arasında (örn: cep telefonu ile bankamatik) kablosuz haberleşmeyi sağlamak", "Bluetooth, kısa mesafeli kablosuz iletişim için tasarlanmıştır."],
+        ["SMS mesajlarının şifrelenerek gönderilmesini sağlamak", "Bu güvenlik protokolleriyle ilgilidir."],
+        ["Geniş bantlı video akışını desteklemek", "Bant genişliği genellikle bu tür uygulamalar için sınırlıdır."]
+      ],
+      answer: 2,
+      summary: "Yeni kuşak mobil cihazlar özellikle yakınlarındaki diğer cihazlarla haberleşme özellikleri (Bluetooth teknolojisi) aracılığı ile çok yeni elektronik ticaret uygulamalarını olası duruma getirmiştir."
+    },
+    {
+      q: "7. Geniş bantlı İnternet erişiminin, özellikle firmaların elektronik ortamda üretken çalışmalar yapabilmesi açısından önemi nedir?",
+      options: [
+        ["Veri transfer hızını düşürerek daha dikkatli çalışmayı teşvik etmesi", "Geniş bant hızı artırır."],
+        ["Sadece kişisel bilgisayarların multimedya içeriği elde etmesini sağlaması", "Firmalar için de kritik öneme sahiptir."],
+        ["Firmaların elektronik ağ ortamından yararlanabilmesi için genellikle gerekli olan yüksek hızı sağlaması", "Yüksek hız, firmaların verimliliği için gereklidir."],
+        ["Telefon santrallerinde herhangi bir değişiklik gerektirmemesi", "Yeni abone devreleri gereklidir."],
+        ["Trafik yoğunluğuna bakılmaksızın her aboneye eşit bant genişliği sunması", "Bant genişliği paylaşımı ve trafik politikaları söz konusudur."]
+      ],
+      answer: 2,
+      summary: "Bir firmanın elektronik ortamda üretken çalışmalar yapabilmesi ve elektronik ağ ortamından yararlanabilmesi için genellikle gerekli olan yüksek hız geniş bantlı erişim ile sağlanmaktadır."
+    },
+    {
+      q: "8. IPv6 adresleme modelinin IPv4'e göre getirdiği en temel yenilik nedir?",
+      options: [
+        ["Daha kısa ve hatırlanması kolay IP adresleri sunması", "Adresler daha uzundur (128 bit)."],
+        ["Sadece yerel ağ (LAN) içerisinde kullanılabilmesi", "Küresel internet için tasarlanmıştır."],
+        ["32 bitlik adres yapısını koruyarak daha fazla güvenlik sağlaması", "Adres yapısı 128 bittir."],
+        ["Çok daha geniş bir adres alanı sunarak İnternet'e bağlanabilecek cihaz sayısındaki kısıtlamayı ortadan kaldırması", "IPv6, adres kıtlığı sorununu çözer."],
+        ["Paket taşıma yöntemlerini yavaşlatarak ağ tıkanıklığını önlemesi", "Daha gelişmiş paket taşıma yöntemleri sunar."]
+      ],
+      answer: 3,
+      summary: "INTERNET2 ve IPv6 ile adresleme modeli 32 bit adres ile sınırlandırılmamıştır, bu da çok daha fazla cihazın İnternet'e bağlanabilmesi anlamına gelir."
+    },
+    {
+      q: "9. Yıldız (Star) ağ topolojisinde, merkezi bağlantı noktasında yaşanan bir sorun tüm ağı nasıl etkiler?",
+      options: [
+        ["Sadece o merkeze doğrudan bağlı olan tek bir bilgisayarı etkiler.", "Merkezdeki sorun tüm ağı etkiler."],
+        ["Ağın sadece bir bölümünün yavaşlamasına neden olur, kesinti olmaz.", "Merkezdeki sorun tüm ağda hissedilir."],
+        ["Hiçbir şekilde ağı etkilemez, diğer cihazlar kendi aralarında iletişim kurmaya devam eder.", "Yıldız topolojisi merkeze bağımlıdır."],
+        ["Tüm ağda iletişimin durmasına ve sistemin çökmesine neden olabilir.", "Merkezde yaşanan sorun tüm ağda hissedilir."],
+        ["Sadece ağaç yapısıyla bağlı diğer merkezleri etkiler.", "Doğrudan bağlı tüm cihazlar etkilenir."]
+      ],
+      answer: 3,
+      summary: "Yıldız Ağ (STAR Network): Merkezi bir bağlantı noktasına ayrı hatlarla bağlı olan bilgisayarlardan oluşur. Merkezde yaşanan sorun tüm ağda hissedilir."
+    },
+    {
+      q: "10. Peer-to-Peer (P2P) iletişim modelinde sunucunun temel rolü nedir?",
+      options: [
+        ["Tüm bilgi alışverişini kendi üzerinden dağıtmak", "P2P'de bilgi alışverişi istemciler arasındadır."],
+        ["İstemcilerin hangi bilgilere erişebileceğini denetlemek", "Bu Client-Server modelinde daha belirgindir."],
+        ["Genellikle istemcilerin sisteme kayıt olma ve sistemden çıkma işlemlerini yürütmek", "P2P'de sunucu genellikle bu tür koordinasyon görevlerini üstlenir."],
+        ["Tüm istemcilere eşit bant genişliği sağlamak", "Bu ağ yönetimi ile ilgilidir."],
+        ["İstemciler arasındaki iletişimi tamamen şifrelemek", "Bu güvenlik mekanizmaları ile sağlanır."]
+      ],
+      answer: 2,
+      summary: "Noktalararası (P2P) iletişimde sunucu üzerinden bilgi alışverişi yerine yalnızca istemciler arasında haberleşme hedeflenmektedir. Sunucu genellikle istemcilerin sisteme kayıt olma ve sistemden çıkma işlemlerini yürütür."
+    },
+    {
+      q: "11. 'Extranet' hangi amaçla ve kimler tarafından kullanılır?",
+      options: [
+        ["Sadece firma içi personelin kendi aralarında iletişim kurması için", "Bu Intranet'in tanımıdır."],
+        ["Firmanın, iş ortakları veya müşterileri gibi dış paydaşlarla İnternet teknolojisi üzerinden güvenli bir şekilde iş yapması için", "Extranet, firma dışı yetkili kullanıcıların erişimine açılan sistemdir."],
+        ["Tüm internet kullanıcılarının serbestçe erişebileceği halka açık bir web sitesi oluşturmak için", "Bu genel bir web sitesidir."],
+        ["Devlet kurumlarının kendi aralarındaki özel yazışmaları için", "Bu özel bir ağ türü olabilir."],
+        ["Mobil cihazların kısa mesafede birbirleriyle veri paylaşması için", "Bu Bluetooth gibi teknolojilerle ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Extranet; Firmaların sadece firma içi değil firma dışı ile olan işlerinde de Internet teknolojisi içeren uygulamaları kullandığı modele verilen isimdir. Satınalma, ihale, ilanlar ve müşteri ilişkileri uygulamalarını bu sınıfta incelemek mümkündür."
+    },
+    {
+      q: "12. HTML (HyperText Markup Language) dilinin temel işlevi nedir?",
+      options: [
+        ["İnternet üzerinden güvenli veri transferi sağlamak", "Bu SSL/TLS gibi protokollerin işidir."],
+        ["Web içeriğinin sunucudan istemciye taşınması sırasında, istemci üzerinde istenen dokümanın görüntülenebilmesi için dokümanı kodlamak (yapısını tanımlamak)", "HTML, web sayfalarının yapısını oluşturur."],
+        ["Alan adlarını IP adreslerine çözümlemek", "Bu DNS'in işlevidir."],
+        ["Mobil uygulamalar için kullanıcı arayüzü geliştirmek", "HTML web tabanlıdır, mobil uygulamalar farklı teknolojiler kullanabilir."],
+        ["Veritabanı sunucularını yönetmek", "Bu veritabanı yönetim sistemlerinin işidir."]
+      ],
+      answer: 1,
+      summary: "HTML (HyperText Markup Language): Web içeriğinin sunucudan istemciye taşınması sırasında kullanılan, istemci üzerinde istenen dokümanın görüntülenebilmesi için dokümanı kodlamada kullanılan dile verilen isimdir."
+    },
+    {
+      q: "13. HTTP (HyperText Transfer Protocol) hangi iletişim modelini kullanarak web içeriğini iletir?",
+      options: [
+        ["Peer-to-Peer (P2P) modelini", "HTTP, Client-Server modelini kullanır."],
+        ["Sadece sunucudan sunucuya (Server-to-Server) modeli", "İstemci de iletişimde yer alır."],
+        ["İstemci-Sunucu (Client-Server) iletişim modelini", "HTTP bu model üzerine kuruludur."],
+        ["Halka (Ring) topolojisi modelini", "Bu bir ağ topolojisidir, iletişim modeli değildir."],
+        ["Veriyolu (Bus) mimarisini", "Bu bir ağ topolojisidir."]
+      ],
+      answer: 2,
+      summary: "HTTP (HyperText Transfer Protocol): Web içeriğinin iletiminde kullanılan protokole verilen isimdir. İstemci-Sunucu iletişim modelini öngörür."
+    },
+    {
+      q: "14. Aşağıdakilerden hangisi bir 'Alan Adı' (Domain Name) örneğidir?",
+      options: [
+        ["192.168.1.1", "Bu bir IP adresidir."],
+        ["index.html", "Bu bir dosya adıdır."],
+        ["yesevi.edu.tr", "Bu bir alan adıdır."],
+        ["http://", "Bu bir protokol belirticisidir."],
+        ["/docs/fakulteler.html", "Bu bir dosya yoludur."]
+      ],
+      answer: 2,
+      summary: "DNS (Domain Name Service) ile IP adreslerine isim verilmesi sağlanır. yesevi.edu.tr bir alan adı örneğidir."
+    },
+    {
+      q: "15. DNS (Domain Name Service) sisteminin İnternet'teki temel görevi nedir?",
+      options: [
+        ["Web sayfalarının içeriğini oluşturmak", "Bu HTML ve içerik yönetim sistemlerinin işidir."],
+        ["İnternet bağlantı hızını artırmak", "DNS'in doğrudan böyle bir işlevi yoktur."],
+        ["Hatırlanması zor olan IP adreslerini, kullanıcı dostu alan adlarına çevirmek ve tersini yapmak", "DNS'in temel işlevi budur."],
+        ["Elektronik postaların güvenli bir şekilde iletilmesini sağlamak", "Bu e-posta güvenlik protokollerinin işidir."],
+        ["Ağdaki tüm bilgisayarlara otomatik olarak yazılım yüklemek", "Bu farklı bir sistem yönetimi görevidir."]
+      ],
+      answer: 2,
+      summary: "Internet'e bağlı olan makinaların 32 bit uzunluğunda olan IP adresleri ile hatırlanmalarının oldukça zor olması nedeniyle, dinamik olarak IP adreslerine isim verilmesi gerekliliği doğmuştur. DNS servisi günümüzde otomatik olarak bu amaçla kullanılan sunucular üzerinden yapılmakta, herhangi bir URL adresinin öncelikle DNS sunucusu yardımı ile IP numarası belirlenmektedir."
+    },
+    {
+      q: "16. Bir şehir veya büyük bir yerleşim yerindeki bilgisayar ağlarını birbirine bağlayan ağ teknolojisine ne ad verilir?",
+      options: [
+        ["LAN (Local Area Network)", "Bir bina veya ofis içindir."],
+        ["WAN (Wide Area Network)", "Geniş coğrafi alanları (ülkeler, kıtalar) kapsar."],
+        ["MAN (Metropolitan Area Network)", "Şehirsel Alan Ağı olarak tanımlanır."],
+        ["PAN (Personal Area Network)", "Kişisel cihazlar arası çok kısa mesafeli ağdır."],
+        ["VPN (Virtual Private Network)", "Fiziksel bir coğrafi sınıflandırma değildir."]
+      ],
+      answer: 2,
+      summary: "MAN (Metropolitan Area Network) Şehirsel Alan Ağı, coğrafi gereksinimden doğan bir ağ teknolojisidir ve şehir düzeyinde kullanılır."
+    },
+    {
+      q: "17. Client-Server (İstemci-Sunucu) iletişim modelinin temel çalışma prensibi nedir?",
+      options: [
+        ["Ağdaki tüm bilgisayarların eşit yetkilere sahip olması ve birbirleriyle doğrudan veri paylaşması", "Bu P2P modeline daha yakındır."],
+        ["Bilgilerin ve hesaplamaların bir kısmının ana bilgisayar (sunucu) tarafından sağlanması ve istemcilerin bu sunucudan hizmet talep etmesi", "Client-Server modeli bu şekilde çalışır."],
+        ["Veri iletişiminin tek bir ortak taşıyıcı kablo üzerinden yapılması", "Bu Veriyolu (Bus) topolojisinin özelliğidir."],
+        ["Sunucunun sadece istemcilerin sisteme kayıt olma işlemlerini yürütmesi", "Bu P2P'deki sunucu rolüne daha yakındır."],
+        ["İletişimin halka şeklinde bir yapı üzerinden sıralı olarak gerçekleşmesi", "Bu Halka (Ring) topolojisinin özelliğidir."]
+      ],
+      answer: 1,
+      summary: "CLIENT-SERVER (İstemci-Sunucu): Birden çok bilgisayarın bağlı olduğu çok bilgisayarlı çalışma modelinde, bilgilerin ve hesaplamaların bazılarının ana bilgisayardan sağlandığı gözlenir. Ana bilgisayar sunucu olarak adlandırılır ve birçok istemcinin benzer isteklerini, kendi üzerinde bulundurduğu verilerden yararlanarak karşılar."
+    },
+    {
+      q: "18. INTERNET2 projesinin temel amacı ve hedef kitlesi nedir?",
+      options: [
+        ["Mevcut İnternet'i tamamen ticari kullanıma kapatmak", "Araştırma ve eğitime odaklıdır, kapatma amacı yoktur."],
+        ["ABD'nin öncülüğünde, çok daha hızlı ve öncelikle eğitim ve araştırma amacıyla yeni bir ağ oluşturmak", "INTERNET2 bu amaçla kurulmuştur."],
+        ["Tüm dünyadaki İnternet kullanıcılarına ücretsiz geniş bant erişimi sağlamak", "Bu kapsamda bir hedefi yoktur."],
+        ["Sadece mobil cihazlar için özel bir iletişim protokolü geliştirmek", "Genel bir ağ altyapısıdır."],
+        ["IPv4 adreslerinin daha verimli kullanılmasını sağlamak", "IPv6 gibi yeni teknolojilere odaklıdır."]
+      ],
+      answer: 1,
+      summary: "INTERNET2, ABD'nin öncülüğünde, mevcut İnternet'in limitleri düşünülerek çok daha hızlı ve daha çok eğitim ve araştırma (şimdilik) amacıyla oluşturulmuş yeni bir ağdır."
+    },
+    {
+      q: "19. Bir URL (Uniform Resource Locator) hangi temel bileşenleri içerir?",
+      options: [
+        ["Sadece alan adı ve ülke kodu", "URL daha kapsamlıdır."],
+        ["Protokol (örn: http), alan adı (örn: www.yesevi.edu.tr) ve kaynağın yolu (örn: /docs/fakulteler.html)", "Bir URL bu temel bileşenlerden oluşur."],
+        ["Sadece IP adresi ve port numarası", "Bu da bir adresleme yöntemidir ama URL farklıdır."],
+        ["HTML dosyasının başlık etiketi ve meta açıklamaları", "Bunlar sayfa içeriğiyle ilgilidir."],
+        ["Kullanıcının adı, şifresi ve e-posta adresi", "Bunlar kimlik bilgileridir."]
+      ],
+      answer: 1,
+      summary: "URL (Uniform Resource Locator): Internet üzerinde belirli bir kaynağın, (bir tek sayfanın bile), tüm dünyada tekil olacak bir biçimde belirtilebilmesi, işaret edilebilmesi amacıyla kodlanmış olan adresidir. Örnek: http://www.yesevi.edu.tr/docs/fakulteler.html"
+    },
+    {
+      q: "20. ISP (Internet Servis Sağlayıcısı) firmalarının temel görevi nedir?",
+      options: [
+        ["Web siteleri için içerik üretmek ve tasarlamak", "Bu web geliştiricilerin işidir."],
+        ["Firma ya da kişileri belirli bir ücret karşılığında İnternet ağına bağlama servisi vermek", "ISP'lerin ana işlevi budur."],
+        ["Alan adı (domain name) kayıtlarını yapmak ve yönetmek", "Bu registrar firmalarının işidir, bazı ISP'ler bu hizmeti de sunar."],
+        ["Ağ güvenliği yazılımları geliştirmek ve satmak", "Bu siber güvenlik firmalarının işidir."],
+        ["Mobil iletişim için baz istasyonları kurmak", "Bu mobil operatörlerin işidir."]
+      ],
+      answer: 1,
+      summary: "ISP (Internet Service Provider, Internet Servis Sağlayıcısı): Firma ya da kişileri Internet ağına belirli bir ücret karşılığında bağlama servisi veren firmaya verilen isimdir."
+    },
+    {
+      q: "21. Halka (Ring) ağ topolojisinin temel çalışma prensibi nedir?",
+      options: [
+        ["Tüm bilgisayarların merkezi bir anahtara (switch) bağlanması", "Bu Yıldız (Star) topolojisidir."],
+        ["Veri iletişiminin bir halka çevresinde, genellikle tek bir yönde yapılması ve bilgisayarların bu halkaya sıralı olarak bağlanması", "Halka topolojisi bu şekilde çalışır."],
+        ["Tüm bilgisayarların tek bir ortak kabloya (veriyolu) bağlanması", "Bu Veriyolu (Bus) topolojisidir."],
+        ["Her bilgisayarın ağdaki diğer tüm bilgisayarlara ayrı ayrı bağlanması", "Bu Tam Örgü (Full Mesh) topolojisidir."],
+        ["Bilgisayarlar arasında hiyerarşik bir yapı kurulması", "Bu Ağaç (Tree) topolojisi olabilir."]
+      ],
+      answer: 1,
+      summary: "RING Network (Halka Ağ): Veri iletişiminin bir halka çevresinde yapılması biçimidir. Bağlı bilgisayarlar bir halka çevresinde dizilir ve veri bu halkada iletilir."
+    },
+    {
+      q: "22. Veriyolu (Bus) ağ topolojisinde, bir istasyonun veriyolunda parazit yaratması durumunda ne gibi bir sorun ortaya çıkar?",
+      options: [
+        ["Sadece parazit yaratan istasyon iletişim kuramaz.", "Sorun tüm ağı etkiler."],
+        ["Ağdaki tüm istasyonlar haberleşemez duruma gelir.", "Veriyolu paylaşıldığı için parazit tüm iletişimi bozar."],
+        ["Merkezi bağlantı noktası (hub/switch) devre dışı kalır.", "Veriyolu topolojisinde merkezi bir cihaz zorunlu değildir."],
+        ["Veri iletim hızı otomatik olarak düşer ama iletişim kesilmez.", "İletişim tamamen kesilebilir."],
+        ["Sadece parazit yaratan istasyona en yakın iki istasyon etkilenir.", "Tüm veriyolu etkilenir."]
+      ],
+      answer: 1,
+      summary: "BUS Network (Veriyolu Ağı): Ortak bir taşıyıcı medyaya (bakır tel vb.) aynı anda birden çok bilgisayarın bağlanması şeklinde gerçekleşir. Bir istasyonun veriyolunda parazit yarattığı durumlarda, bütün istasyonlar haberleşemez duruma gelir."
+    },
+    {
+      q: "23. GPRS (General Packet Radio Service) teknolojisinin mobil iletişime getirdiği temel yenilik nedir?",
+      options: [
+        ["Sadece sesli görüşme kalitesini artırmak", "GPRS veri iletimine odaklıdır."],
+        ["Mobil cihazın sürekli olarak İnternet'e bağlı kalabilmesini sağlamak ve paket anahtarlamalı veri iletimi sunmak", "GPRS 'always-on' bağlantı ve paket veri imkanı sunmuştur."],
+        ["Bluetooth gibi kısa mesafeli bağlantıları gereksiz kılmak", "Farklı kullanım alanları vardır."],
+        ["Cep telefonlarının batarya ömrünü önemli ölçüde uzatmak", "Sürekli bağlantı batarya tüketimini etkileyebilir."],
+        ["Sadece SMS gönderimine izin vermek", "SMS'in ötesinde genel internet erişimi sağlar."]
+      ],
+      answer: 1,
+      summary: "GPRS servisleri, mobil cihazın sürekli olarak Internet'e bağlı kalabilmesini altından kalkılabilir bir şekilde çözmüştür. Bu teknoloji kullanılarak, kişiye özel uygulamalar, günün her saati bulunulan yerden bağımsız olarak çalışır durumda kişinin kullanımına açık olacaktır."
+    },
+    {
+      q: "24. Aşağıdakilerden hangisi geniş bantlı erişim teknolojilerinden biri değildir ve tipik iletim hızı nedir?",
+      options: [
+        ["ISDN (64-256 Kbit/s)", "Geniş bantlı bir teknolojidir."],
+        ["DSL (ADSL, SDSL, XDSL) (64 Kbit/s - 10 Mbit/s)", "Geniş bantlı bir teknolojidir."],
+        ["Çevirmeli Ağ (Dial-up) (Genellikle 56 Kbit/s veya altı)", "Bu dar bantlı bir teknolojidir, geniş bant sayılmaz."],
+        ["KabloTV İnternet (64 Kbit/s - 10 Mbit/s)", "Geniş bantlı bir teknolojidir."],
+        ["Fiber Optik (Donanımla sınırlı, çok yüksek hızlar)", "Geniş bantlı bir teknolojidir."]
+      ],
+      answer: 2,
+      summary: "Saniyede 64 kilobit üzerindeki hızlara genel olarak geniş bantlı erişim hızları adı verilmektedir. Çevirmeli ağ genellikle bu sınırın altındadır."
+    },
+    {
+      q: "25. Geniş bantlı erişimde, bir abonenin beklenenin üzerinde trafik yoğunluğu yaratmasının diğer aboneler üzerindeki olası etkisi nedir?",
+      options: [
+        ["Diğer abonelerin bağlantı hızlarının artması", "Tam tersi, olumsuz etkilenirler."],
+        ["İnternet servis sağlayıcısının tüm abonelere indirim yapması", "Bu bir sonuç değildir."],
+        ["Diğer abonelerin bağlantı performanslarının olumsuz etkilenmesi, çünkü bant genişliği paylaşılır.", "Paylaşımlı hatlarda aşırı kullanım diğerlerini yavaşlatır."],
+        ["Sadece trafik yaratan abonenin bağlantısının kesilmesi", "Politikalara bağlıdır, hemen kesilmeyebilir."],
+        ["Hiçbir etkisi olmaz, her abonenin hattı tamamen bağımsızdır.", "Genellikle paylaşımlı bir yapı söz konusudur."]
+      ],
+      answer: 2,
+      summary: "Geniş bantlı erişimde, herhangi bir abone, diğer abonelerin trafiği karşısında performansı etkileyen bir pozisyonda olabilir. İnternet servis sağlayıcısı ile abone arasında mevcut olan hat üzerinde bant genişliği paylaşımı söz konusudur. Bir abonenin beklenenin üzerinde trafik yoğunluğu, diğer aboneleri olumsuz etkileyecektir."
+    },
+    {
+      q: "26. İnternet'te karşılaşılan 'Omurga Sorunları'nın temel nedenlerinden biri nedir?",
+      options: [
+        ["Alan adı sayısının yetersiz kalması", "Bu alan adı yönetimiyle ilgilidir."],
+        ["Kullanıcıların erişim maliyetlerinin çok düşük olması", "Erişim maliyeti farklı bir sorundur."],
+        ["Omurga sağlayıcı firmaların yaşadığı ekonomik sorunlar ve gerekli yatırımların zamanında yapılamaması", "Bu, omurga performansını ve güvenilirliğini etkileyen bir sorundur."],
+        ["HTML dilinin güncelliğini yitirmesi", "HTML sürekli gelişmektedir."],
+        ["Mobil cihazların yaygınlaşması", "Mobil cihazlar trafiği artırır ama omurga sorununun tek nedeni değildir."]
+      ],
+      answer: 2,
+      summary: "Tüm dünyada 2000 yılında yaşanan krizin de etkisiyle ile omurga sağlayıcı firmalar ekonomik yönden çeşitli sorunlarla karşılaşmışlardır. Gerekli yatırımların zamanında yapılamaması, bazı ana arterlerde tıkanmalara, kesintilere neden olabilmektedir."
+    },
+    {
+      q: "27. Bir firmanın kendi iç işleyişinde, çalışanlarının bilgi paylaşımı ve ortak çalışma amacıyla İnternet teknolojilerini kullandığı özel ağa ne ad verilir?",
+      options: [
+        ["Extranet", "Extranet dış paydaşların erişimine de açıktır."],
+        ["İnternet", "İnternet genel bir ağdır."],
+        ["Intranet", "Intranet, firma içi özel ağdır."],
+        ["MAN (Metropolitan Area Network)", "Bu şehirsel bir ağ türüdür."],
+        ["P2P Ağı", "Bu bir iletişim modelidir."]
+      ],
+      answer: 2,
+      summary: "Intranet, bir firmanın kendi iç işleyişinde, Internet teknolojisini içeren uygulamaları kullandığı ağa verilen isimdir."
+    },
+    {
+      q: "28. 'İnternet Trafik Raporu (Internet Weather Report)' gibi araçlar, İnternet'te karşılaşılan hangi temel sorunu izlemek için kullanılır?",
+      options: [
+        ["Alan adı anlaşmazlıklarını", "Bu hukuki bir konudur."],
+        ["Artan internet trafiğini ve ağ yoğunluğunu", "Bu tür raporlar ağ performansını ve trafiği izler."],
+        ["Geniş bant erişiminin maliyetini", "Bu ekonomik bir veridir."],
+        ["Siber saldırıların kaynağını tespit etmek için", "Bu güvenlik analizidir."],
+        ["Yeni çıkan mobil iletişim teknolojilerini", "Bu teknoloji takibiyle ilgilidir."]
+      ],
+      answer: 1,
+      summary: "İnternet üzerinde gözlenen önemli problemlerden biri artan internet trafiğidir (Bkz. Internet Trafik Raporu, Internet Weather Report)."
+    },
+    {
+      q: "29. Elektronik ticaretin gelişiminde, firmaların mevcut bilişim altyapılarını diğer firmalarla 'açık mimari' ortamında iletişim amacıyla kullanmaları ne gibi bir avantaj sağlamıştır?",
+      options: [
+        ["İletişim maliyetlerini artırmıştır.", "Açık mimari maliyetleri düşürebilir."],
+        ["Sadece büyük firmaların bu tür bir iletişime geçebilmesini sağlamıştır.", "Her ölçekten firma faydalanabilir."],
+        ["Tek bir firmanın standartlarına bağımlı kalmadan, farklı sistemlerin birbiriyle konuşabilmesine olanak tanımıştır.", "Açık mimari, birlikte çalışabilirliği ve esnekliği teşvik eder."],
+        ["Veri güvenliğini tamamen ortadan kaldırmıştır.", "Güvenlik önlemleri gereklidir ama açık mimari bunun nedeni değildir."],
+        ["Firmaların sadece kendi geliştirdikleri özel protokolleri kullanmasını zorunlu kılmıştır.", "Açık standartlar teşvik edilir."]
+      ],
+      answer: 2,
+      summary: "Firmaların zaten genellikle mevcut olan bilişim altyapılarını, diğer firmalarla açık mimari ortamında iletişim ve çalışma amacıyla kullanması, e-ticaretin gelişiminde bir kilometre taşı olmuştur."
+    },
+    {
+      q: "30. Geniş bantlı erişimin yaygınlaşmasının elektronik ticarete en önemli katkılarından biri nedir?",
+      options: [
+        ["Sadece metin tabanlı web sitelerinin kullanılmasını teşvik etmesi", "Multimedya içeriğini destekler."],
+        ["Müşterilerin e-dükkânlarda daha yavaş gezinmesine neden olması", "Hızlı gezinme imkanı sunar."],
+        ["Daha zengin içerikli (video, yüksek çözünürlüklü görseller, interaktif uygulamalar) e-ticaret deneyimlerinin sunulabilmesi", "Geniş bant, zengin medya kullanımını mümkün kılar."],
+        ["Online alışverişlerde güvenlik risklerini tamamen ortadan kaldırması", "Güvenlik ayrı bir konudur."],
+        ["E-posta kullanımını azaltması", "E-posta kullanımı devam eder."]
+      ],
+      answer: 2,
+      summary: "Geniş bantlı erişim ile kişisel bilgisayarlar çok yüksek hızlarda multimedya içeriği elde etmek amacıyla kullanılmaktadır. Bu, e-ticarette daha zengin kullanıcı deneyimleri sunulmasını sağlar."
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

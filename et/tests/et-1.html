@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 1 - E-Ticaret Kavramları (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 1 Sınavı (E-Ticaret Kavramları - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Modern işletme metodolojisinin ana hedefleri arasında aşağıdakilerden hangisi yer almaz?",
+      options: [
+        ["Maliyetleri düşürmek", "Maliyet e-ticaretin önemli bir hedefidir."],
+        ["Kaliteyi artırmak", "Kalite, e-ticaretin ana hedeflerinden biridir."],
+        ["Teslimat hızını optimize etmek", "Teslimat süresi e-ticaret avantajlarındandır."],
+        ["Pazar payını her zaman sabit tutmak", "E-ticaret genellikle pazar payını artırmayı hedefler, sabit tutmayı değil."],
+        ["Müşteri ihtiyaçlarını en iyi şekilde karşılamak", "Müşteri memnuniyeti e-ticaretin merkezindedir."]
+      ],
+      answer: 3,
+      summary: "Günümüzde firmaların, kurum ve kuruluşların ve tüketicinin ihtiyaçlarının en iyi şekilde karşılanabilmesini hedef alan modern işletme metodolojisinin ana hedefleri: Maliyet, Kalite, Teslimat Hızı ve Müşteri İhtiyaçlarını Karşılamaktır. [cite: 6]"
+    },
+    {
+      q: "2. Elektronik ticaretin, geleneksel ticaretteki aracı firmalar üzerindeki en belirgin etkisi nedir?",
+      options: [
+        ["Aracı firmaların sayısını ve önemini artırması", "E-ticaret genellikle aracıları azaltır."],
+        ["Aracı firmaların işlevlerini tamamen değiştirmesi ve onlara yeni roller yüklemesi", "Rolleri değişebilir ama temel etki azalmadır."],
+        ["Aracıların ortadan kalkması ya da sayısının ve rolünün azalması", "E-ticaret, üretici ile tüketici arasında daha doğrudan bir ilişki kurulmasını sağlar."],
+        ["Aracı firmaların komisyon oranlarını yükseltmesi", "Rekabet artışı komisyonları etkileyebilir."],
+        ["Aracı firmaların sadece uluslararası ticarette rol oynaması", "İç ticarette de etkilenirler."]
+      ],
+      answer: 2,
+      summary: "Elektronik ticaretin en önemli etkilerinden biri aracıların ortadan kalkması ya da azalmasıdır. [cite: 12]"
+    },
+    {
+      q: "3. Aşağıdakilerden hangisi 'Elektronik Ticaretin Ana Grupları' arasında sayılmaz?",
+      options: [
+        ["Kurumlararası (B2B) e-ticaret", "Bu ana gruplardan biridir."],
+        ["Kurum İçi e-ticaret", "Bu ana gruplardan biridir."],
+        ["Hükümetlerarası (G2G) e-ticaret", "PDF'te listelenen ana gruplar arasında bu kategori spesifik olarak yer almamaktadır."],
+        ["Kurum-Tüketici Arası (B2C) e-ticaret", "Bu ana gruplardan biridir."],
+        ["Aracılık İşlemleri", "Bu ana gruplardan biridir."]
+      ],
+      answer: 2,
+      summary: "Elektronik Ticaretin Ana Grupları: Kurumlararası, Kurum İçi, Kurum Tüketici Arası, Aracılık İşlemleri ve Hizmet ve Servis Sağlayıcılardır. [cite: 25]"
+    },
+    {
+      q: "4. Finansal alanda bir 'elektronik işlem (transaction)' neyi ifade eder?",
+      options: [
+        ["Bir bilgisayar programının kodlanması sürecini", "Bu yazılım geliştirmedir."],
+        ["Bir işlemin çeşitli adımlarının oluşturduğu bütünü (örn: ATM'den para çekme, kredi kartı onayı)", "Elektronik işlem, dijital ortamda gerçekleşen bu tür finansal eylemler bütünüdür."],
+        ["Web sitesi için alan adı tescil ettirme sürecini", "Bu idari bir işlemdir."],
+        ["Müşteriye e-posta ile bilgilendirme mesajı gönderme eylemini", "Bu bir iletişimdir, finansal işlem olmak zorunda değildir."],
+        ["Bir veritabanında yeni bir kayıt oluşturma adımını", "Bu bir veri yönetimi işlemidir."]
+      ],
+      answer: 1,
+      summary: "Elektronik işlem (transaction), finansal alanda bir işlemin çeşitli adımlarının oluşturduğu bütün olarak tanımlanır. Örnek olarak bir ATM'den para çekme işlemi ya da kredi kartı ile onay alma ve ödeme işlemi verilebilir. [cite: 22, 24]"
+    },
+    {
+      q: "5. Aşağıdakilerden hangisi elektronik ticaretin sağladığı avantajlardan biri değildir?",
+      options: [
+        ["İşletmelerin 7 gün 24 saat hizmet verebilmesi", "Bu önemli bir avantajdır."],
+        ["Coğrafi sınırları aşarak küresel pazarlara erişim imkanı", "Bu önemli bir avantajdır."],
+        ["Fiziksel mağaza ve personel maliyetlerinde azalma potansiyeli", "Bu önemli bir avantajdır."],
+        ["Müşterilerle yüz yüze iletişimin zorunlu olması", "E-ticaret genellikle yüz yüze iletişimi azaltır veya ortadan kaldırır; bu bir avantajı değildir."],
+        ["Hedef kitleye özel pazarlama ve kişiselleştirilmiş ürün/hizmet sunma kolaylığı", "Bu önemli bir avantajdır."]
+      ],
+      answer: 3,
+      summary: "E-ticaretin avantajları arasında 7/24 erişim, küresel pazar, düşük operasyonel maliyetler sayılabilir. Yüz yüze iletişim zorunluluğu olmaması da bir avantajıdır, olması değil."
+    },
+    {
+      q: "6. Elektronik ticarette müşteri bilgilerinin ve ödeme işlemlerinin güvenliğini sağlamak için yaygın olarak kullanılan teknoloji hangisidir?",
+      options: [
+        ["FTP (Dosya Transfer Protokolü)", "Bu dosya transferi içindir, işlem güvenliği sağlamaz."],
+        ["SSL/TLS (Güvenli Soket Katmanı/Taşıma Katmanı Güvenliği)", "Bu protokoller, veri iletimini şifreleyerek güvenlik sağlar."],
+        ["HTML (Hiper Metin İşaretleme Dili)", "Bu web sayfası oluşturma dilidir."],
+        ["POP3 (Posta Ofisi Protokolü)", "Bu e-posta alma protokolüdür."],
+        ["DNS (Alan Adı Sistemi)", "Bu alan adlarını IP adreslerine çevirir."]
+      ],
+      answer: 1,
+      summary: "SSL/TLS sertifikaları, e-ticaret sitelerinde kullanıcı bilgilerinin ve ödeme detaylarının şifrelenerek güvenli bir şekilde iletilmesini sağlar. (PDF'te doğrudan geçmese de genel e-ticaret bilgisi ve güvenlik bağlamında çıkarılabilir.)"
+    },
+    {
+      q: "7. B2B (Business-to-Business) e-ticaret modeli neyi ifade eder?",
+      options: [
+        ["Bir şirketin ürünlerini doğrudan son tüketiciye satması", "Bu B2C modelidir."],
+        ["Tüketicilerin kendi aralarında ikinci el ürün alıp satması", "Bu C2C modelidir."],
+        ["İki veya daha fazla şirketin birbirleriyle elektronik ortamda ticari faaliyette bulunması (örn: tedarik, toptan satış)", "B2B, firmalar arası ticareti ifade eder."],
+        ["Devlet kurumlarının vatandaşlara online hizmet sunması", "Bu G2C modelidir."],
+        ["Bir bireyin bir şirkete hizmet veya ürün teklif etmesi", "Bu C2B modelidir."]
+      ],
+      answer: 2,
+      summary: "Firmalar arası elektronik ticaret (B2B), herhangi bir alanda faaliyet gösteren firmaların, faaliyetlerini sürdürebilmek için satınalmaları gereken şeyleri veya kendi ürettiği malları bir başka kurum ile gerçekleştirdiği elektronik ticarettir. [cite: 76]"
+    },
+    {
+      q: "8. 'Bilginin Satışı (Soft Goods)' kavramı elektronik ticaret bağlamında ne anlama gelir?",
+      options: [
+        ["Sadece fiziksel kitap ve dergilerin online satışı", "Fiziksel ürünlerin ötesindedir."],
+        ["Bilgisayar yazılımları, e-kitaplar, müzik dosyaları gibi elektronik ortama aktarılabilen ve dijital olarak teslim edilebilen bilgilerin satışı", "Soft goods, dijital olarak dağıtılabilen bilgi ürünleridir."],
+        ["Ticari firmaların bilançolarının ve finansal raporlarının yayınlanması", "Bu bilgi paylaşımıdır, doğrudan bilginin satışı olmayabilir."],
+        ["Üniversitelerin online ders materyallerini ücretsiz sunması", "Ücretsiz sunum satış değildir."],
+        ["Toptancıların ürün listelerini ve fiyatlarını elektronik ortamda paylaşması", "Bu bilgi paylaşımıdır, listenin kendisi satılmaz."]
+      ],
+      answer: 1,
+      summary: "Bilginin elektronik ortama aktarılması ile bir kitabın içinde bulunan bilgilerin değeri, kitabın fiziksel değerinden ayrılmıştır. Bilgisayar ağları yardımı ile son tüketiciye her türlü basılı olabilecek metin ya da diğer bilgiler (soft goods) sunulabileceği gibi, ticari firmalara da bilgilerin satışı olasıdır. [cite: 16, 17]"
+    },
+    {
+      q: "9. Elektronik para için aşağıdakilerden hangisi söylenemez?",
+      options: [
+        ["Kağıt ya da madeni olmayan, elektronik teknolojisinin avantajlarını kullanan bir para biçimidir.", "Bu doğru bir ifadedir."],
+        ["Kullanım açısından kağıt paraya göre bazı avantajlar sağlar.", "Bu doğru bir ifadedir."],
+        ["Genellikle anonimdir ve üzerinde kullananın ismi yazmaz.", "Bu doğru bir ifadedir."],
+        ["Her zaman bir ağ bağlantısı gerektirir.", "Pek çok elektronik para, ağ bağlantısı gerektirmez. [cite: 39]"],
+        ["Çalındığında ya da kaybedildiğinde kurtarılması genellikle zordur.", "Bu doğru bir ifadedir."]
+      ],
+      answer: 3,
+      summary: "Elektronik para, kağıt ya da madeni olmayan bir para biçimidir, anonim olabilir, transfer edilebilir ve pek çok türü ağ bağlantısı gerektirmez. [cite: 20, 39, 41]"
+    },
+    {
+      q: "10. Müşteriyle kişiselleştirilmiş iletişim kurmayı ve müşteri ilişkilerini yönetmeyi sağlayan kurumsal sistem aşağıdakilerden hangisidir?",
+      options: [
+        ["ERP (Kurumsal Kaynak Planlama)", "ERP daha çok iç süreçlere odaklanır."],
+        ["CRM (Müşteri İlişkileri Yönetimi)", "CRM, müşteri odaklıdır ve kişiselleştirilmiş iletişim sağlar."],
+        ["SCM (Tedarik Zinciri Yönetimi)", "SCM tedarik süreçleriyle ilgilidir."],
+        ["POS (Satış Noktası Sistemi)", "POS fiziksel satış noktası işlem sistemidir."],
+        ["LAN (Yerel Alan Ağı)", "LAN bir ağ altyapısıdır."]
+      ],
+      answer: 1,
+      summary: "CRM (Müşteri İlişkileri Yönetimi) sistemleri, müşteriyle etkileşimleri yöneterek kişiselleştirilmiş iletişim ve hizmet sunulmasına olanak tanır. (Bu genel bir CRM tanımı olup, PDF'te CRM detaylı olarak Ünite 5'te işlenmektedir.)"
+    },
+    {
+      q: "11. Aşağıdaki ödeme sistemleri tarihçesindeki olaylardan hangisi diğerlerinden daha önce gerçekleşmiştir?",
+      options: [
+        ["Bank of America'nın yoğun kredi kartı kullanıma başlaması (1958)", "1958 yılında gerçekleşmiştir. [cite: 27]"],
+        ["Türkiye'de yongalı kartların (Bonus card) kullanıma girmesi (1999)", "1999 yılında gerçekleşmiştir. [cite: 27]"],
+        ["Hollanda'da dijital para (DigiCash) kullanımı (1995)", "1995 yılında gerçekleşmiştir. [cite: 27]"],
+        ["ATM (Automatic Teller Machine)'nin Westminster Bank tarafından kullanılması (1967)", "1967 yılında gerçekleşmiştir. [cite: 27]"],
+        ["Osmanlı Bankası'nın İngiliz-Fransız ortaklığı ile kurulması (1863)", "1863 yılında gerçekleşmiştir. [cite: 27]"]
+      ],
+      answer: 4,
+      summary: "Ödeme sistemleri kronolojisine göre Osmanlı Bankası'nın kuruluşu (1863) diğer belirtilen olaylardan daha öncedir. [cite: 27]"
+    },
+    {
+      q: "12. 'Karşılıksız para basılması' kavramı, paranın hangi temel özelliğiyle ilgilidir?",
+      options: [
+        ["Paranın taşınabilir olmasıyla", "Bu fiziksel bir özelliktir."],
+        ["Paranın bölünebilir olmasıyla", "Bu kullanım kolaylığıyla ilgilidir."],
+        ["Paranın üzerindeki rakamsal değerle değil, temsil ettiği 'kefil kurumun' potansiyel olarak vermeyi taahhüt ettiği zenginlikle", "Karşılıksız para, bu taahhüdün zayıflaması anlamına gelir."],
+        ["Paranın dayanıklı bir malzemeden yapılmış olmasıyla", "Bu fiziksel bir özelliktir."],
+        ["Paranın anonim olarak kullanılabilmesiyle", "Bu kullanım şekliyle ilgilidir."]
+      ],
+      answer: 2,
+      summary: "Toplam dolaşımda bulunan para miktarının, para basan kurumun hazinesindeki zenginliğin göstergesi (makbuzu) olduğu düşünülürse, zenginliği arttırmadan para miktarının iki katına çıkması, paranın alım gücünü yarı yarıya düşürecektir. 'Karşılıksız para basılması' bu bağlamda, yeterli altın emaneti olmadan piyasaya para sürülmesi durumudur. [cite: 33, 34, 35]"
+    },
+    {
+      q: "13. Elektronik ödeme sistemleri hangi üç ana grupta incelenir?",
+      options: [
+        ["Sadece bireysel, sadece kurumsal, sadece devlet", "Bu eksik bir sınıflandırmadır."],
+        ["Nakit, Kredi Kartı, Mobil Ödeme", "Bunlar ödeme yöntemleridir, sistem grubu değil."],
+        ["Banka ve finans kurumlarının kendi aralarındaki sistemler; Klasik mağazalarda toptan ve perakende mal ve hizmetlere yönelik sistemler; Elektronik ortamda mal ve hizmetlere yönelik sistemler", "PDF'te belirtilen üç ana grup bunlardır."],
+        ["Yerel, Ulusal, Uluslararası", "Bu coğrafi bir sınıflandırmadır."],
+        ["Güvenli, Hızlı, Düşük Maliyetli", "Bunlar sistem özellikleridir."]
+      ],
+      answer: 2,
+      summary: "Elektronik ödeme sistemleri üç ana grupta incelenmektedir: 1. Banka ve finans kurumlarının kendi aralarındaki sistemler, 2. Klasik mağazalarda toptan ve perakende mal ve hizmetlere yönelik sistemler, 3. Elektronik ortamda mal ve hizmetlere yönelik sistemler. [cite: 45]"
+    },
+    {
+      q: "14. İnternet'in e-ticarete sunduğu avantajlardan biri olan 'Açık Standart' ne anlama gelir?",
+      options: [
+        ["İnternet'in sadece belirli firmalar tarafından geliştirilen standartlara sahip olması", "Açık standart herkesin katılımını ifade eder."],
+        ["Herkesin uyum gösteren donanım ve yazılım üretebilmesi, bu sayede fiyatların düşmesi ve tek bir üreticiye bağımlı kalma riskinin azalması", "Açık standart bu faydaları sağlar."],
+        ["İnternet üzerindeki tüm bilgilerin şifresiz ve herkese açık olması", "Bu güvenlik açığı olurdu."],
+        ["Web sitelerinin sadece metin tabanlı olabilmesi", "Web teknolojisi zengin içerik destekler."],
+        ["İnternet bağlantısının tüm dünyada ücretsiz olması", "Bağlantı genellikle ücretlidir."]
+      ],
+      answer: 1,
+      summary: "İnternetin E-Ticaret'e Sunduğu Avantajlardan biri 'Açık Standart'tır: Herkes uyum gösteren donanım ve yazılım üretebilir. Çok sayıda yazılım ve donanım üreticisi olması hem fiyat düşmesine neden olur hem de iş yapacak firmaların yalnızca tek bir üreticiye bağlı kalma riskini ortadan kaldırır. [cite: 53, 54]"
+    },
+    {
+      q: "15. Elektronik ticarette başarı için önemli olan 'Ticari Model' faktörü aşağıdakilerden hangisini içermez?",
+      options: [
+        ["Mağazaya girilme ve karşılıklı güvenin sağlanması", "Bu ticari modelin bir parçasıdır."],
+        ["Fiyatta anlaşma ve ödeme süreçleri", "Bu ticari modelin bir parçasıdır."],
+        ["Elektronik işlemlerin (transaction) nasıl gerçekleşeceği", "Bu ticari modelin bir parçasıdır."],
+        ["Kullanılan web sunucusunun markası ve işlemci hızı", "Bu teknik bir detaydır, ticari modelin temel bir unsuru değildir."],
+        ["Ürün veya hizmetin müşteriye sunulma şekli", "Bu ticari modelin bir parçasıdır."]
+      ],
+      answer: 3,
+      summary: "Elektronik Ticarette Üç Temel Faktör'den biri 'Ticari Model'dir ve bu; mağazaya girilme/güvenin sağlanması, fiyatta anlaşma, ödeme ve elektronik işlemleri kapsar. [cite: 58, 60] Sunucu markası gibi teknik detaylar bu temel faktörlerden sayılmaz."
+    },
+    {
+      q: "16. 'Elektronik ticaret entegrasyon sektörü' hangi tür hizmetleri sunar?",
+      options: [
+        ["Sadece web sitesi tasarımı", "Bu hizmetlerden sadece biridir."],
+        ["Elektronik ödeme sistemlerinin donanım, yazılım, ağ, e-mağaza tasarımı gibi çeşitli öğelerini bütünleşik bir şekilde sunmak", "Entegrasyon sektörü bu kapsamlı hizmetleri sağlar."],
+        ["Sadece kargo ve lojistik çözümleri", "Bu lojistik sektörünün işidir."],
+        ["Sadece müşteri hizmetleri ve çağrı merkezi kurulumu", "Bu da bir parçası olabilir ama tamamı değildir."],
+        ["Sadece yasal danışmanlık ve sözleşme hazırlama", "Bu hukuki bir hizmettir."]
+      ],
+      answer: 1,
+      summary: "Elektronik ortamdaki ödeme sistemleri, donanım, yazılım, ağ, elektronik mağaza tasarımı, ödemenin standart sistemlere entegrasyonu gibi çeşitli öğeler içerir. Bu öğeleri bütünleşik bir şekilde sunan sektöre de \"elektronik ticaret entegrasyon sektörü\" adı verilir. [cite: 47, 49]"
+    },
+    {
+      q: "17. Telefonun elektronik ticaretin ilk temel taşı olarak kabul edilmesinin nedeni nedir?",
+      options: [
+        ["Çünkü ilk telefon görüşmeleri ticari anlaşmalar üzerineydi.", "Askeri amaçlarla da düşünülmüştü."],
+        ["Çünkü haberleşme gereksinimi bir işletme için en önemli gereksinimlerdendir ve telefon bu ihtiyacı karşılayan ilk elektronik araçlardandı.", "Telefon, işletmeler arası ve müşteriyle iletişimi elektronik ortama taşıyan ilk teknolojilerden biridir."],
+        ["Çünkü telefonla birlikte kredi kartı kullanımı da başlamıştır.", "Kredi kartı daha sonraki bir gelişmedir."],
+        ["Çünkü ilk e-ticaret siteleri sadece telefonla sipariş alıyordu.", "Bu bir yöntemdir ama temel taş olma nedeni değildir."],
+        ["Çünkü telefon faturaları ilk elektronik ödeme örnekleridir.", "Fatura ödemesi farklı bir konudur."]
+      ],
+      answer: 1,
+      summary: "Her ne kadar, ilk yıllarında ancak askeri amaçlarla kullanılabileceği düşünülen telefonun ekonomik aktivitelere ve genel olarak insanlığa ne kadar yararlı olacağı tahmin edilememişse de, elektronik ticaretin ilk temel taşı telefon olarak kabul edilmektedir. Haberleşme gereksinimi bir işletme için en önemli gereksinimlerden biridir. [cite: 7, 8]"
+    },
+    {
+      q: "18. 1950'lerden günümüze iş dünyasındaki otomasyon sürecinde bilgisayar teknolojisinin rolü ne olmuştur?",
+      options: [
+        ["Sadece büyük bankaların kullandığı bir teknoloji olarak kalmıştır.", "Yaygınlaşmıştır."],
+        ["Ofis otomasyon işlemlerini daha karmaşık ve yavaş hale getirmiştir.", "Kolaylaştırmış ve hızlandırmıştır."],
+        ["Bilgisayar teknolojisini adım adım içine çekmiş ve günümüzde ofis otomasyonu bilgisayarsız yürütülemez duruma gelmiştir.", "Bilgisayarlar otomasyonun merkezi haline gelmiştir."],
+        ["Personel ve müşteri takibi gibi işlemleri tamamen manuel yöntemlere bırakmıştır.", "Bu tür işlemleri elektronikleştirmiştir."],
+        ["Sadece fiziksel üretim süreçlerinde kullanılmıştır.", "Ofis süreçlerinde de yaygınlaşmıştır."]
+      ],
+      answer: 2,
+      summary: "İş dünyasındaki otomasyon 1950'lerden günümüze bilgisayar teknolojisini adım adım içine çekmiştir. Günümüzde ofis otomasyon işlemleri bilgisayar yardımı olmadan yürütülemez durumdadır. [cite: 10]"
+    },
+    {
+      q: "19. 'Banknot' kelimesinin kökeni ve anlamı nedir?",
+      options: [
+        ["Bankaların not aldığı defter anlamına gelir.", "Doğru anlam bu değildir."],
+        ["Bankadan alınan not veya makbuz anlamına gelir ve kağıt paranın emanet altın karşılığı olduğunu ifade eder.", "Banknotun kökeni ve anlamı budur."],
+        ["Bankaların gizli notlarını ifade eden bir terimdir.", "Gizli not anlamında değildir."],
+        ["Paranın elektronik ortama aktarılmış notu anlamına gelir.", "Bu elektronik parayla ilgili olabilir, banknot kağıttır."],
+        ["Bankaların müşterilere verdiği borç senedi anlamına gelir.", "Bu senet kavramıdır."]
+      ],
+      answer: 1,
+      summary: "Kağıt para, para sahibinin para çıkaran kişiye ya da kuruluşa emanet olarak bıraktığı altın ya da değerli maden karşılığı geri aldığı makbuz olarak yaygın bir biçimde kullanılmıştır. İngilizce'de \"bank-note\" yani bankadan alınan not, makbuz Türkçe'ye \"banknot\" olarak yerleşmiştir. [cite: 30, 31]"
+    },
+    {
+      q: "20. Elektronik Ticarette Kamu Politikası faktörü hangi konuları kapsar?",
+      options: [
+        ["Sadece web sitesi tasarım standartlarını", "Bu teknik standartlarla ilgilidir."],
+        ["İnternet erişimi, bilgi gizliliği ve bilginin/erişimin ücretlendirilmesi gibi konuları", "Kamu politikası bu alanları düzenler."],
+        ["Mağazaya girilme ve karşılıklı güvenin sağlanması prensiplerini", "Bu ticari modelle ilgilidir."],
+        ["Ağ uyumluluğu ve bilgi nakli standartlarını", "Bu teknik standartlarla ilgilidir."],
+        ["Sadece ödeme sistemlerinin güvenliğini", "Bu da bir parçası olabilir ama kapsam daha geniştir."]
+      ],
+      answer: 1,
+      summary: "Elektronik Ticarette Üç Temel Faktör'den biri 'Kamu Politikası'dır ve bu; Erişim, Bilgi Gizliliği, Bilginin ve Erişimin Ücretlendirilmesi gibi konuları içerir. [cite: 58]"
+    },
+    {
+        q: "21. Klasik mağaza modelinin özelliklerinden hangisi elektronik ticarette 'web sitesi tasarımı ve kullanıcı deneyimi' olarak karşılık bulur?",
+        options: [
+            ["Mağazanın adresi", "Bu URL ile ilgilidir."],
+            ["Vitrin ve bina yapısı", "Web sitesinin görsel sunumu ve kullanılabilirliği bu kavrama denk gelir."],
+            ["Çalışan elemanlar", "Bu müşteri hizmetleri veya sanal asistanlarla ilgilidir."],
+            ["Ödeme protokolü", "Bu online ödeme sistemleridir."],
+            ["Mağazanın reklamı", "Bu dijital pazarlamadır."]
+        ],
+        answer: 1,
+        summary: "Klasik mağaza modelinin 'Vitrin ve bina yapısı' gibi özellikleri, elektronik ticarette web sitesinin tasarımı, kullanıcı arayüzü ve genel kullanıcı deneyimi olarak biçim değiştirmiştir. [cite: 63]"
+    },
+    {
+        q: "22. 'Elektronik para'nın, kredi kartı veya bloke edilebilir banka hesabından temel farkı nedir?",
+        options: [
+            ["Her zaman bir banka hesabına bağlı olması", "Bazı elektronik paralar hesapsız olabilir."],
+            ["Çalındığında veya kaybedildiğinde kolaylıkla iptal edilebilmesi veya bloke edilebilmesi", "Tam tersine, elektronik para çalındığında veya kaybedildiğinde çoğunlukla kurtarılması kolay değildir; oysa kredi kartı iptal edilebilir. [cite: 41]"],
+            ["Sadece online alışverişlerde kullanılabilmesi", "Otobüste, okulda vb. de kullanılabilir. [cite: 40]"],
+            ["Üzerinde kullanıcının isminin yazması ve transfer edilememesi", "Genellikle anonimdir ve transfer edilebilir. [cite: 39]"],
+            ["Her zaman bir ağ bağlantısı gerektirmesi", "Pek çok elektronik para ağ bağlantısı gerektirmez. [cite: 39]"]
+        ],
+        answer: 1,
+        summary: "Elektronik para, çalındığında ya da kaybedildiğinde çoğunlukla kurtarılması kolay değildir. Oysa kredi kartı iptal, banka hesabı bloke edilebilir. [cite: 41]"
+    },
+    {
+        q: "23. İnternet'in 'Sahibi Yoktur' avantajı, e-ticaret yapmak isteyen girişimciler için ne anlama gelir?",
+        options: [
+            ["İnternet kullanımının tamamen ücretsiz olduğu", "Erişim genellikle ücretlidir."],
+            ["İnternet üzerinde hiçbir kural ve standart olmadığı", "Protokoller ve standartlar vardır."],
+            ["Tek bir firmanın veya gücün İnternet'i tekeline alma riskinin az olması ve yeni girişimcilerin potansiyel korkularının azalması", "Sahipsizlik, rekabet ve yenilik için bir ortam yaratır."],
+            ["İnternet'te yapılan tüm işlemlerin devlet tarafından denetlendiği", "Denetimler olabilir ama sahipsizlik bu anlama gelmez."],
+            ["Herhangi bir güvenlik önlemine gerek olmadığı", "Güvenlik her zaman önemlidir."]
+        ],
+        answer: 2,
+        summary: "İnternet, bir firmanın malı değildir. Böyle bir ortam tekelleşmeme garantisi altında olacağından yeni girişimcilerin potansiyel korkularını azaltır. [cite: 55]"
+    },
+    {
+        q: "24. Elektronik Ticarette 'Teknik Standartlar' faktörü hangi alanları kapsar?",
+        options: [
+            ["Sadece ödeme sistemlerinin güvenliğini", "Daha geniş bir kapsamı vardır."],
+            ["Bilgi yayınlama standartları, kullanıcı arayüzü standartları ve ağ uyumluluğu/bilgi nakli standartları", "Teknik standartlar bu alanları içerir."],
+            ["Müşteri hizmetleri politikalarını", "Bu kamu politikası veya ticari modelle ilgilidir."],
+            ["Reklam ve pazarlama etik kurallarını", "Bu da farklı bir düzenleme alanıdır."],
+            ["Firma içi hiyerarşi ve iş akışlarını", "Bu organizasyonel yapıyla ilgilidir."]
+        ],
+        answer: 1,
+        summary: "Elektronik Ticarette Üç Temel Faktör'den biri 'Teknik Standartlar'dır ve bu; Bilgi yayınlama standartları, Kullanıcı arayüzü standartları, Ağ uyumluluğu ve bilgi nakli standartlarını kapsar. [cite: 58, 59]"
+    },
+    {
+        q: "25. 1985 yılında bankalararası veri değişimini ifade eden EDI (Electronic Data Interchange) hangi ödeme sistemi gelişimiyle aynı döneme denk gelmektedir?",
+        options: [
+            ["Anadolu'da paranın ilk kullanılması (MÖ 700)", "Çok daha eski bir dönemdir."],
+            ["Manyetik mürekkep ve manyetik kart teknolojisinin ortaya çıkışı (1955)", "EDI daha sonradır."],
+            ["Türkiye'de yongalı kartların kullanıma girmesi (1999)", "EDI daha öncedir."],
+            ["EDI'nin kendisi, ödeme sistemleri tarihinde önemli bir gelişmedir ve 1985'te kullanımı belirtilmiştir.", "EDI, 1985'te bankalararası veri değişimi için kullanılmıştır."],
+            ["Diners Club kartının çıkışı (1950)", "EDI daha sonradır."]
+        ],
+        answer: 3,
+        summary: "Ödeme sistemleri kronolojisinde 1985 yılı için 'EDI(Electronic Data Interchange), Bankalararası veri değişimi' bilgisi yer almaktadır. [cite: 27]"
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

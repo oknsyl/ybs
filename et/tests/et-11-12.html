@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 11-12 - E-Ticaret Quiz (Düzenlenmiş)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+	button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 11-12 Sınavı (E-İş ve Entegre Sistemler)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Entegre e-ticaret sistemlerinin temel amacı nedir?",
+      options: [
+        ["Müşteri şikayetlerini sosyal medyada yayınlamak", "Bu sistemlerin amacı değildir."],
+        ["Sadece çevrimdışı satışları yönetmek", "E-ticaret sistemleri çevrimiçi odaklıdır."],
+        ["Tüm iş süreçlerini dijital olarak birbirine bağlamak", "Sistemler arası otomatik veri akışı sağlanır."],
+        ["Yalnızca ERP yazılımını çalıştırmak", "Sadece ERP değil, çoklu sistemler entegre edilir."],
+        ["Stok takibini kağıt ortamında yapmak", "Dijitalleştirme hedeflenir."]
+      ],
+      answer: 2,
+      summary: "Entegre e-ticaret sistemleri, siparişten stoğa, muhasebeden lojistiğe tüm iş süreçlerini dijital ve senkron bir şekilde bağlamayı hedefler."
+    },
+    {
+      q: "2. Aşağıdakilerden hangisi bir e-iş süreci değildir?",
+      options: [
+        ["E-tedarik", "Bu bir e-iş sürecidir."],
+        ["E-pazarlama", "Bu bir e-iş sürecidir."],
+        ["Elle yazılan irsaliye", "Fiziksel süreçtir, dijital değildir."],
+        ["E-hizmet", "Bu bir e-iş sürecidir."],
+        ["E-muhasebe", "Bu bir e-iş sürecidir."]
+      ],
+      answer: 2,
+      summary: "E-iş uygulamaları, iş süreçlerinin elektronik ortamda yürütülmesini kapsar. Fiziksel belge üretimi bu kapsama girmez."
+    },
+    {
+      q: "3. E-iş ile e-ticaret arasındaki temel fark nedir?",
+      options: [
+        ["E-iş işletme içi ve dışı tüm süreçleri kapsar", "E-ticaret genellikle satış odaklıdır."],
+        ["E-iş yalnızca fiziksel mağazada yapılır", "E-iş dijital süreçleri ifade eder."],
+        ["E-ticaret ürün geliştirme süreçlerini kapsar", "Bu e-işin daha geniş kapsamına girer."],
+        ["E-iş sadece küçük işletmeler için uygundur", "Her ölçekte uygulanabilir."],
+        ["E-ticaret muhasebe sistemlerini içermez", "Modern e-ticaret sistemleri muhasebe ile entegredir."]
+      ],
+      answer: 0,
+      summary: "E-ticaret, satış odaklıyken; e-iş, üretim, tedarik, lojistik, insan kaynakları gibi tüm iş süreçlerini içerir."
+    },
+    {
+      q: "4. ERP sistemlerinin en önemli katkısı nedir?",
+      options: [
+        ["Manuel veri girişini zorlaştırmak", "Tam tersine, süreçleri kolaylaştırır."],
+        ["Tüm iş süreçlerinin ortak bir veri tabanında toplanması", "Bu, ERP'nin temel faydasıdır."],
+        ["Müşteri yorumlarını gizlemek", "Müşteri ilişkileri için CRM sistemleri daha odaklıdır."],
+        ["Veri tutarsızlığını artırmak", "Veri bütünlüğünü sağlamayı hedefler."],
+        ["Sadece finansal verileri analiz etmek", "Finans dışında birçok modülü içerir."]
+      ],
+      answer: 1,
+      summary: "ERP (Kurumsal Kaynak Planlaması) sistemleri, şirket içindeki tüm işlevlerin tek bir veritabanı üzerinden yönetilmesini sağlar."
+    },
+    {
+      q: "5. CRM sistemlerinin temel amacı nedir?",
+      options: [
+        ["Yalnızca ürün stoklarını güncellemek", "Bu ERP'nin görevidir."],
+        ["İş gücünü azaltmak", "Dolaylı bir sonuç olabilir, ana amaç değildir."],
+        ["Muhasebe kayıtlarını tutmak", "Bu finans modüllerinin işidir."],
+        ["Müşterilerle ilişkileri geliştirmek", "CRM'in ana odak noktası budur."],
+        ["Şirket logosunu tasarlamak", "Bu pazarlama veya tasarım işidir."]
+      ],
+      answer: 3,
+      summary: "CRM (Customer Relationship Management), müşteri bilgilerini toplayarak analiz eder, şirketin müşterileriyle olan bağını güçlendirir."
+    },
+    {
+      q: "6. SCM sistemleri hangi süreci yönetmek için kullanılır?",
+      options: [
+        ["Ürün fiyatlarını değiştirmek", "Bu fiyatlandırma stratejisiyle ilgilidir."],
+        ["Müşteri hizmetlerini çağrı merkezinden yönetmek", "Bu CRM veya hizmet yönetimiyle ilgilidir."],
+        ["E-fatura kesmek", "Bu muhasebe veya faturalandırma sistemleriyle ilgilidir."],
+        ["Web sitesini yönetmek", "Bu CMS veya web yönetimiyle ilgilidir."],
+        ["Tedarik zincirini planlamak ve optimize etmek", "SCM'nin temel işlevi budur."]
+      ],
+      answer: 4,
+      summary: "SCM (Tedarik Zinciri Yönetimi), hammaddeden müşteriye kadar olan tüm akışın yönetimini sağlar."
+    },
+    {
+      q: "7. Entegre sistemlerde 'veri tekrarının önlenmesi' ne sağlar?",
+      options: [
+        ["Farklı sistemlerin birbirine entegre çalışması", "Veri tekrarı önlenerek tutarlılık sağlanır."],
+        ["Kağıt israfını artırır", "Tam tersine dijitalleşme ile kağıt kullanımı azalır."],
+        ["Personel sayısının artmasını", "Verimlilik artışı ile personel ihtiyacı optimize edilebilir."],
+        ["Kullanıcı arayüzünü karmaşıklaştırır", "İyi tasarlanmış sistemler kullanıcı dostudur."],
+        ["E-posta trafiğini artırır", "Sistem içi iletişim ve otomasyonla e-posta trafiği azalabilir."]
+      ],
+      answer: 0,
+      summary: "Entegre sistemler sayesinde bir kez girilen veri, tüm sistemlerde kullanılır. Bu tekrar girişleri ve hataları engeller."
+    },
+    {
+      q: "8. E-iş modellerinde dış kaynak (outsourcing) kullanımı ne sağlar?",
+      options: [
+        ["Verimsizliği artırır", "Doğru kullanıldığında verimliliği artırır."],
+        ["İnternet bağlantısını koparır", "İlgisiz bir durumdur."],
+        ["Ürün tasarımını zorlaştırır", "Uzmanlık gerektiren alanlarda fayda sağlar."],
+        ["Müşteri ilişkilerini durdurur", "Ana işe odaklanmayı sağlar, ilişkileri etkilemez."],
+        ["Bazı iş süreçlerini uzman dış firmalara devretmek", "Dış kaynak kullanımının tanımı budur."]
+      ],
+      answer: 4,
+      summary: "Dış kaynak kullanımı, bir işletmenin belirli görevleri uzman üçüncü taraflara devretmesidir. Bu, maliyet ve uzmanlık avantajı sağlar."
+    },
+    {
+      q: "9. E-tedarik sistemleri işletmelere nasıl fayda sağlar?",
+      options: [
+        ["Tedarikçilerin daha hızlı bulunmasını ve entegre sipariş sistemlerini mümkün kılar", "E-tedarikin temel faydalarındandır."],
+        ["Sadece bireysel alışverişi mümkün kılar", "Kurumsal alımlara odaklıdır."],
+        ["Tedarik süreçlerini manuel hale getirir", "Tam tersine otomatikleştirir."],
+        ["Fiyatlandırmayı sabitler", "Rekabetçi fiyatlandırma ve şeffaflık sağlar."],
+        ["Sadece yurt dışı tedarikçileri kapsar", "Hem yerel hem de uluslararası tedarikçileri kapsayabilir."]
+      ],
+      answer: 0,
+      summary: "E-tedarik sistemleri, kurumların tedarikçileriyle daha verimli çalışmasını sağlar. Hız, şeffaflık ve otomasyon getirir."
+    },
+    {
+      q: "10. CMS (İçerik Yönetim Sistemi) ile aşağıdakilerden hangisi yapılabilir?",
+      options: [
+        ["Kredi kartı işlemleri yönetilir", "Bu ödeme sistemlerinin işidir."],
+        ["Muhasebe fişleri hazırlanır", "Bu muhasebe yazılımlarının işidir."],
+        ["Stok sayımı yapılır", "Bu envanter yönetim sistemlerinin işidir."],
+        ["Web sitesi içeriği yönetilir", "CMS'nin ana fonksiyonu budur."],
+        ["Tedarik anlaşmaları yapılır", "Bu sözleşme yönetimi veya tedarik sistemleriyle ilgilidir."]
+      ],
+      answer: 3,
+      summary: "CMS (Content Management System), teknik bilgiye gerek kalmadan web içeriğini güncellemeye ve yönetmeye olanak sağlar."
+    },
+    {
+      q: "11. E-iş altyapısında bilgi sistemlerinin rolü nedir?",
+      options: [
+        ["Veri akışını engellemek", "Tam tersine veri akışını kolaylaştırır."],
+        ["Manuel veri girişini zorunlu kılmak", "Otomasyonu ve dijitalleşmeyi hedefler."],
+        ["İş süreçlerinin elektronik ortamda bütünleşmesini sağlamak", "Bilgi sistemlerinin temel rollerinden biridir."],
+        ["Tedarikçi ile iletişimi kesmek", "İletişimi güçlendirir."],
+        ["Kâğıt bazlı evrakları arşivlemek", "Dijital arşivlemeyi ve süreçleri destekler."]
+      ],
+      answer: 2,
+      summary: "Bilgi sistemleri, farklı departmanların iş süreçlerini senkronize şekilde yürütmesine olanak tanır."
+    },
+    {
+      q: "12. CRM sistemlerinde müşteri segmentasyonu neden önemlidir?",
+      options: [
+        ["Tüm müşterilere aynı mesajı göndermek için", "Segmentasyon farklı mesajlar için yapılır."],
+        ["Müşteri verilerini silmek için", "Verileri anlamlı gruplara ayırmak içindir."],
+        ["Farklı müşteri gruplarına özel stratejiler geliştirmek için", "Segmentasyonun temel amacı budur."],
+        ["Reklam bütçesini azaltmak için", "Hedefli pazarlama ile bütçe etkin kullanılabilir, ama ana amaç bu değildir."],
+        ["Ürün stoklarını artırmak için", "Talep tahmini ile ilgili olabilir ancak doğrudan segmentasyonun amacı değildir."]
+      ],
+      answer: 2,
+      summary: "CRM sistemleri, müşterileri belirli gruplara ayırarak her gruba özel pazarlama ve hizmet stratejileri geliştirilmesini sağlar."
+    },
+    {
+      q: "13. ERP sistemleri hangi tür işletmeler için uygundur?",
+      options: [
+        ["Sadece küçük ölçekli", "Her ölçekteki işletmeler kullanabilir."],
+        ["Sadece kamu kuruluşları", "Özel sektör ve kamu tarafından kullanılabilir."],
+        ["Her ölçekteki işletmeler için", "Esnek ve ölçeklenebilir yapıdadır."],
+        ["Sadece ihracat yapan şirketler", "İhracat yapmayan şirketler de kullanabilir."],
+        ["Sadece üretim yapan işletmeler", "Hizmet sektörü dahil birçok sektörde kullanılır."]
+      ],
+      answer: 2,
+      summary: "ERP sistemleri esnek ve modülerdir; küçük, orta ve büyük işletmelere göre özelleştirilebilir."
+    },
+    {
+      q: "14. SCM sistemlerinde 'gerçek zamanlı stok takibi' neyi sağlar?",
+      options: [
+        ["Fazla sipariş riskini artırır", "Tam tersine optimize eder."],
+        ["Anlık envanter bilgisi ile verimli sipariş yönetimi", "Gerçek zamanlı takibin temel faydasıdır."],
+        ["Stok bilgilerinin gecikmeli ulaşmasını", "Gerçek zamanlı anlık bilgi demektir."],
+        ["Siparişin el ile yazılmasını", "Otomasyonu hedefler."],
+        ["İnsan kaynakları planlamasını", "Bu HR sistemlerinin görevidir."]
+      ],
+      answer: 1,
+      summary: "Gerçek zamanlı takip, depo durumu hakkında anında bilgi sağlar ve gereksiz stok maliyetlerini azaltır."
+    },
+    {
+      q: "15. E-hizmetin temel avantajı nedir?",
+      options: [
+        ["Sadece hafta içi çalışması", "7/24 erişim imkanı sunar."],
+        ["Yüz yüze iletişim zorunluluğu", "Online etkileşim sağlar."],
+        ["Müşteriyle zaman ve mekandan bağımsız etkileşim kurmak", "E-hizmetin en önemli avantajıdır."],
+        ["Yalnızca devlet kurumlarında kullanılması", "Hem kamu hem özel sektörde kullanılır."],
+        ["Müşteri kayıtlarının fiziksel arşivde tutulması", "Dijital kayıtları esas alır."]
+      ],
+      answer: 2,
+      summary: "E-hizmetler, müşterilere internet üzerinden kesintisiz hizmet sunarak deneyimi artırır."
+    },
+    {
+      q: "16. Bilgi Yönetim Sistemi (KMS) ile ne yapılabilir?",
+      options: [
+        ["Kullanıcıların maaşı hesaplanır", "Bu bordro veya HR sistemlerinin işidir."],
+        ["Tedarikçi değerlendirme yapılır", "Bu SCM veya tedarikçi yönetim sistemleriyle ilgilidir."],
+        ["Kredi işlemleri yönetilir", "Bu bankacılık veya finans sistemlerinin işidir."],
+        ["Pazarlama planı otomatik oluşturulur", "Bu pazarlama otomasyon araçlarıyla ilgilidir."],
+        ["Kurumsal bilgi ve tecrübelerin merkezi olarak toplanması", "KMS'nin temel amacı budur."]
+      ],
+      answer: 4,
+      summary: "KMS sistemleri; doküman, proje, sunum ve kurumsal bilgi birikimini dijital ortamda organize ederek erişimi kolaylaştırır."
+    },
+    {
+      q: "17. Aşağıdakilerden hangisi entegre e-ticaret sisteminin bir bileşeni değildir?",
+      options: [
+        ["CRM sistemi", "Entegre sistemin önemli bir parçasıdır."],
+        ["El yazısı imza defteri", "Dijital sistemlerle uyumlu değildir."],
+        ["SCM yazılımı", "Tedarik zinciri yönetimi için entegredir."],
+        ["ERP çözümü", "Kurumsal kaynak planlaması için temel bir bileşendir."],
+        ["Ödeme geçidi", "Online ödemeler için zorunludur."]
+      ],
+      answer: 1,
+      summary: "Entegre e-ticaret sistemleri tamamen dijital yapılarla kurulur. Fiziksel defterler bu yapıya dahil değildir."
+    },
+    {
+      q: "18. E-iş uygulamaları aşağıdaki hedeflerden hangisini taşımaz?",
+      options: [
+        ["Verimlilik artışı", "E-işin temel hedeflerindendir."],
+        ["Zaman tasarrufu", "Süreçleri hızlandırarak zaman tasarrufu sağlar."],
+        ["Müşteri memnuniyeti", "Daha iyi hizmet ile müşteri memnuniyetini artırır."],
+        ["Fiziksel evrak iş yükünü artırmak", "Tam tersine dijitalleşme ile evrak iş yükünü azaltır."],
+        ["Karar alma sürecini hızlandırma", "Veri erişimini kolaylaştırarak karar almayı hızlandırır."]
+      ],
+      answer: 3,
+      summary: "E-iş uygulamaları, kağıt işlerini dijital ortama taşıyarak maliyet ve iş yükünü azaltır."
+    },
+    {
+      q: "19. E-satın alma sistemlerinde 'onay mekanizması' ne işe yarar?",
+      options: [
+        ["Tedarikçiye otomatik e-posta atar", "Bu bir sonuç olabilir, ana işlevi değildir."],
+        ["Ürünleri sipariş etmeden önce iptal eder", "Kontrol ve onay sağlar, doğrudan iptal etmez."],
+        ["Fiyatların gizli kalmasını sağlar", "Şeffaflık ve kontrol sağlar."],
+        ["CRM verilerini değiştirir", "Satın alma süreçleriyle ilgilidir."],
+        ["Satın alma taleplerinin kontrol edilmesini sağlar", "Onay mekanizmasının temel amacı budur."]
+      ],
+      answer: 4,
+      summary: "Onay mekanizması, maliyet kontrolü, yetki denetimi ve hatalı satın almanın önlenmesi için gereklidir."
+    },
+    {
+      q: "20. E-iş yapısında 'modüler sistem' ne sağlar?",
+      options: [
+        ["Sistemin tümüyle yeniden yazılmasını", "Parça parça entegrasyonu ifade eder."],
+        ["Kullanıcıların verilerini silmesini", "Veri yönetimi ile ilgili değildir."],
+        ["İhtiyaca göre parça parça kurulum ve entegrasyon", "Modüler yapının avantajıdır."],
+        ["Web sitesini yeniden tasarlamayı", "Bu CMS veya web tasarım araçlarıyla ilgilidir."],
+        ["Çalışan sayısını artırmayı", "Verimlilik artışı ile personel ihtiyacını optimize eder."]
+      ],
+      answer: 2,
+      summary: "Modüler yapı, işletmenin sadece ihtiyacı olan modülleri kurmasını sağlar. Zamanla diğerleri entegre edilebilir."
+    },
+    {
+      q: "21. E-işte süreç entegrasyonunun temel avantajı nedir?",
+      options: [
+        ["Veri tekrarını artırmak", "Veri tekrarını azaltır."],
+        ["İş süreçlerinin birbirinden bağımsız hale gelmesi", "Tam tersine bütünleşik çalışmayı sağlar."],
+        ["Manuel iş yükünü artırmak", "Otomasyonla manuel iş yükünü azaltır."],
+        ["Birimler arasında hızlı veri paylaşımı ve karar almayı sağlamak", "Süreç entegrasyonunun temel faydasıdır."],
+        ["İletişimi yalnızca e-posta ile sınırlamak", "Daha etkin iletişim kanalları sunar."]
+      ],
+      answer: 3,
+      summary: "Süreç entegrasyonu, şirket içinde bölümler arasında bilgi akışını hızlandırır ve iş kararlarını kolaylaştırır."
+    },
+    {
+      q: "22. ERP, CRM ve SCM sistemlerinin ortak özelliği nedir?",
+      options: [
+        ["Sadece dış paydaşlara hizmet vermeleri", "Hem iç hem dış paydaşlara yöneliktir."],
+        ["Tümünün web sitesi tasarımı için kullanılması", "Farklı amaçlara hizmet ederler."],
+        ["Kurumsal iş süreçlerini desteklemeleri", "Temel ortak özellikleridir."],
+        ["Sadece üretim şirketlerinde kullanılması", "Farklı sektörlerde kullanılırlar."],
+        ["Yazılı olmayan kuralları uygulamaları", "Tanımlanmış süreçleri ve kuralları uygularlar."]
+      ],
+      answer: 2,
+      summary: "Bu sistemler, kurumun çeşitli işlevsel alanlarını dijital olarak yönetmeyi amaçlar ve süreç performansını artırır."
+    },
+    {
+      q: "23. E-hizmet ile müşteri deneyimi nasıl iyileştirilir?",
+      options: [
+        ["Sadece fiziksel destek sağlanarak", "Online ve self-servis imkanları sunar."],
+        ["Zaman ve mekân sınırlamasını ortadan kaldırarak", "Müşteri deneyimini iyileştiren önemli bir faktördür."],
+        ["Çağrı merkezine yönlendirerek", "Bu bir kanal olabilir, ancak e-hizmetin tek yolu değildir."],
+        ["Sadece yüz yüze görüşme imkanı sunarak", "Online etkileşim sağlar."],
+        ["Kâğıtla yazılı bilgi sunarak", "Dijital bilgi sunumunu esas alır."]
+      ],
+      answer: 1,
+      summary: "E-hizmetler müşteriye her yerden, her zaman hizmet alma olanağı sağlayarak memnuniyeti artırır."
+    },
+    {
+      q: "24. E-tedarik sistemlerinde platform seçimi neden kritiktir?",
+      options: [
+        ["Çünkü platformlar yalnızca iç yazışma sağlar", "Geniş işlevsellik sunarlar."],
+        ["Çünkü her platform e-fatura düzenler", "Platformdan platforma değişir."],
+        ["Platform müşteri hizmeti sunar", "Bu bir özellik olabilir, ancak kritiklik nedeni değildir."],
+        ["Sadece fiyat karşılaştırması için gereklidir", "Daha kapsamlı faydalar sunar."],
+        ["Tedarikçi ile entegrasyon, güvenlik ve işlevsellik açısından belirleyicidir", "Platform seçiminin kritik olmasının nedenidir."]
+      ],
+      answer: 4,
+      summary: "Uygun e-tedarik platformu, iş sürekliliği ve veri güvenliği için kritik önemdedir."
+    },
+    {
+      q: "25. İş süreçlerinin 'otomasyonu' işletmelere ne sağlar?",
+      options: [
+        ["İşlem süresini uzatır", "Tam tersine kısaltır."],
+        ["Manuel hataları azaltır ve verimliliği artırır", "Otomasyonun temel faydalarıdır."],
+        ["İşe alımları artırır", "Verimlilik artışı ile kaynak optimizasyonu sağlar."],
+        ["Tedarik sürecini durdurur", "Tedarik sürecini de otomatize edebilir."],
+        ["Raporlama yeteneğini azaltır", "Daha iyi ve hızlı raporlama imkanı sunar."]
+      ],
+      answer: 1,
+      summary: "Otomasyon, insan hatasını azaltır, maliyeti düşürür ve iş akışlarını daha hızlı hale getirir."
+    },
+    {
+      q: "26. İçerik Yönetim Sistemleri (CMS) hangi ihtiyaca çözüm sunar?",
+      options: [
+        ["Depo envanterini saymak", "Bu envanter yönetim sistemlerinin işidir."],
+        ["Web sitesi içeriklerini kolayca düzenlemek", "CMS'nin temel amacı budur."],
+        ["Kurumsal bilgiyi saklamak", "Bu KMS veya doküman yönetim sistemleriyle ilgilidir."],
+        ["Kredi tahsilatını yapmak", "Bu finans veya tahsilat sistemlerinin işidir."],
+        ["Tedarikçi bilgisi toplamak", "Bu SCM veya tedarikçi yönetim sistemleriyle ilgilidir."]
+      ],
+      answer: 1,
+      summary: "CMS, kullanıcıların teknik bilgiye sahip olmadan web sayfalarını düzenlemesini ve yönetmesini sağlar."
+    },
+    {
+      q: "27. CRM sisteminde 'müşteri ömür boyu değeri' kavramı neyi ifade eder?",
+      options: [
+        ["Müşterinin sadece ilk alışveriş değerini", "Tüm ilişki boyunca değeri ifade eder."],
+        ["İşletmeye sağlayabileceği toplam katkıyı", "CLV'nin tanımı budur."],
+        ["Müşteri memnuniyet skorunu", "Bu bir metrik olabilir, ancak CLV'nin kendisi değildir."],
+        ["Sadece müşteri şikayetlerini", "Müşteri ilişkilerinin bir parçasıdır, CLV değildir."],
+        ["Alınan promosyonları", "Bu müşteri davranışını etkileyen bir faktördür."]
+      ],
+      answer: 1,
+      summary: "CLV (Customer Lifetime Value), bir müşterinin şirketle olan tüm ilişkisi boyunca sağlayacağı ekonomik değeri ifade eder."
+    },
+    {
+      q: "28. E-iş süreçlerinde 'gerçek zamanlı veri erişimi' neden önemlidir?",
+      options: [
+        ["Veri kaybını artırır", "Veri erişimini iyileştirir."],
+        ["Karar alma süreçlerini hızlandırır", "Gerçek zamanlı verinin temel faydasıdır."],
+        ["Maliyetleri artırır", "Doğru kullanıldığında verimlilikle maliyetleri düşürebilir."],
+        ["İş süreçlerini yavaşlatır", "Tam tersine hızlandırır."],
+        ["Müşteri etkileşimini azaltır", "Daha hızlı ve doğru etkileşim sağlar."]
+      ],
+      answer: 1,
+      summary: "Gerçek zamanlı veri, yöneticilerin anlık durumlara hızlı tepki verebilmesini sağlar."
+    },
+    {
+      q: "29. ERP sisteminde 'modüler yapı' ne tür avantaj sağlar?",
+      options: [
+        ["Sadece muhasebe işlemlerine izin verir", "Birçok farklı modülü içerir."],
+        ["Tüm sistemlerin tek bir anda kurulmasını zorunlu kılar", "Parça parça kuruluma izin verir."],
+        ["Veri girişini fiziksel olarak yapma zorunluluğu", "Dijital veri girişini esas alır."],
+        ["İhtiyaca göre modül seçimi ve esnek entegrasyon", "Modüler yapının temel avantajıdır."],
+        ["Sadece üretim modülü içerir", "Üretim dışında birçok modülü vardır."]
+      ],
+      answer: 3,
+      summary: "Modüler ERP sistemleri, şirketin ihtiyacına göre sadece gerekli olan bileşenlerin entegre edilmesine olanak tanır."
+    },
+    {
+      q: "30. E-iş uygulamalarında en kritik başarı faktörü aşağıdakilerden hangisidir?",
+      options: [
+        ["Personelin e-posta okuma sıklığı", "İletişim önemlidir, ancak en kritik faktör değildir."],
+        ["Yönetsel destek ve stratejik uyum", "Başarının temelini oluşturur."],
+        ["Yalnızca BT departmanının kullanması", "Tüm ilgili departmanların katılımı gerekir."],
+        ["Fiziksel dosya arşivi kurulması", "Dijitalleşmeyi hedefler."],
+        ["Telefonla sipariş alınması", "E-iş online kanalları vurgular."]
+      ],
+      answer: 1,
+      summary: "Başarılı e-iş uygulamaları için organizasyonun üst yönetiminin desteği, kaynak tahsisi ve stratejik uyum şarttır."
+    },
+    {
+      q: "31. E-iş uygulamalarında 'analitik raporlama' neyi amaçlar?",
+      options: [
+        ["Verilerin rastgele silinmesini", "Verileri anlamlı hale getirmeyi amaçlar."],
+        ["Sadece müşteri sayısını takip etmeyi", "Daha kapsamlı analizler sunar."],
+        ["Elle yazılmış raporları saklamayı", "Otomatik ve dijital raporlamayı hedefler."],
+        ["E-posta ile otomatik spam göndermeyi", "İlgisiz bir durumdur."],
+        ["Verilere dayalı stratejik karar almayı", "Analitik raporlamanın temel amacı budur."]
+      ],
+      answer: 4,
+      summary: "Analitik raporlama, e-iş sistemlerinde karar vericilerin geçmiş veriye ve trendlere göre doğru ve zamanında aksiyon almasını sağlar."
+    },
+    {
+      q: "32. Entegre sistemlerde 'kullanıcı yetkilendirmesi' neden önemlidir?",
+      options: [
+        ["Tüm kullanıcıların tüm verilere erişmesini sağlamak için", "Yetkisiz erişimi engellemek içindir."],
+        ["Veri güvenliğini ve işlem sorumluluğunu korumak için", "Yetkilendirmenin temel amacı budur."],
+        ["Hatalı veri girişlerini artırmak için", "Hataları azaltmayı hedefler."],
+        ["Sadece estetik arayüz tasarımı için", "Güvenlik ve kontrol için gereklidir."],
+        ["Tüm işlemleri manuel hale getirmek için", "Sistemlerin etkin kullanımını sağlar."]
+      ],
+      answer: 1,
+      summary: "Kullanıcı yetkilendirmesi, veri güvenliği, işlem takibi ve sistem bütünlüğü için gereklidir."
+    },
+    {
+      q: "33. E-iş sistemlerinin bulut tabanlı olması hangi avantajı sağlar?",
+      options: [
+        ["Sadece yerel bilgisayarda çalışmasını", "Her yerden erişim sağlar."],
+        ["Güncellemeleri engellemesi", "Güncellemeleri kolaylaştırır."],
+        ["Çok fazla fiziksel alan gerektirmesi", "Fiziksel altyapı ihtiyacını azaltır."],
+        ["Erişim esnekliği ve düşük altyapı maliyeti", "Bulut tabanlı sistemlerin temel avantajlarıdır."],
+        ["Sadece tek kullanıcıya izin vermesi", "Çok kullanıcılı sistemlerdir."]
+      ],
+      answer: 3,
+      summary: "Bulut sistemler sayesinde işletmeler, altyapı yatırımı yapmadan, internet üzerinden her yerden erişim sağlar."
+    },
+    {
+      q: "34. E-işte süreç optimizasyonu hangi sonucu doğurur?",
+      options: [
+        ["Maliyetleri artırır", "Maliyetleri düşürür."],
+        ["Verimliliğin artması ve kaynak kullanımının iyileştirilmesi", "Süreç optimizasyonunun temel sonucudur."],
+        ["Süreçlerin daha karmaşık hale gelmesi", "Süreçleri basitleştirir."],
+        ["İş yükünün manuel yapılması", "Otomasyonu ve verimliliği artırır."],
+        ["Çalışan sayısının zorunlu artırılması", "Kaynakların daha etkin kullanılmasını sağlar."]
+      ],
+      answer: 1,
+      summary: "Süreç optimizasyonu, gereksiz adımların kaldırılmasıyla zaman, maliyet ve emek tasarrufu sağlar."
+    },
+    {
+      q: "35. Kurumsal bilgi sistemlerinde 'veri bütünlüğü' neden önemlidir?",
+      options: [
+        ["Verilerin kolay silinmesi için", "Verilerin doğruluğunu ve tutarlılığını ifade eder."],
+        ["Sadece yazılım güncellemelerinde işe yarar", "Sürekli önemlidir."],
+        ["Tüm sistemlerin aynı veri kaynağını kullanarak tutarlı sonuç üretmesi için", "Veri bütünlüğünün temel amacı budur."],
+        ["Sistemlerin birbirinden izole çalışması için", "Entegrasyonu ve tutarlılığı hedefler."],
+        ["Yalnızca sunucuda yer kaplamamak için", "Veri kalitesiyle ilgilidir."]
+      ],
+      answer: 2,
+      summary: "Veri bütünlüğü, sistemler arası veri uyumsuzluğunu önler ve doğru raporlama sağlar."
+    },
+    {
+      q: "36. Elektronik iş süreçlerinde 'otomatik bildirim' sistemi ne işe yarar?",
+      options: [
+        ["Yöneticilerin manuel kontrolünü zorlaştırmak", "Kontrolü ve takibi kolaylaştırır."],
+        ["İlgili kişilere zamanında bilgi vermek", "Otomatik bildirimlerin temel işlevidir."],
+        ["Kullanıcı şifrelerini silmek", "Güvenlikle ilgili bir işlem değildir."],
+        ["Sistem güncellemelerini engellemek", "Güncellemelerle ilgili değildir."],
+        ["Veri girişini iptal etmek", "Süreç akışını destekler."]
+      ],
+      answer: 1,
+      summary: "Otomatik bildirimler, sistemdeki kritik durumları anlık olarak ilgililere ileterek hızlı tepki ve koordinasyon sağlar."
+    },
+    {
+      q: "37. Aşağıdakilerden hangisi bir E-CRM uygulamasıdır?",
+      options: [
+        ["Kağıt formlar ile müşteri takibi", "Bu geleneksel bir yöntemdir."],
+        ["Web tabanlı müşteri destek paneli", "E-CRM uygulamasına bir örnektir."],
+        ["Kargo takip ekranı", "Bu lojistik veya SCM ile ilgili olabilir."],
+        ["Ürün stok sayımı", "Bu envanter yönetimi ile ilgilidir."],
+        ["Banka havale formu", "Bu finansal bir işlemdir."]
+      ],
+      answer: 1,
+      summary: "E-CRM, müşteri verilerinin dijital ortamda toplanmasını, analiz edilmesini ve müşteriyle sürekli iletişimi sağlar."
+    },
+    {
+      q: "38. E-iş sistemlerinde 'gelişmiş kullanıcı arayüzü' ne sağlar?",
+      options: [
+        ["Sadece görsellik sunar, işlevsel değildir", "Hem görsellik hem işlevsellik önemlidir."],
+        ["Kullanıcıların sisteme kolay uyum sağlamasını", "İyi bir arayüzün temel faydasıdır."],
+        ["Karmaşık menüler ile kontrolü zorlaştırır", "Kullanıcı dostu ve sezgisel olmalıdır."],
+        ["Veri gizliliğini azaltır", "Güvenlikten ödün vermemelidir."],
+        ["Sistemi manuel yapıya döndürür", "Dijital etkileşimi kolaylaştırır."]
+      ],
+      answer: 1,
+      summary: "Arayüzün sezgisel ve yalın olması, kullanıcıların sisteme hızla adapte olmasını ve hata yapma oranını azaltır."
+    },
+    {
+      q: "39. E-iş yapısında 'çoklu sistem entegrasyonu' neden tercih edilir?",
+      options: [
+        ["İş yükünü artırmak için", "Verimliliği artırmak için tercih edilir."],
+        ["Her modülün ayrı sunucuda olması zorunludur", "Farklı mimariler mümkündür."],
+        ["Çalışanlara karmaşıklık yaşatmak için", "Kullanım kolaylığı hedeflenir."],
+        ["Kâğıtla raporlama sürecini artırmak için", "Dijital raporlamayı destekler."],
+        ["Tek sistemle tüm işlevleri yönetmek mümkün olmadığından", "Farklı sistemlerin güçlü yönlerini birleştirmek içindir."]
+      ],
+      answer: 4,
+      summary: "Her sistemin uzmanlaştığı farklı alanlar vardır. Entegre yapı, bu uzmanlıkları bir arada çalıştırarak daha etkin çözümler sunar."
+    },
+    {
+      q: "40. E-iş uygulamalarında sistem güncellemeleri neden önemlidir?",
+      options: [
+        ["Sistemi daha yavaş hale getirmek için", "Performansı iyileştirmeyi hedefler."],
+        ["Veri silme işlemlerini hızlandırmak için", "Veri yönetimiyle ilgili değildir."],
+        ["Sadece estetik değişiklik yapmak için", "İşlevsellik ve güvenlik için de önemlidir."],
+        ["Yeni özelliklerin, güvenlik önlemlerinin ve uyumluluğun sağlanması için", "Güncellemelerin temel nedenidir."],
+        ["Tüm kullanıcıları aynı anda sistemden çıkarmak için", "Kesintisiz çalışmayı hedefler."]
+      ],
+      answer: 3,
+      summary: "Güncellemeler, yazılımın yeni ihtiyaçlara ve tehditlere karşı daha güçlü olmasını sağlar."
+    },
+    {
+      q: "41. E-iş sistemlerinde 'ölçeklenebilirlik' kavramı neyi ifade eder?",
+      options: [
+        ["Sistemin yalnızca sabit kapasitede çalışabilmesini", "Kapasite artışına uyum sağlayabilmeyi ifade eder."],
+        ["Kapasite artışına uyum sağlayabilmesini", "Ölçeklenebilirliğin tanımı budur."],
+        ["Tüm işlemleri manuel hâle getirmesini", "Otomasyon ve verimlilikle ilgilidir."],
+        ["Gelişen ihtiyaçlara direnç göstermesini", "Tam tersine uyum sağlamayı ifade eder."],
+        ["Veri girişini yavaşlatmasını", "Performansı koruyarak büyüyebilmeyi ifade eder."]
+      ],
+      answer: 1,
+      summary: "Ölçeklenebilirlik, bir sistemin kullanıcı, işlem veya veri miktarı arttığında performans kaybı yaşamadan genişleyebilme yeteneğidir."
+    },
+    {
+      q: "42. Elektronik kaynak planlamasında 'iş zekâsı entegrasyonu' ne sağlar?",
+      options: [
+        ["Rastgele veri üretimi", "Anlamlı içgörüler üretir."],
+        ["Depo alanını artırma", "Veri analiziyle ilgilidir."],
+        ["Karar destek sürecini güçlendirme", "İş zekasının temel faydasıdır."],
+        ["Sistemin kapanmasına neden olma", "Sistemin etkinliğini artırır."],
+        ["Sadece grafik çizimi sağlama", "Daha kapsamlı analizler sunar."]
+      ],
+      answer: 2,
+      summary: "İş zekâsı entegrasyonu, verilerin analiz edilerek yöneticilere stratejik kararlar aldıracak içgörüler sağlamasını mümkün kılar."
+    },
+    {
+      q: "43. E-iş uygulamalarında 'uyumluluk' neden önemlidir?",
+      options: [
+        ["Veri tutarsızlığına yol açmak için", "Tutarlılığı sağlamak için önemlidir."],
+        ["Kullanıcıların erişimini engellemek için", "Sistemlerin birlikte çalışabilirliği için önemlidir."],
+        ["Sadece manuel sistemlere uygunluk sağlamak için", "Dijital sistemlerin entegrasyonu için önemlidir."],
+        ["Sistemleri yavaşlatmak için", "Sorunsuz çalışmayı hedefler."],
+        ["Farklı sistemlerin birbiriyle entegre çalışabilmesi için", "Uyumluluğun temel amacı budur."]
+      ],
+      answer: 4,
+      summary: "Uyumluluk, yazılım ve donanım bileşenlerinin birlikte sorunsuz çalışmasını ve veri paylaşımını sağlar."
+    },
+    {
+      q: "44. E-tedarik sistemlerinde 'otomatik teklif alma' özelliği ne sağlar?",
+      options: [
+        ["Tedarikçilerin gizlenmesini", "Şeffaflık sağlar."],
+        ["Zaman ve maliyet tasarrufu", "Otomatik teklif almanın temel faydasıdır."],
+        ["Elle teklif yazımı sürecini artırmayı", "Süreci otomatikleştirir."],
+        ["Fiziksel toplantı zorunluluğu getirmeyi", "Online etkileşim sağlar."],
+        ["Stokları artırmayı", "Tedarik sürecini optimize eder."]
+      ],
+      answer: 1,
+      summary: "Otomatik teklif alma, sistem üzerinden eş zamanlı çok sayıda tedarikçiden fiyat ve şart toplama sürecini kolaylaştırır."
+    },
+    {
+      q: "45. E-iş sistemlerinde 'görev atama modülü' ne işe yarar?",
+      options: [
+        ["Sadece e-posta göndermek için", "Daha kapsamlı işlevleri vardır."],
+        ["Çalışanlara sorumluluk tanımlamak ve izlemek için", "Görev atama modülünün temel işlevidir."],
+        ["Kullanıcı şifrelerini sıfırlamak için", "Bu kullanıcı yönetimiyle ilgilidir."],
+        ["Eğitim videoları yayınlamak için", "Bu eğitim veya KMS ile ilgili olabilir."],
+        ["Ürün listelemek için", "Bu e-ticaret veya katalog yönetimiyle ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Görev atama modülleri, kim ne zaman ne yapacak bilgisini sistematik biçimde tanımlamaya ve izlemeye olanak verir."
+    },
+    {
+      q: "46. ERP sisteminde 'gerçek zamanlı raporlama' ne sağlar?",
+      options: [
+        ["Geçmiş verilerle çalışma zorunluluğu", "Anlık verilerle çalışmayı sağlar."],
+        ["Yöneticilerin gecikmeli karar alması", "Hızlı karar almayı sağlar."],
+        ["Anlık veri üzerinden hızlı ve doğru karar alınmasını", "Gerçek zamanlı raporlamanın temel faydasıdır."],
+        ["Raporların sadece kağıt çıktısı olması", "Dijital raporlama sunar."],
+        ["Sadece haftalık raporlama", "İstenilen sıklıkta raporlama imkanı sunar."]
+      ],
+      answer: 2,
+      summary: "Gerçek zamanlı raporlama ile işletme yöneticileri güncel durumu anında görebilir ve hızlı aksiyon alabilir."
+    },
+    {
+      q: "47. CRM sisteminde 'sadakat programı' ne amaçla kullanılır?",
+      options: [
+        ["Müşterilere reklam yasağı uygulamak için", "Tam tersine etkileşimi artırmayı hedefler."],
+        ["Tedarikçi verilerini güncellemek", "Müşteri ilişkileriyle ilgilidir."],
+        ["Fatura ödemelerini kontrol etmek", "Bu finansal işlemlerle ilgilidir."],
+        ["Müşterilere tekrar alışveriş yaptırmak", "Sadakat programlarının temel amacıdır."],
+        ["Yalnızca tek seferlik alışverişler için", "Uzun vadeli müşteri ilişkilerini hedefler."]
+      ],
+      answer: 3,
+      summary: "Sadakat programları, ödül, puan veya ayrıcalık yoluyla müşterinin tekrar satın alma eğilimini artırmayı hedefler."
+    },
+    {
+      q: "48. E-iş sistemlerinde 'doküman yönetim modülü' ne sağlar?",
+      options: [
+        ["Yalnızca belgeleri yazdırmak", "Dijital saklama ve erişimi sağlar."],
+        ["Fiziksel evrakların arşivlenmesini", "Dijital arşivlemeyi hedefler."],
+        ["Yalnızca muhasebe fişlerini saklamayı", "Tüm kurumsal belgeleri kapsayabilir."],
+        ["Belgeleri manuel olarak sıralamayı", "Otomatik indeksleme ve arama imkanı sunar."],
+        ["Belgelerin merkezi dijital ortamda saklanmasını ve erişilmesini", "Doküman yönetiminin temel işlevidir."]
+      ],
+      answer: 4,
+      summary: "Doküman yönetimi, dosyaların merkezi ortamda arşivlenmesi, yetkilendirilmesi ve aranabilir hâle gelmesi süreçlerini kapsar."
+    },
+    {
+      q: "49. E-iş sistemlerinin başarısında 'kullanıcı eğitimi' neden gereklidir?",
+      options: [
+        ["Sistemi kullanmamalarını sağlamak için", "Etkin kullanımı sağlamak içindir."],
+        ["Sistemin etkin, verimli ve hatasız kullanımını sağlamak için", "Kullanıcı eğitiminin temel amacıdır."],
+        ["Yalnızca teknik personel için geçerli olması", "Tüm kullanıcılar için gereklidir."],
+        ["Veri kaybını artırmak için", "Veri güvenliğini ve doğruluğunu artırır."],
+        ["Sadece giriş ekranını tanıtmak için", "Kapsamlı bir eğitim gereklidir."]
+      ],
+      answer: 1,
+      summary: "Eğitim, sistem kullanım hatalarını azaltır, adaptasyonu hızlandırır ve verimliliği artırır."
+    },
+    {
+      q: "50. E-iş sistemlerinde ‘iş akışı otomasyonu’ neyi sağlar?",
+      options: [
+        ["İşlemlerin gecikmesini teşvik eder", "Süreçleri hızlandırır."],
+        ["İş süreçlerinin tanımlanmış kurallara göre otomatik ilerlemesini", "İş akışı otomasyonunun tanımıdır."],
+        ["Tedarik zincirini manuel hale getirir", "Otomasyonu hedefler."],
+        ["Her işlemi manuel onaya sunar", "Otomatik akış sağlar, gerekli yerlerde onay mekanizmaları olabilir."],
+        ["Tüm kullanıcıların görevlerini siler", "Görevlerin etkin yönetimini sağlar."]
+      ],
+      answer: 1,
+      summary: "İş akışı otomasyonu, önceden belirlenmiş adımlarla süreçlerin insan müdahalesi olmadan yürütülmesini sağlar."
+    },
+    {
+      q: "51. E-iş uygulamalarında veri yedekleme neden zorunludur?",
+      options: [
+        ["Kullanıcıların erişimini engellemek için", "Veri kaybını önlemek içindir."],
+        ["Verilerin silinmesini sağlamak için", "Verileri korumak içindir."],
+        ["Donanım arızası, siber saldırı gibi durumlarda verileri korumak için", "Veri yedeklemenin temel amacıdır."],
+        ["Eski verileri tamamen silmek için", "Veri saklama ve geri yükleme içindir."],
+        ["Yalnızca vergi denetimi için", "İş sürekliliği ve veri güvenliği için genel bir gerekliliktir."]
+      ],
+      answer: 2,
+      summary: "Yedekleme, sistem çökmesi veya saldırı durumunda işletmenin verilerini kaybetmeden devam etmesini sağlar."
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately (as per original file structure)
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + opt[1];
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+  
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

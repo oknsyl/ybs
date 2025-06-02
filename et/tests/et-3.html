@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 3 - E-Ticaretin Altyapısı ve İş Modelleri (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 3 Sınavı (Elektronik Ticaretin Altyapısı ve İş Modelleri - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Elektronik ticaretin temel avantajlarından biri olarak 'zaman ve mekan kısıtlarını kaldırması' ne anlama gelir?",
+      options: [
+        ["Sadece belirli saatlerde alışveriş yapılabilmesi", "E-ticaret 7/24 erişim sağlar."],
+        ["Müşterilerin sadece kendi ülkelerinden alışveriş yapabilmesi", "E-ticaret küresel erişim sunar."],
+        ["Alışverişin coğrafi bir konuma veya belirli bir zaman dilimine bağlı olmaması", "E-ticaret, fiziksel sınırlamaları aşarak her an her yerden erişim imkanı sunar."],
+        ["Ürünlerin sadece dijital olarak teslim edilmesi", "Fiziksel ürünler de e-ticaretle satılır ve teslim edilir."],
+        ["Ödemelerin sadece nakit olarak yapılabilmesi", "Elektronik ödeme yöntemleri kullanılır."]
+      ],
+      answer: 2,
+      summary: "E-ticaret, fiziksel mağazaların aksine, zaman (7/24) ve mekan (herhangi bir yerden erişim) kısıtlamalarını ortadan kaldırarak kullanıcılara büyük bir esneklik sunar."
+    },
+    {
+      q: "2. Aşağıdakilerden hangisi elektronik ticaretin teknik altyapısını oluşturan temel bileşenlerden biri değildir?",
+      options: [
+        ["Web sunucuları ve uygulama sunucuları", "E-ticaret sitelerinin çalışması için gereklidir."],
+        ["Veritabanı sistemleri", "Ürün, müşteri ve sipariş bilgilerini saklar."],
+        ["Ağ altyapısı ve internet bağlantısı", "Sistemin erişilebilirliği için zorunludur."],
+        ["Mağazanın fiziksel konumu ve vitrin düzenlemesi", "Bu klasik ticaretin bir unsurudur, e-ticaretin teknik altyapısı değildir."],
+        ["Güvenlik yazılımları ve protokolleri (SSL/TLS)", "Veri güvenliği ve güvenli işlemler için kritiktir."]
+      ],
+      answer: 3,
+      summary: "Elektronik ticaretin teknik altyapısı sunucular, veritabanları, web uygulamaları, ağ bağlantısı ve güvenlik protokolleri gibi dijital bileşenlerden oluşur. Kargo dağıtım ağı lojistik altyapıya, fiziksel mağaza ise klasik ticarete aittir."
+    },
+    {
+      q: "3. Sayısal imzanın temel amacı, elektronik belgelerle ilgili olarak aşağıdakilerden hangisini sağlamaktır?",
+      options: [
+        ["Belgenin içeriğini herkesin okuyabilmesi için şifresini çözmek", "Bu şifre çözme işlemidir, sayısal imzanın amacı değildir."],
+        ["Belgeyi gönderenin kimliğini doğrulamak ve belgenin iletim sırasında değiştirilmediğini garanti etmek", "Sayısal imza, kimlik doğrulama ve veri bütünlüğü sağlar."],
+        ["Belgenin boyutunu küçülterek daha hızlı iletilmesini sağlamak", "Bu sıkıştırma işlemidir."],
+        ["Belgeye yetkisiz erişimi tamamen engellemek", "Bu erişim kontrol mekanizmalarıyla ilgilidir."],
+        ["Belgenin sadece belirli bir süre geçerli olmasını sağlamak", "Bu zaman damgası veya sertifika geçerliliği ile ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Sayısal imza, bir elektronik mesajı ya da dökümanı yaratan ve gönderenin kimliğinin doğrulanması, mesaj ya da dökümanın yazıldığı ve imzalandığı andan sonra değişikliğe uğramadığını kanıtlamak amacıyla kullanılan elektronik işaretleme yöntemidir. Verinin şifrelenmesi ise ayrı bir kriptografik işlemdir."
+    },
+    {
+      q: "4. TCP/IP protokol takımı ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+      options: [
+        ["İnternet'in temel iletişim protokolüdür ve farklı ağların birbiriyle konuşmasını sağlar.", "Bu doğru bir ifadedir."],
+        ["Verileri paket adı verilen küçük parçalara bölerek iletir ve hedefte bu paketleri birleştirir.", "Paket anahtarlama kullanır, bu doğru bir ifadedir."],
+        ["Sadece kapalı devre özel şirket ağlarında (intranet) kullanılmak üzere tasarlanmıştır.", "Bu yanlıştır; TCP/IP, İnternet gibi genel ve açık ağlar için temel protokoldür."],
+        ["Hata denetimi ve kayıp paketlerin yeniden gönderilmesi gibi güvenilir veri iletimi mekanizmalarına sahiptir.", "TCP katmanı bu işlevleri sağlar, bu doğru bir ifadedir."],
+        ["Robert Kahn ve Vinton Cerf, TCP/IP'nin geliştirilmesinde önemli rol oynamışlardır.", "Bu doğru bir bilgidir."]
+      ],
+      answer: 2,
+      summary: "TCP/IP, İnternet'in temel protokolüdür ve hem genel İnternet'te hem de özel ağlarda yaygın olarak kullanılır; sadece özel şirket ağlarına özgü değildir."
+    },
+    {
+      q: "5. Elektronik ticaretin ortaya çıkışı ve gelişiminde aşağıdaki faktörlerden hangisi diğerlerine göre daha dolaylı bir etkiye sahip olmuştur?",
+      options: [
+        ["İnternet'in yaygınlaşarak küresel bir ağ haline gelmesi", "E-ticaret için temel altyapıyı sağlamıştır."],
+        ["Web tarayıcılarının geliştirilerek kullanıcı dostu arayüzler sunması", "Kullanıcıların e-ticaret sitelerine erişimini kolaylaştırmıştır."],
+        ["Elektronik ödeme sistemlerinin güvenli ve çeşitli hale gelmesi", "Online alışverişlerde ödeme işlemlerini mümkün kılmıştır."],
+        ["Akıllı telefonların ve mobil uygulamaların yaygınlaşması", "Bu, e-ticaretin daha sonraki bir evresi olan mobil ticareti (m-ticaret) tetiklemiştir, e-ticaretin ilk ortaya çıkışında değil."],
+        ["HTML gibi web standartlarının gelişmesi", "E-ticaret sitelerinin oluşturulmasını sağlamıştır."]
+      ],
+      answer: 3,
+      summary: "İnternet, web tarayıcıları, elektronik ödeme sistemleri ve HTML gibi web standartları e-ticaretin ilk ortaya çıkışını doğrudan desteklemiştir. Mobil telefonlar ve uygulamalar ise daha sonra mobil ticaretin gelişiminde kilit rol oynamıştır."
+    },
+    {
+      q: "6. Aşağıdakilerden hangisi, elektronik ticarette kullanılan modern bir ödeme sistemi veya aracı olarak kabul edilemez?",
+      options: [
+        ["Kredi kartları (online provizyon ile)", "E-ticarette en yaygın ödeme yöntemidir."],
+        ["Sanal cüzdanlar (PayPal, Apple Pay vb.)", "Modern dijital ödeme araçlarıdır."],
+        ["Kripto paralar (Bitcoin, Ethereum vb.)", "Gelişmekte olan bir alternatif ödeme biçimidir."],
+        ["Mal karşılığı takas (barter)", "Bu çok eski bir ticaret yöntemidir ve modern elektronik ödeme sistemi değildir."],
+        ["Mobil ödeme uygulamaları (operatör veya banka aracılığıyla)", "Yaygınlaşan bir elektronik ödeme türüdür."]
+      ],
+      answer: 3,
+      summary: "Mal karşılığı takas, para kullanılmayan eski bir ticaret şeklidir ve elektronik ödeme sistemleri kategorisine girmez. Diğer seçenekler modern e-ticarette kullanılan ödeme yöntemleridir."
+    },
+    {
+      q: "7. TCP/IP protokolünün 'paket anahtarlamalı' bir iletişim modeli kullanmasının temel özelliği nedir?",
+      options: [
+        ["İletişim başlamadan önce gönderici ve alıcı arasında kesintisiz bir fiziksel devre kurması", "Bu devre anahtarlamalı sistemlerin (örn: eski telefon ağı) özelliğidir."],
+        ["Bilginin küçük paketlere bölünerek, her paketin ağ üzerinde bağımsız yollardan hedefe ulaşabilmesi ve hedefte birleştirilmesi", "Paket anahtarlamanın temel prensibi budur."],
+        ["Tüm verinin tek bir büyük paket halinde gönderilmesi", "Veriler küçük paketlere bölünür."],
+        ["Sadece metin tabanlı verilerin iletilmesine izin vermesi", "Her türlü dijital veriyi iletebilir."],
+        ["İletişimin sadece tek yönlü olmasına izin vermesi", "Çift yönlü iletişimi destekler."]
+      ],
+      answer: 1,
+      summary: "İnternet, paket anahtarlamalı bir iletişim modeli üzerine iletişim sağlayan bir ağdır. Bilgi paketleri, üzerlerinde alıcı ve gönderici adresleri olduğu halde, ağ üzerinde çeşitli düğümlerden ve yönlendiricilerden geçerek yol alır ve hedeflerine ulaşırlar."
+    },
+    {
+      q: "8. E-ticaret sitelerinde kullanılan SSL/TLS teknolojisinin birincil amacı nedir?",
+      options: [
+        ["Web sitesinin arama motorlarında daha üst sıralarda çıkmasını sağlamak", "Bu SEO çalışmalarıyla ilgilidir."],
+        ["Müşterinin bilgisayarına virüs bulaşmasını engellemek", "Bu antivirüs yazılımlarının görevidir."],
+        ["Müşteri ile web sunucusu arasında iletilen verilerin (kredi kartı bilgileri, şifreler vb.) şifrelenerek güvenliğini sağlamak", "SSL/TLS'in temel işlevi budur."],
+        ["Web sitesinin daha hızlı yüklenmesini sağlamak", "Şifreleme işlemi hızı bir miktar etkileyebilir, artırmaz."],
+        ["Sitedeki ürünlerin stok durumunu takip etmek", "Bu envanter yönetim sistemlerinin işidir."]
+      ],
+      answer: 2,
+      summary: "SSL (Secure Sockets Layer) ve onun devamı olan TLS (Transport Layer Security), web sitelerine iletişim güvenliği sağlamak amacıyla geliştirilmiştir. Özellikle kredi kartı bilgileri gibi hassas verilerin iletimi sırasında şifreleme yaparak güvenliği sağlar."
+    },
+    {
+      q: "9. Bir e-ticaret sitesinin güvenilir olduğunu anlamada sayısal sertifikaların rolü nedir?",
+      options: [
+        ["Sitenin ürünlerinin kaliteli olduğunu garanti etmek", "Bu ürün kalitesiyle ilgilidir."],
+        ["Sitenin tasarımının kullanıcı dostu olduğunu belirtmek", "Bu kullanılabilirlikle ilgilidir."],
+        ["Sitenin gerçekten iddia ettiği kuruluşa ait olduğunu ve siteyle kurulan bağlantının şifreli olduğunu doğrulamak", "Sayısal sertifikalar kimlik doğrulama ve güvenli bağlantı için kullanılır."],
+        ["Sitede satılan tüm ürünlerin en ucuz fiyata sahip olduğunu göstermek", "Bu fiyatlandırma politikasıyla ilgilidir."],
+        ["Sitenin müşteri hizmetlerinin 7/24 çalıştığını belgelemek", "Bu servis seviyesiyle ilgilidir."]
+      ],
+      answer: 2,
+      summary: "Sayısal sertifikalar, bir web sitesinin kimliğini doğrular ve kullanıcı ile site arasında güvenli (şifreli) bir bağlantı kurulmasını sağlar. Bu, özellikle e-ticaret sitelerinde kullanıcı güveni için kritik öneme sahiptir."
+    },
+    {
+      q: "10. Bir şirketin kendi çalışanlarının özel kullanımı için İnternet teknolojilerini kullanarak oluşturduğu kapalı ağ yapısına ne ad verilir?",
+      options: [
+        ["Extranet", "Extranet, dış paydaşların da (iş ortakları, müşteriler) erişimine izin verilen bir yapıdır."],
+        ["İnternet", "İnternet, herkese açık küresel bir ağdır."],
+        ["Intranet", "Intranet, bir firmanın kendi iç işleyişinde kullandığı özel ağdır."],
+        ["World Wide Web (WWW)", "WWW, İnternet üzerinde çalışan bir bilgi sistemidir."],
+        ["Sosyal Medya Platformu", "Bu, genel kullanıcıların etkileşimde bulunduğu bir platformdur."]
+      ],
+      answer: 2,
+      summary: "Intranet, bir firmanın kendi iç işleyişinde, Internet teknolojisini içeren uygulamaları kullandığı ağa verilen isimdir. Genellikle firma dışı erişime kapalıdır."
+    },
+    {
+      q: "11. Aşağıdakilerden hangisi, bir e-ticaret sitesinin çalışması için mutlaka gerekli olan bir teknik altyapı bileşeni değildir?",
+      options: [
+        ["Web sunucusu (siteyi barındırmak için)", "Mutlaka gereklidir."],
+        ["Veritabanı sunucusu (ürün/müşteri bilgilerini saklamak için)", "Genellikle gereklidir."],
+        ["Fiziksel bir perakende mağazası", "E-ticaret için fiziksel mağaza zorunlu değildir."],
+        ["Alan adı (domain name) ve DNS hizmeti", "Sitenin erişilebilir olması için gereklidir."],
+        ["Güvenlik duvarı (firewall) ve SSL sertifikası", "Güvenlik için kritik öneme sahiptir."]
+      ],
+      answer: 2,
+      summary: "Bir e-ticaret sitesinin temel teknik altyapı bileşenleri arasında web sunucusu, veritabanı, alan adı, DNS ve güvenlik önlemleri bulunur. Fiziksel bir mağaza ise e-ticaret için zorunlu değildir."
+    },
+    {
+      q: "12. E-ticaretin klasik ticarete göre en belirgin farkı aşağıdakilerden hangisidir?",
+      options: [
+        ["Satıcı ve alıcının aynı fiziksel mekanda bulunma zorunluluğunun olmaması", "Bu, e-ticaretin en temel ve ayırt edici özelliğidir."],
+        ["Ürün veya hizmet karşılığında bir bedel ödenmesi", "Her iki ticaret türünde de geçerlidir."],
+        ["Müşterilere indirim ve promosyonlar sunulabilmesi", "Klasik ticarette de indirimler yapılır."],
+        ["Satılan ürünler için reklam ve tanıtım yapılması", "Her iki ticaret türü de pazarlama faaliyetleri gerektirir."],
+        ["Müşterilerin ürünleri inceleyip seçebilmesi", "Klasik mağazalarda da vitrin ve reyonlar bu amaçla kullanılır."]
+      ],
+      answer: 0,
+      summary: "E-ticaretin klasik ticaretten en büyük farkı, işlemlerin coğrafi konumdan ve büyük ölçüde zamandan bağımsız olarak, dijital ortamda ve fiziksel temas gerektirmeden yapılabilmesidir."
+    },
+    {
+      q: "13. İnternet öncesi dönemde, firmaların kendi içlerinde veya farklı şubeleri arasında veri iletişimi ve kaynak paylaşımı için kullandıkları ağ yapısına genellikle ne ad verilirdi?",
+      options: [
+        ["World Wide Web (WWW)", "WWW, İnternet tabanlı bir bilgi sistemidir."],
+        ["Sosyal Ağlar", "Bunlar modern İnternet uygulamalarıdır."],
+        ["Yerel Alan Ağı (LAN) veya Geniş Alan Ağı (WAN)", "LAN ve WAN, İnternet öncesinde de kullanılan temel ağ yapılarıdır."],
+        ["Bluetooth", "Bu kısa mesafeli kablosuz bir teknolojidir."],
+        ["Mobil Şebekeler (GSM)", "Bu hücresel iletişim ağlarıdır."]
+      ],
+      answer: 2,
+      summary: "Başlangıçtan bu yana 'yerel alan ağı' (local area network, LAN) olarak adlandırılmış olan firma ve kurumlara ait bilgisayar ağları, İnternet'in 1990'lı yıllardan sonra yaygınlaşmasının da etkisi ile 'intranet' olarak da adlandırılmaya başlamıştır. Farklı şubeler arası bağlantılar için WAN yapıları kullanılırdı."
+    },
+    {
+      q: "14. Elektronik ticarette 'sanallaşma' kavramı, aşağıdaki sonuçlardan hangisini doğurmaz?",
+      options: [
+        ["İşletmelerin fiziksel bir mağazaya sahip olma zorunluluğunun ortadan kalkması", "Sanallaşma bunu mümkün kılar."],
+        ["Satılan tüm ürünlerin sadece dijital formatlarda olması ve fiziksel teslimatın tamamen ortadan kalkması", "Fiziksel ürünler için hala fiziksel teslimat gereklidir."],
+        ["Bazı iş modellerinde stok tutma ihtiyacının azalması veya ortadan kalkması (örn: dropshipping)", "Sanallaşma stoksuz çalışmayı kolaylaştırabilir."],
+        ["Coğrafi sınırların aşılarak küresel bir müşteri kitlesine ulaşılabilmesi", "Sanallaşma ve İnternet bunu sağlar."],
+        ["Müşteri hizmetleri ve destek süreçlerinin dijital kanallara taşınması", "Sanallaşma bu dönüşümü destekler."]
+      ],
+      answer: 1,
+      summary: "Elektronik ticarette sanallaşma, fiziksel mağaza zorunluluğunu ve bazı durumlarda stok ihtiyacını azaltabilir, küresel pazara erişimi ve dijital müşteri hizmetlerini mümkün kılar. Ancak satılan ürün fiziksel ise, teslimatı da fiziksel olacaktır."
+    },
+    {
+      q: "15. E-noter veya benzeri güvenilir üçüncü taraf servislerinin elektronik ticaretteki temel işlevi nedir?",
+      options: [
+        ["Elektronik ortamda oluşturulan sözleşme, belge veya işlemlerin yasal geçerliliğini ve taraflar için güvenilirliğini artırmak", "E-noter, dijital işlemlere hukuki bir güvence ve doğrulama katmanı ekler."],
+        ["Web sitelerinin arama motoru optimizasyonunu (SEO) yapmak", "Bu dijital pazarlama uzmanlarının işidir."],
+        ["Kredi kartı ödemeleri için provizyon almak", "Bu ödeme ağ geçitleri ve bankaların işidir."],
+        ["E-ticaret siteleri için web hosting hizmeti sunmak", "Bu hosting firmalarının işidir."],
+        ["Sanal topluluklar için moderasyon hizmeti vermek", "Bu topluluk yönetimi ile ilgilidir."]
+      ],
+      answer: 0,
+      summary: "E-Noter ve benzeri servisler iş modelinde, iki taraf arasında güvenliğin sağlanmasında üçüncü bir güvenilir taraf olarak yer alınır ve genellikle bu işlem ücretlendirilir. E-Devlet uygulamaları ve sayısal imza yaygınlaştıkça bu iş modelinin daha da yaygınlaşması kaçınılmazdır."
+    },
+    {
+      q: "16. 'E-Çarşı (E-mall)' iş modelinin temel özelliği nedir?",
+      options: [
+        ["Tek bir firmanın kendi ürünlerini sattığı online mağaza olması", "Bu standart bir e-dükkandır."],
+        ["Birden çok elektronik dükkânın belirli bir çarşı yapısında, genellikle güven veren bir şemsiye isim altında bir araya gelmesi", "E-Çarşı bu yapıyı ifade eder."],
+        ["Sadece fiziksel ürünlerin açık artırma ile satıldığı bir platform olması", "Bu e-müzayede modelidir."],
+        ["Firmaların sadece kendi aralarında (B2B) toptan alışveriş yaptığı bir sistem olması", "E-Çarşılar son tüketiciye de yönelik olabilir."],
+        ["Devlet kurumlarının vatandaşlara sunduğu online hizmetler bütünü olması", "Bu e-devlet uygulamalarıdır."]
+      ],
+      answer: 1,
+      summary: "E-Çarşı (E-mall) iş modeli, basit olarak bir şemsiye isim altında birden çok elektronik dükkânın belirli bir çarşı yapısında bir araya gelmesinden oluşur."
+    },
+    {
+      q: "17. 'Üçüncü Taraf Pazarları (Third Party Marketplaces)' iş modelinde, ana firma mallarının satış ve pazarlamasını kim yürütür?",
+      options: [
+        ["Sadece ana firmanın kendi satış personeli", "Bu doğrudan satış olurdu."],
+        ["Ana firmanın rakipleri", "Bu olası değildir."],
+        ["Ana firma ile anlaşmalı olan, satış ve pazarlama işlerini üstlenen başka bir firma veya firmalar", "Bu modelde satış ve pazarlama işlemleri üçüncü taraflarca yürütülür."],
+        ["Sadece son kullanıcılar (C2C modeli gibi)", "Bu farklı bir modeldir."],
+        ["Devletin belirlediği resmi satış kurumları", "Bu özel bir durumdur."]
+      ],
+      answer: 2,
+      summary: "Üçüncü Taraf Pazarları iş modelinde, herhangi bir firma, müşterisine kendi teknolojisi ve kaynakları ile e-dükkân yapmaya hiç kalkışmadan ya da kendi mevcut satış kanallarına ek olarak, elektronik ortamda satış ve pazarlama işlerini bir başka firma ya da firmalar aracılığı ile yürütür."
+    },
+    {
+      q: "18. Sanal toplulukların (Virtual Communities) temel amacı ve işleyişi nedir?",
+      options: [
+        ["Sadece ürün reklamı yapmak ve satışları artırmak", "Bu bir yan etki olabilir, temel amaç değildir."],
+        ["Servis sağlayıcının sağladığı yazılım üzerinde, üyelerinin katkıları ile oluşan içeriklerin oluşturduğu elektronik bir cemaat ve cemaatin elektronik faaliyetleri", "Sanal topluluklar bu şekilde tanımlanır."],
+        ["Üyelerden yüksek aidatlar toplayarak gelir elde etmek", "Ücretli veya ücretsiz olabilirler."],
+        ["Rakip firmaların ürünlerini kötülemek", "Bu etik bir davranış değildir."],
+        ["Devlet politikalarını belirlemek için lobi faaliyeti yürütmek", "Bu farklı bir organizasyon türüdür."]
+      ],
+      answer: 1,
+      summary: "Sanal topluluklar, servis sağlayıcının sağladığı yazılım üzerinde, üyelerinin katkıları ile oluşan içeriklerin oluşturduğu elektronik bir cemaat ve cemaatin elektronik faaliyetleri olarak tanımlanır."
+    },
+    {
+      q: "19. 'Değer Zinciri Servis Sağlayıcısı' iş modeli hangi tür hizmetlere odaklanır?",
+      options: [
+        ["Tüm değer zincirini baştan sona yönetmeye", "Bu Değer Zinciri Tümleştiricisi'nin işidir."],
+        ["Değer zinciri üzerinde ödeme sistemleri, lojistik destek, üretim veya stok takibi gibi belirli bir fonksiyona", "Bu model belirli bir uzmanlık alanına odaklanır."],
+        ["Sadece son kullanıcıya yönelik pazarlama kampanyaları düzenlemeye", "Bu pazarlama hizmetidir."],
+        ["Firmalar için web sitesi ve e-dükkân tasarımı yapmaya", "Bu web geliştirme hizmetidir."],
+        ["Sanal topluluklar için moderasyon ve içerik yönetimi sağlamaya", "Bu topluluk yönetimi hizmetidir."]
+      ],
+      answer: 1,
+      summary: "Değer Zinciri Servis Sağlayıcısı iş modelinde, değer zinciri üzerinde belirli bir fonksiyon hedef alınır. Bunlar arasında özellikle, ödeme sistemleri ve destek sistemleri başta gelir."
+    },
+    {
+      q: "20. 'Bilgi Komisyonculuğu' iş modelinin gelir kaynakları arasında aşağıdakilerden hangisi bulunmaz?",
+      options: [
+        ["Sistem kullanıcılarından alınan üyelik aidatları", "Bu bir gelir modelidir."],
+        ["Kullanım başına alınan kullanım ücretleri", "Bu bir gelir modelidir."],
+        ["Reklam gelirleri", "Bu bir gelir modelidir."],
+        ["Satılan fiziksel ürünlerden elde edilen kâr", "Bilgi komisyonculuğu bilgiye dayalı hizmetler sunar, genellikle fiziksel ürün satmaz."],
+        ["Arama sonuçlarında firmaları ücret karşılığı üst sıralara taşıma", "Bazı arama motorları bu modeli kullanır."]
+      ],
+      answer: 3,
+      summary: "Bilgi Komisyonculuğu iş modelinde gelir kaynağı, sistem kullanıcılarından alınan üyelik aidatları, kullanım başına alınan kullanım ücretleri ya da reklam gelirleridir."
+    },
+    {
+      q: "21. Robert Kahn'ın İnternet için ortaya koyduğu 'açık mimari' prensiplerinden biri olan 'Dağıtım' ilkesi neyi ifade eder?",
+      options: [
+        ["Tüm ağların tek bir merkezden yönetilmesi gerektiğini", "Dağıtım ilkesi merkezi kontrolün olmamasını vurgular."],
+        ["Merkezi bir ağ yönetim ve kontrolünün olmayacağını", "Bu, 'Dağıtım' ilkesinin doğru açıklamasıdır."],
+        ["Veri paketlerinin her zaman aynı yolu izlemesi gerektiğini", "Paketler farklı yollar izleyebilir."],
+        ["Ağ geçitlerinin sadece belirli firmalar tarafından kurulabileceğini", "Ağ geçitleri farklı kurumlarca işletilebilir."],
+        ["İnternet'e sadece belirli türdeki bilgisayarların bağlanabileceğini", "Kapalı kutu yapısı farklı bilgisayarların bağlanabilmesini hedefler."]
+      ],
+      answer: 1,
+      summary: "Robert Kahn'ın İnternet prensiplerinden biri olan 'Dağıtım', merkezi bir ağ yönetim ve kontrolünün olmayacağını ifade eder."
+    },
+    {
+      q: "22. İnternetin kısa tarihinde, 50 milyon kullanıcıya ulaşma hızı radyo ve televizyona göre nasıldır?",
+      options: [
+        ["Radyo ve televizyondan çok daha yavaş ulaşmıştır.", "İnternet çok daha hızlı ulaşmıştır."],
+        ["Radyo ile aynı sürede, televizyondan daha hızlı ulaşmıştır.", "İnternet her ikisinden de hızlı ulaşmıştır."],
+        ["Radyo ve televizyona göre çok daha hızlı bir şekilde (yalnızca 4 yılda) 50 milyon kullanıcıya ulaşmıştır.", "Bu, İnternet'in hızlı yayılımını gösterir."],
+        ["Televizyonla aynı sürede, radyodan daha yavaş ulaşmıştır.", "İnternet her ikisinden de hızlı ulaşmıştır."],
+        ["Hiçbir zaman 50 milyon kullanıcıya ulaşamamıştır.", "Milyarlarca kullanıcısı vardır."]
+      ],
+      answer: 2,
+      summary: "Radyo, 50 milyon kullanıcıya kullanılmaya başlamasından 38 yıl sonra, televizyon ise 13 yıl sonra ulaşmıştır. Öte yandan Internet, ticari olarak herkese serbest olmasından yalnızca 4 yıl sonra 50 milyon kullanıcı kitlesine sahip olmuştur."
+    },
+    {
+      q: "23. 'E-İşbirliği Platformları'nın temel amacı nedir?",
+      options: [
+        ["Sadece bireysel kullanıcıların sosyalleşmesini sağlamak", "İşbirliği ve profesyonel etkileşim odaklıdır."],
+        ["Farklı kurum ve kuruluşlar arasında işbirliği sağlayabilecek sistemler ortaya koymak ve işletmek (örn: tasarım, doküman yönetimi)", "E-işbirliği platformları bu tür ortak çalışmalara zemin hazırlar."],
+        ["Tek bir firmanın tüm projelerini kendi içinde yönetmesi", "Farklı kurumlar arası işbirliğini hedefler."],
+        ["Çalışanların sadece ofis içinde iletişim kurmasını sağlamak", "Uzaktan ve kurumlar arası işbirliğini destekler."],
+        ["Güvenlik sertifikası sağlamak", "Bu e-noter veya CA'ların işidir."]
+      ],
+      answer: 1,
+      summary: "E-İşbirliği Platformları iş modelinde, farklı kurum ve kuruluşlar arasında işbirliği sağlayabilecek sistemler ortaya konur ve işletilir. Bu sistemler belirli bir konuyu, mesela tasarım aşamasını, döküman yönetimini ya da projelere sanal danışmanlık sağlanmasını hedef olarak seçebilirler."
+    },
+    {
+      q: "24. İnternet tabanlı iş modelleri sınıflandırılırken kullanılan iki ana boyut nedir?",
+      options: [
+        ["Maliyet ve Hız", "Bunlar performans metrikleridir."],
+        ["Güvenlik Seviyesi ve Kullanıcı Sayısı", "Bunlar önemli faktörlerdir ama sınıflandırma boyutu değildir."],
+        ["Yaratıcılık Derecesi ve Fonksiyonel Entegrasyon Derecesi", "PDF'teki sınıflandırma bu iki boyuta dayanır."],
+        ["Coğrafi Kapsam ve Hedef Kitle Yaşı", "Bunlar pazar segmentasyon kriterleridir."],
+        ["Reklam Bütçesi ve Çalışan Sayısı", "Bunlar işletme büyüklüğü ile ilgili metriklerdir."]
+      ],
+      answer: 2,
+      summary: "Şu ana kadar incelenen onbir iş modeli iki boyutta incelenebilir: Birinci boyut söz konusu iş modelinde görülen yaratıcılığın derecesidir. İkinci boyut ise farklı fonksiyonların iş modeline nasıl entegre edilebildiğidir."
+    },
+    {
+      q: "25. 'Değer Zinciri Tümleştiricisi' iş modelinin, 'Değer Zinciri Servis Sağlayıcısı'ndan temel farkı nedir?",
+      options: [
+        ["Servis sağlayıcı tüm değer zincirini yönetirken, tümleştirici sadece bir fonksiyona odaklanır.", "Tam tersi geçerlidir."],
+        ["Tümleştirici, değer zincirinin farklı aşamalarındaki bilgi akışının elektronik olarak ele alınmasını ve buradan verimlilik artışı sağlamayı hedeflerken; servis sağlayıcı genellikle tek bir fonksiyona (örn: ödeme) odaklanır.", "Bu, iki model arasındaki temel farkı doğru açıklar."],
+        ["Servis sağlayıcı her zaman daha yüksek komisyon alırken, tümleştirici sabit ücretle çalışır.", "Gelir modelleri değişebilir, temel fark bu değildir."],
+        ["Tümleştiriciler sadece KOBİ'lere hizmet verirken, servis sağlayıcılar büyük kurumlara odaklanır.", "Hedef kitleleri farklılık gösterebilir ama bu tanımlayıcı fark değildir."],
+        ["Her iki model de tamamen aynı işlevi yerine getirir, sadece isimleri farklıdır.", "Farklı kapsamlara ve hedeflere sahiptirler."]
+      ],
+      answer: 1,
+      summary: "Değer Zinciri Servis Sağlayıcısı iş modelinde, değer zinciri üzerinde belirli bir fonksiyon hedef alınır. Değer Zinciri Tümleştiricisi iş modelinin hedefi ise, değer zincirinin farklı aşamalarındaki bilgi akışının elektronik olarak ele alınması ve buradan verimlilik artışı ile birlikte kazanç elde edilmesidir."
+    },
+    {
+      q: "26. Bir kurum içinde kullanılan telefon santral sistemine ne ad verilir?",
+      options: [
+        ["LAN (Local Area Network)", "Bu bilgisayar ağıdır."],
+        ["ISP (Internet Service Provider)", "Bu internet servis sağlayıcısıdır."],
+        ["PBX (Private Branch Exchange)", "Bu, dahili özel telefon santralidir."],
+        ["DNS (Domain Name Service)", "Bu alan adı çözümleme sistemidir."],
+        ["WAN (Wide Area Network)", "Bu geniş alan bilgisayar ağıdır."]
+      ],
+      answer: 2,
+      summary: "Herhangi bir kuruluşun, kuruluş içinde kullanımı için sağladığı santral sistemine, dahili santral, (PBX, Private Branch Exchange) denir."
+    },
+    {
+      q: "27. İnternet öncesi dönemde, farklı firmaların modelleri farklı olan bilgisayarlarının birbiriyle anlaşabilmesi için neye ihtiyaç duyulmuştur?",
+      options: [
+        ["Her firmanın kendi özel iletişim protokolünü geliştirmesine", "Bu uyumsuzluğa yol açardı."],
+        ["Donanımda ve yazılım seviyelerinde belirli standartların oluşturulmasına", "Standartlaşma, farklı sistemlerin iletişim kurabilmesi için gereklidir."],
+        ["Sadece aynı marka bilgisayarların kullanılmasına", "Bu pratik bir çözüm değildir."],
+        ["İletişimin tamamen manuel olarak (telefon, faks) yapılmasına", "Elektronik bağlantı hedefleniyordu."],
+        ["Tüm verilerin tek bir merkezi bilgisayarda toplanmasına", "Farklı firmaların kendi sistemleri vardı."]
+      ],
+      answer: 1,
+      summary: "Farklı firmaların, modelleri farklı olan bilgisayarlarının aynı dilden konuşarak anlaşması problemi, donanımda ve yazılım seviyelerinde belirli standartların oluşturulmasını gerekli kılmıştır."
+    },
+    {
+      q: "28. 1991 yılında Amerikan Ulusal Bilim Vakfı'nın (NSF) aldığı karar, İnternet'in gelişimi açısından neden önemlidir?",
+      options: [
+        ["İnternet'in sadece askeri amaçlarla kullanılmasına karar vermiştir.", "Tam tersi, ticari kullanımı serbest bırakmıştır."],
+        ["İnternet'in Ticari kullanım yasağını kaldırmıştır.", "Bu karar, İnternet'in bugünkü ticari potansiyeline ulaşmasında bir dönüm noktasıdır."],
+        ["TCP/IP protokolünün kullanımını yasaklamıştır.", "TCP/IP İnternet'in temelidir."],
+        ["Tüm alan adı kayıtlarını kendi üzerine almıştır.", "Alan adı yönetimi farklı bir süreçtir."],
+        ["İnternet erişimini sadece ABD vatandaşlarıyla sınırlandırmıştır.", "İnternet küresel bir ağdır."]
+      ],
+      answer: 1,
+      summary: "1991 NSF Internet'in Ticari kullanım yasağını kaldırdı. Bu, İnternet'in ticari bir araç olarak gelişmesinin önünü açtı."
+    },
+    {
+      q: "29. Robert Kahn'ın İnternet için tasarladığı 'açık mimari' yapısının 'kapalı kutu yapısı' ilkesi ne anlama gelir?",
+      options: [
+        ["Bir bilgisayarı ağa bağlamak için ağda ya da bilgisayarda özel değişiklikler yapılması gerekecektir.", "Tam tersi, özel değişiklik gerektirmemeyi hedefler."],
+        ["Ağa sadece belirli marka ve modeldeki bilgisayarlar bağlanabilecektir.", "Farklı türdeki bilgisayarların bağlanabilmesini amaçlar."],
+        ["Bir bilgisayarı ağa bağlamak için ağda ya da bilgisayarda özel değişiklik yapılmayacaktır.", "Bu, farklı sistemlerin kolayca entegre olabilmesini sağlar."],
+        ["Ağdaki tüm iletişimlerin şifrelenmesi zorunlu olacaktır.", "Bu güvenlik ilkesidir, kapalı kutu yapısıyla doğrudan ilgili değildir."],
+        ["Merkezi bir ağ yönetimi tüm bağlantıları denetleyecektir.", "Dağıtım ilkesi merkezi kontrolü reddeder."]
+      ],
+      answer: 2,
+      summary: "Robert Kahn'ın 'Kapalı kutu yapısı' ilkesi: Bir bilgisayarı ağa bağlamak için ağda ya da bilgisayarda özel değişiklik yapılmayacaktır."
+    },
+    {
+      q: "30. E-çarşı modelinin, e-dükkân sahibi küçük firmalar için sağladığı temel avantaj nedir?",
+      options: [
+        ["Kendi özel ödeme sistemlerini kurma zorunluluğu getirmesi", "Ortak ve daha düşük maliyetli hizmetler sunar."],
+        ["Daha yüksek kira ve bakım maliyetleri", "Tek başına hareket etmekten daha verimli olabilir."],
+        ["Ödeme sistemleri, güvenilir işlem kanalları ve kargo-sigorta gibi hizmetlerin ortak ve daha düşük maliyetle sağlanması, tanıtım sorununun azalması", "E-çarşı bu tür avantajlar sunar."],
+        ["Müşteri verilerine erişimin kısıtlanması", "Bu bir dezavantaj olabilir."],
+        ["Marka bilinirliğinin tamamen e-çarşı sahibine geçmesi", "Firmalar kendi markalarını da tanıtabilir."]
+      ],
+      answer: 2,
+      summary: "Özellikle, ödeme sistemlerinin daha karmaşık ve pahalı olması, elektronik dükkân kurmanın maliyeti hesaba katıldığında, bir çarşı içinde pazaryeri açılması, bu hizmetlerin ortak ve daha düşük maliyetle verildiği düşünülürse, tek başına hareket edilmesinden çok daha verimli olacaktır. Tanıtım sorunu da bir ölçüde diğer dükkânlara gelen ziyaretçilere yapılan reklam sayesinde daha ekonomik yapılmış olur."
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

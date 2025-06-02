@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 13 - Veri Madenciliği ve Hukuksal Boyutlar (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 13 Sınavı (Veri Madenciliği ve Hukuksal Boyutlar - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Veri madenciliği uygulamalarının temel amacı nedir?",
+      options: [
+        ["Sadece geçmişe yönelik istatistiksel raporlar oluşturmak", "Veri madenciliği geleceğe yönelik tahminler yapar. [cite: 3]"],
+        ["Mevcut veritabanı yazılımlarını tamamen değiştirmek", "Mevcut sistemlere entegre edilebilir. [cite: 7]"],
+        ["Geleceğe yönelik tahminler yaparak firmanın aktif ve bilgiye dayalı kararlar almasını sağlamak", "Bu, veri madenciliğinin temel amacıdır. [cite: 1, 2]"],
+        ["Veri toplama ve depolama süreçlerini yavaşlatmak", "Büyük miktarda veri gerektirir. [cite: 27]"],
+        ["Sadece uzmanların anlayabileceği karmaşık sonuçlar üretmek", "Uzmanların gözden kaçırabileceği verilere ulaşmayı hedefler. [cite: 5]"]
+      ],
+      answer: 2,
+      summary: "Veri madenciliği uygulamaları, genellikle geleceğe yönelik tahminlerin yapılması amacıyla kullanılır. Gelişmelerin, değişmelerin, müşteri davranışlarının daha iyi tahmin edilmesi firmanın aktif ve bilgiye dayalı kararlar almasında önemli rol oynar. [cite: 1, 2]"
+    },
+    {
+      q: "2. Veri madenciliğinin, klasik karar destek sistemlerinin sınırlamalarını aşarak daha gerçekçi tahminler yapabilmesinin nedeni nedir?",
+      options: [
+        ["Sadece küçük veri setleri üzerinde çalışması", "Geniş veritabanları üzerinde çalışır. [cite: 34]"],
+        ["İleriye yönelik analizler yapabilmesi ve doğrudan anlaşılamayan verilere ulaşabilmesi", "Veri madenciliği bu sayede klasik yaklaşımları aşar. [cite: 3, 5]"],
+        ["Yalnızca insan sezgilerine dayalı olması", "Gelişmiş algoritmalar kullanır. [cite: 18]"],
+        ["Çok yavaş sonuçlar üretmesi", "Güçlü sistemlerle hızlı sonuçlar alınabilir. [cite: 4, 9]"],
+        ["Sadece geçmiş olayların analizini yapması", "Geleceğe yönelik tahminler yapar. [cite: 16]"]
+      ],
+      answer: 1,
+      summary: "Geleceğe yönelik tahminler yapan veri madenciliği uygulamaları, klasik yaklaşımda sıklıkla kullanılan karar destek sistemleri uygulamalarının eskiye yönelik analizlerinin sınırlamalarını aşabilmekte ve ileriye daha gerçekçi olarak bakabilmektedir. [cite: 3] Veri madenciliği yaklaşımı ile normalde uzmanların gözden kaçırabileceği, veritabanlarında doğrudan anlaşılamayan verilere ulaşılıp bu verilerin değerlendirilmesi mümkün olmaktadır. [cite: 5]"
+    },
+    {
+      q: "3. Veri madenciliği yaklaşımının iş dünyasında uygulanabilir hale gelmesinde etkili olan üç ana teknoloji hangileridir?",
+      options: [
+        ["Manuel veri girişi, basit hesap makineleri, yerel ağlar", "Bu teknolojiler yetersizdir."],
+        ["Büyük miktarda veri toplayabilme/depolayabilme, güçlü/çok işlemcili bilgisayarlar, özel geliştirilmiş veri madenciliği algoritmaları", "Bu üç teknoloji veri madenciliğinin temelini oluşturur. [cite: 18]"],
+        ["Küçük ölçekli veritabanları, tek işlemcili kişisel bilgisayarlar, standart istatistiksel yazılımlar", "Bu teknolojiler yetersizdir."],
+        ["Analog veri saklama, mekanik hesaplama araçları, telefon hatları üzerinden iletişim", "Bunlar eski teknolojilerdir."],
+        ["Sosyal medya platformları, bulut bilişim, mobil uygulamalar", "Bunlar veri kaynağı veya platform olabilir ama temel teknolojiler farklıdır."]
+      ],
+      answer: 1,
+      summary: "Veri madenciliğinin iş dünyasının hemen uygulamaya alabileceği bir yaklaşım olmasının başlıca nedeni üç ana teknolojinin yeterli düzeyde gelişmiş olmasıdır: Büyük miktarda veri toplayabilme ve depolayabilme, Güçlü ve çok işlemcili bilgisayarların varlığı, Özel geliştirilmiş veri madenciliği algoritmaları. [cite: 18]"
+    },
+    {
+      q: "4. Veri madenciliğinde kullanılan algoritmaların, eski istatistiksel metotlardan daha başarılı olmasının temel sebebi nedir?",
+      options: [
+        ["Her zaman daha basit ve anlaşılır olmaları", "Algoritmalar kompleks olabilir. [cite: 21]"],
+        ["Sadece çok küçük veri setlerinde iyi sonuç vermeleri", "Büyük veri setlerinde de etkilidirler. [cite: 20]"],
+        ["Doğrudan anlaşılamayan, gizli kalmış ilişkileri ve desenleri ortaya çıkarabilmeleri", "Bu, veri madenciliği algoritmalarının temel üstünlüğüdür. [cite: 5, 23, 42]"],
+        ["İnsan müdahalesine hiç ihtiyaç duymamaları", "Uzman yorumu ve modelleme süreci önemlidir. [cite: 38]"],
+        ["Yalnızca sayısal verilerle çalışmaları, metin analizi yapamamaları", "Metin analizi gibi özel uygulamaları da vardır. [cite: 47]"]
+      ],
+      answer: 2,
+      summary: "Veri madenciliği algoritmaları, eski yaklaşımda tercih edilen istatistiksel metodlardan çok daha başarılı olmaktadır [cite: 23] ve veritabanlarında doğrudan anlaşılamayan verilere, daha önce ortaya çıkarılamamış bilgilere ulaşılmasını sağlar. [cite: 5, 42]"
+    },
+    {
+      q: "5. Veri madenciliği sürecinde 'eğilimlerin ve davranışların tahmini' uygulamasına bir örnek nedir?",
+      options: [
+        ["Geçmiş satış verilerine bakarak en çok satan ürünü belirlemek", "Bu geçmişe yönelik bir analizdir."],
+        ["Bir sonraki pazarlama kampanyasına en çok hangi müşterilerin yanıt vereceğinin ve bunun nedenlerinin bulunması", "Bu, geleceğe yönelik bir davranış tahminidir. [cite: 10, 39, 40]"],
+        ["Müşterilerin adres bilgilerindeki yazım hatalarını düzeltmek", "Bu veri temizleme ve doğrulama işlemidir. [cite: 45, 46]"],
+        ["Perakende satışlarda birbiriyle ilişkili olarak satın alınan ürün desenlerini ortaya çıkarmak", "Bu, bilinmeyen özelliklerin otomatik belirlenmesine örnektir. [cite: 43]"],
+        ["Mevcut tüm müşteri verilerini tek bir veri ambarında toplamak", "Bu veri depolama ve hazırlık aşamasıdır. [cite: 113]"]
+      ],
+      answer: 1,
+      summary: "Veri madenciliği uygulamaları, geniş veritabanlarından tahmine yönelik bilgilerin çıkarılmasını sağlar. [cite: 37] Örneğin, bir sonraki pazarlama kampanyasına en çok hangi müşterilerin yanıt vereceği ve bunun nedenlerinin bulunması konusunda başarılı yanıtlar alınabilmektedir. [cite: 10]"
+    },
+    {
+      q: "6. Veri madenciliğinde veritabanı boyutunun 'sütun sayısı' (değişken sayısı) açısından önemi nedir?",
+      options: [
+        ["Analiz süresini kısaltmak için değişken sayısını her zaman minimumda tutmak", "Fazla değişken derinlemesine inceleme sağlar. [cite: 58]"],
+        ["Yüksek performanslı veri madenciliğinin, değişken sayısında indirime gitmeden derinlemesine inceleme sağlaması ve uzmanların ihmal edebileceği değişkenlerdeki bilgileri ortaya çıkarması", "Bu, sütun sayısının önemini vurgular. [cite: 57, 58]"],
+        ["Sadece az sayıda (5-10 arası) değişkenle çalışmanın en doğru sonuçları vermesi", "Çok değişkenli analizler daha kapsamlı olabilir."],
+        ["Veri madenciliği algoritmalarının sadece sayısal sütunlarla çalışabilmesi", "Farklı veri tipleriyle çalışabilirler."],
+        ["Sütun sayısı arttıkça modelin doğruluğunun her zaman azalması", "Doğru tekniklerle doğruluk korunabilir veya artabilir."]
+      ],
+      answer: 1,
+      summary: "Yüksek performanslı veri madenciliği bir veri tabanında bulunan verilerin değişken sayısında herhangi bir indirime gitmeden derinlemesine incelenmesini sağlar. Uzmanların önemsiz oldukları gerekçesiyle ihmal edebileceği değişkenler ciddi bilgiler içerebilir. [cite: 57, 58]"
+    },
+    {
+      q: "7. Aşağıdakilerden hangisi veri madenciliğinde sık kullanılan tekniklerden biri olan 'Karar Ağaçları'nın bir özelliğidir?",
+      options: [
+        ["Doğrusal olmayan (nonlinear) tahmin modelleri kullanarak öğrenim sağlaması", "Bu Yapay Sinir Ağları'nın özelliğidir. [cite: 66, 67]"],
+        ["Birleşme, mutasyon ve doğal seçilim gibi özellikleri kullanarak algoritmaları evrimleştirmesi", "Bu Genetik Algoritmalar'ın özelliğidir. [cite: 71]"],
+        ["Ağaç şeklinde tanımlanan yapılar oluşturarak, eldeki verilerin sınıflandırılmasında kullanılacak kuralları belirlemesi", "Karar ağaçları bu şekilde çalışır. [cite: 69, 70]"],
+        ["Bir veri kümesi içindeki her kaydı, daha önceden var olan kayıtlara yakınlığına göre sınıflandırması", "Bu En Yakın Komşu Yöntemi'nin özelliğidir. [cite: 73]"],
+        ["Ortalama değeri yakın olan veri gruplarını kümeleyerek gruplandırması", "Bu K-Ortalama Değer Kümeleri tekniğidir. [cite: 75]"]
+      ],
+      answer: 2,
+      summary: "Karar ağaçları (Decision Tree), ağaç şeklinde tanımlanan yapılardır ve bir takım kararların birleşiminden oluşur. Bu kararlar, eldeki verilerin sınıflandırılmasında kullanılacak olan kuralları belirler. [cite: 69, 70]"
+    },
+    {
+      q: "8. Veri madenciliğinde kullanılan 'modelleme' süreci nasıl işler?",
+      options: [
+        ["Sadece teorik bilgilere dayanarak varsayımsal sonuçlar üretir.", "Mevcut verileri ve bilinen durumları kullanır. [cite: 81, 82]"],
+        ["Yanıtını bildiğimiz belirli bir durumu kullanarak bir yapı oluşturur ve bu yapıyı yanıtını bilmediğimiz bir durumun incelenmesi amacıyla kullanır.", "Modelleme bu prensiple çalışır. [cite: 80]"],
+        ["Tamamen rastgele seçilmiş veriler üzerinden anlık tahminler yapar.", "Model oluşturma süreci daha sistematiktir."],
+        ["Elde bulunan bütün verileri şifreleyerek güvenliğini sağlar.", "Bu güvenlik işlemidir, modelleme değildir."],
+        ["Sadece geçmişe yönelik verilerin birebir aynısını gelecekte de olacağını varsayar.", "Geçmiş verilerden öğrenir ama geleceği tahmin etmeye çalışır. [cite: 87]"]
+      ],
+      answer: 1,
+      summary: "Modelleme, yanıtını bildiğimiz belirli bir durumu kullanarak oluşturulan yapının, yanıtını bilmediğimiz bir durumun incelenmesi amacıyla kullanılmasıdır. [cite: 80]"
+    },
+    {
+      q: "9. Veri madenciliği mimarisinde 'Veri Ambarı'nın (Data Warehouse) rolü nedir?",
+      options: [
+        ["Sadece OLAP sunucusundan gelen sonuçları son kullanıcıya grafiksel olarak sunmak", "Veri ambarı verilerin saklandığı yerdir. [cite: 113]"],
+        ["Veri madenciliği algoritmalarını çalıştırmak için gerekli olan işlemci gücünü sağlamak", "Bu işlemci ve sunucu donanımıyla ilgilidir."],
+        ["Müşteri bilgileri, piyasa bilgileri gibi analiz için gerekli tüm verilerin saklandığı merkezi veritabanı olmak", "Veri ambarı, veri madenciliği için uygun başlangıç noktasıdır. [cite: 113, 114]"],
+        ["Sadece metin tabanlı verilerin analizini yapmak", "Çeşitli veri türlerini saklar."],
+        ["Veri madenciliği modellerini test etmek için izole edilmiş küçük veri setleri oluşturmak", "Bu model test sürecinin bir parçasıdır, veri ambarının ana rolü değildir."]
+      ],
+      answer: 2,
+      summary: "Veri madenciği sürecinde en uygun başlangıç noktası veri ambarıdır. Veri ambarı, bütün verilerin saklandığı veritabanıdır. Veri ambarında hem müşteri bilgileri, hem de tüm piyasa ile ilgili bilgiler bulunur. [cite: 113, 114]"
+    },
+    {
+      q: "10. OLAP (On-Line Analytical Processing) sunucusunun veri madenciliği mimarisindeki işlevi nedir?",
+      options: [
+        ["Veri ambarındaki ham verileri toplamak ve temizlemek", "Bu veri hazırlık aşamasıdır."],
+        ["Oluşturulan modellerin veri ambarı üzerinde son kullanıcı tarafından kolaylıkla uygulanabilmesine ve çok boyutlu veri yapılarının analizine olanak tanımak", "OLAP sunucusu bu işlevleri yerine getirir. [cite: 117, 118, 119]"],
+        ["Yeni veri madenciliği algoritmaları geliştirmek", "Bu araştırma ve geliştirme faaliyetidir."],
+        ["Veri madenciliği sonuçlarını doğrudan pazarlama kampanyalarına dönüştürmek", "Bu uygulama ve entegrasyon aşamasıdır."],
+        ["Paralel işlemcili bilgisayarların donanımını yönetmek", "Bu sistem yönetimiyle ilgilidir."]
+      ],
+      answer: 1,
+      summary: "OLAP (On-Line Analytical Processing) sunucusu; oluşturulan modellerin veri ambarı üzerinde son kullanıcı tarafından kolaylıkla uygulanabilmesine olanak tanır. Çok boyutlu veri yapıları, kullanıcıların verilere istedikleri perspektiften bakabilmesini ve işe yarar bölümlerini almalarını sağlar. [cite: 117, 118, 119]"
+    },
+    {
+      q: "11. Bir ilaç firmasının, satış ekibinin aktiviteleri ve sonuçları üzerinde veri madenciliği yaparak 'daha değerli doktorları' ortaya çıkarması, hangi temel veri madenciliği uygulamasını örneklendirir?",
+      options: [
+        ["Sadece veri girişi hatalarının düzeltilmesini", "Bu veri temizlemedir."],
+        ["Müşteri (doktor) segmentasyonu ve hedef kitle belirlemeyi", "Bu, belirli bir gruba odaklanmayı sağlar. [cite: 131, 132]"],
+        ["Kredi kartı sahteciliğinin önlenmesini", "Bu farklı bir uygulamadır."],
+        ["Yalan makinası benzeri bir analiz yapılmasını", "Bu metin veya ifade analiziyle ilgilidir."],
+        ["Web sitesinin kişiselleştirilmesini", "Bu farklı bir web uygulamasıdır."]
+      ],
+      answer: 1,
+      summary: "Bir ilaç firması, satış ekibinin aktiviteleri ve sonuçları üzerinde veri madenciliği yaparak, (firma açısından) daha değerli doktorları ortaya çıkarabilir. Bu doktorlar üzerinde yürütülecek olan daha ciddi kampanyalar toplam gelirin daha çok artmasını sağlayabilir. [cite: 131, 132]"
+    },
+    {
+      q: "12. Elektronik ticaretin hukuksal boyutları kapsamında, 'elektronik ortamda sözleşmelerin yapılması' hangi hukuk dalı çerçevesinde incelenir?",
+      options: [
+        ["Ceza Hukuku", "Suç ve cezalarla ilgilenir."],
+        ["Borçlar Hukuku", "Sözleşmeler Borçlar Hukuku'nun konusudur. [cite: 154]"],
+        ["İdare Hukuku", "Kamu yönetimiyle ilgilenir."],
+        ["Anayasa Hukuku", "Devletin temel yapısıyla ilgilenir."],
+        ["Usul Hukuku", "Yargılama yöntemleriyle ilgilenir. [cite: 154]"]
+      ],
+      answer: 1,
+      summary: "Elektronik ticarete ilişkin yasal düzenleme alanlarından biri, elektronik ortamda sözleşmelerin yapılması konusunun Borçlar Hukuku çerçevesinde irdelenmesidir. [cite: 154]"
+    },
+    {
+      q: "13. Elektronik imza konusunda, Birleşmiş Milletler (BM) tarafından 'Güvenli Elektronik İmza'nın sahip olması gerektiği belirtilen standart özelliklerden biri olan 'Teklik' ne anlama gelir?",
+      options: [
+        ["Elektronik imzanın sadece bir kez kullanılabilmesi", "Bu kullanım sıklığıyla ilgili değildir."],
+        ["Elektronik imzaların birbirinden farklı olması ve belirli bir kişiye özgü olması", "Teklik, imzanın benzersizliğini ifade eder. [cite: 171, 172]"],
+        ["Elektronik imzanın sadece metin mesajlarına eklenebilmesi", "Farklı veri türlerine eklenebilir."],
+        ["İmza sahibinin kimliğinin sadece tek bir yöntemle tespit edilebilmesi", "Farklı yöntemler kullanılabilir."],
+        ["Elektronik imzanın sadece tek bir ülkede geçerli olması", "Uluslararası geçerlilik hedeflenir."]
+      ],
+      answer: 1,
+      summary: "Güvenli elektronik imzanın standart özelliklerinden 'Teklik', elektronik imzaların birbirinden farklı olması anlamına gelmektedir. Ya parmak izi, retina taraması gibi biyometrik yöntemlerle ya da çift anahtar kullanımıyla teklik şartı yerine getirilebilmektedir. [cite: 172, 173]"
+    },
+    {
+      q: "14. Birleşmiş Milletler (BM) dokümanlarına göre, bir sayısal imzanın 'güvenli elektronik imza' olarak kabul edilmesi için temel koşul nedir?",
+      options: [
+        ["Mutlaka biyometrik verilerle oluşturulmuş olması", "Çift anahtar kullanımı da geçerlidir. [cite: 173]"],
+        ["Sadece devlet kurumları tarafından verilmiş olması", "Özel onay makamları da olabilir. [cite: 205, 206]"],
+        ["Bir onay makamı tarafından verilen bir sayısal imza sertifikasının geçerlilik süresi içinde imzalanmış olması", "Bu, BM dokümanlarında belirtilen bir kabul koşuludur. [cite: 178]"],
+        ["İmza sahibinin gizli anahtarının herkes tarafından bilinmesi", "Gizli anahtar gizli kalmalıdır."],
+        ["Mesajın şifrelenmemiş olması", "Mesaj şifrelenmiş olabilir."]
+      ],
+      answer: 2,
+      summary: "BM dökümanlarına göre eğer veri mesajı, bir onay makamı tarafından verilen bir sayısal imza sertifikasının geçerlilik süresi içinde imzalanmışsa, bu sayısal imza güvenli elektronik imza olarak kabul edilmektedir. [cite: 178]"
+    },
+    {
+      q: "15. Elektronik imzanın sahipliği konusunda ispat yükü genellikle kimin üzerindedir?",
+      options: [
+        ["Her zaman mesajı alan tarafın", "İspat yükü genellikle imza sahibindedir. [cite: 182]"],
+        ["Onay makamının", "Onay makamı sertifika düzenler."],
+        ["Elektronik imza sahibi olarak görünen kişinin (yetkisiz kullanım iddiası yoksa)", "İspat yükü elektronik imza sahibi üzerinde olacaktır. [cite: 182]"],
+        ["Devletin ilgili denetim kurumlarının", "Bu kurumlar genel denetim yapar."],
+        ["Hiç kimsenin, elektronik imza her zaman tartışmasız kabul edilir.", "Aksi ispat edilebilir. [cite: 179, 181]"]
+      ],
+      answer: 2,
+      summary: "İspat hukuku açısından, elektronik imzalı mesajı alan ya da güvenen taraf karinelere dayanacak, ispat yükü ise elektronik imza sahibi üzerinde olacaktır. [cite: 182]"
+    },
+    {
+        q: "16. Elektronik ticarette 'Onay Kurumu' (Sertifikasyon Otoritesi - CA) temel olarak ne iş yapar?",
+        options: [
+            ["Elektronik ödeme sistemlerini işletir.", "Bu farklı bir işlevdir."],
+            ["Mesaj gönderici ve alıcıların kimliklerinin belirlenmesi için sayısal sertifikalar düzenler ve imzalar.", "Onay kurumlarının temel görevi budur. [cite: 198, 199, 200]"],
+            ["Elektronik ticaret siteleri için web tasarımı yapar.", "Bu web tasarım firmalarının işidir."],
+            ["Gizli imza anahtarlarını oluşturur ve tüm kullanıcılara dağıtır.", "Kullanıcılar kendi anahtar çiftlerini oluşturabilir veya CA yardımcı olabilir, ancak dağıtım şekli farklıdır."],
+            ["İnternet alan adlarını (domain names) tescil eder.", "Bu registrar firmalarının işidir."]
+        ],
+        answer: 1,
+        summary: "Mesaj gönderici ve alıcıların kimliklerinin belirlenmesi için üçüncü kişi veya kurumlarca sayısal sertifika düzenlenmesi gereklidir. Bu sertifikaları düzenleyen kurumlar, \"Sertifikasyon Otoritesi\", \"Onay Makamı\" ya da \"Onay Kurumu\" olarak adlandırılmaktadır. [cite: 198, 199]"
+    },
+    {
+        q: "17. Alman Sayısal İmza Yasası'na göre bir onay makamının faaliyet gösterebilmesi için temel gereksinim nedir?",
+        options: [
+            ["En az 10 yıl deneyime sahip olması", "Yasada böyle bir süre belirtilmemiştir."],
+            ["Sadece kamu kuruluşu olması", "Gerçek veya tüzel kişi olabilir. [cite: 213]"],
+            ["Yetkili makamın vereceği bir lisansa sahip olması", "Lisans gereksinimi Alman yasasında belirtilmiştir. [cite: 214]"],
+            ["Uluslararası bir şirketin şubesi olması", "Yerel bir kuruluş da olabilir."],
+            ["Tüm müşterilerine ücretsiz sertifika dağıtması", "Hizmetler için bedel talep edilebilir. [cite: 225]"]
+        ],
+        answer: 2,
+        summary: "Alman Sayısal İmza Yasasında onay makamının faaliyet gösterebilmesi için, yetkili makamın vereceği lisansa gereksinimi vardır. Bu lisans kendilerine başvuru üzerine verilmektedir. [cite: 214, 215]"
+    },
+    {
+        q: "18. Alman Sayısal İmza Yasası'na göre onay makamlarının 'gizli imza anahtarları' ile ilgili sorumluluğu nedir?",
+        options: [
+            ["Gizli imza anahtarlarını oluşturup tüm kullanıcılara e-posta ile göndermek.", "Güvenlik açığı oluşturur."],
+            ["Gizli imza anahtarlarını kendi veri tabanlarında güvenli bir şekilde saklamak ve gerektiğinde devlet birimleriyle paylaşmak.", "Alman yasasına göre gizli imza anahtarları onay makamı tarafından saklanamaz. [cite: 220]"],
+            ["Gizli imza anahtarlarının mahremiyetini korumak için gerekli tedbirleri almak ve bu anahtarları saklamamak.", "Alman yasası gizli anahtarların saklanmamasını öngörür. [cite: 219, 220]"],
+            ["Kullanıcıların unuttuğu gizli imza anahtarlarını sıfırlamak ve yenisini atamak.", "Saklanmadığı için bu mümkün değildir."],
+            ["Her sertifika için farklı bir gizli imza anahtarı üretip kamuya açık olarak yayınlamak.", "Gizli anahtar gizli kalmalıdır."]
+        ],
+        answer: 2,
+        summary: "Alman Sayısal İmza Yasası'na göre onay makamı, sertifikalardaki verilerin fark edilmeden taklit edilmesi ya da tahrif edilmesini önlemek için gerekli tedbirleri alır. Onay makamı aynı şekilde gizli imza anahtarlarının mahremiyetini korumak için de gerekli tedbirleri alır. Gizli imza anahtarları onay makamı tarafından saklanamaz. [cite: 218, 219, 220]"
+    },
+    {
+        q: "19. Elektronik ticarette 'servis sağlayıcılarının sorumluluğu' hangi tür içerikler açısından yasal bir sorun teşkil edebilir?",
+        options: [
+            ["Sadece ürün fiyatları ve stok bilgileri", "Bu tür bilgiler de önemlidir ama yasal sorumluluk daha çok sakıncalı içeriklerle ilgilidir."],
+            ["Pornografi, ırkçı ve şiddete yönelik muhteva, hakaret, telif hakları ve haksız rekabet içeren muhtevalar", "Servis sağlayıcılar bu tür yasadışı içerikler nedeniyle sorumlu tutulabilir. [cite: 156]"],
+            ["Kullanıcıların kişisel blog yazıları ve yorumları", "İçerik türüne göre sorumluluk doğabilir."],
+            ["Yabancı dilde hazırlanmış web siteleri", "Dil bir sorun değildir, içerik önemlidir."],
+            ["Eğitim ve araştırma amaçlı paylaşılan akademik makaleler", "Bunlar genellikle yasal sorun teşkil etmez."]
+        ],
+        answer: 1,
+        summary: "Servis sağlayıcılarının sorumluluğu ve bunun kapsamı özellikle pornografi, ırkçı ve şiddete yönelik muhteva, hakaret, telif hakları ve haksız rekabet açısından yasal düzenleme alanlarındandır. [cite: 156]"
+    },
+    {
+        q: "20. WIPO (Dünya Fikrî Mülkiyet Teşkilatı) tarafından hazırlanan ve elektronik ticarette telif haklarıyla ilgili olan iki uluslararası anlaşma hangileridir?",
+        options: [
+            ["Elektronik İmza Anlaşması ve Veri Koruma Anlaşması", "Bunlar farklı konulardadır."],
+            ["Telif Hakları Anlaşması ile İcracı Sanatçı ve Fonogram Yapımcıları Anlaşması", "Bu iki anlaşma WIPO tarafından telif hakları için oluşturulmuştur. [cite: 157]"],
+            ["Alan Adları Uyuşmazlık Çözümü Anlaşması ve Siber Suçlar Sözleşmesi", "Bunlar farklı hukuki alanlardır."],
+            ["Rekabet Kanunu Uyum Anlaşması ve Tüketiciyi Koruma Anlaşması", "Bunlar farklı yasal düzenlemelerdir."],
+            ["Elektronik Para İhracı Anlaşması ve Ödeme Sistemleri Operatörleri Anlaşması", "Bunlar finansal düzenlemelerdir."]
+        ],
+        answer: 1,
+        summary: "WIPO (Dünya Fikrî Mülkiyet Teşkilatı) tarafından oluşturulan diplomatik konferansta hazırlanan iki uluslararası anlaşma Telif Hakları Anlaşması ile İcracı Sanatçı ve Fonogram Yapımcıları Anlaşması'dır. [cite: 157]"
+    },
+    {
+        q: "21. Veri madenciliği modelinin doğru olup olmadığını test etmenin en güvenilir yolu nedir?",
+        options: [
+            ["Modelin karmaşıklığına ve kullanılan algoritma sayısına bakmak.", "Karmaşıklık her zaman doğruluk anlamına gelmez."],
+            ["Modeli, daha önceden elde edilmiş ve sonuçları bilinen veriler üzerinde uygulayıp, modelin tahminleri ile gerçek verileri karşılaştırmak.", "Bu, modelin performansını test etmenin bir yoludur. [cite: 103]"],
+            ["Modeli oluşturan uzmanların tecrübesine güvenmek.", "Uzman görüşü önemlidir ama test gereklidir."],
+            ["Modelin ne kadar işlemci gücü tükettiğini ölçmek.", "Bu performansla ilgilidir, doğrulukla değil."],
+            ["Modeli sadece geleceğe yönelik, henüz sonucu bilinmeyen verilere uygulamak.", "Bilinen verilerle test etmek önemlidir. [cite: 103]"]
+        ],
+        answer: 1,
+        summary: "Önerilen modelleri test etmenin yolu, daha önceden elde edilmiş bilinen değerler üzerinde bu modeli uygulayıp, modelin tahminleri ile eldeki toplanmış verileri karşılaştırmaktır. [cite: 103]"
+    },
+    {
+        q: "22. Bir veri madenciliği uygulamasının başarılı sayılabilmesi için hangi temel özelliğe sahip olması gerekir?",
+        options: [
+            ["Sadece firmanın kendi veritabanı dışında, rakip firma verileriyle çalışabilmesi.", "Kendi verileriyle de çalışır."],
+            ["Mevcut sistemlerle tümleşik olarak çalışabilmeli ve ilave aşamalar/veri aktarımı sorunları yaşamamalıdır.", "Entegrasyon ve sorunsuz çalışma önemlidir. [cite: 109]"],
+            ["Her zaman %100 doğru tahminler yapabilmesi.", "Tahminlerde hata payı olabilir."],
+            ["Sadece tek bir veri madenciliği tekniğini kullanması.", "Birden fazla teknik kullanılabilir."],
+            ["Sonuçlarını sadece üst yönetime raporlaması, diğer birimlerle paylaşmaması.", "Elde edilen veriler ilgili tüm birimlerce kullanılabilmelidir. [cite: 110]"]
+        ],
+        answer: 1,
+        summary: "Başarılı bir veri madenciliği uygulaması, mevcut sistemlerle tümleşik olarak çalışabilmeli ve ilave aşamalar ve veri aktarımı sorunları yaşamamalıdır. [cite: 109]"
+    },
+    {
+        q: "23. Veri madenciliğinde 'metadata katmanı'nın OLAP sunucusu üzerindeki işlevi nedir?",
+        options: [
+            ["Ham verilerin doğrudan son kullanıcıya sunulmasını sağlamak.", "Metadata süzülmüş veridir."],
+            ["Verilerin bir anlamda süzülmüş biçimini sunmak ve elde edilen sonuçların geri besleme ile bu verilerin daha da iyi süzülmesinde kullanılmasını sağlamak.", "Metadata bu işlevi görür. [cite: 125]"],
+            ["Veri ambarının fiziksel depolama kapasitesini artırmak.", "Bu donanımsal bir konudur."],
+            ["Veri madenciliği algoritmalarının hızını yavaşlatmak.", "Verimliliği artırmayı hedefler."],
+            ["Sadece grafik ve raporlama araçlarını içermek.", "Verinin kendisiyle ilgilidir."]
+        ],
+        answer: 1,
+        summary: "OLAP sunucusu üzerine \"metadata katmanı\" olarak adlandırılan, verilerin bir anlamda süzülmüş biçimi bulunur ve elde edilen sonuçlar, geri besleme ile bu verilerin daha da iyi süzülmesinde kullanılır. [cite: 125]"
+    },
+    {
+        q: "24. Veri madenciliği yapılacak bir firmada bulunması gereken iki önemli özellik nedir?",
+        options: [
+            ["Çok sayıda çalışana ve geniş bir ofis alanına sahip olması.", "Veri ve süreç önemlidir."],
+            ["Sadece yeni kurulmuş bir firma olması ve eski verilerinin bulunmaması.", "Geniş veri ambarı önemlidir."],
+            ["Geniş ve aynı zamanda bütünlük arz eden bir veri ambarına ve veri madenciliği yapılacak tanımlanmış bir iş sürecine (örn: kampanya) sahip olması.", "Bu iki özellik veri madenciliği için kritiktir. [cite: 129, 130]"],
+            ["Yüksek kâr marjları ve düşük rekabet ortamında faaliyet göstermesi.", "Veri madenciliği rekabetçi ortamlarda daha da önemlidir."],
+            ["Sadece manuel veri toplama yöntemlerini kullanması.", "Veri ambarı dijital verilerle oluşur."]
+        ],
+        answer: 2,
+        summary: "Veri madenciliği yapılacak olan firmada iki önemli özelliğin bulunması gerekmektedir: Geniş ve aynı zamanda bütünlük arz eden veri ambarı ve veri madenciliği yapılacak olan iş sürecinin tanımlanmış bir yapısı. [cite: 129, 130]"
+    },
+    {
+        q: "25. Elektronik ticaretle ilgili yasal düzenlemelerde 'tüketicinin korunması' neden önemlidir?",
+        options: [
+            ["Sadece firmaların kârını artırmak için.", "Tüketici hakları odaklıdır."],
+            ["Elektronik ortamdaki işlemlerin karmaşıklığı ve bilgi asimetrisi nedeniyle tüketicinin daha savunmasız olabilmesi ve güvenli alışveriş ortamının sağlanması için.", "Bu, tüketicinin korunmasının temel nedenidir. [cite: 154]"],
+            ["Veri madenciliği uygulamalarını kısıtlamak için.", "Veri gizliliği ile ilgilidir ama ana amaç bu değildir."],
+            ["Elektronik imza kullanımını zorunlu hale getirmek için.", "Elektronik imza farklı bir yasal düzenlemedir."],
+            ["Kamu alımlarında şeffaflığı azaltmak için.", "Kamu alımları ayrı bir düzenleme alanıdır."]
+        ],
+        answer: 1,
+        summary: "Elektronik ticarete ilişkin yasal düzenleme alanlarından biri, tüketicinin korunması ile ilgili mevzuatın elektronik ticaret açısından yeniden gözden geçirilmesidir. [cite: 154]"
+    },
+    {
+      q: "26. Birleşmiş Milletler (BM) tarafından güvenli elektronik imzanın standart özelliklerinden biri olan 'Bağlantı' ilkesi neyi ifade eder?",
+      options: [
+        ["Elektronik imzanın sadece internet bağlantısı varken kullanılabilmesi", "Bu teknik bir gereklilik değildir."],
+        ["Mesaj değiştiğinde, elektronik imzanın geçersiz hale gelmesi gerektiğini", "Bu, imzanın mesajla olan bütünlüğünü ve bağlantısını ifade eder. [cite: 177]"],
+        ["İmza sahibinin her zaman onay makamıyla bağlantıda olması gerektiğini", "Bu sürekli bir bağlantı gerektirmez."],
+        ["Farklı elektronik imza sistemlerinin birbiriyle uyumlu çalışabilmesi gerektiğini", "Bu birlikte çalışabilirlikle ilgilidir."],
+        ["Elektronik imzanın, imzalanan mesaja fiziksel olarak yapıştırılması gerektiğini", "Mantıksal olarak bağlı olması yeterlidir. [cite: 170]"]
+      ],
+      answer: 1,
+      summary: "Güvenli elektronik imzanın standart özelliklerinden 'Bağlantı': mesajla imza arasında bağlantı olması anlamına gelmektedir. Mesaj değiştiğinde, elektronik imza geçersiz hale gelmelidir. [cite: 177]"
+    },
+    {
+      q: "27. Gizli imza anahtarlarının onay makamları tarafından saklanması konusundaki uluslararası tartışmanın temelinde yatan endişe nedir?",
+      options: [
+        ["Onay makamlarının bu hizmet için çok yüksek ücret talep etmesi", "Maliyet bir faktör olabilir ama temel endişe değildir."],
+        ["Gizli anahtarların teknik olarak saklanmasının imkansız olması", "Saklanabilir ancak güvenlik riskleri vardır."],
+        ["Suç faaliyetlerinin gizlenmesine imkan tanıyabilmesi ve devletlerin yürütme/yargılama yeterlilikleri konusunda endişeler oluşturması ile sisteme olan güvenin azalması potansiyeli", "Bu, tartışmanın merkezindeki temel endişelerdir. [cite: 188, 190]"],
+        ["Açık anahtar veri tabanlarının gereksiz hale gelmesi", "Açık anahtarlar hala gereklidir."],
+        ["Elektronik imzaların yasal geçerliliğini yitirmesi", "Yasal geçerlilik farklı düzenlemelere bağlıdır."]
+      ],
+      answer: 2,
+      summary: "Gizli imza anahtarları ve şifreleme, suç faaliyetlerinin gizlenmesine imkan tanıyabilmekte ve devletlerin yürütme (vergilendirme dahil) ve yargılama yeterlilikleri konusunda endişeler oluşturmaktadır. Diğerleri, şifreleme kullanımının sınırlandırılmaması gerektiğine, gizli imza anahtarlarının üçüncü kişilerin erişiminin sisteme olan güveni azaltacağına inanmaktadır. [cite: 188, 190]"
+    },
+    {
+      q: "28. Bir 'Onay Kurumu'nun (CA) temel görevi aşağıdakilerden hangisidir?",
+      options: [
+        ["Elektronik ticaret siteleri için reklam kampanyaları düzenlemek", "Bu pazarlama ajanslarının işidir."],
+        ["Kullanıcıların gizli imza anahtarlarını oluşturmak ve güvenli bir şekilde onlara teslim etmek", "Anahtar oluşturmaya yardımcı olabilir ama temel görevi sertifika düzenlemektir."],
+        ["Sayısal sertifikalar düzenleyerek ve sayısal olarak imzalayarak bireylerin veya kurumların kimliklerini elektronik ortamda doğrulamak", "Onay kurumlarının ana işlevi budur. [cite: 198, 199, 200]"],
+        ["Elektronik ortamda yapılan tüm sözleşmeleri denetlemek ve onaylamak", "Bu e-noter benzeri bir işlevdir, CA'nın temel görevi sertifikadır."],
+        ["Siber saldırılara karşı firmalara teknik destek sağlamak", "Bu siber güvenlik firmalarının işidir."]
+      ],
+      answer: 2,
+      summary: "Mesaj gönderici ve alıcıların kimliklerinin belirlenmesi için üçüncü kişi veya kurumlarca sayısal sertifika düzenlenmesi gereklidir. Bu sertifikaları düzenleyen kurumlar, \"Sertifikasyon Otoritesi\", \"Onay Makamı\" ya da \"Onay Kurumu\" olarak adlandırılmaktadır. Sertifika, onay makamı tarafından düzenlenerek, sayısal olarak imzalanır. [cite: 198, 199, 200]"
+    },
+    {
+      q: "29. Alman Sayısal İmza Yasası'na göre 'Yetkili Makam'ın onay makamları üzerindeki temel yetkisi nedir?",
+      options: [
+        ["Onay makamlarının reklam bütçelerini belirlemek", "Bu ticari bir karardır."],
+        ["Onay makamlarına kişisel veri toplama konusunda sınırsız yetki vermek", "Kişisel veri toplama sınırlıdır. [cite: 221]"],
+        ["Onay makamlarının çalışabilmesi için gerekli lisansı vermek ve onlar üzerinde kontrol/denetim yetkisine sahip olmak", "Yetkili makam bu görevleri üstlenir. [cite: 223, 225]"],
+        ["Onay makamlarının sadece devlet kurumlarına hizmet vermesini sağlamak", "Özel sektöre de hizmet verebilirler."],
+        ["Onay makamlarının kullandığı şifreleme algoritmalarını geliştirmek", "Bu teknik bir konudur."]
+      ],
+      answer: 2,
+      summary: "Alman Sayısal İmza Yasası'na göre, yetkili makam onay makamlarının çalışabilmesi için gerekli lisansı veren makamdır ve onay makamları üzerinde kontrol ve denetim yetkisi bulunmaktadır. [cite: 215, 223, 225]"
+    },
+    {
+      q: "30. Veri madenciliği ile elde edilen bilgilerin, bir kredi kartı firması tarafından yeni bir kredi ürünü pazarlamasında kullanılma süreci nasıl işler?",
+      options: [
+        ["Tüm müşterilere aynı standart pazarlama mesajı gönderilir.", "Hedefli pazarlama yapılır."],
+        ["Önce mevcut müşteriler arasından yeni ürüne en çok ilgilenebilecek olanlar veri madenciliği ile belirlenir, sonra bu grubun küçük bir bölümüne test pazarlaması yapılır ve sonuçlara göre genel pazarlama yapılır.", "Bu, veri madenciliğinin pazarlamada etkin kullanımına bir örnektir. [cite: 136, 137, 138, 139]"],
+        ["Rastgele seçilen bir müşteri grubuna ürün hakkında anket yapılır.", "Bu pazar araştırmasıdır, veri madenciliği farklıdır."],
+        ["Sadece rakip firmaların müşterilerine yönelik bir kampanya düzenlenir.", "Kendi müşteri tabanı da önemlidir."],
+        ["Veri madenciliği modeli oluşturulmadan doğrudan tüm müşterilere kampanya yapılır.", "Model oluşturma ve test önemlidir."]
+      ],
+      answer: 1,
+      summary: "Bir kredi kartı firması, mevcut müşterilerin arasından yeni bir kredi ürünü ile en çok ilgilenebilecek olan müşterileri veri madenciliği aracılığı ile belirleyebilir. Belirlenen grubun küçük bir bölümüne ve eski metotla karar verilen tüm grubun küçük bir bölümüne test pazarlaması yapılır. Elde edilen başarıya göre gerekirse veri madenciliği modelinde düzeltmeler yapılır ve ardından elde edilen listedeki müşterilerin tamamına pazarlama yapılır. [cite: 136, 137, 138, 139]"
+    },
+    {
+      q: "31. Elektronik ticaret faaliyetleri ve yasal düzenlemeleri kapsamında 'alan adlarının (domain names) hukuken korunması' neden önemlidir?",
+      options: [
+        ["Sadece .com uzantılı alan adlarının değerli olması nedeniyle.", "Tüm geçerli alan adları önemlidir."],
+        ["Firmaların ve markaların dijital kimliklerinin ve itibarlarının korunması, haksız rekabetin ve tüketici yanıltılmasının önlenmesi için.", "Alan adı, markanın dijitaldeki önemli bir temsilcisidir. [cite: 158]"],
+        ["İnternet servis sağlayıcılarının gelirlerini artırmak için.", "Bu ticari bir sonuçtur, hukuki korumanın amacı değildir."],
+        ["Web sitesi trafik analizlerinin daha kolay yapılabilmesi için.", "Bu teknik bir konudur."],
+        ["Tüm alan adlarının devlet tarafından kontrol edilmesi için.", "Alan adı yönetimi farklı kuruluşlarca yapılabilir."]
+      ],
+      answer: 1,
+      summary: "Elektronik ticaret sırasında kullanılan İnternet alan isimlerinin (domain names) hukuken korunması, yasal düzenleme alanlarından biridir. [cite: 158] Bu, marka ve kimlik koruması için önemlidir."
+    },
+    {
+      q: "32. Veri madenciliği tekniklerinden 'Yapay Sinir Ağları'nın temel çalışma prensibi nedir?",
+      options: [
+        ["Verileri ağaç yapısında sınıflandırarak kurallar çıkarmak.", "Bu Karar Ağaçları'nın işlevidir. [cite: 69]"],
+        ["Doğrusal olmayan (nonlinear) tahmin modelleri kullanarak, belirli bir öğrenim sürecinden sonra girdilere karşı öğrenilmiş bilgiler doğrultusunda tepki vermek.", "Yapay sinir ağları bu şekilde çalışır. [cite: 66, 67]"],
+        ["Evrimsel süreçleri (birleşme, mutasyon) taklit ederek en uygun çözümü bulmak.", "Bu Genetik Algoritmalar'ın işlevidir. [cite: 71]"],
+        ["Veri noktalarını, önceden tanımlanmış küme merkezlerine olan uzaklıklarına göre gruplamak.", "Bu K-Ortalama Değer Kümeleri tekniğidir. [cite: 75]"],
+        ["İstatistiksel özelliklere dayanarak IF-THEN-ELSE formatında kurallar oluşturmak.", "Bu Kural Yüklemesi tekniğidir. [cite: 74]"]
+      ],
+      answer: 1,
+      summary: "Yapay sinir ağları, doğrusal olmayan (nonlinear) tahmin modelleri bu alanda temel oluşturmaktadır. Bu modeller, belirli bir öğrenim sürecinden sonra, çeşitli girdilere karşı öğrenimden kazanılan bilgiler doğrultusunda bir tepki verirler. [cite: 66, 67]"
+    },
+    {
+      q: "33. Veri madenciliğinde 'Veri Ambarı'nın (Data Warehouse) temel amacı, hangi tür bilgileri bir araya getirmektir?",
+      options: [
+        ["Sadece anlık işlem verilerini.", "Hem güncel hem geçmiş verileri içerir."],
+        ["Sadece rakip firma bilgilerini.", "Kendi müşteri ve piyasa bilgilerini de içerir. [cite: 114]"],
+        ["Müşteri bilgileri, tüm piyasa ile ilgili bilgiler (rakip bilgileri, döviz kurları vb.) gibi farklı kaynaklardan gelen verileri.", "Veri ambarı, analiz için geniş bir veri yelpazesi sunar. [cite: 114]"],
+        ["Sadece yapılandırılmamış metin verilerini.", "Yapılandırılmış verileri de içerir."],
+        ["Sadece firmanın web sitesi ziyaretçi loglarını.", "Daha kapsamlıdır."]
+      ],
+      answer: 2,
+      summary: "Veri ambarı, bütün verilerin saklandığı veritabanıdır. Veri ambarında hem müşteri bilgileri, hem de tüm piyasa ile ilgili, örneğin rakiplerin açıklanan bilgileri, döviz kurlarının hareketi gibi bilgiler bulunur. [cite: 113, 114]"
+    },
+    {
+      q: "34. Elektronik imza ile ilgili yasal düzenlemelerde, 'aksi ispat edilene kadar geçerli olan karineler' arasında aşağıdakilerden hangisi bulunmaz?",
+      options: [
+        ["Elektronik imza mesaja eklendiği andan itibaren mesaj değişmemiştir.", "Bu bir karinedir. [cite: 179]"],
+        ["Elektronik imza ilgili şahsın imzasıdır.", "Bu bir karinedir. [cite: 180]"],
+        ["Elektronik imza, imza sahibi tarafından mesajı imzalamak amacıyla mesaja eklenmiştir.", "Bu bir karinedir. [cite: 180]"],
+        ["Elektronik imzanın kullanıldığı mesaj her zaman şifrelenmiştir.", "Mesajın şifrelenmiş olması zorunlu bir karine değildir."],
+        ["Yukarıdakilerin aksi, teknolojik gelişmeler veya güvenlik ihlalleriyle ispat edilebilir.", "Aksinin ispatı mümkündür. [cite: 181]"]
+      ],
+      answer: 3,
+      summary: "Elektronik imzaya ilişkin olarak aksi ispat edilene kadar geçerli olan maddeler (karineler): a) Elektronik imza mesaja eklendiği andan itibaren mesaj değişmemiştir. b) Elektronik imza ilgili şahsın imzasıdır. c) Elektronik imza, imza sahibi tarafından mesajı imzalamak amacıyla mesaja eklenmiştir. [cite: 179, 180]"
+    },
+    {
+      q: "35. Onay makamlarının (CA) kişisel bilgileri toplamasıyla ilgili olarak Alman Sayısal İmza Yasası'nda getirilen temel kısıtlama nedir?",
+      options: [
+        ["İstedikleri her türlü kişisel bilgiyi sınırsızca toplayabilirler.", "Kısıtlamalar vardır."],
+        ["Kişisel bilgileri sadece doğrudan ilgili kişiden ve sertifikasının amacı doğrultusunda gerekli ölçüde toplayabilirler.", "Yasa bu şekilde bir sınırlama getirmiştir. [cite: 221]"],
+        ["Topladıkları tüm kişisel bilgileri kamuya açık olarak yayınlamak zorundadırlar.", "Gizlilik esastır."],
+        ["Sadece adli makamların talebiyle kişisel bilgi toplayabilirler.", "Sertifika başvurusu sırasında da bilgi toplanır."],
+        ["Kişisel bilgi toplamaları tamamen yasaklanmıştır.", "Gerekli ölçüde toplayabilirler."]
+      ],
+      answer: 1,
+      summary: "Onay makamı, kişisel bilgileri ancak doğrudan ilgili kişiden ve sertifikasının amacı doğrultusunda gerekli ölçüde toplayabilmektedir. [cite: 221]"
+    },
+    {
+        q: "36. Veri madenciliği uygulamalarının klasik yaklaşımlara göre daha hızlı sonuçlar üretebilmesi neye bağlıdır?",
+        options: [
+            ["Sadece insan zekasına ve deneyimine.", "Algoritmalar ve işlem gücü de önemlidir."],
+            ["Ciddi miktarda işlemci gücü ve güçlü istemci-sunucu ya da paralel bilgisayar sistemlerinin kullanılmasına.", "Bu, karmaşık hesaplamaların hızla yapılmasını sağlar. [cite: 9, 51]"],
+            ["Veritabanı boyutunun küçük tutulmasına.", "Büyük veritabanlarından anlamlı bilgi çıkarır."],
+            ["Algoritmaların her zaman basit ve tek adımlı olmasına.", "Karmaşık algoritmalar kullanılabilir."],
+            ["Verilerin manuel olarak tek tek incelenmesine.", "Otomatik analiz yapar."]
+        ],
+        answer: 1,
+        summary: "Bazı veri madenciliği uygulamaları, ciddi miktarda işlemci gücü ve güçlü istemci-sunucu ya da paralel bilgisayar sistemlerinin kullanılmasıyla oldukça karmaşık sorulara yanıt arayabilmektedir. [cite: 9] Paralel işlemcili bilgisayarlar yardımıyla başka türlü yapılması pratikte olanaksız olan işlemler birkaç dakikada gerçekleştirilebilmektedir. [cite: 51]"
+    },
+    {
+        q: "37. Bir veri madenciliği modelinin geliştirme sürecinde, modelin doğruluğunu test etmek için izole edilen veriler ne amaçla kullanılır?",
+        options: [
+            ["Modelin ne kadar karmaşık olduğunu göstermek için.", "Doğruluk testi amaçlanır."],
+            ["Modelin tahminleri ile bu bilinen (izole edilmiş) verileri karşılaştırarak modelin geçerliliğini sınamak için.", "Bu, modelin performansını değerlendirmenin bir yoludur. [cite: 104, 105]"],
+            ["Veri ambarındaki veri miktarını azaltmak için.", "Test için küçük bir bölüm ayrılır."],
+            ["Modelin daha fazla veri öğrenmesini sağlamak için.", "Öğrenme için farklı veri seti kullanılır, test için ayrı."],
+            ["Sistemin genel performansını yavaşlatmak için.", "Testin amacı bu değildir."]
+        ],
+        answer: 1,
+        summary: "Veri madenciliği modelleri, verilerin bir bölümü modelden izole edilerek uygulanır ve modelin doğruluğunun test edilmesi amacıyla izole edilmiş verilerle, model sonucunda oluşan veriler karşılaştırılır. İzole edilen veriler elle kontrol edilebileceği için, modelin sonuçları bu veriler üzerinde anlamlı ise modelin geçerli olduğu sonucuna varılır. [cite: 104, 105]"
+    },
+    {
+        q: "38. Elektronik ticaretin hukuksal boyutları değerlendirilirken, 'servis sağlayıcılarının sorumluluğu' en çok hangi tür içeriklerde gündeme gelir?",
+        options: [
+            ["Ürünlerin fiyat bilgileri ve indirim oranları.", "Bu bilgiler de önemlidir ama sorumluluk daha çok yasadışı içeriklerle ilgilidir."],
+            ["Web sitesinin teknik altyapısı ve sunucu performansı.", "Bu teknik bir konudur."],
+            ["Pornografi, ırkçı ve şiddete yönelik muhteva, hakaret, telif hakları ihlalleri ve haksız rekabet içeren içerikler.", "Servis sağlayıcılar bu tür içeriklerden sorumlu tutulabilir. [cite: 156]"],
+            ["Kullanıcıların siteye giriş için kullandıkları şifrelerin güvenliği.", "Bu kullanıcı ve site güvenliği ile ilgilidir."],
+            ["Müşteri hizmetleri departmanının yanıt verme süresi.", "Bu hizmet kalitesiyle ilgilidir."]
+        ],
+        answer: 2,
+        summary: "Servis sağlayıcılarının sorumluluğu ve bunun kapsamı (özellikle pornografi, ırkçı ve şiddete yönelik muhteva, hakaret, telif hakları ve haksız rekabet açısından) yasal düzenleme gerektiren alanlardandır. [cite: 156]"
+    },
+    {
+        q: "39. BM Elektronik Ticarete İlişkin Model Kanunu'nda 'elektronik imza' nasıl tanımlanmıştır?",
+        options: [
+            ["Sadece biyometrik verilerle (parmak izi, retina) oluşturulan kimlik bilgisi.", "Bu yöntemlerden biri olabilir ama tanım daha geneldir."],
+            ["Kimliğini ve mesaj içeriğine onay verildiğini göstermek niyetiyle bir kimse tarafından mesaja eklenen veya mantıksal olarak mesaja bağlı olan elektronik bilgi.", "Bu, BM Model Kanunu'ndaki tanımdır. [cite: 170]"],
+            ["Bir web sitesine giriş yapmak için kullanılan kullanıcı adı ve şifre.", "Bu bir kimlik doğrulama yöntemidir, elektronik imza değildir."],
+            ["Devlet tarafından verilen resmi bir mühür.", "Bu fiziksel bir onaydır."],
+            ["Bir belgenin taranmış ve resim formatında kaydedilmiş el yazısı imzası.", "Bu dijitalleştirilmiş bir imzadır, kriptografik elektronik imza farklıdır."]
+        ],
+        answer: 1,
+        summary: "Elektronik imza: \"Kimliğini ve mesaj içeriğine onay verildiğini göstermek niyetiyle bir kimse tarafından (veya onun namına) mesaja eklenen veya mantıksal olarak mesaja bağlı olan elektronik bilgidir.\" [cite: 170]"
+    },
+    {
+        q: "40. Onay makamlarının (CA) hiyerarşik yapısı veya aralarındaki akreditasyon ilişkisi konusunda uluslararası düzeyde genel kabul görmüş yaklaşım nedir?",
+        options: [
+            ["Tüm onay makamları tek bir uluslararası üst kuruma bağlı olmalıdır.", "Farklı uygulamalar mevcuttur."],
+            ["Onay makamları arasında hiçbir hiyerarşi veya akreditasyon ilişkisi olmamalıdır.", "Farklı uygulamalar mevcuttur."],
+            ["Bu husus ülkelerin kendi tercihlerine bırakılmıştır; bazı ülkelerde hiyerarşik yapı, bazılarında ise eşit şartlarda faaliyet gösteren ve birbirini akredite eden kurumlar vardır.", "Genel kabul görmüş tek bir yaklaşım yoktur, ülkeler farklı modeller benimsemiştir. [cite: 207, 208, 209, 210]"],
+            ["Sadece devlet tarafından kurulan onay makamları geçerli sayılmalıdır.", "Özel kurumlar da onay makamı olabilir. [cite: 205]"],
+            ["Onay makamlarının tümü aynı şifreleme algoritmasını kullanmak zorundadır.", "Algoritma seçimi farklılık gösterebilir."]
+        ],
+        answer: 2,
+        summary: "Uluslararası düzeyde, onay makamlarının özel kurumlardan veya resmi kurumlardan oluşturulması konusunda genel kabul görmüş bir yaklaşım olmadığından, bu husus ülkelerin tercihlerine bırakılmaktadır. Bazı ülke uygulamalarında, onay kurumları hiyerarşik olarak tepede yer alan tek bir onay kurumuna bağlı olmakta ve üst onay kurumunca akredite edilmektedir. Bazılarında ise onay kurumları arasında herhangi bir hiyerarşi bulunmamakta, birbirlerini akredite eden onay kurumları eşit şartlarda faaliyet göstermektedir. [cite: 207, 208, 209, 210]"
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

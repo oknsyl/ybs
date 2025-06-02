@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 8 - Kurumsal Bilgi Sistemleri (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 8 Sınavı (Kurumsal Bilgi Sistemleri - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Üretim bilişim sistemlerinin gelişmesinde etkili olan iki ana neden aşağıdakilerden hangisidir?",
+      options: [
+        ["Çalışan maaşlarının artması ve sendikal faaliyetler", "Bu faktörler dolaylı etkileyebilir ancak ana nedenler değildir."],
+        ["Devlet teşviklerinin azalması ve rekabetin düşmesi", "Rekabetin artması gelişim nedenidir."],
+        ["Üretim zamanının (Lead Time) kısalması gereksinimi ve ürün çeşitliliğinin artması", "Bu iki faktör üretim bilişim sistemlerinin gelişimini zorlamıştır. [cite: 7]"],
+        ["Fabrika binalarının eskimesi ve enerji maliyetlerinin yükselmesi", "Bunlar yenileme veya maliyet azaltma nedenleridir, sistem gelişimi için ana itici güç değildir."],
+        ["Pazarlama bütçelerinin küçülmesi ve reklam kısıtlamaları", "Pazarlama ve üretim farklı alanlardır."]
+      ],
+      answer: 2,
+      summary: "Üretim bilişim sistemlerinin gelişmesinde iki ana neden etkili kabul edilmektedir: Üretim zamanının kısalması gereksinimi ve ürün çeşitliliğinin artması ve bunu ekonomik yapma gereksinimi. [cite: 7]"
+    },
+    {
+      q: "2. Modern seri üretim sistemlerinin, klasik üretim modellerine göre temel üstünlüğü nedir?",
+      options: [
+        ["Daha fazla hammadde stoğu tutarak üretim kesintilerini önlemesi", "Modern sistemler en az stokla çalışmayı hedefler. [cite: 9]"],
+        ["Üretim sürecinde bilgi akışını yavaşlatarak daha kontrollü üretim sağlaması", "Modern sistemler hızlı bilgi akışını hedefler. [cite: 9]"],
+        ["Hatalı ürünlerin tespitini üretim bandının sonuna bırakması", "Hatalı ürünler kaynağında tespit edilerek ortadan kaldırılır. [cite: 10, 11]"],
+        ["Gelişmiş bilişim sistemleri aracılığıyla en az stokla en verimli ve kesintisiz üretimi sağlaması", "Modern sistemler hızlı bilgi akışı ile verimli ve kesintisiz üretimi amaçlar. [cite: 9]"],
+        ["Sadece büyük ölçekli işletmelerde uygulanabilir olması", "Mikro düzeyde de uygulama alanı bulur. [cite: 14]"]
+      ],
+      answer: 3,
+      summary: "Modern seri üretim, gelişmiş üretim bilişim sistemleri aracılığı ile üretim sürecinde hızlı bilgi akışını sağlayarak en az stokla en verimli ve kesintisiz üretim yapılmasını sağlar. [cite: 9]"
+    },
+    {
+      q: "3. Üretim süreçlerinde 'Lead Time' kavramı neyi ifade eder?",
+      options: [
+        ["Üretim makinelerinin toplam çalışma süresini", "Bu farklı bir performans metriğidir."],
+        ["Bir ürünün tasarımının tamamlanması için geçen süreyi", "Bu tasarım süreciyle ilgilidir."],
+        ["Sipariş verildikten sonra malın üretim aşamalarının tamamlanmasına kadar geçen zamanın uzunluğunu", "'Lead Time' bu süreyi ifade eder. [cite: 3, 5]"],
+        ["Hammadde tedarikçisinden malzemelerin fabrikaya ulaşma süresini", "Bu tedarik süresinin bir parçasıdır, tamamı değildir."],
+        ["Üretilen bir malın raf ömrünü", "Bu ürünün dayanıklılığı ile ilgilidir."]
+      ],
+      answer: 2,
+      summary: "Üretimde en önemli sorunlardan birisi sipariş verildikten sonra malın üretim aşamalarının tamamlanmasına kadar geçen zamanın uzunluğudur. Bu zamana İngilizce'de 'Lead Time' adı verilir. [cite: 3, 5]"
+    },
+    {
+      q: "4. Aşağıdakilerden hangisi 'akıllı üretim sistemleri'nin bir firmaya sağladığı yararlardan biri değildir?",
+      options: [
+        ["Üretim kapasitesinde artış sağlaması [cite: 19]", "Bu, akıllı üretim sistemlerinin bir yararıdır."],
+        ["Birim mal üretim maliyetini düşürmesi [cite: 19]", "Bu, akıllı üretim sistemlerinin bir yararıdır."],
+        ["Sipariş-Teslim süresinin artması", "Akıllı sistemler bu süreyi azaltmayı hedefler. [cite: 19]"],
+        ["Ürün kalitesinin yükselmesi [cite: 19]", "Bu, akıllı üretim sistemlerinin bir yararıdır."],
+        ["Stokta bekleyen malların azalması [cite: 19]", "Bu, akıllı üretim sistemlerinin bir yararıdır."]
+      ],
+      answer: 2,
+      summary: "Akıllı üretim sistemleri bir firmaya; üretim kapasitesi artışı, birim mal üretim maliyetinin düşmesi, ürün kalitesinin yükselmesi, sipariş-teslim süresinin azalması gibi pek çok yarar sağlar. [cite: 19] Sipariş-teslim süresinin artması bir yarar değildir."
+    },
+    {
+      q: "5. Tedarik zinciri yönetiminde, farklı departmanların (pazarlama, üretim, dağıtım vb.) bağımsız çalışması ve farklı hedeflere sahip olması ne gibi bir soruna yol açabilir?",
+      options: [
+        ["Departmanlar arası sinerjinin artmasına", "Bağımsızlık ve farklı hedefler çelişkiye yol açar."],
+        ["Firmanın genel verimliliğinin yükselmesine", "Entegrasyon eksikliği verimliliği düşürür."],
+        ["Hedeflerin birbiriyle çelişmesi ve genel firma performansının düşmesine", "Farklı hedefler çelişkilere neden olabilir. [cite: 25, 26]"],
+        ["Maliyetlerin her zaman düşmesine", "Çelişen hedefler maliyetleri artırabilir."],
+        ["Müşteri memnuniyetinin kesin olarak artmasına", "Koordinasyonsuzluk memnuniyeti olumsuz etkileyebilir."]
+      ],
+      answer: 2,
+      summary: "Klasik yaklaşımda, pazarlama, dağıtım, planlama, üretim ve satın alma işlemleri birbirinden bağımsız olarak yürütülür ve farklı hedefleri belirlemişlerdir. Bu hedefler bazı durumlarda birbirleri ile çelişebilir. [cite: 24, 25, 26]"
+    },
+    {
+      q: "6. Tedarik zincirinde stratejik ve işlevsel kararların alındığı dört ana alan aşağıdakilerden hangisinde doğru olarak verilmiştir?",
+      options: [
+        ["Pazarlama, Finans, İnsan Kaynakları, Ar-Ge", "Bunlar genel işletme fonksiyonlarıdır, SCM karar alanları değildir."],
+        ["Yerleşim, Üretim, Stok, Nakliye", "Bu dört alan tedarik zinciri kararlarının alındığı ana alanlardır. [cite: 38]"],
+        ["Reklam, Satış, Müşteri Hizmetleri, Garanti", "Bunlar pazarlama ve satışla ilgili alanlardır."],
+        ["Yazılım, Donanım, Ağ Altyapısı, Veri Güvenliği", "Bunlar bilişim teknolojileriyle ilgili alanlardır."],
+        ["Kalite Kontrol, Bakım, İş Güvenliği, Çevre Yönetimi", "Bunlar üretim ve operasyonla ilgili farklı alanlardır."]
+      ],
+      answer: 1,
+      summary: "Tedarik zincirinde hem stratejik hem de kısa vadeli kararların alındığı dört ana alan vardır: Yerleşim, Üretim, Stok, Nakliye. [cite: 38]"
+    },
+    {
+      q: "7. Tedarik zincirinde stokların temel amacı nedir?",
+      options: [
+        ["Üretim maliyetlerini bilinçli olarak artırmak", "Stok yapmanın maliyeti vardır, azaltılması hedeflenir. [cite: 48]"],
+        ["Nakliye sürelerini uzatmak", "Stoklar, nakliye belirsizliklerine karşı tampon olabilir."],
+        ["Üretimin çeşitli aşamaları arasında oluşabilecek belirsizliklere karşı bir tampon oluşturmak", "Stokların temel amacı budur. [cite: 47]"],
+        ["Depolama tesislerinin tam kapasiteyle kullanılmasını sağlamak", "Optimum stok seviyesi hedeflenir."],
+        ["Son ürünlerin satış fiyatını yükseltmek", "Stok maliyeti fiyatı etkileyebilir ancak temel amaç bu değildir."]
+      ],
+      answer: 2,
+      summary: "Stokların amacı, üretimin çeşitli aşamaları arasında, tedarik zincirinde oluşabilecek belirsizliklere karşı koymak amacıyla birer tampon oluşturmaktır. [cite: 47]"
+    },
+    {
+      q: "8. Sanal ofis çalışma modelinin (Telecommuting) çalışanlar için sağladığı temel avantajlardan biri nedir?",
+      options: [
+        ["Ofis ortamında daha fazla sosyalleşme imkanı", "Sanal ofis uzaktan çalışmayı ifade eder."],
+        ["İş kıyafeti zorunluluğunun artması", "İş kıyafeti zorunluluğu ortadan kalkabilir. [cite: 70]"],
+        ["Ulaşım masraflarının ve ulaşımda kaybedilen zamanın azalması", "Bu, sanal ofislerin önemli bir avantajıdır. [cite: 70]"],
+        ["Daha güçlü ve pahalı bilgisayarlara ihtiyaç duyulması", "Gerekli teknoloji yatırımı olsa da bu genel bir kural değildir."],
+        ["Yöneticilerle yüz yüze iletişimin artması", "İletişim genellikle elektronik araçlarla sağlanır."]
+      ],
+      answer: 2,
+      summary: "Sanal ofisler, çalışanların evlerinde ya da tercih ettikleri yerlerde çalışmasına olanak tanır. Ulaşım masrafları ortadan kalkar, ulaşımda kaybedilen zaman verimli olarak harcanır. [cite: 69, 70]"
+    },
+    {
+      q: "9. Doküman yönetim sistemlerinin, müşterilere yönelik dokümanların yönetimindeki temel önemi nedir?",
+      options: [
+        ["Dokümanların sadece tek bir formatta (örn: PDF) saklanmasını sağlamak", "Farklı formatları destekleyebilir."],
+        ["Müşterilere yanlış ve tutarsız bilgilerin verilmesini önleyerek firma itibarını korumak", "Tutarlılık ve doğruluk firma itibarı için kritiktir. [cite: 90]"],
+        ["Dokümanların sadece firma içinde kalmasını garanti etmek", "Müşterilere yönelik dokümanlar dış kullanıma açıktır."],
+        ["Dokümanların güncellenme sıklığını azaltmak", "Güncel tutulmalarını sağlar."],
+        ["Sadece basılı dokümanların arşivlenmesini kolaylaştırmak", "Elektronik doküman yönetimi esastır."]
+      ],
+      answer: 1,
+      summary: "Dış kullanıma, müşterilere ve iş ilişkisinde bulunulan diğer kurum ve kuruluşlara hazırlanan dökümanların yönetiminde tutarlılık daha da önem kazanır. Müşterilere yanlış ve tutarsız bilgilerin verilmesi, firma itibarını düşüren en önemli faktörlerden birisidir. [cite: 89, 90]"
+    },
+    {
+      q: "10. Proje yönetim sistemlerinin temel amacı nedir?",
+      options: [
+        ["Proje maliyetlerini her zaman en üst düzeye çıkarmak", "Maliyet kontrolü önemlidir."],
+        ["Belirli bir projenin süresinde ve başarılı bir biçimde yapılabilmesini sağlamak amacıyla kullanılması", "Proje yönetim sistemleri bu amacı hedefler. [cite: 98]"],
+        ["Sadece bireysel çalışanların performansını ölçmek", "Proje bütününü hedefler."],
+        ["Projelerde doküman kullanımını tamamen ortadan kaldırmak", "Doküman yönetimi de projenin bir parçasıdır."],
+        ["Proje çalışanlarının sayısını her zaman minimumda tutmak", "Kaynak planlaması yapar ancak tek amacı bu değildir."]
+      ],
+      answer: 1,
+      summary: "Proje yönetim sistemleri, kurum ve kuruluşlarda belirli bir projenin süresinde ve başarılı bir biçimde yapılabilmesi amacıyla kullanılan sistemlerdir. [cite: 98]"
+    },
+    {
+      q: "11. 1990'lı yıllardan itibaren şube yönetiminde benimsenen temel yaklaşım nedir?",
+      options: [
+        ["Her şubenin bağımsız bir ana bilgisayar sistemi kurarak tüm verilerini yerel olarak tutması", "Bu daha önceki bir yaklaşımdır. [cite: 117]"],
+        ["Şubeler arası iletişimin sadece mektup ve faksla yapılması", "Bu klasik bir yaklaşımdır. [cite: 111]"],
+        ["Neredeyse tüm verilerin genel merkezdeki bilgisayar sisteminde tutularak şubelerin sürekli güncel bilgilere erişiminin sağlanması", "Bu, 1990'lardan sonraki yaklaşımdır. [cite: 122, 123]"],
+        ["Şube yöneticilerinin yetkilerinin maksimum düzeye çıkarılması", "Merkezi kontrol artmıştır."],
+        ["İletişim hatları maliyetlerini düşürmek için şubeler arası veri transferinin ayda bir yapılması", "Sürekli ve kesintisiz bağlantılar hedeflenir."]
+      ],
+      answer: 2,
+      summary: "1990'lı yıllardan itibaren iletişim ağlarında görülen maliyetlerin düşmesi ve bağlantıların daha kesintisiz ve güvenilir olarak sağlanabilmesi, neredeyse tüm verilerin genel merkezdeki bilgisayar sisteminde tutulmasına yol açmıştır. Böylece herhangi bir şube en son güncellenmiş bilgilere sürekli erişim durumundadır. [cite: 121, 122, 123]"
+    },
+    {
+      q: "12. Kurumsal Kaynak Planlama (ERP) sistemlerinin firmalara sağladığı en büyük avantajlardan biri nedir?",
+      options: [
+        ["Her departmanın kendi bağımsız veritabanını kullanmasını sağlaması", "ERP ortak bir veritabanı kullanır."],
+        ["Kurum çapında bilgilere kolay, doğru ve güvenilir bir biçimde ulaşılması ve firma çapında saydamlık sağlanması", "Bu, ERP'nin temel avantajlarındandır. [cite: 140]"],
+        ["Sadece büyük üretim firmaları tarafından kullanılabilmesi", "Farklı ölçek ve sektörlerde kullanılabilir."],
+        ["Firma içi iletişimi tamamen ortadan kaldırması", "İletişimi ve koordinasyonu artırır."],
+        ["Çözüm ortağı firmalara olan ihtiyacı ortadan kaldırması", "Çözüm ortakları özelleştirmede rol alabilir. [cite: 151, 152]"]
+      ],
+      answer: 1,
+      summary: "Kurumsal kaynak planlama sistemlerinin en büyük avantajları, kurum çapında bilgilere kolay, doğru ve güvenilir bir biçimde ulaşılması, firma çapında saydamlık sağlanması olarak gösterilmektedir. [cite: 140]"
+    },
+    {
+      q: "13. Kurumsal entegre bilişim sistemleri oluşturulurken, mevcut sistemlerle entegrasyon neden genellikle yeni baştan sistem oluşturmaktan daha ekonomik bir çözüm olarak ortaya çıkar?",
+      options: [
+        ["Çünkü yeni sistemler her zaman daha pahalıdır.", "Bu genel bir kural değildir."],
+        ["Çünkü mevcut sistemler hiçbir zaman güncellenemez.", "Mevcut sistemler de güncellenebilir."],
+        ["Çünkü mevcut yatırımların çöpe atılması engellenmiş olur ve sistem entegrasyonu katma değer yaratır.", "Mevcut yatırımları korumak ekonomik bir yaklaşımdır. [cite: 153, 155]"],
+        ["Çünkü çözüm ortağı firmalar sadece eski sistemlerle çalışır.", "Çözüm ortakları yeni sistemler de kurabilir."],
+        ["Çünkü yeni sistemler her zaman daha fazla personel gerektirir.", "Verimlilik hedeflenir."]
+      ],
+      answer: 2,
+      summary: "Her çözümde, bütün sistemin yeni baştan oluşturulması ekonomik olmayabilir. Mevcut sistemlerle entegrasyon daha ekonomik bir çözüm olarak ortaya çıkabilir. Böylelikle mevcut yatırımların çöpe atılması engellenmiş olur. [cite: 153, 155]"
+    },
+    {
+      q: "14. Bir firmanın kurumsal bilişim entegrasyonuna geçme kararı alırken en çok dikkat etmesi gereken faktör nedir?",
+      options: [
+        ["En son çıkan teknolojiyi kullanmak", "Teknoloji bir araçtır, amaçla uyumlu olmalıdır."],
+        ["Rakiplerin kullandığı sistemleri birebir kopyalamak", "Her firmanın ihtiyacı farklıdır."],
+        ["Oluşturulacak bilişim sisteminin iş modeli içindeki yeri, getirisi ve kurumsal yapı ile uyumu", "Bu faktörler yatırımın başarısı için kritiktir. [cite: 157, 158]"],
+        ["Sadece bilişim departmanının görüşlerini dikkate almak", "Tüm paydaşların katılımı önemlidir."],
+        ["Mümkün olan en düşük maliyetli sistemi seçmek", "Maliyet önemlidir ancak tek kriter olmamalıdır."]
+      ],
+      answer: 2,
+      summary: "Kurumsal bilişim sistemlerinin oluşturulması ve satın alınması süreçlerinde, çok dikkatli bir biçimde, oluşturulacak olan bilişim sisteminin iş modeli içindeki yeri ve getirisi enine boyuna incelenmelidir. Kendini amorti edemeyecek, iş modeli ve kurumsal yapı ile uyuşması olanaksız görülen yatırımlardan kaçınmalıdır. [cite: 157, 158]"
+    },
+    {
+      q: "15. 'Programlanabilir Mantıksal Kontrol Üniteleri (PLC)' üretim bilişim sistemlerinde hangi seviyede rol oynar?",
+      options: [
+        ["Sadece yönetimsel raporlama seviyesinde", "PLC'ler makine kontrol seviyesindedir."],
+        ["Üretim makinelerinin denetlenmesi gibi mikro düzeyde otomasyon sağlama seviyesinde", "PLC'ler makine ve süreç kontrolünde kullanılır. [cite: 14, 16]"],
+        ["Tedarik zincirinin tamamını planlama seviyesinde", "Bu SCM veya ERP seviyesidir."],
+        ["Müşteri ilişkileri yönetimi seviyesinde", "Bu CRM seviyesidir."],
+        ["Sanal ofis altyapısını oluşturma seviyesinde", "Bu farklı bir teknoloji alanıdır."]
+      ],
+      answer: 1,
+      summary: "Üretim makinaları üzerinde çalışan, makinanın denetlenmesinden sorumlu 'programlanabilir mantıksal kontol üniteleri (PLC)', bir ağ yardımı ile birleştirilebilir. Seri üretimde otomasyonun ve işgücünde tasarrufun ilk şartlarından birisi, mikro düzeyde üretim cihazlarının otomasyonudur. [cite: 14, 16]"
+    },
+    {
+        q: "16. Tedarik zinciri yönetiminde 'yerleşim kararları' alınırken hangi faktörler rol oynamaz?",
+        options: [
+            ["Vergiler ve üretim maliyetleri [cite: 39]", "Bu faktörler yerleşim kararlarında önemlidir."],
+            ["Dağıtım maliyetleri [cite: 39]", "Bu faktör yerleşim kararlarında önemlidir."],
+            ["Günlük döviz kurları", "Bu daha çok kısa vadeli finansal kararları etkiler, stratejik yerleşim kararını değil."],
+            ["Nakliye olanakları [cite: 56]", "Nakliye olanakları yerleşim kararlarında etkindir."],
+            ["Hammade alım noktalarına yakınlık", "Bu faktör yerleşim kararlarında önemlidir."]
+        ],
+        answer: 2,
+        summary: "Yerleşim kararlarının alınmasında, vergiler, üretim maliyetleri, dağıtım maliyetleri gibi faktörler rol oynar. Tesislerin yerleşim yerleri de nakliye kararlarında etkin rol oynar. [cite: 39, 56]"
+    },
+    {
+        q: "17. Sanal ofislerin etkin bir biçimde çalışabilmesi için gerekli olan minimum tipik bağlantı hızı ne olarak kabul edilmektedir?",
+        options: [
+            ["56 Kbit/saniye", "Bu hız günümüz uygulamaları için yetersizdir."],
+            ["128 Kbit/saniye", "Bu hız, metinde belirtilen en küçük tipik değerdir. [cite: 80]"],
+            ["1 Mbit/saniye", "Daha iyi bir deneyim sunar ancak minimum tipik değer 128Kbit/s olarak belirtilmiş."],
+            ["10 Mbit/saniye", "Bu oldukça yüksek bir hızdır."],
+            ["Bağlantı hızı sanal ofisler için önemli değildir.", "Bağlantı hızı kritik öneme sahiptir. [cite: 79]"]
+        ],
+        answer: 1,
+        summary: "Sanal ofislerin etkin bir biçimde oluşturulabilmesi ancak sağlam, güvenilir ve hızlı ağ bağlantılarının varlığında gerçekleşebilir. Bu bakımda en küçük tipik değer 128Kbit/saniye bir bağlantı olarak kabul edilmektedir. [cite: 79, 80]"
+    },
+    {
+        q: "18. İçerik yönetim sistemleri, web sayfalarının yönetiminde hangi temel sorunu çözmeye yardımcı olur?",
+        options: [
+            ["Web sitesinin hosting maliyetini düşürmek", "Doğrudan bir maliyet düşürme aracı değildir."],
+            ["Dinamik ve sürekli değişen içeriklerin manuel olarak sürdürülmesinin zorluğunu aşmak", "İçerik yönetimini kolaylaştırır ve otomatikleştirir. [cite: 92, 93]"],
+            ["Web sitesine daha fazla reklam almak", "Bu pazarlama ile ilgilidir."],
+            ["Web sitesinin arama motorlarında görünürlüğünü garanti etmek", "SEO'ya yardımcı olabilir ama temel amacı bu değildir."],
+            ["Web sitesi için grafik tasarım yapmak", "Tasarım araçları farklıdır, CMS içeriği yönetir."]
+        ],
+        answer: 1,
+        summary: "İlk başlarda belirli bir ağaç yapısı ile oluşturulan ve çok sık güncellenmelerine gerek olmayan web sayfaları, dinamik, sürekli değişen içeriklerin de sunulması ile birlikte manuel olarak sürdürülmesi olanaksız bir dev haline dönüşmüştür. Doküman yönetim sistemleri, görsel öğelerle içerik öğelerini ayırarak, içerik öğelerini veritabanı yapısında saklayarak bu işlemlerin sorunsuz bir biçimde yapılabilmesini sağlar. [cite: 92, 93]"
+    },
+    {
+        q: "19. Çok uluslu firmalarda şube yönetimi sistemi tasarlanırken, farklı saat dilimlerinin dikkate alınması neden önemlidir?",
+        options: [
+            ["Tüm şubelerin aynı anda tatile çıkmasını sağlamak için", "Bu operasyonel bir planlamadır."],
+            ["Yalnızca mesai saatleri arasında kullanılabilecek bir yazılımın, saat farkı olan şubelerde sorunlara yol açmadan kullandırılabilmesi için", "Farklı saat dilimleri sistemin erişilebilirliğini etkileyebilir. [cite: 133, 135]"],
+            ["Şubeler arası iletişimi tamamen kesmek için", "Tam tersi, iletişimi kolaylaştırmalıdır."],
+            ["Genel merkezin her zaman yerel şube saatine uymasını zorunlu kılmak için", "Sistem esnek olmalıdır."],
+            ["Çalışanların daha az uyumasını sağlamak için", "Bu insan kaynakları ile ilgili bir konu değildir."]
+        ],
+        answer: 1,
+        summary: "Şube yönetimi, çok uluslu firmalarda farklı dillerin ve farklı saat dilimlerinin değerlendirilmesi ve sistemin bu farkları ortadan kaldırabilecek, uyumsuzlukları önleyebilecek bir biçimde tasarlanması ile yapılır. Yalnızca mesai saatleri arasında kullanılabilecek olan bir yazılım, saat farkı olan şubelerde sorunlara yol açmadan kullandırılabilmelidir. [cite: 133, 135]"
+    },
+    {
+        q: "20. Kurumsal Kaynak Planlama (ERP) sistemlerinin kökeni hangi sistemlere dayanmaktadır?",
+        options: [
+            ["Müşteri İlişkileri Yönetimi (CRM) sistemlerine", "CRM daha sonra ERP ile entegre olmuştur."],
+            ["1970'lere dayanan Üretim Kaynak Planlaması (MRP) sistemlerine", "ERP'nin kökeni MRP sistemleridir. [cite: 138]"],
+            ["Elektronik Veri Değişimi (EDI) sistemlerine", "EDI farklı bir iletişim standardıdır."],
+            ["Sanal Ofis uygulamalarına", "Sanal ofisler farklı bir konsepttir."],
+            ["Proje Yönetimi yazılımlarına", "Proje yönetimi ERP'nin bir modülü olabilir ancak kökeni değildir."]
+        ],
+        answer: 1,
+        summary: "Kökeni 1970'lere dayanan üretim kaynak planlaması sistemlerinin, firmalar bünyesinde daha da yaygın alanlarda kullanılması ile 1990'lı yıllarda kurumsal kaynak planlaması kavramı ortaya çıkmıştır. [cite: 138]"
+    },
+    {
+        q: "21. 'Çözüm ortağı' olarak adlandırılan yerel firmaların, kurumsal entegre bilişim sistemleri alanındaki temel rolü nedir?",
+        options: [
+            ["Büyük ana firmaların (örn: Microsoft, IBM) ürünlerini tamamen kopyalamak", "Kopyalamak yerine özelleştirirler."],
+            ["Büyük ana firmaların ürünlerini, müşterinin ihtiyacına göre şekillendirmek ve özelleştirmek", "Çözüm ortakları bu rolü üstlenir. [cite: 151, 152]"],
+            ["Sadece donanım satışı yapmak", "Yazılım ve entegrasyon hizmetleri de sunarlar."],
+            ["Kurumsal firmalar için web sitesi tasarlamak", "Bu hizmetlerden sadece biri olabilir, temel rolleri daha geniştir."],
+            ["Rakiplerin sistemlerini analiz edip zayıf yönlerini bulmak", "Bu rekabet analizi kapsamındadır."]
+        ],
+        answer: 1,
+        summary: "Bu çözüm paketleri, genellikle 'çözüm ortağı' adı verilen, büyük ana firmanın ürünlerini, ihtiyaca göre şekillendiren, kesip biçen yerel firmalar tarafından gereksinimler doğrultusunda özelleştirilmektedir. [cite: 151, 152]"
+    },
+    {
+        q: "22. Otomatik süreç denetimi, özellikle hangi tür üretim sistemlerinde kritik öneme sahiptir?",
+        options: [
+            ["El işçiliğine dayalı atölye tipi üretimde", "Burada otomasyon daha azdır."],
+            ["Montaj hattı prensibiyle çalışan seri üretimde", "Burada da önemlidir ancak soru daha spesifik bir duruma işaret ediyor."],
+            ["Ürün süreçlerinin birbirine yüksek oranda bağlı olduğu (kimya, petrokimya vb.) sistemlerde", "Bu tür karmaşık ve hassas süreçlerde otomatik denetim vazgeçilmezdir. [cite: 12, 13]"],
+            ["Sipariş üzerine tekil ürün imalatında", "Burada esneklik daha ön plandadır."],
+            ["Tarım ürünleri yetiştiriciliğinde", "Farklı otomasyon türleri kullanılabilir."]
+        ],
+        answer: 2,
+        summary: "Ürün süreçleri birbirine yüksek oranda bağlı üretim sistemleri ise (kimya, petrokimya, çimento vb) bilişim sistemleri yardımı ile süreç denetiminin yapılmasını gerektirir. Otomatik süreç denetimi, aksi takdirde üretilmesi olanaksız olan ya da çok yüksek maliyetler oluşturan ürünlerin üretimini olası kılar. [cite: 12, 13]"
+    },
+    {
+        q: "23. Tedarik zinciri yönetiminde nakliye kararları stok kararlarıyla neden yakından ilgilidir?",
+        options: [
+            ["Çünkü ucuz nakliye her zaman daha az stok gerektirir.", "Ucuz nakliye yavaş olabilir ve daha fazla güvenlik stoku gerektirebilir. [cite: 54]"],
+            ["Çünkü hızlı nakliye, stok tutma ihtiyacını tamamen ortadan kaldırır.", "Azaltır ama tamamen ortadan kaldırmaz."],
+            ["Çünkü güvenli ve hızlı nakliye olanakları, daha düşük güvenlik stoku ile çalışabilme yeteneği sağlar; yavaş nakliye ise yüksek güvenlik stoku gerektirebilir.", "Nakliye hızı ve güvenilirliği stok seviyelerini doğrudan etkiler. [cite: 52, 54, 55]"],
+            ["Çünkü nakliye firmaları aynı zamanda depolama hizmeti de verir.", "Her zaman geçerli değildir."],
+            ["Çünkü tüm stoklar sadece nakliye araçlarında tutulur.", "Stoklar depolarda da tutulur."]
+        ],
+        answer: 2,
+        summary: "Nakliye kararları stok kararları ile yakından ilgilidir. Genellikle ucuz nakliye yöntemleri, yavaş ve kesin tarihli olmamakta, bu da güvenli stok miktarının yüksek olmasını gerektirmektedir. Öte yandan düşük stok ile çalışabilme yeteneği, güvenli ve hızlı nakliye olanakları ile elde edilebilir. [cite: 52, 54, 55]"
+    },
+    {
+        q: "24. 'Özel Sanal Ağlar (VPN)' sanal ofis çalışanlarına ne gibi bir temel imkan sunar?",
+        options: [
+            ["Sadece e-posta alıp gönderme imkanı", "VPN daha geniş erişim sağlar."],
+            ["Herhangi bir bilgisayarı, İnternet üzerinden firma ağlarına güvenli bir biçimde bağlama ve firma kaynaklarına erişim imkanı", "VPN'lerin temel amacı budur. [cite: 76, 77]"],
+            ["Ücretsiz video konferans yazılımlarına erişim", "Bu VPN'in dolaylı bir sonucu olabilir, temel işlevi değildir."],
+            ["İnternet bağlantı hızını artırma", "Hızı artırmaz, güvenli tünel oluşturur."],
+            ["Ofis dışındayken firma telefonunu kullanamama", "VPN ile firma telefonunu kullanma imkanı olabilir."]
+        ],
+        answer: 1,
+        summary: "'Özel Sanal Ağlar', 'Virtual Private Networks, VPN' olarak adlandırılan ağ protokolleri, herhangi bir bilgisayarı, Internet üzerinden firma ağlarına güvenli bir biçimde, firma içinde sahip olunan şartlarla bağlayabilir. Uzaktan erişim yapan kişi, sunucuda bulunan ortak dökümanlara erişebilir, e-posta alıp verebilir vb. [cite: 76, 77]"
+    },
+    {
+        q: "25. Doküman yönetim sistemleri, iş alanı doğrudan doküman işlemeye dayalı hangi tür kurumlarda birinci derecede önem kazanır?",
+        options: [
+            ["Perakende satış mağazaları", "Burada da kullanılır ama birincil öncelik olmayabilir."],
+            ["Restoran ve kafe zincirleri", "Operasyonel sistemler daha önceliklidir."],
+            ["Araştırma kuruluşları, kütüphaneler, adliyeler, vergi daireleri ve hastaneler", "Bu tür kurumlar yoğun doküman işleme süreçlerine sahiptir. [cite: 95, 96]"],
+            ["Spor kulüpleri ve eğlence merkezleri", "Farklı sistemlere öncelik verebilirler."],
+            ["Otomotiv üretim fabrikaları", "Üretim bilişim sistemleri daha önceliklidir."]
+        ],
+        answer: 2,
+        summary: "Doküman yönetim sistemleri, iş alanı doğrudan doküman işlemeye dayalı kurumlarda birinci derecede önem kazanır. Bunlar, araştırma kuruluşları, program yazılım kuruluşları, kütüphaneler, adliyeler, vergi daireleri, hastaneler gibi kuruluşlardır. [cite: 95, 96]"
+    },
+    {
+        q: "26. Modern proje yönetim sistemlerinin, projede ortaya çıkması olası aksaklıkları kolaylıkla hesaplayıp ilgili kişilere bildirmesi nasıl mümkün olmaktadır?",
+        options: [
+            ["Sadece proje yöneticisinin sezgilerine dayanarak", "Sistemler veriye dayalı çalışır."],
+            ["Projede çalışanların kendi çalışmalarını sisteme entegre bilgisayarlarla bildirmesi ve sistemin bu verileri analiz etmesiyle", "Veri girişi ve analizi ile aksaklıklar öngörülebilir. [cite: 105]"],
+            ["Her sabah yapılan genel toplantılarla", "Bu iletişim yöntemidir, sistemin işleyişi değildir."],
+            ["Rastgele seçilen çalışanlara anket uygulanmasıyla", "Bu veri toplama yöntemi değildir."],
+            ["Geçmiş projelerdeki tüm aksaklıkların birebir tekrarlanacağı varsayımıyla", "Geçmiş veriler kullanılır ama birebir tekrar varsayılmaz."]
+        ],
+        answer: 1,
+        summary: "Projede çalışanlar, kendi çalışmalarını proje yönetim sistemine entegre bilgisayarlarla ya da diğer cihazlarla (el bilgisayarı vb) bildirmekte, sistem, projede ortaya çıkması olası aksaklıkları kolaylıkla hesaplamakta ve ilgili kişilere bildirmektedir. [cite: 105]"
+    },
+    {
+        q: "27. Klasik şube yönetimi yaklaşımında şubeler arası iletişim genellikle nasıl sağlanırdı?",
+        options: [
+            ["Gerçek zamanlı video konferans sistemleriyle", "Bu modern bir yaklaşımdır."],
+            ["Merkezi bir ERP sistemi üzerinden anlık veri paylaşımıyla", "Bu modern bir yaklaşımdır."],
+            ["Mektup, faks ve telefonla; detaylar üzerinde iletişim genellikle gerekli görülmezdi.", "Klasik yaklaşımda iletişim bu şekildeydi. [cite: 111, 112]"],
+            ["Şubelerin birbirlerinin veritabanlarına doğrudan erişimiyle", "Bu teknik olarak klasik dönemde zordu."],
+            ["Sosyal medya platformları üzerinden grup mesajlaşmalarıyla", "Bu günümüz teknolojisidir."]
+        ],
+        answer: 2,
+        summary: "Klasik yaklaşımda her şube, kendi başına çalışabilen bir firma olarak düşünülür. Şubelerin, merkezle haberleşmesi mektup, faks ve telefonla gerçekleşir. Detaylar üzerinde genellikle iletişim gerekli değildir. [cite: 111, 112]"
+    },
+    {
+        q: "28. SAP AG, Oracle, PeopleSoft gibi firmalar hangi tür kurumsal bilişim sistemleri alanında önde gelen firmalardır?",
+        options: [
+            ["Sadece Müşteri İlişkileri Yönetimi (CRM) sistemleri", "Bu firmalar ERP alanında da güçlüdür."],
+            ["Kurumsal Kaynak Planlama (ERP) sistemleri", "Bu firmalar ERP alanında lider konumdadır. [cite: 141]"],
+            ["Sadece İçerik Yönetim Sistemleri (CMS)", "ERP daha geniş bir kapsama sahiptir."],
+            ["Sanal Özel Ağ (VPN) çözümleri", "Bu network güvenliği ile ilgilidir."],
+            ["Ofis yazılımları (Kelime işlemci, hesap tablosu vb.)", "Bu firmalar daha çok kurumsal çözümlere odaklıdır."]
+        ],
+        answer: 1,
+        summary: "Kurumsal kaynak planlama sistemleri alanında önde gelen firmalar olarak SAP AG, Oracle, PeopleSoft, J.D. Edwards ve Baan sayılabilir. [cite: 141]"
+    },
+    {
+        q: "29. Bir kurumun tüm bilişim altyapısı ve yazılım sistemlerinin entegre olarak çalışmasının beklenmesinin temel nedeni nedir?",
+        options: [
+            ["Sistemlerin daha karmaşık ve yönetimi zor hale gelmesi", "Entegrasyon yönetimi kolaylaştırabilir."],
+            ["Rekabetçi ortamda avantajlar sağlaması ve veri paylaşımının gerekliliği", "Entegrasyon, verimlilik ve rekabet avantajı sağlar. [cite: 145, 147]"],
+            ["Her departmanın tamamen bağımsız kalmasını sağlamak", "Entegrasyon işbirliğini artırır."],
+            ["Bilişim maliyetlerini her zaman iki katına çıkarmak", "Doğru planlanırsa maliyet etkinliği sağlayabilir."],
+            ["Çalışanların farklı sistemleri öğrenmesini zorunlu kılmak", "Kullanıcı dostu arayüzler hedeflenir."]
+        ],
+        answer: 1,
+        summary: "Modern kurumsal sistemlerde, birbirinden farklı çalışan sistemlerin yavaş yavaş terkedildiği görülmektedir. Kurumların tüm bilişim altyapısı ve yazılım sistemlerinin gelişen dünyada entegre olarak çalışması ve rekabetçi ortamda avantajlar sağlaması beklenmektedir. [cite: 146, 147]"
+    },
+    {
+        q: "30. Kurumsal bilişim sistemleri oluşturulurken 'iş modeli ve kurumsal yapı ile uyum' neden enine boyuna incelenmelidir?",
+        options: [
+            ["Sistemin teknik özelliklerinin yeterli olup olmadığını anlamak için", "Bu da önemlidir ama uyum daha stratejiktir."],
+            ["Sistemin kendini amorti edip etmeyeceğini ve firmanın genel stratejisine hizmet edip etmeyeceğini belirlemek için", "Yatırımın geri dönüşü ve stratejik uyum kritiktir. [cite: 157, 158]"],
+            ["Çalışanların yeni sisteme ne kadar hızlı adapte olacağını ölçmek için", "Bu da önemlidir ama öncelikli inceleme konusu uyumdur."],
+            ["Sistemin en son teknolojiye sahip olup olmadığını görmek için", "Teknoloji amaç değil araç olmalıdır."],
+            ["Rakiplerin benzer bir sistemi olup olmadığını araştırmak için", "Rekabet analizi önemlidir ama iş modeline uyum daha temeldir."]
+        ],
+        answer: 1,
+        summary: "Kurumsal bilişim sistemlerinin oluşturulması ve satın alınması süreçlerinde, oluşturulacak olan bilişim sisteminin iş modeli içindeki yeri ve getirisi enine boyuna incelenmelidir. Kendini amorti edemeyecek, iş modeli ve kurumsal yapı ile uyuşması olanaksız görülen yatırımlardan kaçınmalıdır. [cite: 157, 158]"
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+  
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

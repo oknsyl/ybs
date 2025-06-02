@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ünite 5 - Satışa Yönelik Sistemler (Soru Standardizasyonu)</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ünite 5 Sınavı (Satışa Yönelik Sistemler - Standardize Edilmiş)</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. B2C e-dükkân sistemlerinin temel çalışma prensibi aşağıdakilerden hangisidir?",
+      options: [
+        ["Firmalar arası büyük hacimli ticareti kolaylaştırmak", "Bu B2B modelinin özelliğidir."],
+        ["Satılan ürün ya da hizmetin incelendikten sonra belirlenen ödeme sistemi aracılığı ile sipariş işleminin gerçekleştirilmesini sağlamak", "B2C e-dükkanları son tüketiciye bu şekilde hizmet verir."],
+        ["Sadece bilgi ve tanıtım amaçlı içerik sunmak, satışı başka kanallara yönlendirmek", "Bu dolaylı satış modelidir."],
+        ["Ürünlerin açık artırma yoluyla satılmasını sağlamak", "Bu C2C veya özel B2C modellerinde olabilir, temel prensip değildir."],
+        ["Müşterilerin kendi aralarında ürün alıp satmasına olanak tanımak", "Bu C2C modelinin özelliğidir."]
+      ],
+      answer: 1,
+      summary: "Son tüketiciye yönelik olan B2C e-dükkan sistemleri, genellikle satılan ürün ya da hizmetin incelendikten sonra belirlenen ödeme sistemi aracılığı ile sipariş işleminin gerçekleştirilmesini sağlarlar."
+    },
+    {
+      q: "2. Klasik mağaza yaklaşımında başarılı bir mağaza sahibinin uyması gereken kurallardan hangisi, e-dükkânlar için de geçerli bir prensiptir?",
+      options: [
+        ["Müşteriyi ürünlerle ilgili bilgi alabilmek için uzun kayıt formları doldurmaya zorlamak", "Bu, müşteriyi kaçıran bir durumdur."],
+        ["Site tasarımcısının yeteneklerini ispatlamak için karmaşık interaktif unsurlar kullanmak", "Kullanıcı dostu ve basit tasarım önemlidir."],
+        ["Müşteriye saygı göstermek, yeterli ve doğru bilgi sağlamak, ürün seçiminde baskıdan kaçınmak", "Bu temel kurallar e-dükkânlar için de geçerlidir."],
+        ["Ödeme seçeneklerini tek bir yöntemle sınırlamak", "Ödeme şeklinde kolaylıklar gösterilmelidir."],
+        ["Ürün satın alınmasa bile müşteriye e-posta ile sürekli reklam göndermek", "Bu, baskı olarak algılanabilir."]
+      ],
+      answer: 2,
+      summary: "Klasik mağaza yaklaşımında mağaza sahibinin başarılı olması için uyması gereken kurallar (müşteriye saygı, doğru bilgi, baskıdan kaçınma vb.) Internet ortamında e-dükkân sahibinin uyması gereken temel kuralları oluşturur."
+    },
+    {
+      q: "3. E-dükkânlarda, müşterinin ürün bilgilerine erişmesi için kişisel bilgi vermesinin istenmemesi ve animasyonlu giriş sayfalarından kaçınılması neden önemlidir?",
+      options: [
+        ["Web sitesinin daha yavaş yüklenmesini sağlamak için", "Amaç hızlı ve kolay erişimdir."],
+        ["Müşterinin siteyi daha uzun süre gezmesini teşvik etmek için", "Bu tür engeller müşteriyi yorabilir."],
+        ["Müşteri memnuniyetsizliği ve güvenilirlik sorunları yaşamamak, müşteriyi yormamak için", "Kolay ve hızlı erişim, doğru bilgi müşteri deneyimi için kritiktir."],
+        ["Sadece en son web teknolojilerini kullanmak için", "Yaygınlaşmamış teknolojiler sorun yaratabilir."],
+        ["Veritabanında daha az müşteri verisi tutmak için", "Amaç bilgiye kolay erişimdir."]
+      ],
+      answer: 2,
+      summary: "Müşterinin bilgilere erişmesi için kesinlikle kayıt olması, herhangi kişisel bir bilgi vermesi istenmemelidir. Yüklemesi dakikalar sürebilecek animasyonlu giriş sayfaları ve ara ürün sayfaları sunulmamalıdır."
+    },
+    {
+      q: "4. 'Üçüncü taraf ödeme sistemi' kullanan bir e-dükkânda ödeme süreci nasıl işler?",
+      options: [
+        ["Müşteri kredi kartı bilgilerini doğrudan e-dükkânın veritabanına girer.", "Bu entegre ödeme sisteminde olabilir."],
+        ["E-dükkân sahibi, siparişleri toplar ve gün sonunda kredi kartı makinesi ile manuel tahsil eder.", "Bu bekletmeli (batch) sistemin işleyişidir."],
+        ["Müşteri, ürünü satın almaya karar verdikten sonra e-dükkân sitesinden otomatik olarak üçüncü firmanın ödeme sayfalarına yönlendirilir ve ödeme sonrası e-dükkâna döner.", "Üçüncü taraf ödeme sistemleri bu şekilde çalışır."],
+        ["Ödeme sadece banka havalesi veya posta çeki ile yapılır.", "Bu ayrı kanaldan ödeme sistemidir."],
+        ["Müşteri, ürünü teslim alırken nakit olarak ödeme yapar.", "Bu kapıda ödeme veya ayrı kanaldan ödemedir."]
+      ],
+      answer: 2,
+      summary: "Üçüncü taraf ödeme sisteminde, müşteri ürünü satın almaya karar verdikten sonra e-dükkân sitesinden otomatik olarak üçüncü firmanın ödeme sayfalarına yönlendirilir. Ödeme sayfalarında kredi kartı bilgisi ya da benzeri bilgileri veren müşteri, yetkilendirildikten sonra tekrar e-dükkân sayfasına döner."
+    },
+    {
+      q: "5. 'Bekletmeli (Batch) Entegre Ödeme Sistemi' hangi tür firmalar tarafından ve neden tercih edilir?",
+      options: [
+        ["Büyük ve uluslararası firmalar tarafından, anında işlem onayı almak için.", "Anında işlem için entegre sistemler daha uygundur."],
+        ["Yazılım gibi anında teslim gerektiren ürün satan firmalar tarafından, demo versiyon sunumunu kolaylaştırmak için.", "Anında teslim gerektiren ürünlerde bekletmeli sistemin uygulanabilirliği azdır."],
+        ["Küçük firmaların, yüksek maliyetli entegre ödeme sistemleri ve aylık ücretlerden kaçınmaları nedeniyle.", "Batch sistem, maliyet avantajı nedeniyle küçük firmalarca tercih edilir."],
+        ["Sadece B2B (firmalar arası) işlemlerde, büyük miktarlı ödemeler için.", "B2B'de ayrı kanaldan ödeme de yaygındır."],
+        ["Kredi kartı kullanımının yasal olmadığı ülkelerdeki firmalar tarafından.", "Kredi kartı bilgileri kaydedilir."]
+      ],
+      answer: 2,
+      summary: "İngilizcede Batch olarak adlandırılan bu ödeme sistemi küçük firmaların, yüksek maliyetli entegre ödeme sistemleri ve aylık ücretlerden kaçınmaları nedeniyle tercih ettikleri bir sistemdir."
+    },
+    {
+      q: "6. Ağ bağlantısız çalışan elektronik satış otomatları için aşağıdakilerden hangisi doğrudur?",
+      options: [
+        ["Kredi kartı ile tahsilat yapabilirler.", "Ağ bağlantısız otomatlar kredi kartı yetkilendirmesi yapamaz."],
+        ["Rezervasyon gibi merkezi bağlantı gerektiren işlemleri yapabilirler.", "Bu tür işlemleri yapamazlar."],
+        ["Genellikle madeni para, jeton veya ön ödemeli kartlarla çalışırlar.", "Bağlantısız otomatlar bu tür ödeme yöntemlerini kullanır."],
+        ["İçeriklerini ağ üzerinden sürekli güncelleyebilirler.", "Ağ bağlantısı olmadığı için bu mümkün değildir."],
+        ["Mobil telefon aracılığı ile kullanıcı yetkilendirmesi yapabilirler.", "Bu ağ bağlantılı otomatların bir özelliğidir."]
+      ],
+      answer: 2,
+      summary: "Elektronik satış otomatları ağ bağlantısız oldukları zaman ancak madeni para, jeton, önceden ödemeli kart ya da benzeri anonim elektronik paralar aracılığı ile satış yaparlar. Bu sistemler, satış yaptıkları ürünü genellikle içerisinde bulundurur ve rezervasyon gibi merkezi bağlantı gerektiren işlemleri yapamazlar."
+    },
+    {
+      q: "7. Kiosk sistemlerinin, e-dükkân sisteminin ortak kullanım alanlarında reklamının ve kullanımının aynı anda yapılmasını sağlayan 'uç noktalar' olarak değerlendirilmesinin nedeni nedir?",
+      options: [
+        ["Kiosklar sadece reklam amaçlıdır ve satış yapamazlar.", "Kiosklar doğrudan satış da yapabilir."],
+        ["Müşterinin kendi bilgisayarının olmaması veya kiosk ile karşılaştığı anda e-dükkâna zaten ulaşmış olması kiosk sisteminin başarılı olmasında katkı sağlar.", "Kiosklar, bu durumlarda e-dükkâna erişimi kolaylaştırır."],
+        ["Kioskların maliyetlerinin kişisel bilgisayarlardan daha düşük olması", "Kiosk sistemlerinin maliyetleri kişisel bilgisayarın üzerindedir."],
+        ["Ağ bağlantısız kioskların kredi kartı işlemleri yapabilmesi", "Ağ bağlantısız kiosklar kredi kartı yetkilendirmesi yapamaz."],
+        ["Kioskların sadece oyun oynanması için düzenlenmesi", "Oyun oynama, ziyaretçi çekmek için bir ek özellik olabilir, ana amaç değildir."]
+      ],
+      answer: 1,
+      summary: "Kiosk sistemleri, zengin bir e-dükkân sisteminin, çok kişinin erişimine sahne olan ortak kullanım alanlarında, reklamının ve kullanımının aynı anda yapılmasını sağlayan uç noktaları olarak değerlendirilmektedir. Müşterinin kendi bilgisayarının olmaması, kiosk ile karşılaştığı anda zaten e-dükkâna ulaşmış olması kiosk sisteminin başarılı olmasında katkı sağlar."
+    },
+    {
+      q: "8. Mobil iletişim cihazları üzerinden çalışan satış sistemlerinde kullanılan WAP (Wireless Application Protocol) protokolünün temel işlevi nedir?",
+      options: [
+        ["Sadece kısa mesaj (SMS) aktarımını sağlamak", "SMS ayrı bir protokoldür, WAP sunucu etkileşimi içindir."],
+        ["Düşük bant genişliğinde çalışarak İnternet üzerindeki sunucu sistemlerle etkileşim sağlamak ve küçük ekranlı cihazlarda bilgi görüntülemek", "WAP bu amaçla geliştirilmiştir."],
+        ["Mobil cihazların batarya ömrünü uzatmak", "WAP'ın doğrudan böyle bir işlevi yoktur."],
+        ["Taşınan verilerin maliyetini her zaman sıfıra indirmek", "Veri maliyeti GPRS gibi etkenlere bağlıdır."],
+        ["Mobil şebekenin dinlenme olasılığını tamamen ortadan kaldırmak", "Dinlenme olasılığı İnternet'e göre daha zor olsa da sıfır değildir."]
+      ],
+      answer: 1,
+      summary: "WAP (wireless application protocol) protokolü, Internet üzerindeki sunucu sistemlerle etkileşim amacıyla geliştirilmiştir. Bu protokol düşük bant genişliğinde çalışabilen ve küçük ekranlı cihazlarda yeterli bilginin görüntülenmesi amacıyla geliştirilmiştir."
+    },
+    {
+      q: "9. Bir e-ticaret sisteminin 'Store Front' bileşeni hangi temel işlevi yerine getirir?",
+      options: [
+        ["Kredi kartı yetkilendirme firması ile haberleşmeyi sağlamak", "Bu Middleware'in görevidir."],
+        ["Yeni ürünlerin sisteme kaydını ve fiyat ayarlamalarını yapmak", "Bu Back End'in görevidir."],
+        ["Ziyaretçiler ve müşteriler için yapılmış olan, ana girişten ödeme bölümüne ve satış sonrası hizmetlere kadar olan arayüzü oluşturmak", "Store Front, müşteri arayüzüdür."],
+        ["Mevcut stok takip ve muhasebe programları ile haberleşmek", "Bu Middleware'in görevidir."],
+        ["Siparişlerin en yakın şubeye yönlendirilmesini sağlamak", "Bu Middleware veya Back End işlevi olabilir."]
+      ],
+      answer: 2,
+      summary: "Ziyaretçiler ve müşteriler için yapılmış olan bileşen (Store Front), e-dükkân'ın büyük bölümünü oluşturur. Bu bölüm, ana girişten, ödeme bölümüne kadar olan bölümleri ve satış sonrası müşteri hizmetleri bölümlerini kapsar."
+    },
+    {
+      q: "10. E-ticaret sistemlerinde 'Middleware' (ara yazılım) bileşeninin temel görevi nedir?",
+      options: [
+        ["Müşterinin e-dükkânda kaybolduğunda yol sormasını sağlamak", "Bu Store Front'taki destek özellikleriyle ilgilidir."],
+        ["E-dükkân personelinin sisteme giriş yaparak anormal verileri incelemesini sağlamak", "Bu Back End'in görevidir."],
+        ["Kredi kartı yetkilendirme firması ile haberleşme, mevcut stok takip ve muhasebe programları ile haberleşme gibi farklı sistemler arası entegrasyonu sağlamak", "Middleware, sistemler arası köprü görevi görür."],
+        ["Müşteriye dinamik içerik ve kişiselleştirilmiş öneriler sunmak", "Bu Store Front ve altta yatan analiz motorlarının işidir."],
+        ["Web sitesinin kullanıcı arayüzünü tasarlamak", "Bu Store Front tasarımıyla ilgilidir."]
+      ],
+      answer: 2,
+      summary: "Ara yazılım (middleware) bölümü, kredi kartı yetkilendirme firması ile haberleşme sağladıktan sonra gerekli onayı almak, mevcut stok takip ve muhasebe programları ile haberleşmek, paketleme servisi, müşteri hizmetleri bilgisayarlarına otomatik olarak bilgi gönderebilmek görevini üstlenmiştir."
+    },
+    {
+      q: "11. Elektronik satış sistemlerinde 'ölçeklenebilirlik' sorunu hangi durumda ortaya çıkar?",
+      options: [
+        ["Sistem, başlangıçta çok az sayıda kullanıcı tarafından kullanıldığında", "Bu bir sorun değildir."],
+        ["Ürün sayısında, veritabanında veya anlık servis verilebilecek müşteri sayısında önceden öngörülmeyen limitlere ulaşıldığında ve sistem genişleme gereksinimlerini karşılayamadığında", "Ölçeklenebilirlik, sistemin büyüme kapasitesiyle ilgilidir."],
+        ["Güvenlik önlemleri çok sıkı olduğunda", "Bu kullanılabilirliği etkileyebilir, ölçeklenebilirlik farklıdır."],
+        ["Döküman yönetimi çok güçlü olduğunda", "Bu olumlu bir durumdur."],
+        ["Kullanıcı arayüzü çok basit tasarlandığında", "Bu genellikle olumlu bir durumdur."]
+      ],
+      answer: 1,
+      summary: "Ölçeklenebilir olmayan satış sistemleri genişleme gereksinimleri ortaya çıktığında sorun yaratırlar. Ürün sayısında görülebilecek olan limitler, veritabanı limitleri ya da belirli bir anda en fazla servis verilebilecek müşteri sayısı, önceden doğru bir şekilde öngörülmeli ve sistem bu şekilde ölçeklenebilir bir biçimde tasarlanmalıdır."
+    },
+    {
+      q: "12. E-dükkânlarda 'Online Yardımcı İçerik Yönetimi' kapsamında ürünler hakkında multimedya içeriklerinin sunulması ve benzer ürünlerin karşılaştırılması neyi amaçlar?",
+      options: [
+        ["Sadece web sitesinin daha karmaşık görünmesini sağlamak", "Amaç kullanıcıya yardımcı olmaktır."],
+        ["Müşterinin karar verme sürecini zorlaştırmak", "Tam tersine kolaylaştırmayı hedefler."],
+        ["Müşteriye daha zengin bir ürün bilgisi sunarak ve karşılaştırma imkanı vererek satın alma kararını desteklemek", "Detaylı ve karşılaştırmalı içerik, bilinçli karar vermeyi sağlar."],
+        ["Rakiplerin ürünlerini kötülemek", "Etik bir yaklaşım değildir, karşılaştırma objektif olabilir."],
+        ["Sitenin sunucu yükünü artırmak", "Bu bir sonuç olabilir, amaç değildir."]
+      ],
+      answer: 2,
+      summary: "Online yardımcı içerik yönetimi kapsamında ürünler hakkında multimedya içerikleri doğru bir biçimde sağlanmalıdır. Organize bir yapıda benzer ürünler karşılaştırma amacıyla sunulmalıdır."
+    },
+    {
+      q: "13. İnternet tabanlı elektronik satış sistemlerinde 'Komisyoncu Servisi' (Affiliate Programs) nasıl bir işleyişe sahiptir?",
+      options: [
+        ["E-dükkânın kendi satış personelinin komisyonla çalışmasıdır.", "Bu doğrudan satış personelinin prim sistemidir."],
+        ["Tasarımcılar, reklam alanlar veya portal sitelerin, komisyon karşılığında e-dükkânın reklamını veya ürün tanıtımını yaparak satışlardan pay almasıdır.", "Affiliate marketing bu prensiple çalışır."],
+        ["Müşterilere, yaptıkları alışverişler üzerinden komisyon ödenmesidir.", "Bu sadakat programı veya cashback olabilir."],
+        ["E-dükkânın, sattığı her ürün için üreticiye komisyon ödemesidir.", "Bu farklı bir ticari anlaşmadır."],
+        ["Sadece mobil uygulamalar üzerinden yapılan satışlarda geçerli bir sistemdir.", "Web tabanlı sistemlerde yaygındır."]
+      ],
+      answer: 1,
+      summary: "Komisyoncu servisleri (affiliate programs), kendi küçük Internet sitelerini hazırlayan tasarımcılar, reklam alan gazete ve dergiler, portal (başlangıç noktası siteleri) siteler, komisyon karşılığında e-dükkân'ın reklamını ya da bir ürünün tanıtımını yaparlar ve satışlardan komisyon alırlar."
+    },
+    {
+      q: "14. 'Doğrudan satış' modeli, e-ticarette nasıl tanımlanır?",
+      options: [
+        ["Müşterinin ürünü sadece fiziksel mağazadan almasıyla", "Bu klasik perakendeciliktir."],
+        ["Satışın sadece telefonla sipariş alınarak yapılmasıyla", "Bu bir doğrudan satış kanalı olabilir ama tanımın tamamı değildir."],
+        ["Bir mal ya da hizmetin, elektronik satış sistemleri aracılığı ile sistemi kullanan kişiye, müşterinin satış kararını alması, değerlendirmesi ve sonuçlandırması işlemlerinin sistem kullanımı sırasında gerçekleşmesiyle", "Bu, doğrudan satışın kapsamlı bir tanımıdır."],
+        ["Ürünlerin sadece toptancılar aracılığıyla satılmasıyla", "Bu dolaylı bir kanaldır."],
+        ["Satış işlemi için mutlaka bir aracı kurumun kullanılmasıyla", "Doğrudan satışta aracı yoktur veya minimumdur."]
+      ],
+      answer: 2,
+      summary: "Bir mal ya da hizmetin, elektronik satış sistemleri aracılığı ile sistemi kullanan kişiye satışının yapılmasına doğrudan satış adı verilir. Doğrudan satış genellikle satış sisteminin, müşterinin satış kararını alması, değerlendirmesi ve sonuçlandırması işlemlerini, sistemin müşteri tarafından kullanıldığı sırada gerçekleştirmesi ile tanımlanır."
+    },
+    {
+      q: "15. Bir e-dükkânda 'Ekstra Servisler' kapsamında sunulan elektronik topluluk yapısı (anket, mesaj panosu, chat) kurmak için gereken minimum ziyaretçi sayısı/aktivite oranı nedir?",
+      options: [
+        ["Günde en az 1000 ziyaretçi ve %50 aktivite oranı", "Bu çok yüksek bir beklentidir."],
+        ["Günde birkaç mesaj atılan bir mesaj tahtası kullanıcı sayısı; toplam kullanıcıların %5 aktivite oranı (günde yaklaşık en az 100 ziyaretçi)", "Bu, PDF'te belirtilen yaklaşık değerlerdir."],
+        ["Sadece kayıtlı üye sayısının 5000'i geçmesi", "Aktif katılım önemlidir, sadece üye sayısı değil."],
+        ["Aylık en az 10.000 sayfa görüntülenmesi", "Sayfa görüntülenmesi tek başına topluluk için yeterli değildir."],
+        ["Elektronik topluluk kurmak için ziyaretçi sayısı önemli değildir.", "Kritik kütle gereklidir."]
+      ],
+      answer: 1,
+      summary: "Elektronik topluluk yaratabilmek için gerekli kritik kütle günde birkaç mesaj atılan bir mesaj tahtası kullanıcılarının sayısı kadar kabul edilebilir. Genellikle sistemin genel amacı topluluk kurmak olmadığı durumlarda toplulukta aktivite oranı en iyi durumda yüzde beş civarındadır. Dolayısı ile günde yaklaşık en az 100 ziyaretçi almayan Internet tabanlı elektronik satış sistemlerinde elektronik topluluk kurmak oldukça zor olmaktadır."
+    },
+    {
+      q: "16. Klasik bir dükkânda alışveriş sürecinin aşamalarından biri olan 'karşılıklı güven ortamı sağlanması' e-dükkânlarda nasıl bir karşılık bulur?",
+      options: [
+        ["Müşteriden TC kimlik numarasını istemekle", "Bu aşırı bir bilgi talebi olabilir."],
+        ["Güvenli ödeme sistemleri, şeffaf iade politikaları ve net kullanıcı sözleşmeleri ile", "Bu unsurlar e-dükkanda güven oluşturur."],
+        ["Satış sonrası hiç iletişim kurmamakla", "Bu güvensizlik yaratır."],
+        ["Web sitesinde çok sayıda animasyon kullanmakla", "Bu güvenle doğrudan ilgili değildir."],
+        ["Ürün fiyatlarını sürekli değiştirmekle", "Bu tutarsızlık yaratır."]
+      ],
+      answer: 1,
+      summary: "Klasik dükkan modelindeki 'karşılıklı güven ortamı sağlanır' aşaması, e-dükkanlarda güvenli ödeme altyapısı, net iade politikaları, kullanıcı yorumları ve şeffaf iletişim ile sağlanmaya çalışılır."
+    },
+    {
+      q: "17. E-dükkân tasarımında, müşterinin 'en kolay, en zevkli ve en verimli bir şekilde mal ya da hizmeti satınalmaya karar vermesine yönelik olması' ilkesi ne anlama gelir?",
+      options: [
+        ["Sadece en ucuz ürünleri listelemek", "Fiyat bir etkendir ama tek başına yeterli değildir."],
+        ["Müşteri merkezli bir anlayışla, kullanıcı dostu arayüzler, kolay gezinme ve arama fonksiyonları sunmak", "Bu, müşteri deneyimini optimize eder."],
+        ["Web sitesini çok sayıda reklamla doldurmak", "Bu kullanıcı deneyimini olumsuz etkiler."],
+        ["Müşteriyi satın almaya zorlayıcı mesajlar kullanmak", "Baskıdan kaçınılmalıdır."],
+        ["Sadece en yeni web teknolojilerini kullanmak, tarayıcı uyumluluğunu dikkate almamak", "Yaygın ve stabil teknolojiler tercih edilmelidir."]
+      ],
+      answer: 1,
+      summary: "Elektronik dükkan, müşterinin en kolay, en zevkli ve en verimli bir şekilde mal ya da hizmeti satınalmaya karar vermesine yönelik olmalıdır. Bu, müşteri merkezli bir anlayış gerektirir."
+    },
+    {
+      q: "18. Anında teslimat gerektiren yazılım gibi ürünlerde 'Bekletmeli (Batch) Entegre Ödeme Sistemi'nin uygulanabilirliğinin az olmasının temel nedeni nedir?",
+      options: [
+        ["Yazılımların kredi kartıyla satın alınamaması", "Yazılımlar kredi kartıyla alınabilir."],
+        ["Yetkilendirmenin anında gerçekleşmemesi ve müşterinin ürüne hemen erişememesi", "Batch sistemde yetkilendirme gecikmeli olduğu için anında teslimat yapılamaz."],
+        ["Bu tür sistemlerin sadece fiziksel ürünler için tasarlanmış olması", "Dijital ürünler için de ödeme sistemleri vardır."],
+        ["Demo versiyon sunmanın yasal olmaması", "Demo sunmak yaygın bir uygulamadır."],
+        ["Kredi kartı bilgilerinin güvensiz bir şekilde saklanması", "Entegre olarak kaydedilir ama anında işlenmez."]
+      ],
+      answer: 1,
+      summary: "Anında teslim gerektiren yazılım benzeri ürünlerde bekletmeli ödeme sisteminin uygulanabilirliği azdır, çünkü yetkilendirme anında gerçekleşmez."
+    },
+    {
+      q: "19. 'Ayrı Kanaldan Ödeme Sistemi' hangi tür ticari işlemlerde ve neden daha çok tercih edilir?",
+      options: [
+        ["Son tüketiciye yönelik (B2C) küçük alışverişlerde, hız ve kolaylık için.", "B2C'de genellikle entegre sistemler tercih edilir."],
+        ["Firmalar arası (B2B) işlemlerde, genellikle miktarların büyük olması ve hukuki ek gereksinimler sebebiyle.", "B2B'de ayrı kanaldan ödeme bu nedenlerle yaygındır."],
+        ["Elektronik satış otomatlarından yapılan alışverişlerde, anında onay için.", "Otomatlar farklı ödeme yöntemleri kullanır."],
+        ["Mobil uygulamalar üzerinden yapılan mikro ödemelerde, pratiklik için.", "Mikro ödemeler için özel sistemler vardır."],
+        ["Kiosk sistemlerinden yapılan bilet alımlarında, self-servis kolaylığı için.", "Kiosklar entegre ödeme kullanabilir."]
+      ],
+      answer: 1,
+      summary: "Özellikle firmalar arası (B2B) işlemlerde genellikle miktarların büyük olması ve hukuki ek gereksinimler sebebiyle ayrı kanaldan ödeme tercih edilmektedir."
+    },
+    {
+      q: "20. Ağ bağlantılı elektronik satış otomatlarının, klasik (bağlantısız) otomatlara göre sağladığı temel avantajlardan biri nedir?",
+      options: [
+        ["Sadece nakit para ile çalışabilmesi", "Kredi kartı gibi seçenekler sunar."],
+        ["İçindeki ürünlerin daha uzun süre taze kalması", "Bu ürün saklama koşullarıyla ilgilidir."],
+        ["Ağ aracılığı ile uzaktan bakım, servis ve kritik ürün stoğu takibi yapılabilmesi", "Ağ bağlantısı bu tür merkezi yönetim imkanları sunar."],
+        ["Daha az elektrik tüketmesi", "Ağ bağlantısı ek enerji gerektirebilir."],
+        ["Sadece tek bir ürün çeşidi satabilmesi", "Çeşitli ürünler satabilir."]
+      ],
+      answer: 2,
+      summary: "Kablosuz ağlar satış otomatlarının ağ aracılığı ile bakımının ve servisinin yapılması olanaklarını da sağlar. Kritik ürün stoğuna yaklaşıldığı zaman, satış sistemi merkeze mesaj göndererek yeni ürün siparişini kolaylıkla verebilir."
+    },
+    {
+      q: "21. Kiosk sistemlerinde, yakından geçen veya karşısında duran kişilerin dikkatini çekmek için kullanılan yöntemler arasında hangisi yer almaz?",
+      options: [
+        ["Kızılaltı alıcı sistemleri ile kişileri algılama", "PDF'te bu yöntemden bahsedilmektedir."],
+        ["Güçlendirilmiş ses ve görüntü efektleri", "PDF'te bu yöntemden bahsedilmektedir."],
+        ["Değişken aydınlatma kullanma", "PDF'te bu yöntemden bahsedilmektedir."],
+        ["Kiosk ekranını tamamen karartarak merak uyandırma", "Bu dikkat çekmek yerine kullanıcıyı uzaklaştırabilir."],
+        ["Kısıtlı oranda genel internet kullanımına veya oyun oynamaya izin verme", "PDF'te bu yöntemden bahsedilmektedir."]
+      ],
+      answer: 3,
+      summary: "Kiosk sistemlerinin birçoğunda yakından geçen kişileri, karşısında duran kişileri seçebilen kızılaltı alıcı sistemleri bulunur. Bu sistemlere destek olarak güçlendirilmiş ses ve görüntü efektleri, değişken aydınlatma da müşteri ya da ziyaretçinin dikkatinin çekilmesi için kullanılır."
+    },
+    {
+      q: "22. Mobil iletişim cihazları üzerinden çalışan satış sistemlerinin en önemli avantajı nedir?",
+      options: [
+        ["Her zaman yüksek bant genişliği sunması", "Genellikle düşük bant genişliği bir dezavantajdır."],
+        ["Çok büyük ekranlarda detaylı ürün inceleme imkanı vermesi", "Genellikle küçük ekranları vardır."],
+        ["Kullanıcıya her yerde ve her an çalışma (alışveriş yapma) imkanı sunması", "Bu, mobil sistemlerin temel avantajıdır."],
+        ["Batarya ömrünün sınırsız olması", "Batarya ömrü bir kısıtlamadır."],
+        ["Taşınan verilerin maliyetinin her zaman çok düşük olması", "Yüksek veri miktarlarında maliyetli olabilir."]
+      ],
+      answer: 2,
+      summary: "Mobil sistemlerin getirdiği avantajlar arasında her yerde her an çalışma ve taşıma kolaylığı bulunmaktadır."
+    },
+    {
+      q: "23. E-ticaret sisteminin 'Back End' (arka plan) bölümünde gerçekleştirilen işlemlerden biri hangisidir?",
+      options: [
+        ["Müşterinin ürünleri inceleyip sepete eklemesi", "Bu Store Front işlemidir."],
+        ["Yeni ürünlerin sisteme kaydı, fiyat ayarlamalarının yapılması ve stok durum bilgilerinin girilmesi", "Bu tür işlemler Back End'de personel tarafından yapılır."],
+        ["Müşterinin kredi kartı bilgilerini girerek ödeme yapması", "Bu Store Front'ta başlar, Middleware ve ödeme sistemi ile devam eder."],
+        ["Web sitesinin genel görünümünün ve renklerinin belirlenmesi", "Bu tasarım ve Store Front ile ilgilidir."],
+        ["Müşterinin site içi arama motorunu kullanması", "Bu Store Front işlemidir."]
+      ],
+      answer: 1,
+      summary: "Yeni ürünlerin sisteme kaydı, eski ürünlerin katalogdan düşülmesi, fiyat ayarlamalarının yapılması, stok durum bilgilerinin elle girilmesi, batch kredi kartı işlemlerinin yürütülmesi bu bölümdeki (Back End) yazılım ya da yazılımlar aracılığı ile gerçekleşir."
+    },
+    {
+      q: "24. Satışa yönelik bir e-ticaret sisteminde, 'Arka Plan Yönetim Fonksiyonelliği'nin yetersiz olması durumunda hangi tür sorunlar yaşanabilir?",
+      options: [
+        ["Müşteri arayüzünün çok yavaş çalışması", "Bu daha çok Store Front veya sunucu performansıyla ilgilidir."],
+        ["Çift siparişler, yanlış stok bilgileri ve firma içinde kaos oluşması", "Yetersiz arka plan yönetimi bu tür operasyonel sorunlara yol açabilir."],
+        ["Kredi kartı komisyonlarının artması", "Bu ödeme anlaşmalarıyla ilgilidir."],
+        ["Web sitesinin arama motorlarında görünmemesi", "Bu SEO ile ilgilidir."],
+        ["Mobil cihazlarla uyumsuzluk", "Bu Store Front tasarımıyla ilgilidir."]
+      ],
+      answer: 1,
+      summary: "Firma içinde kaos oluşmadan, arka plan yönetimi yapılabilmelidir. Aksi takdirde çift siparişler ve benzeri sorunlar yaşanabilmektedir."
+    },
+    {
+      q: "25. Bir e-dükkânın 'Store Front' (müşteri arayüzü) bölümünde, 'müşteri mağaza içinde kaybolduğu zaman yolu birisine sorabilmeli' ilkesi nasıl uygulanabilir?",
+      options: [
+        ["Sadece sıkça sorulan sorular (SSS) sayfası ekleyerek", "Bu bir yöntemdir ama tek başına yeterli olmayabilir."],
+        ["Canlı destek (chat), yardım linkleri, site haritası ve kullanıcı dostu navigasyon menüleri sunarak", "Bu tür araçlar müşteriye destek olur."],
+        ["Müşterinin IP adresini takip ederek otomatik e-posta göndermekle", "Bu rahatsız edici olabilir."],
+        ["Web sitesini sürekli olarak bakım moduna alarak", "Bu erişimi engeller."],
+        ["Karmaşık ve çok adımlı bir sipariş süreci tasarlayarak", "Bu müşteriyi daha da yorar."]
+      ],
+      answer: 1,
+      summary: "Müşteriye, e-dükkân'da bulunduğu süre içinde daha önce belirtilmiş olan bütün safhalarda, gerektiği zaman destek verilebilmelidir. Müşteri mağaza içinde kaybolduğu zaman yolu birisine sorabilmeli, ürün detaylarını sorgulayabilmelidir."
+    },
+    {
+      q: "26. Dolaylı satış sistemleri, tek bir markaya yönelik olduğunda genellikle kim tarafından oluşturulur?",
+      options: [
+        ["Markanın rakipleri tarafından", "Bu mantıklı değildir."],
+        ["Bağımsız tüketici grupları tarafından", "Bu sanal müşteri gruarına benzer."],
+        ["Satıcı firma (markanın sahibi) tarafından", "Tek markaya yönelik sistemleri genellikle o markanın sahibi firma kurar."],
+        ["Komisyon ile çalışan üçüncü taraf reklam ajansları tarafından", "Bunlar genellikle çok markalı sistemler oluşturur."],
+        ["Devlet kurumları tarafından", "Bu özel bir durumdur."]
+      ],
+      answer: 2,
+      summary: "Tek bir markaya yönelik olan dolaylı satış sistemleri satıcı firma tarafından oluşturulurken, farklı markalara yönelik dolaylı satış sistemleri, komisyon ya da sabit ücret ile çalışan üçüncü firmalar tarafından oluşturulur."
+    },
+    {
+      q: "27. Elektronik satış sistemlerinde, yetersiz bir 'Döküman Yönetimi' hangi temel soruna yol açar?",
+      options: [
+        ["Sunucu maliyetlerinin artmasına", "Dolaylı etkisi olabilir."],
+        ["Müşteri şikayetlerinin anında çözülmesine", "İyi dokümantasyon çözümü hızlandırır."],
+        ["Ürün yelpazesinin güncellenmesi sorunlarına ve verilerin güncelliğini sağlayamamasına", "Güçlü doküman yönetimi güncellik için kritiktir."],
+        ["Kredi kartı bilgilerinin çalınmasına", "Bu güvenlik açığıdır, doküman yönetimiyle doğrudan ilgili değildir."],
+        ["Personel sayısının artmasına", "Verimsizlik personel ihtiyacını artırabilir."]
+      ],
+      answer: 2,
+      summary: "Döküman yönetimi yetersizliği, ürün yelpazesinin güncellenmesi sorunlarını beraberinde getirir. Güçlü bir döküman yönetim sistemi olmayan elektronik satış sistemleri, verilerin güncelliğini sağlayamaz."
+    },
+    {
+      q: "28. Bir elektronik satış sisteminin '24 saat kesintisiz hizmet' sağlaması neden önemlidir?",
+      options: [
+        ["Çünkü sadece gece alışveriş yapan müşteriler hedeflenir.", "Her zaman erişim beklenir."],
+        ["Çünkü sık sık arıza yapan sistemler müşteri güvenini ve sadakatini artırır.", "Tam tersi, güven kaybına yol açar."],
+        ["Çünkü müşterinin kapıdan geri çevrilmemesi prensibiyle, sık arızalar müşteri kaybına ve güvenilirlik sorunlarına yol açar.", "Kesintisiz hizmet, müşteri memnuniyeti ve güven için kritiktir."],
+        ["Çünkü sistemin yedeklerinin alınması sadece bu şekilde mümkün olur.", "Yedekleme planlı kesintilerle de yapılabilir."],
+        ["Çünkü servis sağlayıcılar sadece bu koşulla anlaşma yapar.", "Servis seviyesi anlaşmaları (SLA) önemlidir."]
+      ],
+      answer: 2,
+      summary: "Bir elektronik satış sistemi müşteri ya da ziyaretçilere 24 saat kesintisiz hizmet sağlamalıdır. Sık sık arıza yapan, müşterilerin geri dönmesine yol açan sistemler, kısa sürede güvenilirliklerini kaybederler."
+    },
+    {
+      q: "29. Müşteri İlişkileri Yönetimi (CRM) uygulamalarının temelinde yatan 'rakip yalnızca bir tık ötededir' ifadesi neyi vurgular?",
+      options: [
+        ["Elektronik ticarette rekabetin çok düşük olduğunu", "Tam tersine rekabet yüksektir."],
+        ["Müşterilerin sadece tek bir siteye sadık kaldığını", "Müşteri bağlılığı değişkendir."],
+        ["Elektronik ortamda müşterilerin kolayca alternatiflere yönelebileceğini ve bu nedenle müşteri ilişkileri ile bağlılığın hayati önem taşıdığını", "Bu ifade, müşteri bağlılığının önemini vurgular."],
+        ["Web siteleri arası geçişin teknik olarak çok zor olduğunu", "Geçiş kolaydır."],
+        ["Fiziksel mağazaların e-ticaretten daha avantajlı olduğunu", "Bu genel bir kural değildir."]
+      ],
+      answer: 2,
+      summary: "Elektronik ticaret sözkonusu olduğunda önemli bir noktayı ortaya koymak gerekir: \"Rakip yalnızca bir tık ötededir.\" Bu önemli nokta, müşteri ilişkileri açısından son derece önemli sonuçlar doğurmaktadır."
+    },
+    {
+      q: "30. Müşteri İlişkileri Yönetimi (CRM) hangi iş felsefesine dayanır?",
+      options: [
+        ["Sadece en yeni teknolojileri kullanarak maksimum kâr elde etme", "Teknoloji bir araçtır, felsefenin kendisi değildir."],
+        ["Üst yönetimin benimsemesi gereken, firma çapında koordinasyon ve müşteri odaklı bir iş stratejisi uygulama", "CRM, teknolojik bir uygulamadan öte, bütünsel bir iş felsefesidir."],
+        ["Müşteri verilerini toplamadan, sadece genel pazarlama kampanyaları yapma", "CRM veri odaklıdır."],
+        ["Satış, pazarlama ve servis departmanlarının birbirinden tamamen bağımsız çalışması", "Entegrasyon ve koordinasyon esastır."],
+        ["Müşteri şikayetlerini mümkün olduğunca yanıtsız bırakma", "Müşteri memnuniyeti hedeflenir."]
+      ],
+      answer: 1,
+      summary: "Müşteri ilişkileri yönetiminin daha çok bir iş felsefesi olarak tanımlanması gerekmektedir. Üst yönetim ve idari yapı, farklı birimleri işin içine sokan müşteri ilişkileri yönetimini benimsemeli ve bu felsefenin sadece bir teknoloji uygulamasından ibaret olmadığını kabul etmelidir. Firma çapında koordinasyon, haberleşme ve adanmışlık gerektirir."
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+  
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
