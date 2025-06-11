@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 8</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 8</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Sistem analiz çalışmaları hangi üç ana başlık altında toplanır?",
+    options: [
+        ["Planlama, Tasarım, Uygulama", "Bunlar SGYD'nin farklı adımlarıdır."],
+        ["Anket, Görüşme, Gözlem", "Bunlar analizde kullanılan veri toplama yöntemleridir."],
+        ["Sistem isterlerinin tespiti, Sistem isterlerinin modellenmesi, En iyi alternatifin seçilmesi", "Analiz çalışmaları bu üç temel faaliyeti kapsar."],
+        ["Paydaşlar, Kullanıcılar, Müşteriler", "Bunlar analiz sürecinin bilgi kaynaklarıdır."],
+        ["Veri, Veri Akışı, İşleme Mantığı", "Bunlar bir bilgi sisteminin öğeleridir."]
+    ],
+    answer: 2,
+    summary: "Analiz çalışmaları üç ana başlık altında toplanabilmektedir: Sistem isterlerinin tespiti, Sistem isterlerinin modellenmesi, En iyi alternatifin seçilmesi."
+},
+{
+    q: "2. 'Mevcut sistemdeki problemlerin detaylandırılması, nedenlerinin tespiti ve organizasyonun bilgi ve diğer gereksinimlerinin çıkartılması' süreci hangisidir?",
+    options: [
+        ["Sistem isterlerinin modellenmesi", "Modelleme, tespit edilen isterlerin dokümante edilmesidir."],
+        ["En iyi alternatifin seçilmesi", "Bu, analiz sonrası yapılan bir karar verme sürecidir."],
+        ["Durum Tespiti Yöntemi", "Bu, isterleri tespit etmek için kullanılan tekniklerin genel adıdır."],
+        ["Sistem isterlerinin tespiti", "Bu tanım, sistem isterlerinin tespiti faaliyetinin amacını ifade eder."],
+        ["Prototipleme", "Bu, isterleri tespit etmek için kullanılan yöntemlerden sadece biridir."]
+    ],
+    answer: 3,
+    summary: "Sistem isterlerinin tespiti, mevcut sistemdeki problemlerin detaylandırılması, nedenlerinin tespiti ve organizasyonun bilgi ve diğer gereksinimlerinin çıkartılması için tüm sistem paydaşlarının da içinde yer aldığı çalışmaları içerir."
+},
+{
+    q: "3. Sistem isterlerinin tespitinde başlıca bilgi kaynağını oluşturan paydaş grupları hangileridir?",
+    options: [
+        ["Sadece Kullanıcılar", "Eksik, müşteriler ve teknik personel de önemli bilgi kaynaklarıdır."],
+        ["Kullanıcılar, Müşteriler ve Teknik Personel", "Sistem isterlerinin başlıca bilgi kaynağını bu üç grup oluşturur."],
+        ["Yöneticiler, Analistler ve Geliştiriciler", "Bu gruplar da paydaştır ancak temel bilgi kaynağı sınıflandırması bu şekilde yapılmamıştır."],
+        ["Sadece Müşteriler ve Teknik Personel", "Eksik, kullanıcılar en temel bilgi kaynaklarından biridir."],
+        ["Sadece Yöneticiler", "Yöneticiler, kullanıcıların bir türüdür."]
+    ],
+    answer: 1,
+    summary: "Sistem isterlerinin başlıca bilgi kaynağını oluşturan paydaşlar üç ana başlıkta incelenebilir: Kullanıcılar, Müşteriler, Teknik Personel."
+},
+{
+    q: "4. Kullanıcı rollerinin 'Personel, orta yönetim ve üst düzey yöneticilerin bilgi ihtiyaçları' açısından incelenmesi hangi boyutu ifade eder?",
+    options: [
+        ["Yatay boyut", "Yatay boyut, departmanlar arası bilgi akışını ifade eder."],
+        ["Fonksiyonel boyut", "Bu terim dokümanda bu şekilde kullanılmamıştır."],
+        ["Hiyerarşik boyut", "Bu genel bir ifadedir, doğru terim Dikey boyuttur."],
+        ["Dikey boyut", "Organizasyon içindeki farklı hiyerarşik seviyelerin (personel, yönetici vb.) bilgi ihtiyaçları dikey boyutu oluşturur."],
+        ["Operasyonel boyut", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Kullanıcı rolleri iki boyutta incelenebilir: Yatay (departmanlar arası) ve Dikey (personel, orta yönetim ve üst düzey yöneticilerin bilgi ihtiyaçları)."
+},
+{
+    q: "5. 'Günlük işlemleri gerçekleştirmek için sistemi kullanan' kullanıcılar hangi tipe girer?",
+    options: [
+        ["İşlem Kullanıcıları", "Günlük operasyonel işlemleri yapan kullanıcılar bu gruba girer."],
+        ["Sorgu Kullanıcıları", "Sorgu kullanıcıları sistemden anlık bilgi çekerler."],
+        ["Yönetici Seviyesindeki Kullanıcılar", "Bu kullanıcılar özet ve istatistiksel bilgi alırlar."],
+        ["Yönetimsel Kullanıcılar", "Bu kullanıcılar daha çok stratejik bilgilerle ilgilenir."],
+        ["Teknik Kullanıcılar", "Bu terim kullanıcı tipleri arasında listelenmemiştir."]
+    ],
+    answer: 0,
+    summary: "İşlem Kullanıcıları: Günlük işlemleri gerçekleştirmek için sistemi kullanan kullanıcılardır."
+},
+{
+    q: "6. 'Sistemden istatiksel ve özet bilgi gereksinimlerini karşılayan' kullanıcı tipi hangisidir?",
+    options: [
+        ["İşlem Kullanıcıları", "İşlem kullanıcıları veri girişi ve rutin işleri yapar."],
+        ["Sorgu Kullanıcıları", "Sorgu kullanıcıları spesifik ve anlık bilgi ararlar."],
+        ["Yönetici Seviyesindeki Kullanıcılar", "Özet ve istatistiksel raporlar genellikle yönetici seviyesindeki kullanıcıların ihtiyacıdır."],
+        ["Yönetimsel Kullanıcılar", "Bu kullanıcılar hem günlük hem de stratejik bilgilerle ilgilenir."],
+        ["Analitik Kullanıcılar", "Bu terim kullanıcı tipleri arasında listelenmemiştir."]
+    ],
+    answer: 2,
+    summary: "Yönetici Seviyesindeki Kullanıcılar: Sistemden istatiksel ve özet bilgi gereksinimlerini karşılayan kullanıcılardır."
+},
+{
+    q: "7. Projeyi finanse eden, finansman onayını yürüten ve proje ekibinin raporlama yaptığı kişi ya da grup hangi paydaş rolünü ifade eder?",
+    options: [
+        ["Kullanıcılar", "Kullanıcılar sistemi kullanır."],
+        ["Teknik Personel", "Teknik personel teknik destek sağlar."],
+        ["Sistem Analisti", "Analist, gereksinimleri belirler."],
+        ["Müşteriler", "Bu tanım, projeyi finanse eden ve yöneten 'Müşteri' rolünü ifade eder."],
+        ["Proje Sponsoru", "Bu Müşteri rolünün bir diğer adıdır ama dokümanda Müşteri olarak geçmektedir."]
+    ],
+    answer: 3,
+    summary: "Müşteri; projeyi finanse eden, finansman onayı ya da ibra edilmesi mekanizmasını yürüten, proje ekibinin, proje durumu ile ilgili raporlama yaptığı kişi ya da gruptur."
+},
+{
+    q: "8. 'Organizasyondaki bilgisayar ortamının kurulum ve bakımını yapan, programlama dili ve platformlar için destek sağlayan' kişi ya da grup kimdir?",
+    options: [
+        ["Kullanıcılar", "Kullanıcılar sistemin tüketicisidir."],
+        ["Müşteriler", "Müşteriler projenin sahibidir."],
+        ["Yöneticiler", "Yöneticiler, kullanıcıların bir türüdür."],
+        ["Sistem Geliştiriciler", "Geliştiriciler programları yazar."],
+        ["Teknik Personel", "Bu tanım, altyapı ve teknik destek sağlayan 'Teknik Personel'e aittir."]
+    ],
+    answer: 4,
+    summary: "Teknik Personel; Organizasyondaki bilgisayar ortamının kurulum ve bakımı yapan, Programlama dili, bilgisayar platformları ve diğer ekipmanlar için destek sağlayan kişi ya da gruptur."
+},
+{
+    q: "9. Hem mevcut sistemin hem de yeni sistemin fiziksel ve mantıksal modellerinin oluşturulduğu sistem isterlerini belirleme yaklaşımı hangisidir?",
+    options: [
+        ["Mevcut Yaklaşım", "Mevcut yaklaşım sadece yeni sistemin mantıksal isterlerine odaklanır."],
+        ["Orijinal Yaklaşım", "Mevcut ve yeni sistemin birlikte modellendiği bu yaklaşım 'Orijinal Yaklaşım' olarak adlandırılır."],
+        ["Karma Yaklaşım", "Bu terim dokümanda kullanılmamıştır."],
+        ["Fiziksel Yaklaşım", "Bu terim dokümanda kullanılmamıştır."],
+        ["Mantıksal Yaklaşım", "Bu terim dokümanda kullanılmamıştır."]
+    ],
+    answer: 1,
+    summary: "Orijinal Yaklaşım (Original Approach): Hem mevcut hem de yeni sistemin modellenmesi."
+},
+{
+    q: "10. 'Sadece yeni sistemin mantıksal isterlerinin modellenmesi' hangi sistem isterlerini belirleme yaklaşımını tanımlar?",
+    options: [
+        ["Orijinal Yaklaşım", "Orijinal yaklaşım hem mevcut hem de yeni sistemi modeller."],
+        ["Modern Yaklaşım", "Bu terim dokümanda bu şekilde kullanılmamıştır."],
+        ["Mevcut Yaklaşım", "Sadece yeni sistemin mantıksal gereksinimlerine odaklanan bu yaklaşım 'Mevcut Yaklaşım' olarak adlandırılır."],
+        ["Mantıksal Yaklaşım", "Bu genel bir ifadedir, spesifik yaklaşımın adı 'Mevcut Yaklaşım'dır."],
+        ["İteratif Yaklaşım", "Bu terim dokümanda bu şekilde kullanılmamıştır."]
+    ],
+    answer: 2,
+    summary: "Mevcut Yaklaşım (Current Approach): Sadece yeni sistemin mantıksal isterlerinin modellenmesi."
+},
+{
+    q: "11. 'Sistem analistlerinin paydaşlardan sistem problemleri ve çözüm isterlerini belirlemek amacıyla bilgi almaları sırasında kullandıkları teknikleri içeren süreç' ne olarak adlandırılır?",
+    options: [
+        ["Paydaş Analizi", "Bu genel bir ifadedir."],
+        ["Gereksinim Modelleme", "Bu, toplanan bilginin dokümante edilmesidir."],
+        ["Durum Tespiti Yöntemi (Fact-Finding Method)", "Bilgi toplama amaçlı tekniklerin kullanılma sürecine 'Durum Tespiti Yöntemi' denir."],
+        ["Prototipleme", "Bu, durum tespiti yöntemlerinden sadece bir tanesidir."],
+        ["Anket Tasarımı", "Bu, durum tespiti yöntemlerinden sadece bir tanesidir."]
+    ],
+    answer: 2,
+    summary: "'Durum Tespiti Yöntemi (Fact-Finding Method)' bilgi toplama amaçlı bu tekniklerin kullanılma sürecidir. Bilgi ya da veri toplama olarak da adlandırılır."
+},
+{
+    q: "12. Aşağıdakilerden hangileri 'Durum Tespiti Yöntemleri' arasında yer alır? \nI. Anket dağıtılması \nII. Kullanıcılar ile görüşme yapılması \nIII. İş süreçlerinin gözlemlenmesi \nIV. Prototiplerin yaratılması",
+    options: [
+        ["I ve II", "Eksik, diğer yöntemler de listelenmiştir."],
+        ["II, III ve IV", "Eksik, anket de bir yöntemdir."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, Durum Tespiti Yöntemleri arasında sayılmıştır."],
+        ["Yalnızca I ve III", "Eksik, görüşme ve prototipleme de birer yöntemdir."],
+        ["Yalnızca IV", "Bu sadece bir yöntemdir."]
+    ],
+    answer: 2,
+    summary: "Durum Tespiti Yöntemleri şunlardır: Paydaşlara anket dağıtılması, Var olan raporların gözden geçirilmesi, Kullanıcılar ile görüşme, İş süreçlerinin gözlemlenmesi, Prototiplerin yaratılması, Birleşik uygulama tasarımı (JAD)."
+},
+{
+    q: "13. Bilgi toplama sırasında kullanılan, 'basit ve belirli bir cevabı olan' sorular hangi tipe girer?",
+    options: [
+        ["Açık sorular", "Açık sorular açıklama gerektirir."],
+        ["Kapalı sorular", "'Evet/Hayır' gibi veya belirli seçenekler arasından seçim yapılan basit cevaplı sorular 'kapalı sorular'dır."],
+        ["Yönlendirmeli sorular", "Bu genel bir mülakat tekniğidir."],
+        ["Sorgulayıcı sorular", "Bu genel bir ifadedir."],
+        ["Kantitatif sorular", "Bu doküman tipiyle ilgili bir terimdir."]
+    ],
+    answer: 1,
+    summary: "Kapalı sorular (Close-ended questions): Basit ve belirli bir cevabı olan sorulardır."
+},
+{
+    q: "14. 'Açıklama gerektiren ya da basit ve kısa bir cevap gerektirmeyen' sorulara ne ad verilir?",
+    options: [
+        ["Kapalı sorular", "Kapalı soruların cevabı basit ve nettir."],
+        ["Detaylı sorular", "Bu genel bir ifadedir."],
+        ["Açık sorular", "Cevabı yoruma ve açıklamaya dayalı olan sorular 'açık sorular'dır."],
+        ["Kalitatif sorular", "Bu doküman tipiyle ilgili bir terimdir."],
+        ["Derinlemesine sorular", "Bu genel bir ifadedir."]
+    ],
+    answer: 2,
+    summary: "Açık sorular (Open-ended questions): Açıklama gerektiren ya da basit ve kısa bir cevap gerektirmeyen sorulardır."
+},
+{
+    q: "15. Aşağıdakilerden hangisi durum tespiti yöntemlerinde kullanılan örnekleme çeşitlerinden biri değildir?",
+    options: [
+        ["Uygunluk Örneklemesi", "Bu bir örnekleme çeşididir."],
+        ["Maksatlı Örnekleme", "Bu bir örnekleme çeşididir."],
+        ["Rastgele Örnekleme", "Bu, 'Basit Olası Örnekleme'nin diğer adıdır."],
+        ["Görsel Örnekleme", "Görsel örnekleme diye bir çeşit listelenmemiştir."],
+        ["Kompleks Olası Örnekleme", "Bu bir örnekleme çeşididir."]
+    ],
+    answer: 3,
+    summary: "Kullanılan örnekleme çeşitleri; Uygunluk Örneklemesi, Maksatlı Örnekleme, Basit Olası Örnekleme ve Kompleks Olası Örnekleme'dir."
+},
+{
+    q: "16. 'Sınırsız, olasılıksız ve en kolay hazırlanabilen fakat en az güvenilen' örnekleme çeşidi hangisidir?",
+    options: [
+        ["Maksatlı Örnekleme", "Bu, belli bir karara dayanır ve kabul edilebilir güvenliği vardır."],
+        ["Kompleks Olası Örnekleme", "Bu en uygun ve genellikle güvenilir örneklemedir."],
+        ["Basit Olası Örnekleme", "Bu olasılıklıdır ve güvenilirdir."],
+        ["Uygunluk Örneklemesi", "Bu tanım, en kolay ama en az güvenilir olan 'Uygunluk Örneklemesi'ne aittir."],
+        ["Katmanlı Örnekleme", "Bu, kompleks örneklemenin bir türüdür."]
+    ],
+    answer: 3,
+    summary: "Uygunluk Örneklemesi: Sınırsız, olasılıksız ve en kolay hazırlanabilen fakat en az güvenilen örneklemedir."
+},
+{
+    q: "17. 'İşlemlerin anlaşılması için kullanılabilecek, görüşmeler için görsel yardım ve tartışmalar için de çalışma dokümanı özelliği taşıyan' durum tespiti yöntemi hangisidir?",
+    options: [
+        ["Anket", "Anket, işlemlerin öğrenilmesine uygun bir metot değildir."],
+        ["Gözlem", "Gözlem, iş akışlarını yerinde görmektir."],
+        ["İnceleme Yöntemi", "Var olan rapor, form ve işlem tanımlarının gözden geçirilmesi olan bu yöntem, tanımda belirtilen özelliklere sahiptir."],
+        ["Prototip", "Prototip, çalışan bir modeldir."],
+        ["JAD", "Bu, yoğun toplantılarla yapılan bir çalışmadır."]
+    ],
+    answer: 2,
+    summary: "Var olan rapor, form ve işlem tanımlarının gözden geçirilmesi (İnceleme Yöntemi), işlemlerin anlaşılması için kullanabilecek bir yöntemdir. Görüşmeler için görsel yardım ve tartışmalar için de çalışma dokümanı özelliği taşır."
+},
+{
+    q: "18. İnceleme yönteminde, 'kısa notlar, bülten tahtasındaki işaretler, web siteleri ve el kitapları' ne tür dokümanlara örnektir?",
+    options: [
+        ["Kantatif Dokümanlar", "Kantatif dokümanlar karar alma, performans raporları gibi sayısal ve yapısal veriler içerir."],
+        ["Operasyonel Dokümanlar", "Bu terim dokümanda bu şekilde kullanılmamıştır."],
+        ["Resmi Dokümanlar", "Bu genel bir ifadedir."],
+        ["Kalitatif Dokümanlar", "Bu tür yorum ve metin bazlı, yapısal olmayan dokümanlar 'Kalitatif Dokümanlar' sınıfına girer."],
+        ["İşlem Dokümanları", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Kalitatif Dokümanlar: Kısa notlar, bülten tahtası ya da çalışma alanlarındaki işaretler, web siteleri, el kitapları ve politika el kitapları içerir."
+},
+{
+    q: "19. Anket yönteminin özellikleriyle ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+    options: [
+        ["Bilginin toplanmasında sınırlı ve spesifik bir kullanımı vardır.", "Doğru, anketler genellikle spesifik konular için kullanılır."],
+        ["Birçok sayıda paydaştan bilgi toplamaya olanak sağlar.", "Doğru, anketler geniş kitlelere ulaşmak için etkilidir."],
+        ["İşlemlerin, iş akışlarının ve tekniklerin detaylı öğrenilmesine çok uygun bir metottur.", "Yanlış. Tam tersine, anketlerin bu tür derinlemesine bilgi toplamak için uygun olmadığı belirtilmiştir."],
+        ["Genellikle kapalı sorular içermektedir.", "Doğru, anketlerde genellikle evet/hayır veya çoktan seçmeli gibi kapalı uçlu sorular kullanılır."],
+        ["Birtakım paydaşların bilgi ihtiyaçlarına ön görüş sağlar.", "Doğru, genel eğilimleri ve öncelikleri anlamak için kullanılabilir."]
+    ],
+    answer: 2,
+    summary: "Anket yönteminin özelliklerinden biri, 'İşlemler, iş akışları ve tekniklerin öğrenilmesine uygun bir metot değildir' olmasıdır."
+},
+{
+    q: "20. 'Ana yığındaki her varlığın seçilme şansının aynı olduğu' olasılıklı örnekleme çeşidi hangisidir?",
+    options: [
+        ["Maksatlı Örnekleme", "Bu olasılıksız bir örneklemedir."],
+        ["Uygunluk Örneklemesi", "Bu olasılıksız bir örneklemedir."],
+        ["Kompleks Olası Örnekleme", "Bu daha karmaşık olasılıklı yöntemleri içerir."],
+        ["Basit Olası Örnekleme", "Bu tanım, her birimin eşit seçilme şansına sahip olduğu 'Basit Olası Örnekleme'ye aittir."],
+        ["Küme Örnekleme", "Bu, kompleks örneklemenin bir türüdür."]
+    ],
+    answer: 3,
+    summary: "Basit Olası Örnekleme: Olasılıklıdır. Ana yığındaki her varlığın seçilme şansının aynı olduğu örneklemedir."
+},
+{
+    q: "21. 'Sistemdeki stratejik bilgilerle ilgili olduğu kadar günlük bilgilerle de ilgilenen' kullanıcı tipi hangisidir?",
+    options: [
+        ["İşlem Kullanıcıları", "İşlem kullanıcıları sadece günlük operasyonel işlerle ilgilenir."],
+        ["Sorgu Kullanıcıları", "Sorgu kullanıcıları anlık bilgi sorgular."],
+        ["Yönetici Seviyesindeki Kullanıcılar", "Bu kullanıcılar genellikle özet ve istatistiksel raporlarla ilgilenir."],
+        ["Yönetimsel Kullanıcılar", "Hem stratejik hem de günlük bilgilerle ilgilenen bu grup, 'Yönetimsel Kullanıcılar' olarak tanımlanmıştır."],
+        ["Stratejik Kullanıcılar", "Bu terim dokümanda bu şekilde kullanılmamıştır."]
+    ],
+    answer: 3,
+    summary: "Yönetimsel Kullanıcılar: Sistemdeki stratejik bilgilerle ilgili olduğu kadar günlük bilgilerle de ilgilenen kullanıcılardır."
+},
+{
+    q: "22. Kullanıcı rollerinin 'Departmanlar arası bilgi akışı' açısından incelenmesi hangi boyutu ifade eder?",
+    options: [
+        ["Dikey boyut", "Dikey boyut, hiyerarşik seviyeler arası bilgi akışını inceler."],
+        ["Yatay boyut", "Farklı departmanlar arasındaki bilgi akışının incelenmesi 'Yatay boyut'u ifade eder."],
+        ["İşlevsel boyut", "Bu genel bir ifadedir."],
+        ["Yapısal boyut", "Bu genel bir ifadedir."],
+        ["Süreç boyutu", "Bu genel bir ifadedir."]
+    ],
+    answer: 1,
+    summary: "Kullanıcı rolleri iki boyutta incelenebilir: Yatay: Departmanlar arası bilgi akışı."
+},
+{
+    q: "23. Aşağıdakilerden hangisi inceleme yönteminde kullanılan 'Kantatif Dokümanlar'a bir örnektir?",
+    options: [
+        ["Politika el kitapları", "Bu, kalitatif bir dokümandır."],
+        ["Web siteleri", "Bu, kalitatif bir dokümandır."],
+        ["Çalışma alanlarındaki işaretler", "Bu, kalitatif bir dokümandır."],
+        ["Performans raporları", "Performans raporları gibi sayısal ve ölçülebilir veriler içeren kayıtlar kantatif dokümanlardır."],
+        ["Kısa notlar", "Bu, kalitatif bir dokümandır."]
+    ],
+    answer: 3,
+    summary: "Kantatif Dokümanlar: Karar alma, performans raporları, periyodik güncellemeler içeren kayıtlar... içerir."
+},
+{
+    q: "24. Sistem analistine en uygun örnekleme çeşidi olarak belirtilen hangisidir?",
+    options: [
+        ["Uygunluk Örneklemesi", "Bu en az güvenilen örneklemedir."],
+        ["Maksatlı Örnekleme", "Bu kabul edilebilir güvenliğe sahiptir ancak en uygunu değildir."],
+        ["Basit Olası Örnekleme", "Bu olasılıklıdır ancak her zaman en verimlisi olmayabilir."],
+        ["Kompleks Olası Örnekleme", "Sistematik, katmanlı gibi yöntemleri içeren 'Kompleks Olası Örnekleme', sistem analizine en uygun olarak belirtilmiştir."],
+        ["Rastgele Olmayan Örnekleme", "Bu genel bir kategoridir."]
+    ],
+    answer: 3,
+    summary: "Kompleks Olası Örnekleme: Sistem analizine en uygun örneklemedir (sistematik örnekleme, katman örnekleme, küme örnekleme vb.)."
+},
+{
+    q: "25. 'Sistemde günlük bilgi sorgulayan' kullanıcılar hangi tipe girer?",
+    options: [
+        ["İşlem Kullanıcıları", "İşlem kullanıcıları veri girer veya rutin işleri yapar."],
+        ["Sorgu Kullanıcıları", "Sistemden anlık ve spesifik bilgi çeken kullanıcılar bu gruba girer."],
+        ["Yönetici Seviyesindeki Kullanıcılar", "Bu kullanıcılar özet raporlar alır."],
+        ["Yönetimsel Kullanıcılar", "Bu kullanıcılar stratejik ve günlük bilgilerle ilgilenir."],
+        ["Veri Analistleri", "Bu bir roldür ancak dokümandaki kullanıcı tipleri arasında bu şekilde listelenmemiştir."]
+    ],
+    answer: 1,
+    summary: "Sorgu Kullanıcıları: Sistemde günlük bilgi sorgulayan kullanıcılardır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

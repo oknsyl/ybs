@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 11</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 11</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Analiz çalışmaları sonucunda belirlenen sistemin geliştirilmesi için çeşitli alternatifler arasından seçim yapabilmek amacıyla hangi iki temel model türü kullanılabilir?",
+    options: [
+        ["Finansal veya Skorlama Modelleri", "Sistem alternatiflerini değerlendirmek ve en iyisini seçmek için finansal (parasal) veya skorlama (puanlama) modelleri kullanılır."],
+        ["Matematiksel veya Grafiksel Modeller", "Bunlar genel model tipleridir, alternatif seçimi için kullanılan spesifik yaklaşımlar değillerdir."],
+        ["Teorik veya Pratik Modeller", "Bu genel bir ayrımdır, dokümanda geçen bir sınıflandırma değildir."],
+        ["İç Kaynak veya Dış Kaynak Modelleri", "Bunlar geliştirme alternatifleridir, seçim yapmak için kullanılan modeller değil."],
+        ["Agile veya Waterfall Modelleri", "Bunlar yazılım geliştirme metodolojileridir."]
+    ],
+    answer: 0,
+    summary: "Analiz çalışmaları sonucunda ortaya çıkan alternatifler arasında seçim yapabilmek için finansal veya skorlama modelleri kullanılabilir."
+},
+{
+    q: "2. Finansal modeller kapsamında en iyi alternatifi seçebilmek için öncelikle yapılması gereken adımlar arasında hangileri bulunur? \nI. Donanım envanterinin çıkarılması \nII. Yazılım envanterinin çıkarılması \nIII. Sistemin iş yükünün tespit edilmesi \nIV. İnsan kaynakları gereksinimlerinin tespiti",
+    options: [
+        ["I ve II", "Eksik, iş yükü ve insan kaynakları da belirlenmelidir."],
+        ["III ve IV", "Eksik, donanım ve yazılım envanteri de çıkarılmalıdır."],
+        ["I, II ve III", "Eksik, insan kaynakları gereksinimleri de bu ön adımlardandır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, finansal analiz öncesinde her bir alternatif için yapılması gereken temel adımlardandır."],
+        ["Yalnızca I ve IV", "Eksik, yazılım envanteri ve iş yükü de belirlenmelidir."]
+    ],
+    answer: 3,
+    summary: "Finansal analiz öncesi; donanım envanteri, yazılım envanteri, sistemin iş yükü, donanım/yazılım ihtiyaçları ve insan kaynakları gereksinimleri gibi adımların tamamlanması gerekir."
+},
+{
+    q: "3. 'Organizasyonda kullanılan ya da lisansına sahip olunan yazılımların araştırılması ve dökümünün çıkarılması' hangi adımdır?",
+    options: [
+        ["Donanım envanterinin çıkarılması", "Bu, fiziksel bilgisayar ekipmanlarıyla ilgilidir."],
+        ["İş yükünün tespiti", "Bu, sistemin ne kadar yoğun kullanılacağının belirlenmesidir."],
+        ["Yazılım envanterinin çıkarılması", "Bu tanım, mevcut yazılımların listelenmesi olan 'yazılım envanterinin çıkarılması' adımına aittir."],
+        ["Yazılım ihtiyaçlarının belirlenmesi", "Bu, gelecekte ne tür yazılımlara ihtiyaç duyulacağının belirlenmesidir."],
+        ["Lisans yönetimi", "Bu genel bir kavramdır, adımdaki spesifik ifade değil."]
+    ],
+    answer: 2,
+    summary: "Yazılım envanterinin çıkarılması: Organizasyonda kullanılan ya da lisansına sahip olunanan yazılımların araştırılması ve dökümünün çıkarılması gerekir."
+},
+{
+    q: "4. Yeni sistemin kurulması ve operasyonel kullanımı sırasında 'ihtiyaç duyulacak insan kaynağının tespit edilmesi' hangi adımda gerçekleştirilir?",
+    options: [
+        ["İş yükünün tespiti", "İş yükü, ihtiyaç duyulacak insan kaynağı sayısını etkiler ama bu adımın kendisi değildir."],
+        ["Proje ekibinin atanması", "Bu, proje yönetimi ile ilgili bir adımdır."],
+        ["İnsan kaynakları gereksinimlerinin tespiti", "Sistemin hem kurulumu hem de kullanımı için ne kadar ve ne nitelikte personele ihtiyaç olduğunun belirlenmesi bu adımdır."],
+        ["Eğitim planlaması", "Bu, insan kaynakları gereksinimleri belirlendikten sonraki bir adımdır."],
+        ["Organizasyonel fizibilite", "Bu, sistemin kuruma uyumunu inceler."]
+    ],
+    answer: 2,
+    summary: "İnsan kaynakları gereksinimlerinin tespiti: Yeni sistemin kurulmasının gerçekleştirilebilmesi için hem projenin yürütülmesi sırasında hem de sistemin operasyonel kullanımında ihtiyaç duyulacak insan kaynağının tespit edilmesi gerekir."
+},
+{
+    q: "5. 'Dokunulamaz faydaları da birçok kriter kullanarak tanımlayabilen' ve 'alternatifleri ağırlıklı skorlarını temel alarak karşılaştıran' model hangisidir?",
+    options: [
+        ["Finansal Modeller", "Finansal modeller genellikle dokunulur, yani parasal olarak ölçülebilen fayda ve maliyetlere odaklanır."],
+        ["Skorlama Modelleri", "Bu tanım, farklı kriterlere ağırlıklar vererek alternatifleri puanlayan ve bu sayede dokunulamaz faydaları da analize dahil edebilen skorlama modellerine aittir."],
+        ["Matematiksel Modeller", "Bu genel bir model tipidir."],
+        ["Karşılaştırma Modelleri", "Bu genel bir ifadedir, spesifik modelin adı Skorlama Modelleri'dir."],
+        ["Kalitatif Modeller", "Skorlama modelleri kalitatif unsurları içerir ama sadece onlardan oluşmaz."]
+    ],
+    answer: 1,
+    summary: "Skorlama modelleri, alternatifleri, alternatiflerin ağırlıklı skorlarını temel alarak, karşılaştırmaktadır. Skorlama modelleri aynı zamanda dokunulamaz faydaları da birçok kriter kullanarak tanımlayabilmektedir."
+},
+{
+    q: "6. Skorlama modellerinin özellikleriyle ilgili aşağıdakilerden hangisi söylenemez?",
+    options: [
+        ["Hem kalitatif hem de kalitatif olmayan unsurları bir araya getirebilir.", "Bu, skorlama modellerinin bir özelliğidir."],
+        ["Kullanılan ağırlıklar ve skorlar oldukça subjektif olabilir.", "Bu, skorlama modellerinin bir özelliğidir."],
+        ["Her zaman finansal modellerden daha objektif sonuçlar verir.", "Yanlış. Tam tersine, özellikle kısa dönem temel alındığında finansal modellerin skorlama modellerine göre daha subjektif olabileceği belirtilmiştir."],
+        ["Bazı kriterler tersine skorlanabilir.", "Bu, skorlama modellerinin bir özelliğidir."],
+        ["Geçmiş deneyimlerden faydalanılarak daha gerçekçi bir iş örneği yaratılabilir.", "Bu, skorlama modellerinin bir özelliğidir."]
+    ],
+    answer: 2,
+    summary: "Skorlama modellerinin bir özelliği, 'Kısa dönem temel alındığında finansal modeller skorlama modellerine nazaran daha subjektif sonuçlar verebilir' olmasıdır. Yani her zaman daha objektif değildir."
+},
+{
+    q: "7. Skorlama modeli örneğindeki tabloda, bir alternatifin 'Toplam Skoru' nasıl hesaplanmaktadır?",
+    options: [
+        ["Tüm skorların toplanmasıyla", "Hayır, ağırlıklar da hesaba katılmalıdır."],
+        ["Her bir kriter için (Ağırlık x Skor) değerlerinin toplanmasıyla", "Toplam skor, her bir kriterin ağırlığı ile o kritere verilen skorun çarpımlarının toplamıdır."],
+        ["Tüm ağırlıkların toplanmasıyla", "Hayır, skorlar da hesaba katılmalıdır."],
+        ["En yüksek skor ile en yüksek ağırlığın çarpılmasıyla", "Hayır, tüm kriterler hesaba katılır."],
+        ["Tüm skorların ortalamasının alınmasıyla", "Hayır, ağırlıklı bir hesaplama yapılır."]
+    ],
+    answer: 1,
+    summary: "Örnek tabloda görüldüğü gibi, bir alternatifin toplam skoru, her bir kritere atanan ağırlık ile o alternatifin o kriterden aldığı skorun çarpılması ve bu çarpım sonuçlarının toplanmasıyla bulunur. Örneğin, Alternatif 1 için: (5x5) + (4x3) + (4x3) = 49."
+},
+{
+    q: "8. Finansal modellerde, maliyet ve kazançlar belirlendikten sonra en iyi alternatifi tespit etmek için kullanılabilecek finansal analiz yöntemleri arasında hangileri yer alır? \nI. Başa baş metodu \nII. Geri ödeme metodu \nIII. Nakit akışı metodu \nIV. Şimdiki değer metodu",
+    options: [
+        ["I ve IV", "Eksik, geri ödeme ve nakit akışı metotları da listelenmiştir."],
+        ["II ve III", "Eksik, başa baş ve şimdiki değer metotları da listelenmiştir."],
+        ["I, II ve III", "Eksik, şimdiki değer metodu da listelenmiştir."],
+        ["I, II, III ve IV", "Dokümanda bu yöntemlerin tümü, maliyet/kazanç analizinde kullanılabilecek yöntemler olarak sayılmıştır."],
+        ["Yalnızca IV", "Eksik, diğer yöntemler de listelenmiştir."]
+    ],
+    answer: 3,
+    summary: "Finansal analizler sonucunda alternatifleri karşılaştırmak için; başa baş metodu, geri ödeme metodu, nakit akışı metodu ve şimdiki değer metodu gibi çeşitli finansal analiz yöntemleri kullanılabilir."
+},
+{
+    q: "9. Finansal modelleme öncesinde, 'hem bugün için hem de ileriye dönük olarak organizasyondaki iş süreçlerinin belirlenmesi ve bu süreçlere bağlı iş yüklerinin tahmin edilmesi' hangi adımın tanımıdır?",
+    options: [
+        ["Donanım ihtiyaçlarının belirlenmesi", "Bu, iş yükü belirlendikten sonraki bir adımdır."],
+        ["Sistemin iş yükünün tespit edilmesi", "Bu tanım, sistemin mevcut ve gelecekteki kullanım yoğunluğunun, yani iş yükünün tespit edilmesi adımına aittir."],
+        ["Yazılım envanterinin çıkarılması", "Bu, mevcut yazılımların listelenmesidir."],
+        ["Operasyonel fizibilite", "Bu, bir fizibilite türüdür, finansal modelleme adımı değil."],
+        ["Kapasite planlaması", "Bu genel bir kavramdır, dokümandaki spesifik adımın adı farklıdır."]
+    ],
+    answer: 1,
+    summary: "Hem bugün için hem de ileriye dönük olarak sistemin iş yükünün tespit edilmesi: Bu tespitin yapılabilmesi amacıyla hem bugün için hem de ileriye dönük olarak organizasyondaki iş süreçlerinin belirlenmesi hem de söz konusu süreçlere bağlı olarak iş yüklerinin tahmin edilebilmesi gerekir."
+},
+{
+    q: "10. Aşağıdakilerden hangisi, finansal modelleme öncesi yapılması gereken adımlardan biri değildir?",
+    options: [
+        ["Donanım envanterinin çıkarılması", "Bu, yapılması gereken bir adımdır."],
+        ["Yazılım envanterinin çıkarılması", "Bu, yapılması gereken bir adımdır."],
+        ["Skorlama modelinin oluşturulması", "Skorlama modeli, finansal modele bir alternatiftir; onun bir ön adımı değildir."],
+        ["Sistemin iş yükünün tespit edilmesi", "Bu, yapılması gereken bir adımdır."],
+        ["İnsan kaynakları gereksinimlerinin tespiti", "Bu, yapılması gereken bir adımdır."]
+    ],
+    answer: 2,
+    summary: "Finansal modelleme öncesi; donanım ve yazılım envanteri, iş yükü, donanım/yazılım ihtiyaçları ve insan kaynakları gereksinimleri belirlenir. Skorlama modeli ise ayrı bir alternatif seçim yöntemidir."
+},
+{
+    q: "11. En iyi alternatifin sunulacağı bir teklif dokümanının, okuyucunun dokümanı daha kolay takip etmesini sağlayan ve konuların başlıklarını içeren bölümü hangisidir?",
+    options: [
+        ["Kapak sayfası", "Kapak sayfası, dokümanın kime hitaben yazıldığını belirtir."],
+        ["Yönetici özeti", "Yönetici özeti, dokümanın amacını ve ana sonucunu kısaca anlatır."],
+        ["İçindekiler", "Teklifin içinde yer alan konuların başlıklarının ve sayfa numaralarının yer aldığı bu kısım 'İçindekiler' bölümüdür."],
+        ["Özet", "Özet, yapılan çalışmanın genel hatlarıyla tekrarlandığı bölümdür."],
+        ["Ekler", "Ekler, ana metne dahil olmayan destekleyici belgeleri içerir."]
+    ],
+    answer: 2,
+    summary: "İçindekiler: Teklifin içinde yer alan konuların başlıklarının yer aldığı bu kısım okuyucunun dokümanı daha kolay takip etmesini sağlayacaktır."
+},
+{
+    q: "12. Bir teklif dokümanında, 'yapılan araştırmalar sonucunda varılan sonuçların aktarıldığı' bölüm hangisidir?",
+    options: [
+        ["Sistem çalışmasının ana hatları", "Bu bölüm, kullanılan yöntemleri ve çalışma detaylarını içerir."],
+        ["Sistem çalışmasının detaylı sonuçları", "Araştırma sonucunda elde edilen bulgular ve varılan sonuçlar bu bölümde aktarılır."],
+        ["Sistem alternatifleri", "Bu bölümde olası çözüm önerileri sunulur."],
+        ["Sistem analistin önerileri", "Bu bölümde, sunulan alternatifler arasından en uygun olanı belirtilir."],
+        ["Yönetici özeti", "Yönetici özeti, sonuçların çok kısa bir özetini içerir, detaylarını değil."]
+    ],
+    answer: 1,
+    summary: "Sistem çalışmasının detaylı sonuçları: Yapılan araştırmalar sonucunda varılan sonuçlar bu kısımda aktarılır."
+},
+{
+    q: "13. Teklif dokümanının, 'yaklaşık 250-375 kelimelik kısa bir metinle ve en iyi teklifi de içerecek şekilde niye böyle bir teklifin hazırlandığını açıklayan' bölümü hangisidir?",
+    options: [
+        ["Giriş", "Bu genel bir ifadedir, doğru terim Yönetici Özeti'dir."],
+        ["Özet", "Özet bölümü genellikle dokümanın sonunda yer alır ve genel bir tekrar niteliğindedir."],
+        ["Kapak sayfası", "Kapak sayfası bir ön yazıdır."],
+        ["Yönetici özeti", "Üst düzey yöneticilerin tüm dokümanı okumaya vakti olmayacağı varsayımıyla hazırlanan ve projenin amacını, ana bulgularını ve önerisini kısaca sunan bu bölüme 'Yönetici Özeti' denir."],
+        ["Projenin başlık sayfası", "Bu sayfa sadece sistemin adını ve hazırlayanları içerir."]
+    ],
+    answer: 3,
+    summary: "Yönetici özeti: 250-375 kelimelik gibi kısa bir metinle (en iyi teklifin de yer alması gerekir) niye böyle bir teklifi hazırlanıldığı açıklanmalıdır."
+},
+{
+    q: "14. Bir teklif dokümanının içeriğinde aşağıdakilerden hangisi yer almaz?",
+    options: [
+        ["Sistem alternatifleri", "Bu, önerilen bölümlerden biridir."],
+        ["Sistem analistin önerileri", "Bu, önerilen bölümlerden biridir."],
+        ["Proje ekibinin detaylı maaş bilgileri", "Bu tür hassas ve idari bilgiler genellikle teklif dokümanında yer almaz."],
+        ["Yönetici özeti", "Bu, önerilen bölümlerden biridir."],
+        ["Ekler (formlar, yazışma örnekleri vb.)", "Bu, önerilen bölümlerden biridir."]
+    ],
+    answer: 2,
+    summary: "Önerilen bir teklif dokümanı; kapak sayfası, yönetici özeti, sistem çalışması detayları, alternatifler, öneriler ve ekler gibi bölümleri içerir. Personelin maaş bilgileri bu dokümanın konusu değildir."
+},
+{
+    q: "15. En iyi alternatifin sunumunda 'Teklifin Profesyonel Stilde Yazılması' başlığı altında ne önerilmektedir?",
+    options: [
+        ["Sadece metin kullanılması", "Hayır, tam tersine görsellerin de kullanılması önerilir."],
+        ["Uygun yerlerde şekil, tablo, şema gibi görsellerin kullanılması", "Teklifin daha anlaşılır ve profesyonel olması için metnin yanı sıra görsel unsurların da kullanılması önerilir."],
+        ["Teklifin en fazla 5 sayfa olması", "Böyle bir kısıtlama belirtilmemiştir."],
+        ["Teklifin elle yazılması", "Hayır, hazır rapor şablonları kullanılması önerilir."],
+        ["Teknik terimlerden tamamen kaçınılması", "Gerekli yerlerde teknik terimler kullanılmalıdır, ancak anlaşılır bir dille."]
+    ],
+    answer: 1,
+    summary: "Teklifin Profesyonel Stilde Yazılması: Teklif dokümanı yazılırken hazır rapor şablonları kullanabilmenin yanı sıra uygun olduğu yerlerde şekil, tablo, şema, grafik gibi görseller de kullanılabilir."
+},
+{
+    q: "16. Bir sistem teklifinin sözlü sunumunun etkili olabilmesi için dikkat edilmesi gereken hususlar arasında hangileri bulunur? \nI. Dinleyici profili \nII. Sunumun organizasyonu \nIII. Sunum yazılımı \nIV. Etkili sözlü sunum",
+    options: [
+        ["I ve II", "Eksik, yazılım ve sunum tekniği de önemlidir."],
+        ["III ve IV", "Eksik, dinleyici profili ve organizasyon da önemlidir."],
+        ["I, II ve IV", "Eksik, kullanılacak sunum yazılımı da bir husustur."],
+        ["II, III ve IV", "Eksik, dinleyici profilini dikkate almak da önemlidir."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, etkili bir sözlü sunum için dikkat edilmesi gereken hususlardır."]
+    ],
+    answer: 4,
+    summary: "Sistem teklifinin etkili bir şekilde sunulabilmesi için; Dinleyici profili, Sunumun organizasyonu, Sunum yazılımı ve Etkili sözlü sunum gibi hususlara dikkat edilmesi gerekir."
+},
+{
+    q: "17. Bir teklif dokümanında, 'her bir alternatifin (3 veya 4 mümkün çözüm) birer alt bölümde açıklandığı' bölüm hangisidir?",
+    options: [
+        ["Sistem çalışmasının detaylı sonuçları", "Bu bölümde araştırma bulguları yer alır."],
+        ["Sistem analistin önerileri", "Bu bölümde seçilen en iyi alternatif detaylandırılır."],
+        ["Sistem alternatifleri", "Olası tüm çözüm yollarının artı ve eksileriyle açıklandığı bölüm 'Sistem alternatifleri'dir."],
+        ["Ekler", "Ekler, destekleyici belgeleri içerir."],
+        ["Yönetici özeti", "Bu bölümde alternatiflerden sadece kısaca bahsedilebilir."]
+    ],
+    answer: 2,
+    summary: "Sistem alternatifleri: Her bir alternatif (3 veya 4 mümkün çözüm) birer alt bölümde açıklanmalıdır."
+},
+{
+    q: "18. Teklif dokümanında, 'sistemin adı ve teklifin kimler tarafından geliştirildiği bilgilerinin yer aldığı' sayfa hangisidir?",
+    options: [
+        ["Kapak sayfası", "Kapak sayfası, teklifin sunulduğu makama hitaben bir ön yazı içerir."],
+        ["İçindekiler", "İçindekiler, bölüm başlıklarını listeler."],
+        ["Özet", "Özet, çalışmanın genel bir tekrarıdır."],
+        ["Projenin başlık sayfası", "Sistemin adını ve hazırlayanları içeren sayfa 'Projenin başlık sayfası'dır."],
+        ["Giriş bölümü", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Projenin başlık sayfası: Sistemin adı ve teklifin kimler tarafından geliştirildiği bilgileri yer alır."
+},
+{
+    q: "19. Alternatifler arasından en uygun olanının belirtilip daha detaylı incelendiği bölüm hangisidir?",
+    options: [
+        ["Sistem alternatifleri", "Bu bölümde tüm alternatifler eşit şekilde sunulur."],
+        ["Sistem çalışmasının sonuçları", "Bu bölümde araştırma bulguları yer alır."],
+        ["Sistem analistin önerileri", "Analistin, değerlendirmeler sonucunda en uygun bulduğu alternatifi gerekçeleriyle birlikte detaylandırdığı bölüm budur."],
+        ["Yönetici özeti", "Bu bölümde öneriden sadece kısaca bahsedilir."],
+        ["Sonuç bölümü", "Bu genel bir ifadedir, doğru terim 'Sistem analistin önerileri'dir."]
+    ],
+    answer: 2,
+    summary: "Sistem analistin önerileri: Bir önceki bölümde açıklanan alternatiflerden en uygun olanı en iyi alternatif olarak belirtilir ve daha detaylı incelenir."
+},
+{
+    q: "20. Aşağıdakilerden hangisi etkili bir sözlü sunum için dikkat edilmesi gereken hususlardan biri değildir?",
+    options: [
+        ["Sunumun organizasyonu ve mantıksal bir akışa sahip olması", "Bu, etkili bir sunum için önemlidir."],
+        ["Sunumu yapacak kişinin dinleyici profilini önceden analiz etmesi", "Bu, etkili bir sunum için önemlidir."],
+        ["Sunumda kullanılacak projeksiyon cihazının markası", "Kullanılacak cihazın çalışır durumda olması önemlidir, ancak markası dikkat edilmesi gereken bir husus olarak listelenmemiştir."],
+        ["Doğru ve etkili bir sunum yazılımının seçilmesi", "Bu, etkili bir sunum için önemlidir."],
+        ["Sunumun etkili bir sözlü anlatım ve beden dili ile desteklenmesi", "Bu, etkili bir sunum için önemlidir."]
+    ],
+    answer: 2,
+    summary: "Etkili bir sözlü sunum için dikkat edilmesi gerekenler; dinleyici profili, sunumun organizasyonu, sunum yazılımı ve etkili sözlü sunumdur. Projeksiyon cihazının markası gibi teknik detaylar bu listede yer almaz."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

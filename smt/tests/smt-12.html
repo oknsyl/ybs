@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 12</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 12</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Sistem tasarım aşaması hangi iki temel seviyeden oluşur?",
+    options: [
+        ["Analiz ve Tasarım", "Bunlar SGYD'nin farklı adımlarıdır."],
+        ["Fiziksel ve Mantıksal Tasarım", "Bunlar tasarımın türleridir, dokümandaki seviye adları değil."],
+        ["Genel Tasarım ve Detay Tasarım", "Sistem tasarım aşaması; çözümün genel yapısını içeren Genel Tasarım ve spesifik detayları içeren Detay Tasarım olmak üzere iki seviyeye ayrılır."],
+        ["Stratejik ve Operasyonel Tasarım", "Bu terimler dokümanda bu şekilde kullanılmamıştır."],
+        ["Modül ve Veritabanı Tasarımı", "Bunlar Detay Tasarım'ın alt başlıklarıdır."]
+    ],
+    answer: 2,
+    summary: "Sistem tasarım aşamasının iki seviyesi vardır: Genel Tasarım (çözümün genel yapısı ve formunu içerir) ve Detay Tasarım (spesifik detayların tasarımını içerir)."
+},
+{
+    q: "2. Genel tasarımın tanımında genellikle kullanılan iki temel şema hangileridir?",
+    options: [
+        ["Veri Akış Diyagramı ve ER Diyagramı", "Bu şemalar genellikle Analiz aşamasında kullanılır."],
+        ["Sistem Akış Şeması ve Yapısal Şema", "Genel tasarımın yapısını ve akışını tanımlamak için bu iki temel şema kullanılır."],
+        ["Akış Şeması ve Kod Taslağı", "Bunlar, bir modülün iç mantığını tasarlamak için kullanılır."],
+        ["Organizasyon Şeması ve Gantt Şeması", "Bunlar sırasıyla kurum yapısını ve proje takvimini gösteren araçlardır."],
+        ["Arayüz Tasarımı ve Veritabanı Şeması", "Bunlar Detay Tasarım'ın parçalarıdır."]
+    ],
+    answer: 1,
+    summary: "Genel tasarımın tanımında genellikle iki temel şema kullanılmaktadır: Sistem akış şeması ve Yapısal şema."
+},
+{
+    q: "3. 'Bir bilişim sisteminin çeşitli programlarının, dosyalarının, veritabanlarının ve ilişkili manüel yordamlarının çeşitli semboller aracılığı ile gösterimi' hangi şemayı tanımlar?",
+    options: [
+        ["Yapısal Şema", "Yapısal şema, program modülleri arasındaki hiyerarşik ilişkiyi gösterir."],
+        ["Veri Akış Diyagramı", "Bu, verinin sistemdeki mantıksal akışını gösterir."],
+        ["Sistem Akış Şeması", "Bu tanım, sistemin tüm bileşenlerini (programlar, dosyalar vb.) ve aralarındaki fiziksel akışı gösteren Sistem Akış Şeması'na aittir."],
+        ["İş Akış Şeması", "Bu genel bir ifadedir."],
+        ["Genel Tasarım Şeması", "Bu genel bir ifadedir, spesifik şemanın adı değil."]
+    ],
+    answer: 2,
+    summary: "Sistem akış şeması, bir bilişim sisteminin çeşitli programlarının, dosyalarının, veritabanlarının ve ilişkili manüel yordamlarının çeşitli semboller aracılığı ile gösterimidir."
+},
+{
+    q: "4. Sistem akış şemalarının en belirgin özelliklerinden biri nedir?",
+    options: [
+        ["Daha çok sistemin mantıksal akışına odaklanması", "Bu, Veri Akış Diyagramlarının bir özelliğidir."],
+        ["Sadece program modülleri arasındaki hiyerarşiyi göstermesi", "Bu, Yapısal Şemaların bir özelliğidir."],
+        ["Daha çok fiziksel kuruluma odaklanması (dosya, disk, bant gibi)", "Sistem akış şemaları, verinin hangi fiziksel ortamlar arasında aktığını gösterdiği için daha çok fiziksel kuruluma odaklanır."],
+        ["Sadece manüel yordamları göstermesi", "Hayır, program, dosya gibi tüm bileşenleri gösterir."],
+        ["Sadece tek bir programın iç yapısını göstermesi", "Hayır, farklı programları içeren büyük bilgi sistemlerini tanımlar."]
+    ],
+    answer: 2,
+    summary: "Sistem akış şemaları, girdi ve çıktıları göstermektedir ancak daha çok fiziksel kuruluma odaklanmıştır (örneğin; dosya, disk veya bantlar gibi)."
+},
+{
+    q: "5. 'Bir bilgisayar sisteminin modülleri arasındaki ilişkiyi gösteren hiyerarşik bir diyagram' olarak tanımlanan şema hangisidir?",
+    options: [
+        ["Sistem Akış Şeması", "Sistem akış şeması, programlar ve dosyalar arası akışı gösterir."],
+        ["Veri Akış Diyagramı", "Bu, verinin mantıksal akışını gösterir."],
+        ["Organizasyon Şeması", "Bu, kurumun hiyerarşik yapısını gösterir."],
+        ["Yapısal Şema", "Bu tanım, bir programın modüllere nasıl ayrıldığını ve bu modüllerin birbirini nasıl çağırdığını hiyerarşik olarak gösteren Yapısal Şema'ya aittir."],
+        ["Modül Diyagramı", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Yapısal şema, bir bilgisayar sisteminin modülleri arasındaki ilişkiyi gösteren hiyerarşik bir diyagramdır."
+},
+{
+    q: "6. Yapısal şemada, program akışını ve çalışmasını kontrol eden üst seviye modüllere ne ad verilir?",
+    options: [
+        ["Baş Modül", "Baş modül, ağacın en tepesindeki modüldür."],
+        ["Kontrol Modülü", "Program akışını ve çalışmasını kontrol eden üst seviye modüllere 'kontrol modülü' denir."],
+        ["Alt Seviye Modül", "Alt seviye modüller program mantığını içerir, akışı kontrol etmez."],
+        ["Çağrılan Modül", "Bu, başka bir modül tarafından çağrılan herhangi bir modüldür."],
+        ["Fonksiyon Modülü", "Bu genel bir ifadedir."]
+    ],
+    answer: 1,
+    summary: "Üst seviye modüllere kontrol modülü adı verilir. Kontrol modülleri program akışını ve çalışmasını kontrol eden modüllerdir."
+},
+{
+    q: "7. Yapısal şema sembollerinden 'içi dolu çemberli küçük ok' neyi temsil eder?",
+    options: [
+        ["Veri eşleşmesini", "Veri eşleşmeleri, içi boş çemberli oklarla gösterilir."],
+        ["Koşullu çağrıyı", "Koşullu çağrı, içi dolu baklava biçimli şekil ile gösterilir."],
+        ["İterasyonu (döngüyü)", "İterasyon, baş modül altındaki eğri ok ile gösterilir."],
+        ["Kontrol eş bayrağını", "Dosya sonu bilgisi gibi kontrol amaçlı verileri taşıyan bu sembol, 'kontrol eş bayrağı'nı temsil eder."],
+        ["Ortak alt programı", "Bu, çift barlı bir dikdörtgenle gösterilir."]
+    ],
+    answer: 3,
+    summary: "Yapısal şemada, içi dolu çemberli oklar kontrol eş bayrağını temsil eder (örneğin; bir dosya bitişinin bayrağı)."
+},
+{
+    q: "8. Yapısal şemadaki bir modülün iç mantığını (algoritmasını) tanımlamak için kullanılabilecek yöntemler arasında hangileri yer alır? \nI. Akış şeması \nII. Yapısal İngilizce \nIII. Kod taslağı",
+    options: [
+        ["Yalnızca I", "Eksik, diğer iki yöntem de kullanılabilir."],
+        ["I ve II", "Eksik, kod taslağı da bir yöntemdir."],
+        ["I, II ve III", "Bir modülün algoritmasını tasarlamak için bu üç yöntem de kullanılabilir."],
+        ["Yalnızca II ve III", "Eksik, akış şeması da bir yöntemdir."],
+        ["Yalnızca I ve III", "Eksik, yapısal İngilizce de bir yöntemdir."]
+    ],
+    answer: 2,
+    summary: "Yapısal şemadaki her bir modülün iç mantığı, Akış şeması, Yapısal İngilizce veya Kod taslağı gibi üç yöntemden biri kullanılarak tanımlanabilir."
+},
+{
+    q: "9. Sistem tasarım aşamasında, derlenen tüm bilgilerin (tasarım modelleri, veri alanları, formlar vb.) yönetilmesi ve ekip tarafından paylaşılması için kullanılan en temel araç hangisidir?",
+    options: [
+        ["Proje Çizelgesi", "Proje çizelgesi, görevleri ve zamanı yönetir, bilginin kendisini değil."],
+        ["E-posta", "E-posta bir iletişim aracıdır, merkezi bir bilgi yönetim aracı değil."],
+        ["CASE Araçları", "Bilginin koordinasyonunda kullanılan en temel araç, merkezi bir veri havuzu (repository) kullanan CASE araçlarıdır."],
+        ["Word/Excel Dosyaları", "Bunlar dokümantasyon için kullanılabilir ama merkezi ve bütünleşik bir araç değildir."],
+        ["Veritabanı Yönetim Sistemi", "Bu, uygulamanın veritabanını yönetir, tasarım dokümanlarını değil."]
+    ],
+    answer: 2,
+    summary: "Bilginin koordinasyonunda kullanılan en temel araç CASE araçlarıdır. Bu araçlar bilgiye ulaşmak için merkezi bir havuz kullanır; bu havuz bütün proje ekibinin proje ile ilgili bilgiyi görmesini sağlar."
+},
+{
+    q: "10. 'Detay Tasarım' kapsamında aşağıdaki tasarımlardan hangileri yer alır? \nI. Kod tasarımı \nII. Arayüz tasarımı \nIII. Kontrol tasarımı \nIV. Veritabanı tasarımı",
+    options: [
+        ["I ve II", "Eksik, diğerleri de detay tasarımın parçasıdır."],
+        ["III ve IV", "Eksik, diğerleri de detay tasarımın parçasıdır."],
+        ["I, II ve IV", "Eksik, kontrol tasarımı da detay tasarımın parçasıdır."],
+        ["II, III ve IV", "Eksik, kod tasarımı da detay tasarımın parçasıdır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, Detay Tasarım kapsamında tamamlanması gereken tasarımlardır."]
+    ],
+    answer: 4,
+    summary: "Yeni sistemin tasarımında, detay tasarım kapsamında; Kod tasarımı, Arayüz Tasarımı, Çıktı Tasarımı, Girdi Tasarımı, Kontrol tasarımı ve Veritabanı tasarımı gibi tasarımların tamamlanması gerekir."
+},
+{
+    q: "11. 'Bir veri elemanını temsil eden sayılar ve harflerin oluşturduğu bir set' olarak tanımlanan kavram hangisidir?",
+    options: [
+        ["Veri Tipi", "Veri tipi, bir verinin türünü belirtir (örn: string, integer)."],
+        ["Değişken", "Değişken, programlamada bir değeri tutan birimdir."],
+        ["Kod", "Bu tanım, bir veri elemanını temsil etmek için kullanılan 'Kod' kavramına aittir."],
+        ["Anahtar", "Anahtar, bir kaydı benzersiz kılan bir koddur, kodun genel tanımı değil."],
+        ["Format", "Format, bir verinin gösterim şeklidir."]
+    ],
+    answer: 2,
+    summary: "Kod bir veri elemanını temsil eden sayılar ve harflerin oluşturduğu bir settir."
+},
+{
+    q: "12. 'Her yeni gelen elemanın bir sonraki sayıyı kod numarası olarak aldığı' ve fazla bilgi vermeyen kodlama türü hangisidir?",
+    options: [
+        ["Seri Kodlama", "Bu tanım, elemanlara ardışık numaralar veren Seri Kodlama'ya aittir."],
+        ["Blok Kodlama", "Blok kodlama, belirli gruplara ayrılmış numara blokları kullanır."],
+        ["Hiyerarşik Kodlama", "Hiyerarşik kodlama, ana grup ve alt grup ilişkisini gösterir."],
+        ["Yaratılan Kodlama", "Yaratılan kodlama, elemanın kendi bilgilerinden kod türetir."],
+        ["Kontrol Basamaklı Kodlama", "Bu kodlama türü, hata kontrolü için ek bir basamak içerir."]
+    ],
+    answer: 0,
+    summary: "Seri Kodlama: Her yeni gelen eleman bir sonraki sayıyı kod numarası olarak alır. Fazla bilgi vermeyen bu tür kodlama ile en azından hangi elemanın hangi elemandan sonra sisteme girdiği bilgisi öğrenilebilir."
+},
+{
+    q: "13. Muhasebe departmanı için 300-399, Satış departmanı için 800-899 gibi numara aralıklarının kullanıldığı kodlama türü hangisidir?",
+    options: [
+        ["Seri Kodlama", "Seri kodlama ardışık numaralar verir."],
+        ["Hiyerarşik Kodlama", "Hiyerarşik kodlama, 301'in 300'ün alt öğesi olduğu gibi bir yapı gösterir."],
+        ["Blok Kodlama", "Belirli gruplar veya kategoriler için belirli sayı bloklarının ayrıldığı bu yöntem 'Blok Kodlama'dır."],
+        ["Sınıflandırılmış Kodlama", "Sınıflandırılmış kodlamada her hane bir özelliği temsil eder."],
+        ["Kategorik Kodlama", "Kategorik kodlama genellikle alfabetik karakterler kullanır."]
+    ],
+    answer: 2,
+    summary: "Blok Kodlama: Çeşitli özelliklerine göre gruplanmış olan elemanlara girdiği gruba/kategoriye göre ait olduğu bloktan bir numara atanır."
+},
+{
+    q: "14. Bir üniversitede, fakülte kodunun ilk haneyi, bölüm kodunun ise sonraki iki haneyi oluşturduğu '302' gibi bir öğrenci numarası, hangi kodlama türüne örnektir?",
+    options: [
+        ["Blok Kodlama", "Blok kodlamada aralıklar önemlidir, alt grup ilişkisi değil."],
+        ["Hiyerarşik Kodlama", "Kodun her bir parçasının bir ana grubun alt grubunu temsil ettiği bu yapı 'Hiyerarşik Kodlama'ya örnektir."],
+        ["Sınıflandırılmış Kodlama", "Bu kodlama türüne benzer ancak hiyerarşi vurgusu daha belirgindir."],
+        ["Belirleyici Kodlama", "Belirleyici kodlama, doğrudan bir özelliği (boy, çap gibi) belirtir."],
+        ["Seri Kodlama", "Seri kodlama anlamsız ve ardışık numaralar verir."]
+    ],
+    answer: 1,
+    summary: "Hiyerarşik Kodlama: Kodlanacak her eleman belirlenen bir ana grubun alt gruplarından birine düşer."
+},
+{
+    q: "15. 'JFK' (John F. Kennedy havalimanı için) veya 'İST' (İstanbul için) gibi, kodladığı elemanı çağrıştırıcı karakterlerden oluşan kodlama türü hangisidir?",
+    options: [
+        ["Kategorik Kodlama", "Kategorik kodlama genellikle tek bir harf veya karakterle bir kategoriyi belirtir."],
+        ["Yaratılan Kodlama", "Yaratılan kodlama, elemanın farklı bilgilerini birleştirir."],
+        ["Mnemonik Kodlama", "Hatırlamayı kolaylaştıran ve kodlanan elemanı çağrıştıran bu tür kısaltmalara 'Mnemonik Kodlama' denir."],
+        ["Belirleyici Kodlama", "Bu, elemanın bir özelliğini doğrudan belirtir."],
+        ["Hareket Kodları", "Bu, bir eylemi kodlar."]
+    ],
+    answer: 2,
+    summary: "Mnemonik Kodlama: Kodladığı elemanı çağrıştırıcı birkaç karakterden oluşan kodlamadır. Örnek: Havalimanları için kullanılan kodlama."
+},
+{
+    q: "16. Bir vidanın özelliklerini gösteren '0830' (08mm çap, 30mm boy) gibi, koda bakarak elemanın özelliklerinin direkt anlaşıldığı kodlama türü hangisidir?",
+    options: [
+        ["Sınıflandırılmış Kodlama", "Sınıflandırılmış kodlamada her hane bir kategoriye karşılık gelir (1:Yünlü, 2:İpek gibi)."],
+        ["Hiyerarşik Kodlama", "Bu, bir alt-üst grup ilişkisi göstermez."],
+        ["Belirleyici Kodlama", "Kodun kendisinin, elemanın bir özelliğini (boy, çap, ağırlık vb.) doğrudan belirttiği bu türe 'Belirleyici Kodlama' denir."],
+        ["Blok Kodlama", "Bu, belirli gruplar için numara aralıkları kullanır."],
+        ["Kontrol Basamaklı Kodlama", "Bu, hata kontrolü için ek bir basamak içerir."]
+    ],
+    answer: 2,
+    summary: "Belirleyici Kodlama: Kodlamadaki her hane veya hane grubunun direkt olarak elemanın bazı özelliklerini belirtmesidir."
+},
+{
+    q: "17. Bir ürün kodunun ilk hanesinin ürün tipini, ikinci hanesinin rengini, üçüncü hanesinin ise kumaş cinsini belirttiği kodlama türü hangisidir?",
+    options: [
+        ["Blok Kodlama", "Blok kodlama, numara aralıkları kullanır."],
+        ["Hiyerarşik Kodlama", "Hiyerarşik kodlama, alt-üst grup ilişkisi gösterir."],
+        ["Belirleyici Kodlama", "Belirleyici kodlama, kodun kendisinin bir ölçü birimi gibi bir değeri vardır."],
+        ["Sınıflandırılmış Kodlama", "Kodun her bir hanesinin veya hane grubunun, elemanın farklı bir karakteristiğini veya sınıfını temsil ettiği bu kodlama türüne 'Sınıflandırılmış Kodlama' denir."],
+        ["Yaratılan Kodlama", "Bu, elemanın kendi bilgilerinden (ad, soyad gibi) türetilir."]
+    ],
+    answer: 3,
+    summary: "Sınıflandırılmış Kodlama: Kodlamadaki her hane veya hane grubu elemanla ilgili bir karakteristiğini belirtir."
+},
+{
+    q: "18. 'Kutlu Küçük' isimli, 1978 doğumlu bir personel için 'KK78' gibi bir kod oluşturma yöntemi hangi kodlama türüne girer?",
+    options: [
+        ["Mnemonik Kodlama", "Mnemonik kodlama, genel olarak bilinen bir kavramı çağrıştırır."],
+        ["Yaratılan Kodlama", "Veri elemanının kendi bilgilerinden (adının ilk harfi, soyadının ilk harfi, doğum yılı gibi) çeşitli kurallarla yeni bir kod oluşturma şekli 'Yaratılan Kodlama'dır."],
+        ["Hiyerarşik Kodlama", "Bu bir hiyerarşi göstermez."],
+        ["Seri Kodlama", "Seri kodlama anlamsız ve ardışık numaralar verir."],
+        ["Belirleyici Kodlama", "Bu kod, personelin bir özelliğini doğrudan belirtmez."]
+    ],
+    answer: 1,
+    summary: "Yaratılan Kodlama: Veri elemanının kendisinden çeşitli kurallara göre atanan bir kod oluşturma şeklidir."
+},
+{
+    q: "19. Bir programda 'Kaydet' işlemi için 'K', 'Sil' işlemi için 'S' gibi kodların kullanılması hangi kodlama türüne örnektir?",
+    options: [
+        ["Kategorik Kodlama", "Kategorik kodlama bir nesne grubunu belirtir, bir eylemi değil."],
+        ["Mnemonik Kodlama", "Bu, eylemin kendisini çağrıştırsa da, bir eylemi kodlamak için kullanılan spesifik türün adı Hareket Kodlarıdır."],
+        ["Hareket Kodları", "Bir eleman üzerinde gerçekleştirilecek bir eylemi veya hareketi (kaydet, sil, güncelle gibi) kodlamak için kullanılan bu türe 'Hareket Kodları' denir."],
+        ["Seri Kodlama", "Bu anlamsız ardışık numaralar kullanır."],
+        ["Yaratılan Kodlama", "Bu, bir nesnenin verilerinden kod türetir."]
+    ],
+    answer: 2,
+    summary: "Hareket Kodları: Bir eleman üzerinde gerçekleştirilecek hareketi kodlamak için kullanılır. Yazılım ekranlarında sıkça başvurulan bir kodlamadır."
+},
+{
+    q: "20. Veri girişindeki hataları tespit etmek amacıyla, kod hanelerinin belirli bir matematiksel işlemden geçirilip sonuçta elde edilen rakamın kodun sonuna eklendiği kodlama türü hangisidir?",
+    options: [
+        ["Seri Kodlama", "Bu, hata kontrolü içermez."],
+        ["Belirleyici Kodlama", "Bu, elemanın bir özelliğini belirtir."],
+        ["Yaratılan Kodlama", "Bu, elemanın kendi verilerinden kod türetir."],
+        ["Hiyerarşik Kodlama", "Bu, hiyerarşik bir yapı gösterir."],
+        ["Kontrol Basamaklı Kodlama", "Bu tanım, kodun doğruluğunu kontrol etmek için matematiksel bir formülle ek bir basamağın üretildiği 'Kontrol Basamaklı Kodlama'ya aittir."]
+    ],
+    answer: 4,
+    summary: "Kontrol Basamaklı Kodlama: Kod haneleri belirli bir işlem dizisinden geçirilir ve sonuçta elde edilen rakam, kodun sonuna bir hane olarak eklenir."
+},
+{
+    q: "21. Aşağıdakilerden hangileri 'Kodlama Standartları ve Stratejileri' arasında yer alır? \nI. Teklik \nII. Kısalık \nIII. Genişleyebilirlik \nIV. Sabitlik",
+    options: [
+        ["I ve II", "Eksik, diğer standartlar da önemlidir."],
+        ["III ve IV", "Eksik, diğer standartlar da önemlidir."],
+        ["I, II ve IV", "Eksik, genişleyebilirlik de önemli bir standarttır."],
+        ["II, III ve IV", "Eksik, teklik de önemli bir standarttır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, iyi bir kodlama tasarımı için uyulması gereken standartlardandır."]
+    ],
+    answer: 4,
+    summary: "İyi bir kodlama sisteminin sahip olması gereken standartlar arasında; Teklik, Kısalık, Genişleyebilirlik, Sabitlik, Dengeli Görünüm, Basitlik, Anlamlı Kodlar ve Tek Amaçlı Kodlar bulunur."
+},
+{
+    q: "22. 'Kodlanan her elemanın ayrı bir kodu olması gerektiği' hangi kodlama standardını ifade eder?",
+    options: [
+        ["Teklik", "Her bir elemanın benzersiz ve sadece ona ait bir koda sahip olması 'Teklik' standardıdır."],
+        ["Sabitlik", "Sabitlik, kodların zamanla değiştirilmemesi gerektiğini belirtir."],
+        ["Basitlik", "Basitlik, kodun kolay anlaşılır olması gerektiğini belirtir."],
+        ["Anlamlılık", "Anlamlılık, kodun bir çağrışım yapması gerektiğini belirtir."],
+        ["Kısalık", "Kısalık, kodun gereksiz uzun olmaması gerektiğini belirtir."]
+    ],
+    answer: 0,
+    summary: "Teklik: Kodlanan her elemanın ayrı bir kodu olmalıdır."
+},
+{
+    q: "23. Bir mağazanın ürün kodu için 2 hane kullanması, ancak ürün çeşidi 100'e ulaştığında sisteme yeni ürün ekleyememesi hangi standardın ihlal edildiğini gösterir?",
+    options: [
+        ["Sabitlik", "Bu, kodların değiştirilmesiyle ilgilidir."],
+        ["Genişleyebilirlik", "İleriye dönük ihtiyaçların göz önüne alınmaması ve sistemin gelecekteki büyümeye cevap verememesi 'Genişleyebilirlik' standardının ihlalidir."],
+        ["Dengeli Görünüm", "Bu, kodların birbiriyle tutarlı görünmesiyle ilgilidir."],
+        ["Tek Amaçlılık", "Bu, bir kodun birden fazla anlam taşımamasıyla ilgilidir."],
+        ["Anlamlılık", "Bu, kodun bir çağrışım yapmasıyla ilgilidir."]
+    ],
+    answer: 1,
+    summary: "Genişleyebilirlik: İleriye dönük durum göz önüne alınmalıdır. Örneğin, 80 çeşit ürünü olan bir mağazanın ürün kodu için 2 hane kullanması, gelecekte problemle karşılaşmasına neden olabilir."
+},
+{
+    q: "24. 'Kodların değişmesinin sistemde uzun süre problem yaratması nedeniyle, kodlama gerçekleştirildikten sonra olağanüstü bir durum olmadıkça değişikliğe gidilmemesi' hangi standardı tanımlar?",
+    options: [
+        ["Teklik", "Teklik, her kodun benzersiz olmasıdır."],
+        ["Genişleyebilirlik", "Genişleyebilirlik, gelecekteki büyümeye izin vermesidir."],
+        ["Sabitlik", "Kodların zaman içinde değişmeden kalması gerekliliği 'Sabitlik' standardıdır."],
+        ["Dengeli Görünüm", "Bu, kodların tutarlı bir görünüme sahip olmasıdır."],
+        ["Basitlik", "Bu, kodların kolay anlaşılır olmasıdır."]
+    ],
+    answer: 2,
+    summary: "Sabitlik: Kodların değişmesi sistemde uzun süre problem yaratır. Bu yüzden kodlama gerçekleştirildikten sonra olağanüstü bir durum olmadıkça değişikliğe gidilmemesi gerekmektedir."
+},
+{
+    q: "25. 'Aynı gruba ait kodların birbiriyle aynı görünüme sahip ve tutarlı olması (örneğin aynı uzunlukta olması)' hangi standarda girer?",
+    options: [
+        ["Anlamlı Kodlar", "Bu, kodun bir çağrışım yapmasıdır."],
+        ["Tek Amaçlı Kodlar", "Bu, kodun tek bir şeyi temsil etmesidir."],
+        ["Sabitlik", "Bu, kodun değişmemesidir."],
+        ["Dengeli Görünüm", "Aynı kategorideki kodların benzer bir yapı ve formatta olması 'Dengeli Görünüm' standardıdır."],
+        ["Kısalık", "Bu, kodun gereksiz uzun olmamasıdır."]
+    ],
+    answer: 3,
+    summary: "Dengeli Görünüm: Aynı gruba ait kodlar birbiriyle aynı görünüme sahip ve tutarlı olmalıdır (Aynı uzunluk, vb.)."
+},
+{
+    q: "26. Kodlama tasarımında, görsel olarak birbirine çok yakın olan '0' (sıfır) ve 'O' (harf) gibi karakterlerin kullanılmasından kaçınmak hangi standardın bir gereğidir?",
+    options: [
+        ["Teklik", "Teklik, kodların benzersiz olmasıdır."],
+        ["Anlamlılık", "Anlamlılık, kodların çağrışım yapmasıdır."],
+        ["Genişleyebilirlik", "Bu, gelecekteki büyümeyle ilgilidir."],
+        ["Basitlik", "Kullanıcıların yanlış okumasına veya yanlış girmesine neden olabilecek karmaşadan ve yanlış algılardan kaçınmak 'Basitlik' standardının bir parçasıdır."],
+        ["Sabitlik", "Bu, kodların değişmemesidir."]
+    ],
+    answer: 3,
+    summary: "Basitlik: Karmaşadan ve yanlış algılara sebebiyet verecek uygulamalardan kaçınılmalıdır. Örneğin 0 ve O görsel olarak birbirlerine çok yakındır, bu tür detaylar göz önünde bulundurulmalıdır."
+},
+{
+    q: "27. 'Bir kodlamayı birden çok şey anlatmak için kullanmanın karışıklığa neden olacağı' ilkesi hangi standardı ifade eder?",
+    options: [
+        ["Tek Amaçlı Kodlar", "Bir kodun sadece tek bir şeyi temsil etmesi ve birden fazla anlam taşımaması 'Tek Amaçlı Kodlar' standardıdır."],
+        ["Anlamlı Kodlar", "Anlamlılık, kodun bir çağrışım yapmasıdır, birden fazla anlam taşıması değil."],
+        ["Basitlik", "Basitlik, kolay anlaşılırlıkla ilgilidir."],
+        ["Kısalık", "Kısalık, kodun uzunluğuyla ilgilidir."],
+        ["Sınıflandırılmış Kodlama", "Bu bir kodlama türüdür, bir standart değil."]
+    ],
+    answer: 0,
+    summary: "Tek Amaçlı Kodlar: Bir kodlamayı birden çok şey anlatmak için kullanmak karışıklığa neden olabilir. Örneğin öğrenci kodunu, öğrencinin bölümü ve üyesi olduğu klüp numarası gibi birbirinden farklı 2 özelliği birleştirerek kullanmak tek amaç prensibine uymayacaktır."
+},
+{
+    q: "28. Yapısal şema modüllerindeki program algoritmalarının tasarımı için aşağıdakilerden hangisi önerilen bir yöntem değildir?",
+    options: [
+        ["Akış şeması", "Bu, önerilen bir yöntemdir."],
+        ["Yapısal İngilizce", "Bu, önerilen bir yöntemdir."],
+        ["Kod taslağı", "Bu, önerilen bir yöntemdir."],
+        ["Veri Akış Diyagramı", "Veri Akış Diyagramı (DFD), sistemin genel veri akışını gösterir; tek bir modülün içindeki detaylı algoritmayı tasarlamak için kullanılmaz."],
+        ["Pseudocode", "Bu, Kod Taslağı'nın bir diğer adıdır ve önerilen bir yöntemdir."]
+    ],
+    answer: 3,
+    summary: "Yapısal şemadaki her bir modülün iç mantığı Akış şeması, Yapısal İngilizce veya Kod taslağı kullanılarak tanımlanabilir. Veri Akış Diyagramı ise sistemin genel tasarımına aittir."
+},
+{
+    q: "29. Yapısal şema tasarımının hangi unsurlarla entegrasyonunun gerçekleştirilmesi gerekir? \nI. Kullanıcı Arayüzü \nII. Veritabanı \nIII. Ağ",
+    options: [
+        ["Yalnızca I", "Eksik, veritabanı ve ağ da önemlidir."],
+        ["I ve II", "Eksik, ağ entegrasyonu da gereklidir."],
+        ["I, II ve III", "Oluşturulan yapısal şemanın; kullanıcı arayüzü, veritabanı ve ağ gibi diğer tasarım unsurlarıyla entegre edilmesi ve uyumlu olması gerekir."],
+        ["Yalnızca II ve III", "Eksik, kullanıcı arayüzü de önemlidir."],
+        ["Yalnızca I ve III", "Eksik, veritabanı da önemlidir."]
+    ],
+    answer: 2,
+    summary: "Veri akışı şeması baz alınarak oluşturulan yapısal şemanın, Kullanıcı Arayüzü, Veritabanı ve Ağ gibi unsurlar ile entegrasyonunun da gerçekleştirilmesi gerekmektedir."
+},
+{
+    q: "30. Aşağıdakilerden hangisi sistem tasarım aşamasında 'Proje Koordinasyonu'nun önemini vurgulayan nedenlerden biri değildir?",
+    options: [
+        ["Tasarım aşamasında bütün aktivitelerin koordine edilmesinin güç olabilmesi", "Bu, koordinasyonun neden önemli olduğunu gösterir."],
+        ["Projenin geliştirilmesi esnasında yönetimin karar almaya devam edebilmesi", "Bu, koordinasyonun neden önemli olduğunu gösterir."],
+        ["Tasarım unsurlarının sayısına göre projenin parçalara ayrılması gerekliliği", "Bu, koordinasyonun neden önemli olduğunu gösterir."],
+        ["Sistemin analiz aşamasının başarıyla tamamlanmış olması", "Analiz aşamasının başarısı bir ön koşuldur, ancak tasarım aşamasında koordinasyonun neden önemli olduğunu doğrudan açıklamaz."],
+        ["İnsan kaynakları ile ilgili zorlukların ortaya çıkabilmesi", "Bu, koordinasyonun neden önemli olduğunu gösterir."]
+    ],
+    answer: 3,
+    summary: "Tasarım aşamasında proje koordinasyonunun önemi; aktivitelerin zorluğu, yönetim kararları, projenin parçalara ayrılması ve insan kaynakları zorlukları gibi nedenlerle vurgulanır."
+}  ,
+{
+    q: "31. Yapısal şemada, modüller arasında aktarılan veriyi göstermek için kullanılan 'içi boş çemberli küçük ok' neyi temsil eder?",
+    options: [
+        ["Kontrol eş bayrağını", "Bu, içi dolu çemberli ok ile gösterilir ve dosya sonu gibi kontrol bilgilerini taşır."],
+        ["Veri eşleşmesini", "Modüller arasında geçen normal verileri (örneğin müşteri numarası, ürün fiyatı) gösteren bu sembole 'veri eşleşmesi' denir."],
+        ["Koşullu çağrıyı", "Bu, içi dolu baklava biçimli bir şekil ile gösterilir."],
+        ["İterasyonu (döngüyü)", "Bu, baş modülün altındaki eğri bir ok ile gösterilir."],
+        ["Modül çağrısını", "Bu, modülleri birbirine bağlayan dikey çizgilerle gösterilir."]
+    ],
+    answer: 1,
+    summary: "Yapısal şema sembollerinden olan içi boş çemberli küçük oklar veri eşleşmelerini göstermektedir. Bu, bir modülden diğerine veri aktarıldığı anlamına gelir."
+},
+{
+    q: "32. Bir yapısal şemada, hiyerarşinin en tepesinde yer alan ve altındaki modülleri çağırarak onlara bilgi transferi yapan modüle ne ad verilir?",
+    options: [
+        ["Kontrol Modülü", "Kontrol modülü, akışı kontrol eden genel bir tanımdır, en tepedeki modül olmak zorunda değildir."],
+        ["Çağrılan Modül", "Bu, başka bir modül tarafından çağrılan herhangi bir modüldür."],
+        ["Altprogram Modülü", "Bu, tekrar kullanılabilen bir modül türüdür."],
+        ["Baş modül", "Ağacın en tepesindeki modüle baş modül adı verilir ve temel fonksiyonu altındaki modülleri çağırmak ve onlara bilgi transfer etmektir."],
+        ["Ana Fonksiyon", "Bu bir programlama terimidir, yapısal şema terminolojisi değildir."]
+    ],
+    answer: 3,
+    summary: "Her bir modül spesifik bir fonksiyonu gerçekleştirir. Ağacın en tepesindeki modüle baş modül adı verilir ve baş modülün fonksiyonu altındaki modülleri çağırmak ve onlara bilgi transfer etmektir."
+},
+{
+    q: "33. Sistem tasarım çalışmaları devam ederken, bunlara paralel olarak başlatılması gerekebilecek iki ayrı çalışma hangileridir?",
+    options: [
+        ["Proje planlama ve risk analizi", "Bu çalışmalar genellikle tasarım öncesinde, planlama aşamasında yapılır."],
+        ["Kullanıcı eğitimi ve sistem bakımı", "Bu çalışmalar genellikle sistem kurulduktan sonra, uygulama aşamasında yapılır."],
+        ["Veri dönüştürme projesi ve test örneği geliştirme projesi", "Tasarım devam ederken, bir yandan mevcut verileri yeni sisteme uygun hale getirecek 'veri dönüştürme' projesi, diğer yandan da sistemi test etmek için kullanılacak verileri hazırlayan 'test örneği geliştirme' projesi paralel olarak başlatılabilir."],
+        ["Donanım alımı ve yazılım lisanslama", "Bunlar genellikle planlama ve tasarım sonrası yapılan satınalma faaliyetleridir."],
+        ["Arayüz tasarımı ve veritabanı tasarımı", "Bunlar sistem tasarımının kendi içindeki faaliyetlerdir, ona paralel ayrı çalışmalar değil."]
+    ],
+    answer: 2,
+    summary: "Sistem tasarım çalışmaları paralelinde iki ayrı çalışmanın da başlatılması gerekebilir; veri dönüştürme projesi ve test örneği geliştirme projesi."
+},
+{
+    q: "34. Sistem tasarım aşamasında, proje ekibinin koordinasyonunda aktivitelerin takip edilmesi ve kontrolünün sağlanması amacıyla kullanılması gereken araç hangisidir?",
+    options: [
+        ["Yapısal Şema", "Bu, program modüllerinin hiyerarşisini gösteren bir tasarım aracıdır."],
+        ["Sistem Akış Şeması", "Bu, sistemin fiziksel bileşenleri arasındaki akışı gösteren bir tasarım aracıdır."],
+        ["Proje Çizelgesi", "Aktivitelerin takibi ve kontrolü, proje yönetimi aracı olan 'Proje Çizelgesi' ile sağlanır."],
+        ["CASE Veri Havuzu", "Bu, tasarım bilgilerinin merkezi olarak saklandığı yerdir."],
+        ["Gantt Şeması", "Bu, proje çizelgesinin bir türüdür, ancak dokümanda geçen spesifik ifade 'Proje Çizelgesi'dir."]
+    ],
+    answer: 2,
+    summary: "Proje ekibinin koordinasyonunda, proje çizelgesi aktivitelerin takip edilmesi ve kontrolünün sağlanması amacıyla kullanılmalıdır."
+},
+{
+    q: "35. Bir Yapısal Şema'da, 'sadece bir fonksiyonu gerçekleştiren ve program mantığını içeren temel birimi' temsil eden sembol hangisidir?",
+    options: [
+        ["İçi boş çemberli ok", "Bu, veri eşleşmesini temsil eder."],
+        ["Dikdörtgen", "Yapısal şemada standart bir dikdörtgen, 'modül' olarak adlandırılan ve tek bir fonksiyonu yerine getiren temel program parçasını temsil eder."],
+        ["Baklava dilimi", "Bu, koşullu çağrıyı temsil eder."],
+        ["Eğri ok", "Bu, iterasyonu (döngüyü) temsil eder."],
+        ["Çift barlı dikdörtgen", "Bu, ortak alt programı (library module) temsil eder."]
+    ],
+    answer: 1,
+    summary: "Yapısal şema sembollerinden olan standart dikdörtgen, Modül'ü temsil eder. Modül, sadece bir fonksiyonu gerçekleştiren ve program mantığını içeren temel birimdir."
+},
+{
+    q: "36. Bir Sistem Akış Şeması'nda, 'verinin sıralı bir şekilde manyetik teyp üzerine kaydedildiğini' gösteren sembol hangisidir?",
+    options: [
+        ["Silindir şeklindeki sembol", "Bu, disk veya doğrudan erişimli depolama aygıtını temsil eder."],
+        ["Altı kıvrık dikdörtgen", "Bu, fiziksel doküman veya raporu temsil eder."],
+        ["Makara şeklindeki sembol", "Bu sembol, manyetik teyp (magnetic tape) üzerine sıralı kayıt yapılan bir dosyayı temsil eder."],
+        ["Dalgalı çizgi", "Bu genellikle iletişim bağlantısını temsil eder."],
+        ["Standart dikdörtgen", "Bu genellikle bir işlemi (modül) temsil eder."]
+    ],
+    answer: 2,
+    summary: "Sistem akış şeması elemanlarından makara şeklindeki sembol, Manyetik teyp'i temsil eder."
+},
+{
+    q: "37. Sistem Akış Şeması'nda, 'sistem tarafından üretilen veya kullanılan, fiziksel olarak var olan kağıt çıktıları veya formları' temsil eden sembol hangisidir?",
+    options: [
+        ["Standart dikdörtgen", "Bu, genellikle bir işlemi temsil eder."],
+        ["Paralelkenar", "Bu, genellikle girdi/çıktı ekranını temsil eder."],
+        ["Silindir", "Bu, disk veya veritabanını temsil eder."],
+        ["Altı kıvrık dikdörtgen", "Bu sembol, fatura, sipariş formu gibi fiziksel dokümanları veya raporları temsil etmek için kullanılır."],
+        ["Ok", "Oklar, akış yönünü temsil eder."]
+    ],
+    answer: 3,
+    summary: "Sistem akış şeması elemanlarından altı kıvrık dikdörtgen, Doküman veya Rapor'u temsil eder."
+}  
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

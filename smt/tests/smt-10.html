@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 10</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 10</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Modellemede iki anahtar kavram olarak belirtilen unsurlar hangileridir?",
+    options: [
+        ["Girdi ve Çıktı", "Bunlar bir sistemin genel unsurlarıdır."],
+        ["Olay ve Nesne", "Modellemenin temelini oluşturan iki anahtar kavram Olay ve Nesne'dir."],
+        ["Veri ve Bilgi", "Bunlar bilgi hiyerarşisindeki kavramlardır."],
+        ["Analiz ve Tasarım", "Bunlar SGYD'nin adımlarıdır."],
+        ["Diyagram ve Şema", "Bunlar modelleme araçlarıdır."]
+    ],
+    answer: 1,
+    summary: "Olay ve nesne, modellemede iki anahtar kavramdır. Sistem, olaylara tepki veren ve nesneler üzerindeki bilgileri işleyen bir yapı olarak modellenebilir."
+},
+{
+    q: "2. 'Belli bir zaman ve yerde meydana gelen, sistem tarafından gerçekleştirilen işlemleri tetikleyen tanımlanabilir oluşum'a ne ad verilir?",
+    options: [
+        ["Nesne", "Nesne, hakkında bilgi depolanan bir varlıktır."],
+        ["Olay", "Bu tanım, bir sistemin tepki vermesine neden olan 'Olay' kavramını ifade eder."],
+        ["İşlem", "İşlem, bir olayın tetiklediği bir eylemdir, olayın kendisi değildir."],
+        ["Tetikleyici", "Tetikleyici, bir olayın gerçekleştiğini sisteme bildiren sinyaldir, olayın kendisi değil."],
+        ["Durum", "Durum, bir olayın türüdür, kavramın genel adı değil."]
+    ],
+    answer: 1,
+    summary: "Olay, belli bir zaman ve yerde meydana gelen, tanımlanabilir bir oluşumdur. Sistem tarafından gerçekleştirilen işlemleri olaylar yürütür ve tetikler."
+},
+{
+    q: "3. Olay tipleri hangi üç ana başlık altında incelenir?",
+    options: [
+        ["Dışsal, Geçici, Durum", "Olaylar; sistem dışından tetiklenen (Dışsal), zamana bağlı (Geçici) veya sistemin kendi içindeki bir koşuldan kaynaklanan (Durum) olmak üzere üçe ayrılır."],
+        ["Manuel, Otomatik, Karma", "Bu, bir işlemin nasıl yapıldığıyla ilgilidir, olayın tipiyle değil."],
+        ["Zorunlu, Opsiyonel, Koşullu", "Bunlar genellikle ilişkilerin boyutlarını tanımlar."],
+        ["Tekil, İkili, Üçlü", "Bunlar nesneler arası ilişki tipleridir."],
+        ["Girdi, İşlem, Çıktı", "Bunlar bir sistemin temel unsurlarıdır."]
+    ],
+    answer: 0,
+    summary: "Olay tipleri üç ana başlık altında incelenebilir: Dışsal Olaylar, Geçici Olaylar ve Durum Olayları."
+},
+{
+    q: "4. Bir kullanıcının sisteme giriş yapması veya bir form göndermesi gibi, genellikle 'dışsal bir varlık ya da aktör' tarafından başlatılan olaylara ne ad verilir?",
+    options: [
+        ["Geçici Olay", "Geçici olaylar zamana bağlıdır, dış bir aktöre değil."],
+        ["Durum Olayı", "Durum olayları sistemin iç koşulları tarafından tetiklenir."],
+        ["Dışsal Olay", "Sistem sınırları dışından bir aktör tarafından başlatılan olaylar 'Dışsal Olay' olarak adlandırılır."],
+        ["Kullanıcı Olayı", "Bu doğru bir tanımdır, ancak teknik olarak kullanılan sınıflandırma adı 'Dışsal Olay'dır."],
+        ["Tetikleyici Olay", "Bu genel bir ifadedir, spesifik tip değildir."]
+    ],
+    answer: 2,
+    summary: "Dışsal Olaylar, sistem dışında gerçekleşen ve genellikle dışsal bir varlık ya da aktör (sisteme veri sağlayan veya sistemden veri elde eden kişi ya da organizasyonel birimdir) tarafından başlatılan olaylardır."
+},
+{
+    q: "5. 'Her ayın sonunda maaşların hesaplanması' veya 'her gece saat 02:00'de sistemin yedeklenmesi' gibi eylemler ne tür bir olaya örnektir?",
+    options: [
+        ["Dışsal Olay", "Bu olaylar bir kullanıcı tarafından anlık olarak başlatılmaz."],
+        ["Geçici Olay", "Belirli bir zamanın gelmesiyle (ay sonu, gece yarısı vb.) tetiklenen olaylar 'Geçici Olay' olarak sınıflandırılır."],
+        ["Durum Olayı", "Bu olaylar sistemin bir durumuna (örn: stok seviyesi) değil, zamana bağlıdır."],
+        ["Periyodik Olay", "Bu doğru bir tanımdır, ancak dokümanda kullanılan teknik terim 'Geçici Olay'dır."],
+        ["Otomatik Olay", "Bu, olayın nasıl çalıştığını belirtir, tipini değil."]
+    ],
+    answer: 1,
+    summary: "Geçici olaylar, zamanda bir noktaya ulaşma sonucunda ortaya çıkan olaylardır. Örneğin; her ay sonunda alınması gereken yönetim raporları gibi."
+},
+{
+    q: "6. Bir e-ticaret sitesinde, bir ürünün stok seviyesinin kritik düzeyin altına düşmesi üzerine sistemin otomatik olarak tedarikçiye yeni sipariş oluşturması ne tür bir olaydır?",
+    options: [
+        ["Dışsal Olay", "Bu olay dış bir aktör tarafından tetiklenmemiştir."],
+        ["Geçici Olay", "Bu olay zamana bağlı değildir."],
+        ["Durum Olayı", "Sistem içindeki bir koşulun (stok seviyesinin durumu) başka bir işlemi tetiklemesi 'Durum Olayı'na bir örnektir."],
+        ["Sipariş Olayı", "Bu, olayın sonucudur, tipi değil."],
+        ["İçsel Olay", "Bu doğru bir tanımdır, ancak dokümanda kullanılan teknik terim 'Durum Olayı'dır."]
+    ],
+    answer: 2,
+    summary: "Durum olayları, sistem içinde gerçekleşen ve işlem yapmayı tetikleyen olaylardır. Örneğin; satış sebebiyle azalan stoklar için sistemin uyarı vermesi ya da gerekli siparişi vermesi gibi."
+},
+{
+    q: "7. Aşağıdakilerden hangisi 'Olayların Belirlenmesi' sürecinin adımlarından biri değildir?",
+    options: [
+        ["Olaylara karşı koşulların ve cevapların belirlenmesi", "Bu, olay belirleme adımlarından biridir."],
+        ["Olayların sırasının belirlenmesi", "Bu, olay belirleme adımlarından biridir."],
+        ["Teknolojiye bağımlı olayların ve sistem kontrollerinin belirlenmesi", "Bu, olay belirleme adımlarından biridir."],
+        ["Olay tablosunun oluşturulması", "Olay tablosu, olaylar belirlendikten sonra onları 'tanımlamak' için kullanılır, 'belirleme' sürecinin bir adımı değildir."],
+        ["Olayların önceliklendirilmesi", "Bu mantıklı bir adım gibi görünse de, dokümanda listelenen belirleme adımları arasında yer almamaktadır."]
+    ],
+    answer: 3,
+    summary: "Olayların belirlenmesi sürecinin adımları; koşul/cevapların, sıranın ve teknolojiye bağımlı kontrollerin belirlenmesidir. Olay tablosu ise 'Olayların Tanımlanması' aşamasında kullanılan bir araçtır."
+},
+{
+    q: "8. Olay tablosunda, 'sistemden veri alan dışsal varlık ya da aktör' hangi kolon ile ifade edilir?",
+    options: [
+        ["Kaynak", "Kaynak, sisteme veri sağlayan varlıktır."],
+        ["Cevap", "Cevap, sistemin ürettiği çıktıdır."],
+        ["Hedef", "Sistem tarafından oluşturulan çıktıyı (cevabı) alan dışsal varlık veya aktör 'Hedef' olarak adlandırılır."],
+        ["Alıcı", "Bu genel bir ifadedir, doğru terim Hedef'tir."],
+        ["Tüketici", "Bu genel bir ifadedir, doğru terim Hedef'tir."]
+    ],
+    answer: 2,
+    summary: "Olay tablosunun kolonlarından biri olan Hedef, sistemden veri alan dışsal varlık ya da aktördür."
+},
+{
+    q: "9. 'Kitap, masa, bilgisayar' gibi unsurlar hangi nesne tipine örnektir?",
+    options: [
+        ["Oynanan roller", "Roller, müşteri veya çalışan gibi soyut kavramlardır."],
+        ["Dokunulur nesneler", "Fiziksel olarak var olan ve dokunulabilen bu tür nesneler 'dokunulur nesneler' sınıfına girer."],
+        ["Cihazlar", "Bilgisayar bir cihazdır, ancak kitap veya masa değildir. Dokunulur nesne daha kapsayıcı bir kategoridir."],
+        ["Varlıklar", "Bu genel bir ifadedir, spesifik nesne tipi değildir."],
+        ["Hadiseler", "Hadiseler, satın alma gibi eylemlerdir."]
+    ],
+    answer: 1,
+    summary: "Nesne tiplerinden biri dokunulur nesnelerdir; kitap, masa gibi."
+},
+{
+    q: "10. 'Bir nesneyi benzersiz kılan özellik' ile 'birden fazla özelliği içeren bileşik özellik' sırasıyla hangileridir?",
+    options: [
+        ["Bileşik özellik - Ayırıcı özellik", "Sıralama yanlıştır."],
+        ["Anahtar özellik - Birincil özellik", "Bu terimler benzer anlamlara gelse de dokümandaki sınıflandırma bu şekilde değildir."],
+        ["Ayırıcı (anahtar) özellik - Bileşik özellik", "Bir nesneyi tek olarak tanımlayan özelliğe 'ayırıcı (anahtar) özellik', birden fazla alt bilgiden oluşan özelliğe ise 'bileşik özellik' denir."],
+        ["Tekil özellik - Çoklu özellik", "Bu terimler dokümanda bu şekilde kullanılmamıştır."],
+        ["Zorunlu özellik - Opsiyonel özellik", "Bu, bir özelliğin dolu olup olmama durumuyla ilgilidir."]
+    ],
+    answer: 2,
+    summary: "Nesne özellikleri ikiye ayrılır: Ayırıcı (anahtar) özellik (bir nesneyi benzersiz kılan özellik) ve Bileşik özellik (birden fazla özelliği içeren bileşik özellik)."
+},
+{
+    q: "11. 'Aynı tip iki nesne arasındaki ilişki' (örneğin, bir çalışanın başka bir çalışanın yöneticisi olması) ne tür bir ilişkidir?",
+    options: [
+        ["Tekli ilişki", "Aynı türden iki nesne arasındaki bu tür ilişkilere 'tekli ilişki' (unary relationship) denir."],
+        ["İkili ilişki", "İkili ilişki, iki farklı tip nesne arasındadır (örn: çalışan ve departman)."],
+        ["Simetrik ilişki", "Bu, ilişkinin bir özelliğidir, tipi değil."],
+        ["Hiyerarşik ilişki", "Bu, ilişkinin bir türüdür ancak dokümandaki sınıflandırma adı 'Tekli ilişki'dir."],
+        ["n'li ilişki", "Bu, n sayıda farklı tip nesne arasındadır."]
+    ],
+    answer: 0,
+    summary: "Tekli ilişki: Aynı tip iki nesne arasındaki ilişkidir. Örneğin; iki insanın birbiri ile evlenmesi gibi."
+},
+{
+    q: "12. 'Departmanlar ile çalışanlar arasındaki ilişki' ne tür bir ilişki tipine örnektir?",
+    options: [
+        ["Tekli ilişki", "Tekli ilişki, aynı tip nesneler arasındadır."],
+        ["Üçlü ilişki", "Bu, üç farklı tip nesne arasındadır."],
+        ["n'li ilişki", "Bu, n sayıda farklı tip nesne arasındadır."],
+        ["İkili İlişki", "'Departman' ve 'Çalışan' gibi iki farklı tip nesne arasındaki bağlar 'ikili ilişki'dir."],
+        ["Bağımlı ilişki", "Bu genel bir ifadedir, doğru terim İkili İlişki'dir."]
+    ],
+    answer: 3,
+    summary: "İkili ilişki: İki farklı tip nesne arasındaki ilişkidir. Örneğin; departmanlar ile çalışanlar arasındaki ilişki gibi."
+},
+{
+    q: "13. Veri varlıkları arasındaki ilişki boyutlarından olan 'Sıfır ya da fazlası (opsiyonel)' ne anlama gelir?",
+    options: [
+        ["Bir varlığın başka bir varlıkla mutlaka en az bir ilişkisi olması gerektiğini", "Bu 'Bir ya da fazlası (zorunlu)' ilişkisidir."],
+        ["Bir varlığın başka bir varlıkla ilişkisi olmayabileceği gibi, birden çok ilişkisi de olabileceğini", "Bu ifade, bir ilişkinin zorunlu olmadığını (sıfır olabilir) ve birden çok kez kurulabileceğini (fazlası olabilir) belirtir."],
+        ["Bir varlığın başka bir varlıkla en fazla bir ilişkisi olabileceğini", "Bu 'Sıfır ya da bir (opsiyonel)' ilişkisidir."],
+        ["Bir varlığın başka bir varlıkla sadece ve sadece bir ilişkisi olması gerektiğini", "Bu 'Kesin olarak bir (zorunlu)' ilişkisidir."],
+        ["İlişkinin belirsiz olduğunu", "Hayır, bu belirli bir ilişki kuralıdır."]
+    ],
+    answer: 1,
+    summary: "Sıfır ya da fazlası (opsiyonel) ilişki boyutu, bir varlığın ilişkili olduğu diğer varlıktan hiç bulundurmayabileceğini (opsiyonel) veya birden çok sayıda bulundurabileceğini ifade eder. Örneğin, bir müşteri hiç sipariş vermemiş olabilir veya n sayıda siparişi olabilir."
+},
+{
+    q: "14. 'Bir bilgi sisteminin temel gereksinimlerini gösteren grafiksel sistem modeli' olarak tanımlanan ve son kullanıcıların bile kolayca anlayabildiği diyagram hangisidir?",
+    options: [
+        ["Varlık-İlişki (ER) Diyagramı", "ER diyagramı veritabanı yapısını gösterir, sistemin genel akışını değil."],
+        ["Akış Şeması (Flowchart)", "Akış şeması bir algoritmanın adımlarını gösterir."],
+        ["Organizasyon Şeması", "Bu, kurumsal hiyerarşiyi gösterir."],
+        ["Veri Akış Diyagramları (DFD)", "Bu tanım, sistemdeki veri akışını ve işlemleri modelleyen DFD'ye aittir."],
+        ["Sınıf Diyagramı", "Bu, nesne yönelimli modellemede kullanılan bir diyagramdır."]
+    ],
+    answer: 3,
+    summary: "Veri akış diyagramları bir bilgi sisteminin temel gereksinimlerini gösteren grafiksel sistem modelidir. Veri akış diyagramlarından son kullanıcılar dahil herkes projenin çeşitli yönlerini basit bir eğitim ile anlayabilir."
+},
+{
+    q: "15. Aşağıdakilerden hangisi bir Veri Akış Diyagramı (DFD) çizim kuralı değildir?",
+    options: [
+        ["Bir işlemin en az bir veri girişi ve bir veri çıkışı olmak zorundadır.", "Bu geçerli bir kuraldır."],
+        ["İki veri deposu, bir işlemden geçmeden birbirine bağlanamaz.", "Bu geçerli bir kuraldır."],
+        ["Bir dışsal varlık, herhangi bir işleme girmeden bir veri deposuna doğrudan bağlanamaz.", "Bu geçerli bir kuraldır."],
+        ["Veri depoları, sistemin en üst seviyesi olan İçerik Şeması'nda mutlaka gösterilmelidir.", "Yanlış. Tam tersine, veri depoları sistemin iç bileşenleri olduğu için İçerik Şeması'nda yer almazlar."],
+        ["Veri akış okları sadece gerekli bağlantıları göstermek için kullanılmalıdır.", "Bu geçerli bir kuraldır."]
+    ],
+    answer: 3,
+    summary: "Veri akış diyagramı çizim kurallarına göre, veri depoları sistemin içindedir ve sistemin tamamını tek bir işlem olarak gösteren İçerik Seviyesi Şeması'nda gösterilmezler."
+},
+{
+    q: "16. DFD'de, 'veri girdilerinin veri çıktıları haline dönüştürülmesi ile ilgili bir algoritma ya da prosedürü gösteren sembol' hangisidir?",
+    options: [
+        ["Veri Akışı", "Bu, verinin hareketini gösteren oktur."],
+        ["Veri Deposu", "Bu, verinin saklandığı yerdir."],
+        ["İşlem", "Verinin dönüştürüldüğü, işlendiği veya analiz edildiği eylemleri temsil eden sembol 'İşlem'dir."],
+        ["Dışsal Varlık", "Bu, verinin geldiği veya gittiği dış unsurdur."],
+        ["Algoritma", "Algoritma, işlemin nasıl yapılacağını tanımlar, sembolün adı 'İşlem'dir."]
+    ],
+    answer: 2,
+    summary: "İşlem: Veri girdilerinin veri çıktıları haline dönüştürülmesi ile ilgili bir algoritma ya da prosedürü gösteren semboldür."
+},
+{
+    q: "17. Bir DFD'nin okunabilirliğini artırmak ve karmaşıklığını azaltmak için aşağıdakilerden hangisi yapılabilir?",
+    options: [
+        ["Tüm işlemleri tek bir diyagramda göstermek", "Bu, karmaşıklığı artırır."],
+        ["Diyagramdaki bileşen sayısını ve arayüz bağlantılarını azaltmak", "Bir diyagrama çok fazla bileşen koymak yerine, sistemi daha küçük ve yönetilebilir parçalara ayırmak karmaşıklığı azaltır."],
+        ["Sadece teknik personelin anlayacağı semboller kullanmak", "Bu, okunabilirliği azaltır."],
+        ["Veri depolarını göstermemek", "Veri depoları sistemin önemli parçalarıdır ve uygun seviyelerde gösterilmelidir."],
+        ["Tüm veri akışlarını isimlendirmemek", "Bu, okunabilirliği azaltır."]
+    ],
+    answer: 1,
+    summary: "Karmaşıklığın azaltılması için; Bileşen sayılarının sınırlandırılması ve Bileşenler arasındaki arayüz ve bağlantı sayılarının azaltılması gibi yöntemler kullanılabilir."
+},
+{
+    q: "18. 'Sisteme veri girişi sağlayan, sistem çıktılarını kabul eden ve sistem sınırları dışında bulunan kişi ya da organizasyon' hangi DFD sembolü ile temsil edilir?",
+    options: [
+        ["İşlem", "İşlem, sistem içindeki bir eylemdir."],
+        ["Veri Deposu", "Veri deposu, sistem içindeki bir depolama alanıdır."],
+        ["Dışsal Varlık", "Bu tanım, sistemin dış dünyayla olan etkileşim noktalarını temsil eden 'Dışsal Varlık' sembolüne aittir."],
+        ["Paydaş", "Paydaş bir roldür, DFD'deki sembolün adı 'Dışsal Varlık'tır."],
+        ["Kaynak/Hedef", "Bunlar dışsal varlığın rolleridir, sembolün adı değil."]
+    ],
+    answer: 2,
+    summary: "Dışsal Varlık: Sisteme veri girişi sağlayan, sistem çıktılarını kabul eden ve sistem sınırları dışında bulunan kişi ya da organizasyondur."
+},
+{
+    q: "19. Aşağıdakilerden hangisi DFD'lerde yapılan yaygın hatalardan biridir?",
+    options: [
+        ["Bir işlemin birden fazla veri çıkışının olması", "Bu bir hata değildir, bir işlem birden fazla çıktı üretebilir."],
+        ["Bir veri deposunun birden fazla işlem tarafından kullanılması", "Bu bir hata değildir, veri depoları paylaşılabilir."],
+        ["Ana şemalarla (üst seviye) alt şemalar arasında farklılıkların (dengesizlik) olması", "Bu, DFD'lerde en sık yapılan hatalardan biridir. Üst seviyedeki bir işlemin girdi/çıktıları, o işlemin detaylandırıldığı alt şemadaki toplam girdi/çıktılarla aynı olmalıdır."],
+        ["Bir dışsal varlığın birden fazla veri akışına sahip olması", "Bu bir hata değildir, bir dışsal varlık sisteme birden fazla bilgi gönderebilir veya alabilir."],
+        ["Bir veri akışının bir işlemden çıkıp başka bir işleme girmesi", "Bu, DFD'nin temel çalışma mantığıdır, bir hata değildir."]
+    ],
+    answer: 2,
+    summary: "Veri akış diyagramlarında yapılan yaygın hatalar arasında, ana şemalarla alt şemalar arasında farklılıkların olması en yaygın olanlardan biridir. Buna 'dengeleme hatası' da denir."
+},
+{
+    q: "20. 'İçerik Seviyesi Şeması' ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+    options: [
+        ["Sistemin en üst seviyesinin gösterimidir.", "Doğru, bu şema sisteme en tepeden bakar."],
+        ["Sistem ile ilgili tüm işlemleri tek bir işlem ile özetler.", "Doğru, sistem tek bir '0' numaralı işlem olarak gösterilir."],
+        ["Sistem sınırlarını göstermek için oldukça uygundur.", "Doğru, sistemin dış dünya ile olan etkileşimini net bir şekilde gösterir."],
+        ["Sistemin tüm veri depolarını detaylı olarak gösterir.", "Yanlış. İçerik seviyesi şemasında, sistemin iç bileşenleri olan veri depoları gösterilmez."],
+        ["Tüm dışsal varlıklar ve ana veri akışları gösterilmelidir.", "Doğru, bu şemanın temel amacı budur."]
+    ],
+    answer: 3,
+    summary: "İçerik şeması ile ilgili önemli bir nokta, veri depolarının sistem dahilinde olduklarından dolayı bu şemada yer almamalarıdır."
+},
+{
+    q: "21. 'İçerik Seviyesi Şeması'nın detaylandırılarak açılmış hali olan ve sistemin ana işlemlerini gösteren diyagram hangisidir?",
+    options: [
+        ["1. Seviye Şeması", "Bu, 0. seviyedeki bir işlemin detayıdır."],
+        ["Fiziksel DFD", "Bu bir DFD türüdür."],
+        ["İşlem Diyagramı", "Bu genel bir ifadedir."],
+        ["0 Seviyesi Şeması", "0 Seviyesi Şeması, İçerik Seviyesi Şeması'ndaki tek işlemin patlatılarak sistemin ana alt işlemlerine ayrılmış halidir."],
+        ["Varlık-İlişki Diyagramı", "Bu, veri modelleme için kullanılır."]
+    ],
+    answer: 3,
+    summary: "0 Seviye Şeması, İçerik Seviyesi Şeması'nın açılımıdır. Sistemin genel bir bakışını vermek üzere ana veri depolarını ve işlemleri içerir."
+},
+{
+    q: "22. Bir 0 Seviyesi Şeması'nda en fazla kaç işlem içermesi önerilir?",
+    options: [
+        ["3", "Bu sayı genellikle çok az kabul edilir."],
+        ["5", "Bu makul bir sayıdır ancak önerilen üst limit değildir."],
+        ["9", "Diyagramın okunabilirliğini korumak için genellikle bir DFD seviyesinde en fazla 7 ila 9 işlem olması önerilir."],
+        ["12", "Bu sayı genellikle okunabilirliği zorlaştıracak kadar çok kabul edilir."],
+        ["Sınırsız", "Okunabilirlik ve anlaşılırlık için işlem sayısının sınırlandırılması önemlidir."]
+    ],
+    answer: 2,
+    summary: "En fazla 9 işlem içerebilecek bu şema; temel girdiler, ana veri depoları, işlemler, çıktılar... dahil edebilecek şekilde hazırlanır."
+},
+{
+    q: "23. 'Tek bir fonksiyondan oluşan ve daha fazla parçalara ayrılamayan işlem' ne olarak adlandırılır?",
+    options: [
+        ["Ana İşlem", "Bu genel bir ifadedir."],
+        ["Atomik İşlem", "Bu doğru bir ifadedir ancak dokümandaki terim farklıdır."],
+        ["Fonksiyonel Temel İşlem", "DFD'de daha alt seviyelere ayrılamayan en temel işlemlere 'Fonksiyonel Temel İşlem' (functional primitive) denir."],
+        ["Son Seviye İşlem", "Bu genel bir ifadedir."],
+        ["Basit İşlem", "Bu genel bir ifadedir."]
+    ],
+    answer: 2,
+    summary: "Fonksiyonel temel işlem: Tek bir fonksiyondan oluşan ve daha fazla parçalara ayrılamayan işlemdir."
+},
+{
+    q: "24. Aşağıdaki dokümantasyon başlıklarından hangisi Veri Akış Diyagramı bileşenlerinin dokümantasyonu kapsamında değildir?",
+    options: [
+        ["İşlem Tanımı", "Bu, DFD bileşenlerinin dokümantasyonudur."],
+        ["Veri Akış Tanımı", "Bu, DFD bileşenlerinin dokümantasyonudur."],
+        ["Veri Deposu Tanımı", "Bu, DFD bileşenlerinin dokümantasyonudur."],
+        ["Dışsal Varlık Tanımı", "Bu, DFD bileşenlerinin dokümantasyonudur."],
+        ["Proje Takvimi Tanımı", "Proje takvimi, proje yönetimi ile ilgili bir dokümandır, DFD'nin bir bileşeni değildir."]
+    ],
+    answer: 4,
+    summary: "Veri Akış Diyagramı Bileşenlerinin Dokümantasyonu başlığı altında; İşlem Tanımı, Veri Akış Tanımı, Veri Deposu Tanımı ve Dışsal Varlık Tanımı incelenir."
+},
+{
+    q: "25. Olay tablosu örneğinde, 'Müşterinin sipariş vermesi' olayını sisteme anlatan oluşum, yani 'Tetikleyici' nedir?",
+    options: [
+        ["Müşteri", "Müşteri, olayın Kaynağı'dır."],
+        ["Sipariş onayı", "Sipariş onayı, olayın Cevabı'dır."],
+        ["Yeni sipariş", "Tabloya göre, müşterinin sipariş vermesi olayını 'Yeni sipariş' tetikler."],
+        ["Yeni siparişin yaratılması", "Bu, olaya karşı yapılan Aktivite'dir."],
+        ["Malın sorgulanması", "Bu, başka bir olayın tetikleyicisidir."]
+    ],
+    answer: 2,
+    summary: "Online satış sistemi ile ilgili olay tablosu örneğinde, 'Müşterinin sipariş vermesi' olayının Tetikleyici'si 'Yeni sipariş' olarak belirtilmiştir."
+},
+{
+    q: "26. Bir ER diyagramında, veri varlıklarını ve onların özelliklerini göstermek için hangi geometrik şekil kullanılır?",
+    options: [
+        ["Ok", "Oklar genellikle veri akışını veya ilişkileri gösterir."],
+        ["Elips", "Elipsler geleneksel ERD gösterimlerinde özellikleri temsil edebilir, ancak dokümanda varlıkların dikdörtgenle gösterildiği belirtilmiştir."],
+        ["Çizgi", "Çizgiler, varlıklar arasındaki ilişkileri göstermek için kullanılır."],
+        ["Dikdörtgenler", "Veri varlıkları ve onların özellikleri dikdörtgenler kullanılarak gösterilir."],
+        ["Baklava Dilimi", "Baklava dilimi, geleneksel ERD gösterimlerinde ilişkileri temsil eder."]
+    ],
+    answer: 3,
+    summary: "Veri varlıklarının ve veri varlıklarının özelliklerini göstermek için dikdörtgenler kullanılmaktadır."
+},
+{
+    q: "27. Online satış sistemi örneğindeki olay tablosuna göre, 'Aylık sipariş raporunun alınması' olayının 'Hedef'i kimdir?",
+    options: [
+        ["Müşteri", "Müşteri, diğer olayların kaynağı veya hedefidir."],
+        ["Kaynak yoktur", "Bu, olayın Kaynak'ıdır."],
+        ["Yönetim", "Tabloya göre, 'Aylık sipariş raporu' isimli Cevap, 'Yönetim' isimli Hedef'e yönelir."],
+        ["Sistem", "Sistem, cevabı üreten taraftır."],
+        ["Satış Departmanı", "Bu, Yönetim'in bir parçası olabilir ancak tabloda spesifik olarak Yönetim belirtilmiştir."]
+    ],
+    answer: 2,
+    summary: "Online satış sistemi ile ilgili olay tablosu örneğinde, 'Aylık sipariş raporunun alınması' olayının Hedef'i 'Yönetim' olarak belirtilmiştir."
+},
+{
+    q: "28. 'Hadiseler, olaylar ve etkileşimler (satın alma, sipariş verme gibi)' hangi kavrama örnektir?",
+    options: [
+        ["Olay Tipleri", "Bunlar olaylara örnektir ama 'nesne tipi' olarak da sınıflandırılırlar."],
+        ["İlişki Tipleri", "İlişki, nesneler arasındaki bağdır."],
+        ["Nesne Tipleri", "Hakkında bilgi depolanması gereken 'satın alma' gibi eylemler de birer nesne tipi olarak kabul edilir."],
+        ["İşlem Tipleri", "Bu genel bir ifadedir."],
+        ["Sistem Fonksiyonları", "Bu genel bir ifadedir."]
+    ],
+    answer: 2,
+    summary: "Nesne tipleri arasında 'Hadiseler, olaylar ve etkileşimler; satın alma, sipariş verme gibi' unsurlar da listelenmiştir."
+},
+{
+    q: "29. Bir DFD'de 'İşlem gerçekleşirken dışsal varlık ile işlem arasındaki iletişimi gösteren sembol' hangisidir?",
+    options: [
+        ["Veri Akışı", "Veri akışı, verinin kendisinin hareketidir."],
+        ["Gerçek Zaman Bağlantısı", "Bu tanım, 'Gerçek Zaman Bağlantısı' sembolünü ifade eder."],
+        ["Protokol", "Bu bir iletişim kuralıdır, DFD sembolü değil."],
+        ["Arayüz", "Arayüz genel bir kavramdır."],
+        ["Dışsal Varlık", "Bu, iletişimin taraflarından biridir, iletişimin kendisi değil."]
+    ],
+    answer: 1,
+    summary: "Gerçek Zaman Bağlantısı: İşlem gerçekleşirken dışsal varlık ile işlem arasındaki iletişimi gösteren semboldür."
+},
+{
+    q: "30. 'Olay tablosu'nun temel amacı nedir?",
+    options: [
+        ["Nesneler arasındaki ilişkileri göstermek", "Bu, Varlık-İlişki (ER) Diyagramı'nın temel amacıdır."],
+        ["Sistemin maliyetini hesaplamak", "Bu, ekonomik fizibilite çalışmasının bir parçasıdır."],
+        ["Olayları, tetikleyicileri, kaynakları, aktiviteleri ve cevapları yapısal bir şekilde listelemek", "Olay tablosu, bir olayın tüm bileşenlerini organize bir formatta belgelemek ve tanımlamak için kullanılır."],
+        ["Veri akış diyagramlarını çizmek", "Bu, DFD adı verilen farklı bir modelleme tekniğidir."],
+        ["Proje takvimini oluşturmak", "Bu, proje yönetimi araçları (örn: Gantt Şeması) ile yapılır."]
+    ],
+    answer: 2,
+    summary: "Olayların tanımlanmasında olay tablosu kullanılır. Olay tablosu, olayları satırlarda ve her olay için anahtar bilgi parçalarını (Tetikleyici, Kaynak, Aktivite, Cevap, Hedef) kolonlarda listeleyen tablodur."
+},
+{
+    q: "31. (Eski 30. Soru yerine) Aşağıdakilerden hangisi, nesneler arasındaki mantıksal ilişkilerin belirlenmesi sırasında dikkat edilmesi gereken temel hususlardan birini en doğru şekilde ifade eder?",
+    options: [
+        ["Nesneleri oluşturacak programlama dilinin seçilmesi", "Bu, projenin teknoloji seçimiyle ilgili bir karardır ve mantıksal ilişki belirleme aşamasının bir parçası değildir."],
+        ["Nesnelerin fiziksel olarak nerede ve nasıl depolanacağının planlanması", "Bu, veritabanının fiziksel tasarımı aşamasında ele alınan bir konudur, mantıksal modelleme aşamasında değil."],
+        ["İlişkinin her iki yöndeki doğasının, bağ sayılarının (kardinalite) ve opsiyonelliğinin anlaşılması", "Bu ifade, bir ilişkinin mantıksal yapısını tanımlamak için gereken temel unsurları (iki yön, kardinalite, opsiyonellik) kapsamlı bir şekilde içermektedir."],
+        ["Nesneler için birincil anahtar (primary key) olarak hangi özelliğin kullanılacağının atanması", "Bu, nesnelerin kendi özelliklerini tanımlama ve veritabanı tasarımıyla ilgilidir, nesneler 'arası' ilişkiyi belirlemenin temel bir hususu değildir."],
+        ["İlişkilerin isimlendirme standartlarına karar verilmesi", "Bu, projenin dokümantasyon standartlarıyla ilgili bir konudur, ilişkinin mantıksal doğasıyla değil."]
+    ],
+    answer: 2,
+    summary: "Nesneler arası mantıksal ilişkileri belirlerken; ilişkinin iki yönünü, nesneler arası bağ sayılarını (kardinalite) ve ilişkinin boyutlarını (opsiyonellik) anlamak gerekir. Diğer şıklar ise genellikle projenin daha sonraki fiziksel tasarım veya yönetimsel adımlarıyla ilgilidir."
+},
+{
+    q: "32. Aşağıdaki Veri Akış Diyagramı (DFD) senaryolarından hangisi, temel bir çizim kuralını ihlal eden yaygın bir hatadır?",
+    options: [
+        ["Bir dışsal varlığın birden fazla işleme veri göndermesi", "Bu hatalı bir kullanım değildir, bir kaynak birden çok süreci besleyebilir."],
+        ["Bir veri deposundan veri okuyan bir işlemin aynı zamanda o veri deposuna veri yazması", "Bu hatalı bir kullanım değildir, 'güncelleme' işlemleri bu şekilde çalışır."],
+        ["Bir işlemin sadece veri girdilerinin olup, hiçbir veri çıktısının olmaması", "Bu, 'bir işlemin en az bir çıktısı olmak zorundadır' kuralını ihlal eden yaygın bir hatadır."],
+        ["Bir işlemin çıktısının, başka bir işlemin girdisi olması", "Bu hatalı değildir, DFD'nin temel çalışma prensibidir."],
+        ["Bir dışsal varlığın bir işlem sonucunda veri alması", "Bu hatalı değildir, raporlama gibi işlemler bu şekilde çalışır."]
+    ],
+    answer: 2,
+    summary: "DFD çizim kurallarına göre, bir işlemin en az bir veri girişi ve bir veri çıkışı olmak zorundadır. Sadece veri alıp hiçbir çıktı üretmeyen bir işlem, temel bir kural ihlalidir ve yaygın bir hatadır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

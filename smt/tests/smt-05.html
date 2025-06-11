@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 5</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 5</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Sistem planlama çalışmaları hangi üç ana başlık altında toplanır?",
+    options: [
+        ["Analiz, Tasarım, Uygulama", "Bunlar SGYD'nin genel adımlarıdır, planlama adımının alt başlıkları değil."],
+        ["Problemin tanımlanması, Proje fizibilitesinin saptanması, Proje yönetimi", "Planlama çalışmaları bu üç temel faaliyeti kapsar."],
+        ["Yukarıdan aşağıya, Aşağıdan yukarıya, Karma", "Bunlar proje belirleme yöntemleridir."],
+        ["Ekonomik, Teknik, Operasyonel Fizibilite", "Bunlar fizibilite saptamanın alt başlıklarıdır."],
+        ["Veri, İşlem, Çıktı", "Bunlar bir sistemin temel unsurlarıdır."]
+    ],
+    answer: 1,
+    summary: "Planlama çalışmaları üç ana başlık altıda toplanabilmektedir: Problemin tanımlanması, Proje fizibilitesinin saptanması, Proje yönetimi."
+},
+{
+    q: "2. Problemin tanımlanması aşamasında yer alan temel faaliyetler hangileridir? \nI. Mevcut durumun tanımlanması \nII. Hedeflenen durumun tanımı \nIII. Geçiş planının oluşturulması",
+    options: [
+        ["Yalnızca I", "Eksik, hedeflenen durum ve geçiş planı da bu aşamanın faaliyetleridir."],
+        ["I ve II", "Eksik, geçiş planının oluşturulması da bu aşamadadır."],
+        ["I, II ve III", "Problemin tanımlanması bu üç temel faaliyeti kapsar."],
+        ["Yalnızca II ve III", "Eksik, mevcut durumun tanımlanması da bu aşamadadır."],
+        ["Yalnızca III", "Eksik, diğer iki faaliyet de bu aşamadadır."]
+    ],
+    answer: 2,
+    summary: "Problemin tanımlanmasında üç temel faaliyet vardır: Mevcut durumun tanımlanması, hedeflenen durumun tanımı ve geçiş planının oluşturulması."
+},
+{
+    q: "3. 'Çözüm üretilecek problemin tam tanımının yapılması ve çözüm üretmek amacıyla tasarlanacak yeni sistem kapsamının belirlenmesi' hangi faaliyetin temel amacıdır?",
+    options: [
+        ["Proje Yönetimi", "Proje yönetimi, projenin kaynaklarını ve zamanını yönetir."],
+        ["Fizibilite Saptaması", "Fizibilite, projenin yapılabilirliğini araştırır."],
+        ["Problemin Tanımlanması", "Bu ifade, problemin tanımlanması faaliyetinin temel amacını ifade eder."],
+        ["Sistem Analizi", "Sistem analizi, tanımlanmış problemin detaylarını inceler."],
+        ["Geçiş Planlaması", "Bu, problemin tanımlanması faaliyetinin bir parçasıdır, tamamı değil."]
+    ],
+    answer: 2,
+    summary: "Problemin tanımlanmasında amaç çözüm üretilecek problemin tam tanımının yapılması ve çözüm üretmek amacıyla tasarlanacak yeni sistem kapsamının belirlenmesidir."
+},
+{
+    q: "4. Projelerin sınıflandırılması ve sıralanması sırasında dikkate alınan kriterler arasında hangileri bulunur? \nI. Değer zinciri analizi \nII. Potansiyel faydalar \nIII. Projenin boyutu/süresi \nIV. Teknik zorluğu/riskleri",
+    options: [
+        ["I ve II", "Eksik, projenin boyutu ve teknik zorluğu da önemli kriterlerdir."],
+        ["III ve IV", "Eksik, değer zinciri analizi ve potansiyel faydalar da önemli kriterlerdir."],
+        ["I, II ve III", "Eksik, teknik zorluk da bir kriterdir."],
+        ["II, III ve IV", "Eksik, değer zinciri analizi de bir kriterdir."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, projelerin sınıflandırılması ve sıralanmasında kullanılan kriterlerdendir."]
+    ],
+    answer: 4,
+    summary: "Projelerin sınıflandırma ve sıralanması sırasında dikkat edilen kriterler şunlardır: Değer zinciri analizi, Stratejik sıralama, Potansiyel faydalar, Mevcut kaynaklar, Projenin boyutu/süresi, Teknik açıdan zorluğu/riskleri."
+},
+{
+    q: "5. Potansiyel projelerin belirlenmesinde, genellikle üst yönetim veya yönetim kurulu tarafından uygulanan ve odak noktası organizasyonun genel gereksinimleri olan yöntem hangisidir?",
+    options: [
+        ["Aşağıdan yukarıya belirleme", "Bu yöntem iş birimleri tarafından uygulanır ve genel amaçları yansıtmayabilir."],
+        ["Karma belirleme", "Bu terim dokümanda geçmemektedir."],
+        ["Fırsat bazlı belirleme", "Bu bir tetikleyicidir, bir belirleme yöntemi değil."],
+        ["Yukarıdan aşağıya belirleme", "Bu yöntem, üst yönetim tarafından stratejik bir bakış açısıyla uygulanır."],
+        ["Departman bazlı belirleme", "Bu, aşağıdan yukarıya belirleme yönteminin bir örneğidir."]
+    ],
+    answer: 3,
+    summary: "Projelerin belirlenmesinde iki yöntem kullanılır; yukarıdan aşağıya belirleme ve aşağıdan yukarıya belirleme. Bu yöntemlerin ilki (yukarıdan aşağıya) üst yönetim ya da yönetim kurulu tarafından uygulanır ve odak noktası organizasyonun genel gereksinimleridir."
+},
+{
+    q: "6. İş birimleri ya da bilgi sistemleri grubu tarafından uygulanan ve yapılan çalışmanın organizasyonun genel amaçlarını yansıtmayabildiği proje belirleme yöntemi hangisidir?",
+    options: [
+        ["Yukarıdan aşağıya belirleme", "Bu yöntem üst yönetim tarafından uygulanır ve genel amaçlara odaklıdır."],
+        ["Aşağıdan yukarıya belirleme", "Bu yöntem, daha çok spesifik birimlerin ihtiyaçlarından doğar ve her zaman genel stratejiyle uyumlu olmayabilir."],
+        ["Stratejik belirleme", "Bu, yukarıdan aşağıya belirleme yönteminin bir özelliğidir."],
+        ["Merkezi belirleme", "Bu terim dokümanda bu şekilde kullanılmamıştır."],
+        ["Problem bazlı belirleme", "Bu bir tetikleyicidir, bir belirleme yöntemi değil."]
+    ],
+    answer: 1,
+    summary: "Diğer yöntem (aşağıdan yukarıya) ise iş birimleri ya da bilgi sistemleri grubu tarafından uygulanır ve yapılan çalışma organizasyonun genel amaçlarını yansıtmaz."
+},
+{
+    q: "7. Projelerin seçimi noktasında bir proje için verilebilecek kararlar arasında hangileri yer alabilir? \nI. Projenin kabulü \nII. Projenin reddedilmesi \nIII. Projenin sonraya bırakılması \nIV. Projeye yeniden odaklanılması",
+    options: [
+        ["I ve II", "Eksik, erteleme veya yeniden odaklanma da birer karardır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, projelerin seçimi aşamasında verilebilecek olası kararlardandır."],
+        ["Yalnızca I", "Reddetme, erteleme gibi başka kararlar da mümkündür."],
+        ["III ve IV", "Eksik, kabul veya ret de birer karardır."],
+        ["I, III ve IV", "Eksik, reddetme de bir karardır."]
+    ],
+    answer: 1,
+    summary: "Projelerin seçimi noktasında her bir proje için... Projenin kabulü, Projenin reddedilmesi, Projenin sonraya bırakılması, Projeye yeniden odaklanılması... gibi kararlardan biri geçerli olabilir."
+},
+{
+    q: "8. Potansiyel araştırma projeleri kimler tarafından belirlenebilir?",
+    options: [
+        ["Sadece üst yönetim ve yönetim kurulu tarafından", "Eksik, kullanıcı departmanları ve geliştirme grubu da proje belirleyebilir."],
+        ["Sadece kullanıcı departmanları tarafından", "Eksik, üst yönetim de proje belirleyebilir."],
+        ["Sadece geliştirme grubu tarafından", "Eksik, üst yönetim ve kullanıcılar da proje belirleyebilir."],
+        ["Üst yönetim, kullanıcı departmanları ve geliştirme grubu gibi çeşitli birimler tarafından", "Potansiyel projeler organizasyonun farklı seviyelerinden gelebilir."],
+        ["Sadece dış danışmanlar tarafından", "Dış danışmanlar öneride bulunabilir ama belirleyici olan genellikle iç birimlerdir."]
+    ],
+    answer: 3,
+    summary: "Potansiyel araştırma projeleri üst yönetim, yönetim kurulu, kullanıcı departmanları, geliştirme grubu ya da üst düzey bilgi sistemleri çalışanları tarafından belirlenir."
+},
+{
+    q: "9. Geliştirilecek bir bilgi sistemi projesi seçilirken en temel değerlendirme kriteri nedir?",
+    options: [
+        ["Projenin teknik olarak en kolay olması", "Kolaylık bir etken olabilir ama temel kriter değildir."],
+        ["Projenin en düşük bütçeye sahip olması", "Bütçe önemli bir kısıttır ama seçim için temel kriter değildir."],
+        ["Projenin iş hedeflerini karşılayabilme potansiyeli", "Projeler, öncelikle organizasyonun iş hedeflerine hizmet etme potansiyellerine göre seçilir."],
+        ["Projenin en kısa sürede bitirilebilecek olması", "Süre bir kısıttır ama temel seçim kriteri değildir."],
+        ["Projenin en yeni teknolojiyi kullanması", "Teknoloji bir araçtır, amaç değil."]
+    ],
+    answer: 2,
+    summary: "Geliştirilecek bilgi sistemi projesi olarak daha çok iş hedeflerini karşılayabilecek projeler seçilmektedir."
+},
+{
+    q: "10. Seçilen bir proje için mevcut durumu tanımlarken, organizasyonun konumları, fonksiyonları, birimleri gibi unsurları arasındaki ilişkileri göstermek için ne kullanılır?",
+    options: [
+        ["Akış Diyagramları", "Akış diyagramları süreçleri gösterir."],
+        ["İş Listeleri", "İş listeleri yapılacak görevleri sıralar."],
+        ["Matrisler", "Konum-Fonksiyon veya Birim-Fonksiyon gibi ilişkiler matrisler ile gösterilir."],
+        ["Organizasyon Şeması", "Organizasyon şeması sadece hiyerarşik yapıyı gösterir."],
+        ["Zaman Çizelgeleri", "Zaman çizelgeleri projenin takvimini gösterir."]
+    ],
+    answer: 2,
+    summary: "Mevcut durum, seçilen proje ve belirlenen hedef kapsamında, organizasyonun konumları, fonksiyonları... ve bunlar arasındaki... ilişkilerin matrisler ile gösterimi ile tanımlanır."
+},
+{
+    q: "11. 'Merkez Şube, Etiler Şubesi, Kadıköy Şubesi' gibi ifadeler, mevcut durumun tanımlanmasında hangi kavrama örnektir?",
+    options: [
+        ["Fonksiyon", "Fonksiyon, Muhasebe gibi işlevsel bir alanı ifade eder."],
+        ["Konum", "Bu ifadeler, organizasyonun fiziksel veya coğrafi yerlerini temsil eden 'Konum' örnekleridir."],
+        ["Birim", "Birim, Satış Departmanı gibi organizasyonel bir yapıdır."],
+        ["Veri Varlığı", "Veri Varlığı, Müşteri gibi hakkında veri tutulan bir nesnedir."],
+        ["Hedef", "Hedef, Satışların Artırılması gibi bir amaçtır."]
+    ],
+    answer: 1,
+    summary: "Konum Örnekleri: Merkez Şube, Etiler Şubesi, Kadıköy Şubesi gibi."
+},
+{
+    q: "12. 'Müşteri, Ürün, Hammadde' gibi unsurlar, hakkında veri toplanan nesneler olarak hangi kavrama örnektir?",
+    options: [
+        ["İşlem", "İşlem, bir eylemdir (örn: İşe Alım İşlemi)."],
+        ["Hedef", "Hedef, ulaşılmak istenen bir sonuçtur."],
+        ["Fonksiyon", "Fonksiyon, bir iş bölümüdür (örn: Finans)."],
+        ["Veri Varlığı", "Bu unsurlar, hakkında bilgi depolanan nesneler olan 'Veri Varlığı' örnekleridir."],
+        ["Birim", "Birim, bir departmandır (örn: İnsan Kaynakları)."]
+    ],
+    answer: 3,
+    summary: "Veri Varlığı Örnekleri: Müşteri, Ürün, Hammadde gibi."
+},
+{
+    q: "13. 'Muhasebe, Satın Alma, Finans' gibi ifadeler, organizasyonun işlevsel alanlarını belirten hangi kavrama örnektir?",
+    options: [
+        ["Birim", "Birim, bu fonksiyonları yerine getiren departmanlardır."],
+        ["Konum", "Konum, coğrafi bir yerdir."],
+        ["İşlem", "İşlem, belirli bir eylemdir."],
+        ["Veri Varlığı", "Veri varlığı, hakkında bilgi tutulan bir nesnedir."],
+        ["Fonksiyon", "Bu ifadeler, organizasyonun ana işlevsel bölümlerini temsil eden 'Fonksiyon' örnekleridir."]
+    ],
+    answer: 4,
+    summary: "Fonksiyon Örnekleri: Muhasebe, Satın Alma, Finans gibi."
+},
+{
+    q: "14. Bir sistemin genel bir bakışını vermek üzere hazırlanan 'İçerik Şeması'nda kullanılan temel semboller hangileridir?",
+    options: [
+        ["Sadece Varlık ve Genel İşlem", "Eksik, Veri Akışı da temel bir semboldür."],
+        ["Varlık, Veri Akışı ve Genel İşlem", "İçerik şemasında bu üç temel sembol kullanılır."],
+        ["Girdi, Çıktı ve İşlem", "Bunlar genel sistem unsurlarıdır, içerik şeması sembolleri değil."],
+        ["Sistem, Alt Sistem ve Çevre", "Bunlar sistemin yapısal kavramlarıdır."],
+        ["Veri, Bilgi ve Rapor", "Bunlar bilgi hiyerarşisi kavramlarıdır."]
+    ],
+    answer: 1,
+    summary: "İçerik şemasında temel olarak üç tip sembol kullanılmaktadır. Bunlar; çift kare ile gösterilen 'Varlık', ok ile gösterilen 'Veri Akışı' ve köşeleri yuvarlak dikdörtgen ile gösterilen 'Genel İşlem'dir."
+},
+{
+    q: "15. İçerik şemasında, 'bilgi veya veri alan veya oluşturan kişi, bölüm veya başka bir sistem gibi dış veri unsurlarını' göstermek için kullanılan sembol hangisidir?",
+    options: [
+        ["Genel İşlem", "Bu, verinin işlendiği veya değiştiği yeri gösterir."],
+        ["Veri Akışı", "Bu, verinin hareketini gösterir."],
+        ["Varlık", "Bu tanım, sisteme veri sağlayan veya sistemden veri alan 'Varlık' sembolüne aittir."],
+        ["Veri Deposu", "Veri deposu içerik şemasında genellikle gösterilmez, verinin saklandığı yerdir."],
+        ["Sistem Sınırı", "Bu, bir kavramdır, bir sembol değil."]
+    ],
+    answer: 2,
+    summary: "Varlık: Bilgi veya veri alan, veya oluşturan kişi, bölüm veya başka bir sistem gibi dış veri varlıklarının gösterimi için kullanılır."
+},
+{
+    q: "16. 'Bir işleme giden veya bir işlemden çıkan veri akışının gösterimi için kullanılan' sembol hangisidir?",
+    options: [
+        ["Veri Akışı", "Ok ile gösterilen bu sembol, verinin hareketini temsil eder."],
+        ["Genel İşlem", "Bu sembol, verinin dönüştürüldüğü yeri gösterir."],
+        ["Varlık", "Bu sembol, verinin kaynağını veya hedefini gösterir."],
+        ["İlişki", "Bu terim içerik şeması sembolleri arasında yoktur."],
+        ["Bağlantı", "Bu genel bir ifadedir, spesifik sembolün adı Veri Akışı'dır."]
+    ],
+    answer: 0,
+    summary: "Veri Akışı: Bir işleme giden veya bir işlemden çıkan veri akışının gösterimi için kullanılır."
+},
+{
+    q: "17. İçerik şemasında, 'verinin işlenmesi ve değişimi için gerekli olan işlem veya işlemleri grubunun gösterimi için kullanılan' sembol hangisidir?",
+    options: [
+        ["Varlık", "Varlık, verinin kaynağı veya hedefidir."],
+        ["Veri Akışı", "Veri Akışı, verinin hareketidir."],
+        ["Proses Kutusu", "Bu genel bir ifadedir, doğru terim Genel İşlem'dir."],
+        ["Fonksiyon", "Fonksiyon bir kavramdır, şemadaki bir sembol değil."],
+        ["Genel İşlem", "Köşeleri yuvarlak dikdörtgen olan bu sembol, verinin dönüştürüldüğü işlemi temsil eder."]
+    ],
+    answer: 4,
+    summary: "Genel İşlem: Verinin işlenmesi ve değişimi için gerekli olan işlem veya işlemleri grubunun gösterimi için kullanılır."
+},
+{
+    q: "18. Araba Kiralama Sistemi örneğinde, 'Müşteri' ve 'Yönetim' kutucukları içerik şemasının hangi temel unsurunu temsil etmektedir?",
+    options: [
+        ["Genel İşlem", "Hayır, Genel İşlem 'Araba Kiralama Sistemi' kutusudur."],
+        ["Varlık", "Müşteri sisteme veri veren, Yönetim ise sistemden veri alan birer dış 'Varlık'tır."],
+        ["Veri Akışı", "Hayır, Veri Akışı 'Müşteri Bilgisi' gibi oklardır."],
+        ["Sistemin Parçaları", "Bu genel bir ifadedir, doğru terim 'Varlık'tır."],
+        ["Paydaşlar", "Paydaş bir roldür, şemadaki gösterimin adı 'Varlık'tır."]
+    ],
+    answer: 1,
+    summary: "İçerik şeması örneğinde, sisteme veri sağlayan (Müşteri) veya sistemden veri alan (Yönetim, Muhasebe) unsurlar 'Varlık' olarak adlandırılır."
+},
+{
+    q: "19. Bir projenin hedeflenen durumunu tanımlama faaliyetleri arasında aşağıdakilerden hangisi yer almaz?",
+    options: [
+        ["Sistemden beklenen yeteneklerin dokümantasyonunun yapılması", "Bu, hedeflenen durumu tanımlama faaliyetlerinden biridir."],
+        ["Seçilen projenin gelecekteki durumunun tanımlanması", "Bu, hedeflenen durumu tanımlama faaliyetlerinden biridir."],
+        ["Sistem kapsamının grafiksel içerik şeması ile gösterilmesi", "Bu, hedeflenen durumu tanımlama faaliyetlerinden biridir."],
+        ["Potansiyel projelerin sınıflandırılması ve sıralanması", "Bu faaliyet, hedeflenen durumu değil, 'mevcut durumu ve potansiyel projeleri' tanımlama aşamasında yapılır."],
+        ["İhtiyaç duyulan sistem yeteneklerinin analiz edilmesi", "Bu, hedeflenen durumu tanımlama faaliyetlerinden biridir."]
+    ],
+    answer: 3,
+    summary: "Potansiyel projelerin sınıflandırılması ve sıralanması, problemin tanımlanmasının ilk temel faaliyeti olan 'mevcut durumun tanımlanması' başlığı altında yer alır; 'hedeflenen durum' başlığı altında değil."
+},
+{
+    q: "20. Projenin son aşamasında hazırlanan 'Geçiş Planı ve Stratejisi' hangi unsurları içerir? \nI. Projenin genel açıklaması \nII. Tavsiyeler \nIII. Alternatifler \nIV. Sistemin tanımı",
+    options: [
+        ["I ve II", "Eksik, diğer maddeler de geçiş planının parçasıdır."],
+        ["III ve IV", "Eksik, diğer maddeler de geçiş planının parçasıdır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, geçiş planı ve stratejisinin temel bileşenleridir."],
+        ["Yalnızca I ve IV", "Eksik, tavsiyeler ve alternatifler de bu planda yer alır."],
+        ["Yalnızca II ve III", "Eksik, projenin ve sistemin tanımı da bu planda yer alır."]
+    ],
+    answer: 2,
+    summary: "Geçiş planı ve stratejisi; Projenin genel açıklaması, Tavsiyeler, Alternatifler ve Sistemin tanımı gibi unsurlardan oluşur."
+},
+{
+    q: "21. Araba Kiralama Sistemi örneğindeki içerik şemasında, 'Müşteri Bilgisi' ve 'Yönetim Raporları'nı gösteren oklar hangi unsuru temsil eder?",
+    options: [
+        ["Genel İşlem", "Genel İşlem, 'Araba Kiralama Sistemi' kutusunun kendisidir."],
+        ["Varlık", "Varlık, 'Müşteri' veya 'Yönetim' gibi kutulardır."],
+        ["Veri Akışı", "Sistemdeki unsurlar arasında hareket eden bilgiyi temsil eden oklar 'Veri Akışı'dır."],
+        ["İlişki", "Bu genel bir kavramdır, şemadaki spesifik unsurun adı 'Veri Akışı'dır."],
+        ["Sistem Çıktısı", "'Yönetim Raporları' bir çıktıdır, ancak şemadaki gösteriminin adı 'Veri Akışı'dır."]
+    ],
+    answer: 2,
+    summary: "İçerik şemasında oklar, bir Varlık'tan bir İşlem'e veya bir İşlem'den bir Varlık'a doğru hareket eden bilgiyi, yani 'Veri Akışı'nı temsil eder."
+},
+{
+    q: "22. Hedeflenen durumun tanımlanması faaliyeti kapsamında, sistem kapsamını grafiksel olarak göstermek için hazırlanan diyagram hangisidir?",
+    options: [
+        ["Akış Şeması", "Akış şeması, bir sürecin adımlarını gösterir."],
+        ["Organizasyon Şeması", "Organizasyon şeması, hiyerarşiyi gösterir."],
+        ["İçerik Şeması", "Sistem kapsamını; temel girdiler, işlemler ve çıktılarla genel bir bakış açısıyla gösteren grafiksel şema 'İçerik Şeması'dır."],
+        ["Matris Diyagramı", "Matrisler, iki farklı unsur arasındaki ilişkileri göstermek için kullanılır."],
+        ["Veritabanı Şeması", "Bu, veritabanının yapısını gösterir."]
+    ],
+    answer: 2,
+    summary: "Hedeflenen durumun tanımı faaliyetinin üç alt faaliyetinden biri, sistem kapsamının grafiksel içerik şeması oluşturularak gösterilmesidir."
+},
+{
+    q: "23. Araba Kiralama Sistemi örneğindeki içerik şemasında, 'Araba Kiralama Sistemi' yazan köşeleri yuvarlak dikdörtgen neyi temsil eder?",
+    options: [
+        ["Varlık", "Varlık, 'Müşteri' gibi dış unsurlardır."],
+        ["Veri Akışı", "Veri Akışı, 'Müşteri Bilgisi' gibi oklardır."],
+        ["Genel İşlem", "Sistemin kendisini veya ana fonksiyonunu temsil eden bu sembol 'Genel İşlem'dir."],
+        ["Veri Deposu", "Veri deposu bu şemada gösterilmez."],
+        ["Sistem Sınırı", "Sınır, şemanın kendisinin ima ettiği bir kavramdır, bir sembol değil."]
+    ],
+    answer: 2,
+    summary: "İçerik şemasında köşeleri yuvarlak dikdörtgen, verinin işlendiği ve değişime uğradığı 'Genel İşlem'i temsil eder."
+},
+{
+    q: "24. Aşağıdakilerden hangisi potansiyel projelerin sınıflandırılması ve sıralanması sırasında dikkate alınan kriterlerden biri değildir?",
+    options: [
+        ["Stratejik sıralama", "Bu bir kriterdir."],
+        ["Mevcut kaynaklar", "Bu bir kriterdir."],
+        ["Projenin boyutu/süresi", "Bu bir kriterdir."],
+        ["Proje yöneticisinin kişisel tercihi", "Bu, nesnel bir kriter değildir ve projelerin sıralanmasında kullanılmamalıdır."],
+        ["Teknik açıdan zorluğu/riskleri", "Bu bir kriterdir."]
+    ],
+    answer: 3,
+    summary: "Projelerin sınıflandırılması ve sıralanmasında; değer zinciri analizi, stratejik sıralama, potansiyel faydalar, mevcut kaynaklar, projenin boyutu ve teknik riski gibi nesnel kriterler kullanılır."
+},
+{
+    q: "25. 'Personelin İşe Alım İşlemi' ifadesi, mevcut durumun tanımlanmasında hangi kavrama örnektir?",
+    options: [
+        ["Fonksiyon", "Fonksiyon, 'İnsan Kaynakları' gibi daha genel bir işlevdir."],
+        ["Birim", "Birim, 'İnsan Kaynakları Departmanı' gibi bir yapıdır."],
+        ["Veri Varlığı", "Veri varlığı, 'Personel' gibi hakkında veri tutulan bir nesnedir."],
+        ["İşlem", "Belirli bir amaca yönelik adımlar bütünü olan bu ifade, bir 'İşlem' örneğidir."],
+        ["Hedef", "Hedef, 'Nitelikli Personel Sayısını Artırmak' gibi bir amaçtır."]
+    ],
+    answer: 3,
+    summary: "İşlem Örneği: Personelin İşe Alım İşlemi gibi."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 14</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 14</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. SGYD'nin dördüncü adımı olan 'Sistem Uygulama' hangi temel faaliyetleri kapsar? \nI. Uygulama geliştirme \nII. Sistem kurumu \nIII. Sistem değerlendirme \nIV. Destek ve bakım hizmetleri",
+    options: [
+        ["I ve II", "Eksik, değerlendirme ve destek/bakım da bu adımın parçasıdır."],
+        ["I, II, III ve IV", "Sistem Uygulama adımı; geliştirme, kurulum, değerlendirme ve destek/bakım hizmetlerinin tümünü kapsar."],
+        ["Yalnızca I, II ve IV", "Eksik, sistemin değerlendirilmesi de bu adımdadır."],
+        ["II, III ve IV", "Eksik, uygulama geliştirme de bu adımın parçasıdır."],
+        ["Yalnızca I", "Bu sadece bir faaliyettir, adımın tamamı değildir."]
+    ],
+    answer: 1,
+    summary: "Sistem uygulama, SGYD'nün dördüncü adımıdır ve uygulama geliştirme, sistem kurumu, sistem değerlendirme çalışmaları ile birlikte kullanıcı destek ve bakım hizmetlerinin verilmesini kapsar."
+},
+{
+    q: "2. Uygulama geliştirme aşamasında 'Üretim' çalışmaları hangi dört temel adımı içerir?",
+    options: [
+        ["Planlama, Analiz, Tasarım, Test", "Planlama ve Analiz, SGYD'nin önceki adımlarıdır."],
+        ["Tasarım, Kodlama, Test, Dokümantasyon", "Her bir programın üretim süreci; program mantığının tasarlanması, kodlanması, test edilmesi ve dokümante edilmesi adımlarını içerir."],
+        ["Strateji, Tasarım, Test, Kurulum", "Strateji planlaması üretim öncesi yapılır, kurulum ise sonrası bir adımdır."],
+        ["Kodlama, Derleme, Hata Ayıklama, Sürümleme", "Bunlar kodlama ve testin alt detaylarıdır."],
+        ["Analiz, Modelleme, Kodlama, Değerlendirme", "Analiz ve Modelleme daha önceki SGYD adımlarıdır."]
+    ],
+    answer: 1,
+    summary: "Üretim aşamasında her bir program aşağıdaki adımlar doğrultusunda geliştirilmelidir: Tasarım, Kodlama, Test, Dokümantasyon."
+},
+{
+    q: "3. 'Program mantığının bilgisayar sistemi tarafından çözümlenerek yerine getirebileceği programlama dilinin sentaksına uygun özel talimatlara dönüştürülmesi işlemi' hangisidir?",
+    options: [
+        ["Tasarım", "Tasarım, program mantığının oluşturulması işlemidir."],
+        ["Derleme", "Derleme, yazılan kodun makine diline çevrilmesidir."],
+        ["Test", "Test, kodun doğru çalışıp çalışmadığının kontrol edilmesidir."],
+        ["Kodlama", "Bu tanım, program mantığını Visual Basic, Java gibi bir programlama diline çevirme eylemi olan 'Kodlama'ya aittir."],
+        ["Yalancı Kodlama", "Bu, program mantığını tasarlamak için kullanılan bir tekniktir."]
+    ],
+    answer: 3,
+    summary: "Kodlama, program mantığının bilgisayar sistemi tarafından çözümlenerek yerine getirebileceği programlama dilinin sentaksına uygun özel talimatlara dönüştürülmesi işlemidir."
+},
+{
+    q: "4. Bir programın test edilmesi sırasında, öncelikle programlama dilinin derleyicisi tarafından yapılan 'dil gramer hatalarının kontrolü'ne ne ad verilir?",
+    options: [
+        ["Masa Kontrolü", "Masa kontrolü, programın mantığının test verileriyle kontrol edilmesidir."],
+        ["Sentaks Kontrolü", "Programın yazıldığı dilin kurallarına (sentaksına) uygun olup olmadığının kontrolü 'Sentaks Kontrolü'dür."],
+        ["Entegrasyon Testi", "Bu, farklı programların birlikte çalışıp çalışmadığının testidir."],
+        ["Birim Testi", "Bu, testin genel adıdır, spesifik kontrolün adı değil."],
+        ["Alfa Testi", "Bu bir sürüm testidir."]
+    ],
+    answer: 1,
+    summary: "Test işlemi, öncelikle programın yazıldığı programlama dilinin derleyicisi tarafından yapılan sentaks kontrolü, diğer bir deyişle dil gramer hatalarının kontrolü ile başlar."
+},
+{
+    q: "5. Program geliştirme sürecinde, 'sistemin tamamlanmak üzere olduğu ve testlerinin programcılar tarafından değil, son kullanıcılar tarafından yapıldığı' sürüm hangisidir?",
+    options: [
+        ["Alfa Sürümü", "Alfa sürümü bitmemiş, bitirilmeye yakın bir sistemdir ve testleri genellikle kurum içinde yapılır."],
+        ["Beta Sürümü", "Son sürümden önceki, testlerin son kullanıcılar tarafından yapıldığı bu sürüme 'Beta Sürümü' denir."],
+        ["Ürün Sürümü", "Ürün sürümü, son kullanıcıya dağıtılan nihai sistemdir."],
+        ["Test Sürümü", "Bu genel bir ifadedir."],
+        ["Geliştirici Sürümü", "Bu genel bir ifadedir."]
+    ],
+    answer: 1,
+    summary: "Beta sürümü: Sistemin tamamlanmak üzere olduğu ve zorunlu testler yapıldıktan sonra son sürümünün çıkarılabileceği şeklidir. Testler programcılar veya test uzmanlarınca değil son kullanıcılar tarafından yapılır."
+},
+{
+    q: "6. 'Üretim aşamasında tek tek test edilmiş programların birlikte çalışıp çalışmadığının kontrolü amacıyla yapılan test' hangisidir?",
+    options: [
+        ["Birim Testi", "Birim testi, tek bir programın test edilmesidir."],
+        ["Sistem Testi", "Sistem testi, tüm sistemin kullanıcılarla birlikte test edilmesidir."],
+        ["Entegrasyon Testi", "Farklı modüllerin veya programların bir araya getirildiğinde uyumlu bir şekilde çalışıp çalışmadığını kontrol eden bu teste 'Entegrasyon Testi' denir."],
+        ["Kabul Testi", "Bu, kullanıcının sistemi kabul edip etmediğini belirleyen testtir."],
+        ["Stres Testi", "Bu, sistemin yoğun yük altındaki performansını ölçer."]
+    ],
+    answer: 2,
+    summary: "Bu aşamada, öncelikle üretim aşamasında tek tek test edilmiş programların birlikte çalışıp çalışmadığının kontrolü amacıyla sistem analist denetiminde entegrasyon testi yapılır."
+},
+{
+    q: "7. Aşağıdakilerden hangisi sistem testinin yapılma nedenlerinden biri değildir?",
+    options: [
+        ["Tüm programlar için son bir test daha yapılması", "Bu, sistem testinin bir nedenidir."],
+        ["Tüm sistem bileşenlerinin entegre olarak doğru çalıştığının tespit edilmesi", "Bu, sistem testinin bir nedenidir."],
+        ["Programlama dilinin sentaks hatalarının bulunması", "Sentaks hataları, programın üretim aşamasındaki birim testinde derleyici tarafından bulunur, sistem testinde değil."],
+        ["Kullanıcıların sistem ile etkileşim içinde olabildiğinin gösterilmesi", "Bu, sistem testinin bir nedenidir."],
+        ["Bilişim sisteminin belirlenmiş hacimdeki veriyi zamanında işleyebileceğinin tespiti", "Bu, sistem testinin bir nedenidir."]
+    ],
+    answer: 2,
+    summary: "Sentaks kontrolü, her bir programın kodlanması sırasında yapılır. Sistem testi ise tüm programlar birleştirildikten sonra, sistemin genel performansını ve doğruluğunu ölçmeyi hedefler."
+},
+{
+    q: "8. Sistem testi sırasında veri kullanımı için tercih edilen yöntem nedir?",
+    options: [
+        ["Sadece gerçek veri ile test edilmesi", "Bu riskli olabilir, hatalar doğrudan canlı veriyi etkileyebilir."],
+        ["Sadece örnek veri ile test edilmesi", "Örnek veri, gerçek hayattaki tüm senaryoları kapsamayabilir."],
+        ["Önce örnek veri ile, sonra gerçek veri ile test edilmesi", "Tercih edilen yöntem; önce güvenli olan örnek veriyle test yapıp hataları ayıklamak, ardından sistemin doğruluğundan emin olmak için gerçek veriyle test etmektir."],
+        ["Test verisi kullanılmasına gerek yoktur.", "Bu kesinlikle yanlıştır, testler veri olmadan yapılamaz."],
+        ["Önce gerçek veri ile, sonra örnek veri ile test edilmesi", "Bu sıralama yanlıştır ve risklidir."]
+    ],
+    answer: 2,
+    summary: "Sistem testi örnek veri ile yapılabileceği gibi, gerçek veri ile de yapılabilir. Tercih edilen; ilk olarak örnek veri ile test edilmesi, daha sonra... sonrasında da gerçek veri ile test edilmesidir."
+},
+{
+    q: "9. Aşağıdakilerden hangileri sistem geliştirilmesi tamamlandıktan sonra hazırlanması gereken dört temel dokümantasyon türüdür?",
+    options: [
+        ["İşletim kılavuzu, Program dokümanı, Sistem dokümanı, Kullanıcı kılavuzu", "Bu dört doküman, sistemin farklı paydaşları için hazırlanması gereken temel dokümantasyon türleridir."],
+        ["Analiz Raporu, Tasarım Dokümanı, Test Planı, Proje Planı", "Bunlar geliştirme sürecinin farklı aşamalarında üretilen dokümanlardır."],
+        ["Kullanıcı Kılavuzu, Eğitim Materyali, Yardım Menüsü, SSS", "Bunlar genellikle kullanıcı desteği odaklı dokümanlardır."],
+        ["Kaynak Kodu, Veritabanı Şeması, Ağ Diyagramı, Sunucu Konfigürasyonu", "Bunlar sistemin teknik detaylarını içeren belgelerdir."],
+        ["Fizibilite Raporu, Teklif Dosyası, Sözleşme, Fatura", "Bunlar projenin idari ve finansal dokümanlarıdır."]
+    ],
+    answer: 0,
+    summary: "Sistemin geliştirilmesinin tamamlanmasından sonra dört temel dokümantasyon çalışmasının tamamlanmış olması gerekmektedir: İşletim kılavuzu, Program dokümanı, Sistem dokümanı, Kullanıcı kılavuzu."
+},
+{
+    q: "10. 'Sistemi kullanacak olan kişiler için gerekli talimat ve bilgileri içeren ve yardım ekranlarını da kapsayan' dokümantasyon türü hangisidir?",
+    options: [
+        ["İşletim kılavuzu", "İşletim kılavuzu, sistemi çalıştıracak teknik ekip (BT ekibi) içindir."],
+        ["Program dokümanı", "Program dokümanı, programcılar için kodla ilgili detayları içerir."],
+        ["Sistem dokümanı", "Sistem dokümanı, sistemin genel fonksiyonlarını ve nasıl uygulandığını açıklar."],
+        ["Kullanıcı kılavuzu", "Bu tanım, sistemi fiilen kullanacak son kullanıcılar için hazırlanan 'Kullanıcı Kılavuzu'na aittir."],
+        ["Teknik doküman", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Kullanıcı kılavuzu: Sistemi kullanacak olan kişiler için gerekli talimat ve bilgileri içeren bir dokümantasyon çalışmasıdır. Yardım ekranları ve eğitim araçları da bu kapsamda ele alınmaktadır."
+},
+{
+    q: "11. 'Sistem uygulamaya geçtikten sonra, sistemin işletilmesini sağlayacak BT ekibi tarafından kullanılacak olan' ve sistemin yedekleme, hata anında geri dönüş gibi kurallarını içeren kılavuz hangisidir?",
+    options: [
+        ["Kullanıcı kılavuzu", "Bu kılavuz son kullanıcılar içindir."],
+        ["Program dokümanı", "Bu doküman programcılar içindir."],
+        ["İşletim kılavuzu", "Sistemin günlük operasyonlarını yönetecek ve teknik sorunlarına müdahale edecek BT ekibi için hazırlanan bu kılavuz 'İşletim Kılavuzu'dur."],
+        ["Sistem dokümanı", "Bu doküman sistemin genel fonksiyonlarını açıklar."],
+        ["Bakım kılavuzu", "Bu genel bir ifadedir, doğru terim İşletim Kılavuzu'dur."]
+    ],
+    answer: 2,
+    summary: "İşletim kılavuzu: Sistem uygulamaya geçtikten sonra sistemin işletilmesini sağlayacak ekip tarafından, yani bilişim teknolojisi ekibi tarafından kullanılacak bir dokümandır. İşletim için ve gerektiğinde anlık bakım için gerekli olan talimat ve bilgileri içerir."
+},
+{
+    q: "12. 'Sistem fonksiyonlarının ve bu fonksiyonların nasıl uygulandığının açıklandığı' dokümantasyon çalışması hangisidir?",
+    options: [
+        ["Program dokümanı", "Bu, spesifik modüllerin içsel detaylarına odaklanır."],
+        ["İşletim kılavuzu", "Bu, sistemin nasıl çalıştırılacağına odaklanır."],
+        ["Kullanıcı kılavuzu", "Bu, sistemin nasıl kullanılacağına odaklanır."],
+        ["Sistem dokümanı", "Sistemin genel işlevlerini ve bu işlevlerin nasıl hayata geçirildiğini açıklayan doküman 'Sistem Dokümanı'dır."],
+        ["Analiz dokümanı", "Bu, sistem geliştirme sürecinin bir çıktısıdır."]
+    ],
+    answer: 3,
+    summary: "Sistem dokümanı: Sistem fonksiyonlarının ve bu fonksiyonların nasıl uygulandığının açıklandığı bir dokümantasyon çalışmasıdır."
+},
+{
+    q: "13. Sistem Kurumu aşamasının üç temel adımı doğru sırayla hangileridir?",
+    options: [
+        ["Eğitimlerin verilmesi, Sistem değişiminin yapılması, Kurulum", "Sıralama yanlıştır, kurulum ilk adımdır."],
+        ["Sistemin işlevsel ortamda kurulumu, Eğitimlerin verilmesi, Sistem değişiminin yapılması", "Sistem kurumu süreci; önce sistemin teknik olarak kurulması, sonra kullanıcıların eğitilmesi ve son olarak da eski sistemden yeni sisteme geçişin yapılması adımlarını içerir."],
+        ["Sistem değişiminin yapılması, Kurulum, Eğitimlerin verilmesi", "Sıralama yanlıştır."],
+        ["Kurulum, Sistem testinin yapılması, Eğitimlerin verilmesi", "Sistem testi kurulum öncesi bir adımdır."],
+        ["Veri aktarımı, Eğitimlerin verilmesi, Sistem değişiminin yapılması", "Veri aktarımı, sistem değişiminin bir parçasıdır."]
+    ],
+    answer: 1,
+    summary: "Sistem kurumu... aşağıdaki üç temel adım doğrultusunda yerine getirilir: Sistemin işlevsel ortamda kurulumu, Eğitimlerin verilmesi, Sistem değişiminin yapılması."
+},
+{
+    q: "14. 'Mevcut verinin yeni sisteme yüklenmesi veya aktarımı' işlemi hangi kavramla ifade edilir?",
+    options: [
+        ["Sistem çevrimi", "Sistem çevrimi, eski sistemden yeni sisteme geçiş stratejisidir."],
+        ["Veri aktarımı", "Bu tanım, 'Veri Aktarımı' (Data Migration) işlevine aittir."],
+        ["Veri yedekleme", "Yedekleme, verinin bir kopyasını almaktır."],
+        ["Veri senkronizasyonu", "Bu, iki sistemdeki veriyi eşitlemektir."],
+        ["Veri kurulumu", "Bu genel bir ifadedir."]
+    ],
+    answer: 1,
+    summary: "Veri aktarımı işlevi, mevcut verinin yeni sisteme yüklenmesi veya aktarımı şeklinde gerçekleşir."
+},
+{
+    q: "15. 'Belirlenen bir günde, eski sistemin tamamen devreden çıkarılarak, yeni sistemin eski sistem yerine kullanılmaya başlandığı' çevrim stratejisi hangisidir?",
+    options: [
+        ["Paralel Çalışma Stratejisi", "Bu stratejide iki sistem bir süre birlikte çalışır."],
+        ["Pilot Çalışma Stratejisi", "Bu stratejide sistem önce küçük bir gruba uygulanır."],
+        ["Fazlı Yaklaşım Stratejisi", "Bu stratejide sistem modüller halinde devreye alınır."],
+        ["Direkt Kesim Stratejisi", "Eski sistemin aniden kapatılıp yenisinin açıldığı bu riskli ama hızlı strateji 'Direkt Kesim'dir."],
+        ["Ani Geçiş Stratejisi", "Bu doğru bir tanımdır ancak dokümandaki terim 'Direkt Kesim'dir."]
+    ],
+    answer: 3,
+    summary: "Direkt Kesim Stratejisi: Belirlenen bir günde, eski sistemin tamamen devreden çıkarılarak, yeni sistemin eski sistem yerine kullanılmaya başlandığı bir çevrim yaklaşımı."
+},
+{
+    q: "16. 'Yeni sistemin doğru çalıştığına herkes emin oluncaya kadar hem eski hem de onun yerine geçecek olan yeni sistemin birlikte çalıştırıldığı' çevrim stratejisi hangisidir?",
+    options: [
+        ["Paralel Çalışma Stratejisi", "İki sistemin bir süre boyunca aynı anda çalıştırıldığı ve sonuçlarının karşılaştırıldığı bu güvenli ama maliyetli strateji 'Paralel Çalışma'dır."],
+        ["Direkt Kesim Stratejisi", "Bu stratejide eski sistem anında kapatılır."],
+        ["Pilot Çalışma Stratejisi", "Bu stratejide sistem önce küçük bir gruba uygulanır."],
+        ["Fazlı Yaklaşım Stratejisi", "Bu stratejide sistem modüller halinde devreye alınır."],
+        ["Çift Sistem Stratejisi", "Bu doğru bir tanımdır ancak dokümandaki terim 'Paralel Çalışma'dır."]
+    ],
+    answer: 0,
+    summary: "Paralel Çalışma Stratejisi: Yeni sistemin doğru çalıştığına herkes emin oluncaya kadar hem eski hem de onun yerine geçecek olan yeni sistemin birlikte çalıştırıldığı bir çevrim yaklaşımı."
+},
+{
+    q: "17. Yeni sistemin, tüm organizasyona yayılmadan önce 'organizasyonun sınırlı bir alanına (örneğin tek bir departman veya şube) uygulandığı' çevrim stratejisi hangisidir?",
+    options: [
+        ["Direkt Kesim Stratejisi", "Bu strateji tüm organizasyonda anında geçişi ifade eder."],
+        ["Paralel Çalışma Stratejisi", "Bu stratejide iki sistem birlikte çalışır."],
+        ["Fazlı Yaklaşım Stratejisi", "Bu stratejide sistemin farklı modülleri farklı zamanlarda devreye alınır."],
+        ["Pilot Çalışma Stratejisi", "Yeni sistemin önce küçük bir deneme grubunda veya bölümünde test edildiği bu yaklaşıma 'Pilot Çalışma' denir."],
+        ["Test Grubu Stratejisi", "Bu doğru bir tanımdır ancak dokümandaki terim 'Pilot Çalışma'dır."]
+    ],
+    answer: 3,
+    summary: "Pilot Çalışma Stratejisi: Tümüyle fonksiyonel olduğu ispatlanana kadar, yeni sistemin organizasyonun sınırlı bir alanına uygulandığı bir çevrim yaklaşımı."
+},
+{
+    q: "18. 'Yeni sistemin fonksiyonel olarak modüller veya etaplar halinde kullanılmaya başlandığı' çevrim stratejisi hangisidir?",
+    options: [
+        ["Direkt Kesim Stratejisi", "Bu strateji tek seferde geçişi ifade eder."],
+        ["Paralel Çalışma Stratejisi", "Bu stratejide tüm sistemler aynı anda çalışır."],
+        ["Pilot Çalışma Stratejisi", "Bu strateji coğrafi veya departmansal bir sınırlamaya odaklanır."],
+        ["Fazlı Yaklaşım Stratejisi", "Yeni sistemin parça parça (örneğin önce muhasebe modülü, sonra stok modülü) devreye alındığı bu yaklaşıma 'Fazlı Yaklaşım' denir."],
+        ["Modüler Yaklaşım", "Bu doğru bir tanımdır ancak dokümandaki terim 'Fazlı Yaklaşım'dır."]
+    ],
+    answer: 3,
+    summary: "Fazlı Yaklaşım Stratejisi: Yeni sistemin fonksiyonel olarak modüler veya etaplar halinde kullanılmaya başlandığı bir çevrim yaklaşımı."
+},
+{
+    q: "19. Risk ve maliyet karşılaştırma grafiğine göre en yüksek riske sahip olan çevrim stratejisi hangisidir?",
+    options: [
+        ["Paralel Çalışma", "Bu, en düşük riske ama en yüksek maliyete sahip stratejidir."],
+        ["Pilot Çalışma", "Bu, orta düzeyde risk ve maliyete sahiptir."],
+        ["Fazlı Yaklaşım", "Bu, orta düzeyde risk ve maliyete sahiptir."],
+        ["Direkt Kesim", "Grafiğe göre, eski sistemi aniden kapatıp yeniye geçmek geri dönüşü zor olduğu için en yüksek riski taşır."],
+        ["Hiçbiri", "Grafikte net bir karşılaştırma vardır."]
+    ],
+    answer: 3,
+    summary: "Çevrim stratejilerinin risk ve maliyet karşılaştırma grafiğine göre, en yüksek riske sahip olan strateji Direkt Kesim'dir."
+},
+{
+    q: "20. Risk ve maliyet karşılaştırma grafiğine göre en yüksek maliyete sahip olan çevrim stratejisi hangisidir?",
+    options: [
+        ["Direkt Kesim", "Bu, en düşük maliyete sahip stratejidir."],
+        ["Pilot Çalışma", "Bu, orta düzeyde maliyete sahiptir."],
+        ["Paralel Çalışma", "İki sistemi aynı anda çalıştırmak, personel ve kaynak maliyetlerini iki katına çıkardığı için en yüksek maliyetli stratejidir."],
+        ["Fazlı Yaklaşım", "Bu, orta düzeyde maliyete sahiptir."],
+        ["Hiçbiri", "Grafikte net bir karşılaştırma vardır."]
+    ],
+    answer: 2,
+    summary: "Çevrim stratejilerinin risk ve maliyet karşılaştırma grafiğine göre, en yüksek maliyete sahip olan strateji Paralel Çalışma'dır."
+},
+{
+    q: "21. 'Geliştirilen sistemin işletilmesinden sonra sistem analistin sistem ile ilgili bir değerlendirme çalışması yapması' hangi aşamayı tanımlar?",
+    options: [
+        ["Sistem Kurumu", "Kurulum, sistemin faal hale getirilmesidir."],
+        ["Sistem Testi", "Test, sistemin doğruluğunun kontrol edilmesidir."],
+        ["Sistem Değerlendirme", "Bu tanım, sistemin hedeflerine ulaşıp ulaşmadığını, maliyet-kazanç tahminlerinin doğruluğunu kontrol eden 'Sistem Değerlendirme' aşamasına aittir."],
+        ["Bakım Hizmetleri", "Bakım, sistemdeki hataları düzeltme veya sistemi iyileştirme faaliyetleridir."],
+        ["Kullanıcı Desteği", "Bu, kullanıcılara yardım etme faaliyetidir."]
+    ],
+    answer: 2,
+    summary: "Sistem Değerlendirme: Geliştirilen sistemin işletilmesinden sonra sistem analistin sistem ile ilgili bir değerlendirme çalışması yapması gerekir."
+},
+{
+    q: "22. Aşağıdakilerden hangisi Sistem Değerlendirme aşamasında 'Sonuçlar ve Çıktıların Değerlendirilmesi' kapsamında ele alınan hususlardan biri değildir?",
+    options: [
+        ["Kullanıcı memnuniyeti", "Bu, değerlendirilen önemli bir husustur."],
+        ["Sistem güvenilirliği ve sürekliliği", "Bu, değerlendirilen önemli bir husustur."],
+        ["Maliyet-kazanç tahminlerinin ve geliştirme takviminin doğruluğu", "Bu, değerlendirilen önemli bir husustur."],
+        ["Yeni bir sistem projesinin başlatılması", "Yeni bir proje başlatmak, bu değerlendirmenin bir sonucu olabilir ancak değerlendirme kapsamında ele alınan bir husus değildir."],
+        ["Kaliteli ve etkin eğitim verilip verilmediği", "Bu, değerlendirilen önemli bir husustur."]
+    ],
+    answer: 3,
+    summary: "Sonuçlar ve Çıktıların Değerlendirilmesi; kullanıcı memnuniyeti, sistem güvenilirliği, maliyet/takvim doğruluğu, dokümantasyon ve eğitim kalitesi gibi birçok hususu içerir."
+},
+{
+    q: "23. 'Kullanıcıların veya BT elemanlarının sistemdeki herhangi bir problemi haber vermeleri durumunda problemin düzeltilmesine yönelik verilen' bakım hizmeti hangisidir?",
+    options: [
+        ["Uyarlayıcı Bakım", "Uyarlayıcı bakım, değişen iş ortamına sistemi adapte etmektir."],
+        ["Mükemmeliyetçi Bakım", "Mükemmeliyetçi bakım, sistemi daha etkin hale getirmek için yapılır."],
+        ["Koruyucu Bakım", "Koruyucu bakım, gelecekteki sorunları önlemek için yapılır."],
+        ["Düzeltici Bakım", "Mevcut bir hatayı veya problemi gidermek için yapılan bu bakım türüne 'Düzeltici Bakım' denir."],
+        ["Acil Bakım", "Bu doğru bir tanımdır ancak dokümandaki terim 'Düzeltici Bakım'dır."]
+    ],
+    answer: 3,
+    summary: "Düzeltici Bakım: Kullanıcıların veya BT elemanlarının sistemdeki herhangi bir problemi haber vermeleri durumunda problemin düzeltilmesine yönelik verilen bakım hizmetidir."
+},
+{
+    q: "24. 'Değişen iş veya işletim ortamına uyarlanması amacıyla, sisteme yeni raporlar eklenmesi veya web sitesine yeni bağlantılar eklenmesi' gibi değişiklikler ne tür bir bakımdır?",
+    options: [
+        ["Düzeltici Bakım", "Düzeltici bakım, mevcut bir hatayı düzeltir."],
+        ["Uyarlayıcı Bakım", "Sistemi, değişen iş gereksinimlerine veya çevreye adapte etmek için yapılan bu tür değişiklikler 'Uyarlayıcı Bakım' kapsamındadır."],
+        ["Mükemmeliyetçi Bakım", "Mükemmeliyetçi bakım, sistemin performansını artırmaya odaklanır."],
+        ["Koruyucu Bakım", "Koruyucu bakım, gelecekteki sorunları önlemeye odaklanır."],
+        ["Geliştirici Bakım", "Bu terim dokümanda kullanılmamıştır."]
+    ],
+    answer: 1,
+    summary: "Uyarlayıcı Bakım: Kullanıcıların, değişen iş veya işletim ortamına uyarlanması amacıyla, sistemde değişiklik yapılmasını istemeleri durumunda verilen bakım hizmetidir."
+},
+{
+    q: "25. 'Sistemin daha etkin, güvenilir ve sürdürülebilir olması amacıyla, hesaplama işleminin hızlandırılması için programda değişiklik yapılması' ne tür bir bakımdır?",
+    options: [
+        ["Düzeltici Bakım", "Bu, bir hatayı düzeltir."],
+        ["Uyarlayıcı Bakım", "Bu, yeni bir iş ihtiyacına uyum sağlamaktır."],
+        ["Mükemmeliyetçi Bakım", "Sistemde bir hata olmamasına rağmen, onu daha iyi (daha hızlı, daha güvenilir) hale getirmek için yapılan bu iyileştirmeler 'Mükemmeliyetçi Bakım'dır."],
+        ["Koruyucu Bakım", "Bu, gelecekteki sorunları önler."],
+        ["Performans Bakımı", "Bu doğru bir tanımdır ancak dokümandaki terim 'Mükemmeliyetçi Bakım'dır."]
+    ],
+    answer: 2,
+    summary: "Mükemmeliyetçi Bakım: Sistemin daha etkin, güvenilir ve sürdürülebilir olması amacıyla, genelde BT departmanı tarafından ortaya konan sistemde değişiklik yapılması talebi karşısında verilen bakım hizmetidir."
+},
+{
+    q: "26. 'Gelecekte oluşabilecek problemlerin engellenmesi amacıyla, sisteme virüs koruyucu yazılımların yüklenmesi' ne tür bir bakımdır?",
+    options: [
+        ["Düzeltici Bakım", "Bu, mevcut bir hatayı düzeltir."],
+        ["Uyarlayıcı Bakım", "Bu, yeni bir iş ihtiyacına uyum sağlar."],
+        ["Mükemmeliyetçi Bakım", "Bu, mevcut sistemi daha iyi hale getirir."],
+        ["Koruyucu Bakım", "Henüz bir sorun oluşmadan, gelecekteki olası sorunları engellemek için proaktif olarak yapılan bu tür bakım faaliyetleri 'Koruyucu Bakım'dır."],
+        ["Güvenlik Bakımı", "Bu doğru bir tanımdır ancak dokümandaki terim 'Koruyucu Bakım'dır."]
+    ],
+    answer: 3,
+    summary: "Koruyucu Bakım: Gelecekte oluşabilecek problemlerin engellenmesi amacıyla, BT elemanları tarafından, problem çıkması olası alanlarda ön çalışmaların yapılmasını kapsayan bakım hizmetidir."
+},
+{
+    q: "27. Kullanıcı destek hizmetleri hangi iki temel hizmet grubunu içerir?",
+    options: [
+        ["Yazılım ve Donanım Desteği", "Bunlar desteğin konusudur, hizmet grubu değil."],
+        ["Kullanıcı Eğitimleri ve Yardım Masaları", "Kullanıcı destek hizmetleri temel olarak kullanıcılara eğitim verilmesi ve yardım masaları aracılığıyla anlık destek sağlanması hizmetlerini kapsar."],
+        ["Düzeltici ve Koruyucu Bakım", "Bunlar bakım hizmeti türleridir, kullanıcı desteği değil."],
+        ["Telefon ve E-posta Desteği", "Bunlar yardım masasının iletişim kanallarıdır."],
+        ["Kurulum ve Yapılandırma", "Bunlar sistem kurumu aşamasındadır."]
+    ],
+    answer: 1,
+    summary: "Kullanıcı destek hizmetleri iki temel hizmet grubunu içermektedir: Kullanıcı eğitimleri ve Yardım masaları."
+},
+{
+    q: "28. Aşağıdakilerden hangisi bir 'Yardım Masası'nın sağladığı temel hizmetlerden biridir?",
+    options: [
+        ["Kullanıcıların teknik ve işletimsel sorularına cevap sağlamak", "Yardım masalarının temel görevlerinden biri, kullanıcıların sistemle ilgili teknik veya işlevsel sorularını yanıtlamaktır."],
+        ["Sistemin kaynak kodunu yeniden yazmak", "Bu, yazılım geliştirme veya bakım ekibinin görevidir, yardım masasının değil."],
+        ["Yeni donanım siparişlerini onaylamak", "Bu, satınalma veya ilgili departman yöneticisinin görevidir."],
+        ["Şirketin pazarlama stratejisini belirlemek", "Bu, pazarlama departmanının görevidir."],
+        ["Fizibilite raporunu hazırlamak", "Bu, sistem analistinin planlama aşamasındaki görevidir."]
+    ],
+    answer: 0,
+    summary: "Yardım masalarının temel hizmetleri arasında; kullanıcılara kaynakların etkin kullanımını göstermek, teknik ve işletimsel sorularına cevap sağlamak ve kullanıcıların bilgi gereksinimlerini nasıl karşılayacaklarını göstermek yer alır."
+},
+{
+    q: "29. Bir sisteme yeni katılan bir personele, sistemin nasıl kullanılacağının anlatılması hangi hizmet kapsamına girer?",
+    options: [
+        ["Yardım Masası", "Yardım masası anlık sorunlara çözüm bulur."],
+        ["Düzeltici Bakım", "Bu, hataları düzeltir."],
+        ["Kullanıcı Eğitimleri", "Kuruma yeni katılan elemanlara sistemin nasıl kullanılacağının öğretilmesi, kullanıcı eğitimleri hizmetinin bir parçasıdır."],
+        ["Sistem Kurumu", "Bu, sistemin ilk defa faal hale getirilmesidir."],
+        ["Oryantasyon", "Bu genel bir ifadedir, doğru terim Kullanıcı Eğitimleri'dir."]
+    ],
+    answer: 2,
+    summary: "Kullanıcı eğitimleri; ...Sistem ilk kurulduğunda verilen kullanıcı eğitimlerinin, daha sonraki günlerde kuruma yeni katılan elemanlara da verilmesi... hizmetlerini kapsar."
+},
+{
+    q: "30. Aşağıdaki bakım türlerinden hangisi, bir hata veya yeni bir istek olmaksızın, sadece sistemi daha iyi hale getirmek amacıyla BT departmanı tarafından başlatılır?",
+    options: [
+        ["Düzeltici Bakım", "Bu, bir hata olduğunda kullanıcı veya BT elemanı tarafından başlatılır."],
+        ["Uyarlayıcı Bakım", "Bu, genellikle yeni bir iş gereksinimi nedeniyle kullanıcı tarafından talep edilir."],
+        ["Mükemmeliyetçi Bakım", "Sistemi daha hızlı, daha güvenilir veya daha verimli hale getirmek için genellikle BT departmanının inisiyatifiyle başlatılan bu bakım türü 'Mükemmeliyetçi Bakım'dır."],
+        ["Koruyucu Bakım", "Bu, gelecekteki sorunları önlemek amacıyla proaktif olarak yapılır."],
+        ["İyileştirici Bakım", "Bu doğru bir tanımdır ancak dokümandaki terim 'Mükemmeliyetçi Bakım'dır."]
+    ],
+    answer: 2,
+    summary: "Mükemmeliyetçi Bakım: Sistemin daha etkin, güvenilir ve sürdürülebilir olması amacıyla, genelde BT departmanı tarafından ortaya konan sistemde değişiklik yapılması talebi karşısında verilen bakım hizmetidir."
+},
+{
+    q: "31. Sistem analistinin, üretim çalışmalarına temel oluşturması için programcıya verdiği doküman ve bilgiler arasında aşağıdakilerden hangisi genellikle yer almaz?",
+    options: [
+        ["Veri akış şemaları", "Bu, programcıya sistemin veri akışını anlaması için verilir."],
+        ["Veri sözlüğü detayları", "Bu, programcıya veri yapısını anlaması için verilir."],
+        ["Yapı şeması veya program akış şeması", "Bunlar, programcıya programın mantığını ve yapısını anlaması için verilir."],
+        ["Kullanıcı memnuniyet anketleri", "Bu anketler, sistem geliştirildikten ve kullanılmaya başlandıktan sonra, 'Sistem Değerlendirme' aşamasında kullanılır; programcıya girdi olarak verilmez."],
+        ["İşlem tanımları", "Bu, programcıya her bir fonksiyonun ne yapması gerektiğini anlaması için verilir."]
+    ],
+    answer: 3,
+    summary: "Sistem analisti programcıya; sistem tasarım detayları, veri akış şemaları, işlem tanımları, veri sözlüğü detayları, yapı şeması ve yalancı kodlama gibi teknik dokümanları iletir. Kullanıcı memnuniyet anketleri bu sürecin bir girdisi değildir."
+},
+{
+    q: "32. Bir programın test edilmesi sırasında, 'programın mantığının doğru çalışıp çalışmadığının kontrolünün test verileri ile yapılması' işlemine ne ad verilir?",
+    options: [
+        ["Sentaks Kontrolü", "Sentaks kontrolü, kodun dilbilgisi kurallarına uygunluğunun derleyici tarafından kontrol edilmesidir."],
+        ["Masa Kontrolü", "Programcının veya analistin, programın mantıksal akışını test verileriyle adım adım kağıt üzerinde veya zihinsel olarak takip ettiği bu işleme 'Masa Kontrolü' (desk check) denir."],
+        ["Entegrasyon Testi", "Bu, farklı programların birlikte çalışıp çalışmadığının testidir."],
+        ["Beta Testi", "Bu, sistemin son kullanıcılar tarafından test edilmesidir."],
+        ["Sistem Testi", "Bu, tüm sistemin bir bütün olarak test edilmesidir."]
+    ],
+    answer: 1,
+    summary: "Test aşamasında, sentaks kontrolünden sonra, 'masa kontrolü' olarak adlandırılan programın mantığının doğru çalışıp çalışmadığının kontrolü test verileri ile yapılır."
+},
+{
+    q: "33. Bir 'İşletim Kılavuzu' içeriğinde aşağıdaki bilgilerden hangileri bulunur? \nI. Sistemin Yedekleme Kuralları \nII. Sistemin Hata Anında Geri Dönüş Kuralları \nIII. Sistem Sorumluları ve İletişim Bilgileri",
+    options: [
+        ["Yalnızca I", "Eksik, diğer maddeler de işletim kılavuzunda yer alır."],
+        ["I ve II", "Eksik, sistem sorumlularının bilgileri de bu kılavuzda bulunur."],
+        ["I, II ve III", "Sistemi işletecek BT ekibi için hazırlanan bu kılavuz; yedekleme, hata anında geri dönüş prosedürleri ve acil durumda ulaşılacak kişilerin bilgileri gibi kritik bilgileri içerir."],
+        ["Yalnızca II ve III", "Eksik, yedekleme kuralları da bu kılavuzda yer alır."],
+        ["Yalnızca III", "Eksik, diğer teknik prosedürler de bu kılavuzda yer alır."]
+    ],
+    answer: 2,
+    summary: "Bir İşletim Kılavuzunun içeriğinde; Sistemin Amacı, Donanım/Yazılım Şeması, Güvenlik, Yedekleme Kuralları, Hata Anında Geri Dönüş Kuralları ve Sistem Sorumluları gibi birçok önemli bilgi bulunur."
+},
+{
+    q: "34. Bir bilişim sisteminin 'İşlevsel Ortamda Kurulumu' sırasında faal duruma getirilmesi gereken bileşenlerden biri aşağıdakilerden hangisi değildir?",
+    options: [
+        ["Donanım konfigürasyonu ve ayarları", "Bu, kurulumun bir parçasıdır (örn: yazıcının tanıtılması)."],
+        ["Yazılım konfigürasyonu ve ayarları", "Bu, kurulumun bir parçasıdır (örn: kullanıcı yetkilerinin tanımlanması)."],
+        ["Sistem destek araçlarının kurumu", "Bu, kurulumun bir parçasıdır (örn: yedekleme ortamının yaratılması)."],
+        ["Sistem çevrim stratejisinin seçilmesi", "Strateji seçimi, kurulumdan önce yapılan bir planlama faaliyetidir. Kurulum, seçilen stratejiye göre yapılır."],
+        ["Telekomünikasyon kaynaklarının devreye alınması", "Bu, kurulumun bir parçasıdır (örn: internet bağlantısının sağlanması)."]
+    ],
+    answer: 3,
+    summary: "Sistemin işlevsel ortamda kurulumu; donanım, yazılım, destek araçları ve telekomünikasyon gibi bileşenlerin yapılandırılmasını ve devreye alınmasını içerir. Çevrim stratejisi ise bu kurulumun nasıl yapılacağını belirleyen bir plandır."
+},
+{
+    q: "35. Kullanıcı eğitimlerinin esas amacı nedir?",
+    options: [
+        ["Sistemdeki yazılım hatalarını bulmak", "Bu, test sürecinin amacıdır."],
+        ["Kullanıcılara, görevlerini yerine getirme noktasında, sistemin nasıl faydalı olabileceğini göstermek", "Kullanıcı eğitimlerinin temel amacı, kullanıcıların sistemi kendi iş süreçlerinde verimli ve doğru bir şekilde kullanarak ondan fayda sağlamalarını mümkün kılmaktır."],
+        ["Sistemin performansını ölçmek", "Bu, sistem değerlendirme sürecinin bir parçasıdır."],
+        ["Kullanıcıların bilgisayar okuryazarlığını artırmak", "Bu bir yan fayda olabilir ancak temel amaç değildir."],
+        ["Projenin tamamlandığını yönetime bildirmek", "Bu bir iletişim faaliyetidir."]
+    ],
+    answer: 1,
+    summary: "Kullanıcı eğitimlerinin esas amacı; kullanıcılara, görevlerini yerine getirme noktasında, sistemin nasıl faydalı olabileceğini göstermektir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 7</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 7</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Proje yönetiminde üzerinde durulan üç ana husus aşağıdakilerden hangileridir?",
+    options: [
+        ["Planlama, Analiz, Tasarım", "Bunlar SGYD'nin genel adımlarıdır."],
+        ["Fizibilite, Kapsam, Risk", "Bunlar planlama ve analizle ilgili kavramlardır."],
+        ["Proje zaman çizelgesinin hazırlanması, Proje ekibinin atanması, Projenin başlatılması", "Proje yönetimi bu üç temel husus üzerine kurulmuştur."],
+        ["Maliyet, Zaman, Kalite", "Bunlar projenin genel kısıtlarıdır, yönetim hususları değil."],
+        ["PERT, Gantt, WBS", "Bunlar proje yönetiminde kullanılan araç ve tekniklerdir."]
+    ],
+    answer: 2,
+    summary: "Proje yönetiminde üç husus üzerinde durulmaktadır. Bunlar; Proje zaman çizelgesinin hazırlanması, Proje ekibinin atanması, Projenin başlatılması'dır."
+},
+{
+    q: "2. Proje zaman çizelgesinin hazırlanması aşamasında kullanılan araç ve teknikler arasında hangileri yer alır? \nI. Gantt Şeması \nII. PERT Şeması \nIII. Kritik Yol Metodu (CPM)",
+    options: [
+        ["Yalnızca I", "Eksik, PERT ve CPM de önemli tekniklerdir."],
+        ["I ve II", "Eksik, CPM de dokümanda listelenmiştir."],
+        ["Yalnızca III", "Eksik, PERT ve Gantt de önemli tekniklerdir."],
+        ["II ve III", "Eksik, Gantt Şeması da önemli bir araçtır."],
+        ["I, II ve III", "Gantt Şeması, PERT ve CPM proje zaman çizelgesi hazırlamada kullanılan temel araç ve tekniklerdendir."]
+    ],
+    answer: 4,
+    summary: "Proje zaman çizelgesinin hazırlanması aşamasında kullanılan teknikler arasında Gantt Şeması, PERT ve Kritik Yol Metodu (CPM) yer alır."
+},
+{
+    q: "3. Bir projedeki tüm işlerin, daha küçük ve yönetilebilir parçalara ayrıldığı hiyerarşik yapıya ne ad verilir?",
+    options: [
+        ["Gantt Şeması", "Gantt şeması, işlerin zaman içindeki gösterimidir."],
+        ["PERT Diyagramı", "PERT diyagramı, faaliyetler arası ilişkileri gösterir."],
+        ["Organizasyon Şeması", "Bu, kurumun hiyerarşik yapısını gösterir."],
+        ["İş Dökümü Yapısı (WBS)", "Projedeki tüm işlerin, daha küçük parçalara (iş paketlerine) ayrıldığı yapıya İş Dökümü Yapısı (Work Breakdown Structure - WBS) denir."],
+        ["Faaliyet Listesi", "Bu, WBS'in bir çıktısıdır, yapının kendisi değil."]
+    ],
+    answer: 3,
+    summary: "İş dökümü yapısı (Work Breakdown Structure - WBS) projedeki tüm işlerin daha küçük parçalara ayrılarak yönetilmesini kolaylaştıran bir yapıdır."
+},
+{
+    q: "4. Bir projenin başlangıcından bitişine kadar olan en uzun yolu ifade eden ve üzerindeki faaliyetlerin gecikmemesi gereken yola ne ad verilir?",
+    options: [
+        ["Maksimum Yol", "Bu terim proje yönetiminde kullanılmaz."],
+        ["Optimal Yol", "Bu terim proje yönetiminde kullanılmaz."],
+        ["Kritik Yol", "Projenin en uzun yolunu oluşturan faaliyetler dizisine kritik yol denir ve bu yoldaki faaliyetlerin gecikmesi projenin tamamlanmasını geciktirir."],
+        ["En Kısa Yol", "En kısa yolun projeyle bir ilgisi yoktur."],
+        ["Standart Yol", "Bu terim proje yönetiminde kullanılmaz."]
+    ],
+    answer: 2,
+    summary: "Kritik yol, bir projenin başlangıcından bitişine kadar olan en uzun yoldur. Bu yol üzerindeki faaliyetlerdeki herhangi bir gecikme, projenin toplam süresini uzatır."
+},
+{
+    q: "5. Faaliyet zaman tahminlerinde kullanılan ve (İyimser Süre + 4 x Beklenen Süre + Kötümser Süre) / 6 formülü ile hesaplanan teknik hangisidir?",
+    options: [
+        ["Gantt analizi", "Gantt, zaman çubuklarını kullanan bir görselleştirme aracıdır."],
+        ["Kritik Yol Metodu", "Bu, en uzun yolu bulma metodudur."],
+        ["İş Dökümü Yapısı", "Bu, işleri parçalara ayırma tekniğidir."],
+        ["Üç nokta tahmini", "Bu genel bir ifadedir, spesifik teknik PERT'tir."],
+        ["PERT (Program Değerlendirme ve Gözden Geçirme Tekniği)", "Bu formül, PERT tekniğinde bir faaliyetin beklenen süresini hesaplamak için kullanılır."]
+    ],
+    answer: 4,
+    summary: "PERT tekniği, bir faaliyetin süresini tahmin etmek için üç farklı zaman tahmini (iyimser, kötümser, beklenen) kullanan ve (OS + 4*BS + PS) / 6 formülünü uygulayan bir yöntemdir."
+},
+{
+    q: "6. PERT tekniğinde iyimser süre 5 gün, kötümser süre 13 gün ve en çok beklenen süre 6 gün ise, bu faaliyetin beklenen süresi kaç gündür?",
+    options: [
+        ["8", "Hesaplama (5 + 4*6 + 13) / 6 = (5 + 24 + 13) / 6 = 42 / 6 = 7'dir."],
+        ["7", "Formül (OS + 4*BS + PS) / 6 uygulandığında sonuç 7 çıkar."],
+        ["9", "Hesaplama (5 + 4*6 + 13) / 6 = (5 + 24 + 13) / 6 = 42 / 6 = 7'dir."],
+        ["6", "Hesaplama (5 + 4*6 + 13) / 6 = (5 + 24 + 13) / 6 = 42 / 6 = 7'dir."],
+        ["24", "Hesaplama (5 + 4*6 + 13) / 6 = (5 + 24 + 13) / 6 = 42 / 6 = 7'dir."]
+    ],
+    answer: 1,
+    summary: "Formül: (İyimser Süre + 4 x Beklenen Süre + Kötümser Süre) / 6. Verilen değerlerle hesaplandığında: (5 + 4*6 + 13) / 6 = 42 / 6 = 7 gün."
+},
+{
+    q: "7. Faaliyetlerin birbiriyle olan ilişkilerini ve bağımlılıklarını gösteren diyagramlar hangi proje yönetimi tekniğinde kullanılır?",
+    options: [
+        ["Gantt Şeması", "Gantt şeması zaman çubuklarını kullanır, faaliyetler arası oklarla detaylı bağımlılıkları göstermez."],
+        ["PERT", "PERT, faaliyetler arasındaki öncelik ve bağımlılık ilişkilerini bir ağ diyagramı üzerinde gösterir."],
+        ["WBS (İş Dökümü Yapısı)", "WBS, işlerin hiyerarşik olarak parçalanmasını gösterir."],
+        ["Kaynak Atama Matrisi", "Bu, kaynakların faaliyetlere atanmasını gösterir."],
+        ["Zaman Çizelgesi", "Bu genel bir ifadedir."]
+    ],
+    answer: 1,
+    summary: "Faaliyetlerin sıralanması, faaliyetler arasındaki öncelik ilişkilerinin belirlenmesidir. PERT tekniği, bu ilişkileri bir ağ diyagramı üzerinde görselleştirir."
+},
+{
+    q: "8. Proje faaliyetleri arasındaki ilişkilerde, 'bir faaliyetin sonunun bir başka faaliyetin başlamasını tetiklediği' bağımlılık türü hangisidir?",
+    options: [
+        ["Başlangıçtan-başlangıca (BB)", "Bu, bir faaliyetin başlamasının diğerini de başlatmasıdır."],
+        ["Sondan-sona (SS)", "Bu, iki faaliyetin aynı anda bitmesi gerektiğidir."],
+        ["Başlangıçtan-sona (BS)", "Bu, bir faaliyetin başlamasının diğerini sonlandırmasıdır."],
+        ["Sondan-başlangıca (SB)", "Bu tanım, en yaygın bağımlılık türü olan 'Sondan-başlangıca' (Finish-to-Start) ilişkisine aittir."],
+        ["Koşullu Bağımlılık", "Bu terim, proje yönetimi bağımlılık türleri arasında bu şekilde listelenmemiştir."]
+    ],
+    answer: 3,
+    summary: "Sondan-başlangıca (SB): Bir faaliyetin sonu bir başka faaliyetin başlamasını tetikler."
+},
+{
+    q: "9. Aşağıdakilerden hangisi proje kaynakları arasında sayılmaz?",
+    options: [
+        ["İnsanlar", "İnsanlar temel bir proje kaynağıdır."],
+        ["Hizmetler", "Dışarıdan alınan hizmetler bir proje kaynağıdır."],
+        ["Tesis ve araçlar", "Kullanılan ofis, makine gibi unsurlar bir proje kaynağıdır."],
+        ["Proje hedefleri", "Hedefler, projenin ulaşmaya çalıştığı sonuçtur, bir kaynak değildir."],
+        ["Para", "Para (bütçe) temel bir proje kaynağıdır."]
+    ],
+    answer: 3,
+    summary: "Proje kaynakları arasında İnsanlar, Hizmetler, Tesis ve araçlar, Teçhiz ve materyaller ve Para listelenmiştir. Proje hedefleri bir kaynak değil, amaçtır."
+},
+{
+    q: "10. Proje aktivitelerinin ve bu aktivitelerin sürelerinin bir zaman çizelgesi üzerinde yatay çubuklar şeklinde gösterildiği popüler proje yönetim aracı hangisidir?",
+    options: [
+        ["PERT Diyagramı", "PERT, ağ diyagramı kullanır."],
+        ["İş Dökümü Yapısı (WBS)", "WBS, hiyerarşik bir listedir."],
+        ["Gantt Şeması", "Bu tanım, faaliyetleri zaman ekseninde yatay çubuklarla gösteren Gantt Şeması'na aittir."],
+        ["Akış Diyagramı", "Akış diyagramı, bir sürecin adımlarını gösterir."],
+        ["Kaynak Histogramı", "Bu, kaynak kullanımını gösteren bir grafiktir."]
+    ],
+    answer: 2,
+    summary: "Gantt şeması, proje faaliyetlerinin başlangıç ve bitiş tarihlerini, sürelerini ve ilerlemelerini bir zaman çizelgesi üzerinde yatay çubuklarla gösteren bir planlama aracıdır."
+},
+{
+    q: "11. Proje zaman çizelgesinin hazırlanmasında dikkate alınan üç temel başlık hangileridir?",
+    options: [
+        ["Planlama, Analiz, Tasarım", "Bunlar SGYD'nin genel adımlarıdır."],
+        ["Maliyet, Zaman, Kapsam", "Bunlar projenin 'üçlü kısıt'ı olarak bilinir."],
+        ["Temel işlemler, Proje kaynakları, Zaman kısıtı", "Proje zaman çizelgesi hazırlanırken faaliyet planlamalarının bu üç başlığı dikkate alınır."],
+        ["WBS, PERT, Gantt", "Bunlar zaman çizelgesi hazırlamada kullanılan araçlardır."],
+        ["Kaynak atama, Ekip kurma, Projeyi başlatma", "Bunlar proje yönetiminin farklı aşamalarıdır."]
+    ],
+    answer: 2,
+    summary: "Proje zaman çizelgesinin hazırlanmasında üç başlık önem kazanmaktadır. Bunlar; Faaliyet planlamaları temel işlemleri, Faaliyet planlamaları ve proje kaynakları, Faaliyet planlamaları ve zaman kısıtı'dır."
+},
+{
+    q: "12. Proje ekibinin atanması sürecinin faaliyetleri arasında aşağıdakilerden hangileri bulunur? \nI. Proje için kaynak planının hazırlanması \nII. Teknik personelin belirlenmesi \nIII. Proje takımının iş grupları olarak organize edilmesi \nIV. Eğitimlerin düzenlenmesi",
+    options: [
+        ["I, II, III ve IV", "Listelenen tüm maddeler, proje ekibinin atanması sürecini oluşturan beş temel faaliyet arasında yer alır."],
+        ["Yalnızca I ve II", "Eksik, diğer faaliyetler de bu sürecin parçasıdır."],
+        ["II, III ve IV", "Eksik, kaynak planının hazırlanması da bu sürecin parçasıdır."],
+        ["I ve IV", "Eksik, diğer faaliyetler de bu sürecin parçasıdır."],
+        ["Yalnızca II", "Bu sadece bir adımdır, sürecin tamamı değildir."]
+    ],
+    answer: 0,
+    summary: "Proje ekibinin atanması beş faaliyet içerir: Proje için kaynak planının hazırlanması, Teknik personelin belirlenmesi, Kullanıcı personelin belirlenmesi, Proje takımının iş grupları olarak organize edilmesi, Eğitimlerin düzenlenmesi."
+},
+{
+    q: "13. Aşağıdakilerden hangisi proje kaynakları arasında sayılan 'Hizmetler' kategorisine bir örnektir?",
+    options: [
+        ["Proje Yöneticisi", "Bu, 'İnsanlar' kaynağına bir örnektir."],
+        ["Ofis alanı", "Bu, 'Tesis ve araçlar' kaynağına bir örnektir."],
+        ["Bir dış firmadan alınan yasal danışmanlık", "Dışarıdan sağlanan uzmanlık veya iş gücü 'Hizmetler' kategorisine girer."],
+        ["Bilgisayarlar", "Bu, 'Teçhiz ve materyaller' kaynağına bir örnektir."],
+        ["Proje Bütçesi", "Bu, 'Para' kaynağıdır."]
+    ],
+    answer: 2,
+    summary: "'Hizmetler', projenin ihtiyaç duyduğu ve genellikle dışarıdan temin edilen danışmanlık, temizlik, güvenlik gibi faaliyetleri kapsayan bir kaynak türüdür."
+},
+{
+    q: "14. Projenin başlatılması ile ilgili temel faaliyetler hangileridir?",
+    options: [
+        ["Proje planının onaylanması ve bütçenin ayrılması", "Bunlar genellikle başlatma öncesi adımlardır."],
+        ["Projenin nihai olarak başlatılması ve organizasyona resmi olarak duyurulması", "Projenin başlatılması bu iki temel faaliyeti içerir."],
+        ["Ekibin toplanması ve ilk toplantının yapılması", "Bunlar projenin başlatılmasının alt detaylarıdır."],
+        ["Risk analizinin yapılması ve zaman çizelgesinin oluşturulması", "Bunlar planlama aşamasının faaliyetleridir."],
+        ["Projenin tamamlanması ve sonuçların raporlanması", "Bu, projenin sonlandırma aşamasıdır."]
+    ],
+    answer: 1,
+    summary: "Projenin başlatılması ile ilgili temel iki faaliyet vardır. Bunlar: Projenin nihai olarak başlatılması ve Organizasyona projenin resmi olarak duyurulması'dır."
+},
+{
+    q: "15. 'Faaliyetlerin belirlenmesi' işlemi hangi aracın oluşturulmasıyla başlar?",
+    options: [
+        ["Gantt Şeması", "Gantt şeması, faaliyetler belirlendikten sonra oluşturulur."],
+        ["PERT Diyagramı", "PERT diyagramı, faaliyetler ve sıralamaları belirlendikten sonra oluşturulur."],
+        ["İş Dökümü Yapısı (WBS)", "Faaliyetlerin belirlenmesindeki ilk adım, projenin genel kapsamının daha küçük iş paketlerine ayrıldığı WBS'in oluşturulmasıdır."],
+        ["Kaynak Planı", "Kaynak planı, faaliyetler belirlendikten sonra yapılır."],
+        ["Risk Listesi", "Risk listesi, projenin analizi sırasında oluşturulur."]
+    ],
+    answer: 2,
+    summary: "Faaliyetlerin belirlenmesi temel olarak projenin iş dökümü yapısının (WBS) oluşturulması ile başlar."
+},
+{
+    q: "16. Proje ile ilgili personel ataması çalışması, proje müdürlerinin hangi yeteneklerini gösterir?",
+    options: [
+        ["Sadece teknik ve programlama yeteneklerini", "Personel ataması teknik bir iş değildir."],
+        ["Sadece finansal ve bütçeleme yeteneklerini", "Bu, bütçe yönetimiyle ilgilidir."],
+        ["Organizasyonel ve takım çalışması yeteneklerini", "Doğru kişileri doğru görevlere atamak ve bir takım oluşturmak, organizasyonel ve takım çalışması yetenekleri gerektirir."],
+        ["Sadece pazarlama ve satış yeteneklerini", "Bu, projenin tanıtımıyla ilgilidir."],
+        ["Analitik ve problem çözme yeteneklerini", "Bu daha çok analiz fazıyla ilgilidir."]
+    ],
+    answer: 2,
+    summary: "Proje ile ilgili personel ataması çalışması proje müdürlerinin organizasyonel ve takım çalışması yeteneklerini gösterir."
+},
+{
+    q: "17. 'Faaliyet planlamaları ve zaman kısıtı' başlığı altında ne yapılır?",
+    options: [
+        ["Projenin toplam bütçesi belirlenir.", "Bu, kaynak planlamasıyla ilgilidir."],
+        ["Her bir faaliyet için kritik yol hesaplanır.", "Kritik yol, faaliyetlerin sıralanması ve sürelerinin tahmininden sonra belirlenir."],
+        ["Faaliyetlerin başlangıç ve bitiş tarihleri belirlenir.", "Zaman kısıtı başlığı altında, faaliyetlerin takvime yerleştirilmesi, yani başlangıç ve bitiş tarihlerinin atanması yapılır."],
+        ["Proje ekibinin üyeleri seçilir.", "Bu, proje ekibinin atanması aşamasında yapılır."],
+        ["Projenin riskleri listelenir.", "Bu, genellikle planlama ve analiz aşamalarında yapılır."]
+    ],
+    answer: 2,
+    summary: "Faaliyet planlamaları ve zaman kısıtı, faaliyetlerin takvime oturtulmasını, başlangıç ve bitiş tarihlerinin netleştirilmesini içerir."
+},
+{
+    q: "18. Aşağıdaki kaynak türlerinden hangisi 'Teçhiz ve materyaller' kategorisine girer?",
+    options: [
+        ["Programcı", "Bu, 'İnsanlar' kaynağıdır."],
+        ["Muhasebe danışmanlığı", "Bu, 'Hizmetler' kaynağıdır."],
+        ["Kullanılacak sunucu (server) bilgisayarı", "Sunucu, yazıcı gibi ekipmanlar 'Teçhiz ve materyaller' kaynağıdır."],
+        ["Toplantı odası", "Bu, 'Tesis ve araçlar' kaynağıdır."],
+        ["Nakit avans", "Bu, 'Para' kaynağıdır."]
+    ],
+    answer: 2,
+    summary: "Teçhiz ve materyaller; bilgisayar, yazıcı, sunucu gibi projenin ihtiyaç duyduğu fiziksel ekipmanları kapsar."
+},
+{
+    q: "19. Proje ekibinin atanması sürecinin faaliyetlerinden biri olan 'Proje takımının iş grupları olarak organize edilmesi' ne anlama gelir?",
+    options: [
+        ["Sadece kimin hangi gün çalışacağının belirlenmesi", "Bu zaman çizelgesiyle ilgilidir."],
+        ["Ekip üyelerinin hiyerarşik olarak bir organizasyon şemasına yerleştirilmesi", "Bu, takım içindeki raporlama ve iletişim hatlarının, alt takımların oluşturulmasını ifade eder."],
+        ["Ekip üyelerine ofiste yer gösterilmesi", "Bu lojistik bir detaydır."],
+        ["Ekip üyelerinin maaşlarının belirlenmesi", "Bu, insan kaynakları ve bütçe ile ilgilidir."],
+        ["Ekip üyeleri için sosyal etkinlikler düzenlenmesi", "Bu, takım motivasyonu için yapılabilir ama temel organizasyon faaliyeti değildir."]
+    ],
+    answer: 1,
+    summary: "Proje takımının iş grupları olarak organize edilmesi, takım içinde kimin kime rapor vereceği, hangi alt grupların (analiz ekibi, test ekibi vb.) oluşturulacağı gibi yapısal düzenlemeleri içerir."
+},
+{
+    q: "20. Projenin organizasyona resmi olarak duyurulmasının temel amacı nedir?",
+    options: [
+        ["Sadece proje ekibini motive etmek", "Bu bir yan fayda olabilir ama temel amaç değildir."],
+        ["Tüm organizasyonun projeden haberdar olmasını sağlamak ve gerekli desteği almak", "Projenin resmi duyurusu, diğer departmanların ve çalışanların projeye hazırlıklı olmasını, önemini anlamasını ve destek vermesini sağlar."],
+        ["Rakiplere gözdağı vermek", "Bu, projenin bir amacı değildir."],
+        ["Yasal bir zorunluluğu yerine getirmek", "Genellikle iç duyuruların yasal bir zorunluluğu yoktur."],
+        ["Proje bütçesinin onaylandığını göstermek", "Bu, duyurunun bir sonucu olabilir ama temel amacı değildir."]
+    ],
+    answer: 1,
+    summary: "Organizasyona projenin resmi olarak duyurulması, tüm paydaşların bilgilendirilmesini, projenin görünürlüğünün artırılmasını ve organizasyonel desteğin sağlanmasını amaçlar."
+},
+{
+    q: "21. 'Faaliyetlerin sıralanması' adımının temel çıktısı nedir?",
+    options: [
+        ["Her faaliyetin ne kadar süreceği", "Bu, 'faaliyet zaman tahminleri' adımının çıktısıdır."],
+        ["Hangi faaliyetin hangi faaliyetten önce veya sonra yapılması gerektiğini gösteren bir ağ diyagramı", "Sıralama adımı, faaliyetler arası mantıksal bağımlılıkları belirler ve bu genellikle bir ağ diyagramı (PERT gibi) ile sonuçlanır."],
+        ["Projenin toplam maliyeti", "Bu, kaynak ve bütçe planlamasının bir sonucudur."],
+        ["Projede kimlerin çalışacağı", "Bu, proje ekibinin atanmasıyla ilgilidir."],
+        ["İşlerin hiyerarşik listesi", "Bu, WBS'in çıktısıdır."]
+    ],
+    answer: 1,
+    summary: "Faaliyetlerin sıralanması, faaliyetler arasındaki öncelik ilişkilerinin belirlenmesidir ve temel çıktısı bu ilişkileri gösteren bir mantıksal şemadır."
+},
+{
+    q: "22. Aşağıdakilerden hangisi proje ekibinin atanması sürecinde yer alan bir faaliyet değildir?",
+    options: [
+        ["Proje için kaynak planının hazırlanması", "Bu, atama sürecinin bir faaliyetidir."],
+        ["Teknik ve kullanıcı personelin belirlenmesi", "Bu, atama sürecinin bir faaliyetidir."],
+        ["Kritik yolun belirlenmesi", "Kritik yolun belirlenmesi, 'Proje Zaman Çizelgesinin Hazırlanması' aşamasında yapılan bir faaliyettir."],
+        ["Proje takımının iş grupları olarak organize edilmesi", "Bu, atama sürecinin bir faaliyetidir."],
+        ["Eğitimlerin düzenlenmesi ve takım çalışması alıştırmalarının yönetilmesi", "Bu, atama sürecinin bir faaliyetidir."]
+    ],
+    answer: 2,
+    summary: "Kritik yolun belirlenmesi, zaman çizelgesi hazırlama sürecine aittir. Proje ekibinin atanması ise kaynak planı, personel belirleme, organizasyon ve eğitim gibi faaliyetleri içerir."
+},
+{
+    q: "23. Bir faaliyetin süresini tahmin ederken kullanılan 'iyimser süre' neyi ifade eder?",
+    options: [
+        ["Faaliyetin ortalama tamamlanma süresini", "Bu, 'beklenen süre'dir."],
+        ["Faaliyetin en kötü senaryoda tamamlanma süresini", "Bu, 'kötümser süre'dir."],
+        ["Faaliyetin her şey yolunda giderse tamamlanabileceği en kısa süreyi", "İyimser süre (optimistic time), tüm koşulların ideal olması durumunda faaliyetin alacağı minimum süredir."],
+        ["Faaliyetin yöneticinin istediği süreyi", "Bu, bir hedef olabilir ama bir tahmin türü değildir."],
+        ["Faaliyetin geçmiş projelerdeki ortalama süresini", "Bu, bir tahmin girdisi olabilir ama 'iyimser süre' tanımı değildir."]
+    ],
+    answer: 2,
+    summary: "Faaliyet zaman tahminlerinde kullanılan üç nokta tahmininden biri olan iyimser süre, her şeyin mükemmel gitmesi durumunda işin tamamlanabileceği en kısa süreyi ifade eder."
+},
+{
+    q: "24. Proje yönetimi kapsamında, bir projenin başarılı sayılabilmesi için hangi temel kısıtlar dengelenmelidir?",
+    options: [
+        ["Sadece Zaman ve Bütçe", "Kapsam da en az bunlar kadar önemli bir kısıttır."],
+        ["Sadece Kapsam ve Kalite", "Zaman ve bütçe de kritik kısıtlardır."],
+        ["Zaman, Maliyet ve Kapsam", "Proje yönetiminin 'üçlü kısıt'ı (triple constraint) olarak bilinen bu üç unsur, birbiriyle dengelenmelidir. Birindeki değişiklik diğerlerini etkiler."],
+        ["Sadece Risk ve Kaynaklar", "Bunlar önemli unsurlardır ama temel üçlü kısıt değildir."],
+        ["Teknoloji, Personel ve Müşteri Memnuniyeti", "Bunlar projenin başarısını etkileyen faktörlerdir ama temel kısıt üçlüsü değildir."]
+    ],
+    answer: 2,
+    summary: "Klasik proje yönetimi anlayışına göre her proje; zaman, maliyet (bütçe) ve kapsam olmak üzere üç temel kısıt tarafından dengelenir. Bu unsurlardan birindeki bir değişiklik, genellikle diğerlerini de etkiler."
+},
+{
+    q: "25. 'Faaliyet planlamaları temel işlemleri' başlığı altında yapılan çalışmaların nihai amacı nedir?",
+    options: [
+        ["Proje ekibini seçmek", "Bu, proje ekibinin atanması aşamasında yapılır."],
+        ["Projenin ne kadar karlı olacağını hesaplamak", "Bu, ekonomik fizibilite ile ilgilidir."],
+        ["Projenin ne kadar süreceğini ve hangi faaliyetlerin kritik olduğunu belirlemek", "WBS oluşturma, sıralama, süre tahmini ve kritik yol belirleme gibi temel işlemlerin hepsi, projenin toplam süresini ve en kritik faaliyetlerini ortaya çıkarmak içindir."],
+        ["Projeyi organizasyona duyurmak", "Bu, projenin başlatılması aşamasında yapılır."],
+        ["Gerekli donanım ve yazılımları satın almak", "Bu, kaynak planlaması ve uygulama ile ilgilidir."]
+    ],
+    answer: 2,
+    summary: "Faaliyet planlamalarının temel işlemleri (WBS, sıralama, süre tahmini, kritik yol), projenin bir yol haritasını çıkarmayı ve toplam süresini ve en hassas faaliyetlerini (kritik yol) belirlemeyi amaçlar."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

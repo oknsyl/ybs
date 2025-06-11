@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 1</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Ders 1</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+    q: "1. 'Bir organizasyondaki bilgi sistemi isteklerinin belirlenmesi, bu amaçla gerekli analizlerin yapılmasını, ortaya çıkan çözüm önerisinin mantıksal ve fiziksel olarak tanımlanmasını ve çözümün uygulamaya konulmasını içeren' süreç aşağıdakilerden hangisidir?",
+    options: [
+      ["Sistem Geliştirme Ortamı", "Bu, sistem geliştirme sürecinin temel unsurlarını tanımlar, sürecin kendisini değil."],
+      ["Sistem Modelleme ve Tasarım", "Bu, dersin ilk paragrafında yer alan temel tanımdır."],
+      ["Geribildirim Döngüsü", "Bu, sistemin amaçlarına ulaşıp ulaşmadığını kontrol eden bir mekanizmadır."],
+      ["Fonksiyonel Dağılma", "Bu, bir sistemi alt sistemlere ayırma işlemidir."],
+      ["Veri Analizi", "Bu, sistem modelleme ve tasarım sürecinin sadece bir parçasıdır."]
+    ],
+    answer: 1,
+    summary: "Sistem modelleme ve tasarım, bir organizasyondaki bilgi sistemi isteklerinin belirlenmesini, bu amaçla gerekli analizlerin yapılmasını, ortaya çıkan çözüm önerisinin mantıksal ve fiziksel olarak tanımlanmasını ve çözümün uygulamaya konulmasını içerir."
+	},
+	{
+    q: "2. Bir sistem geliştirme ortamının temel unsurları arasında aşağıdakilerden hangileri sayılmaktadır?",
+    options: [
+        ["Yalnızca Sistem ve Bilgi Sistemi", "Eksik, diğer unsurlar da vardır."],
+        ["Sistem, Bilgi Sistemi ve Sistem Analisti", "Eksik, sistem geliştirme süreci de bir unsurdur."],
+        ["Bilgi Sistemi, Süreç ve Analist", "Eksik, 'Sistem' kavramının kendisi de bir unsurdur."],
+        ["Yalnızca Sistem Analisti ve Geliştirme Süreci", "Eksik, sistem ve bilgi sistemi kavramları da temel unsurlardandır."],
+        ["Sistem, Bilgi Sistemi, Sistem Geliştirme Süreci ve Sistem Analisti", "Metne göre bu dört kavram, sistem geliştirme ortamının temel unsurlarıdır."]
+    ],
+    answer: 4,
+    summary: "Sistem, bilgi sistemi, sistem geliştirme süreci ve sistem analist kavramları bir sistem geliştirme ortamının temel unsurlarıdır."
+	},
+	{
+    q: "3. Metne göre, kendi içlerinde yaşamlarını sürdürdükleri ve katı sınırları olduğu için 'kabileler' ne tür bir sisteme örnek olarak verilebilir?",
+    options: [
+        ["Açık sistem", "Açık sistemler geçirgendir, kabileler ise katı sınırlara sahiptir."],
+        ["Yapay sistem", "Kabileler doğal bir sosyal yapıdır, yapay olarak tasarlanmamıştır."],
+        ["Doğal sistem", "Kabileler sosyal bir yapıdır, güneş sistemi gibi bir doğal sistem değildir."],
+        ["Kapalı sistem", "Metinde kabilelerin, katı ve geçişmesiz sınırları olan kapalı sistemlere örnek olduğu belirtilmiştir."],
+        ["Bilgi sistemi", "Kabileler bir sosyal yapıdır, bir bilgi sistemi değildir."]
+    ],
+    answer: 3,
+    summary: "Kapalı sistemlerin katı ve geçişmesiz sınırları vardır. Bu sistemler kendi içlerinde yaşamlarını sürdürdükleri için kabileler kapalı sisteme örnek olarak verilebilir."
+	},
+	{
+    q: "4. 'Girdinin dönüştürülerek, işlenerek ve analiz edilerek kişilere yararlı hale getirilmesi' olarak tanımlanan sistem unsuru aşağıdakilerden hangisidir?",
+    options: [
+        ["Çıktı", "Çıktı, yararlı hale getirilmiş bilginin dağıtılmasıdır."],
+        ["Girdi", "Girdi, işlenecek ham veridir."],
+        ["İşlem", "Bu, 'işlem' unsurunun metindeki tanımıdır."],
+        ["İzleme", "İzleme, sistemin hedefine ulaşıp ulaşmadığını kontrol etmektir."],
+        ["Geribildirim", "Geribildirim, değerlendirme amacıyla geri gönderilen çıktıdır."]
+    ],
+    answer: 2,
+    summary: "İkinci temel unsur olan 'işlem' ise girdinin dönüştürülerek, işlenerek ve analiz edilerek kişilere yaralı hale getirilmesidir."
+	},
+	{
+    q: "5. Aşağıdaki unsurlardan hangileri 'çıktı' unsuruna örnek olarak verilebilir? \nI. Bitmiş ürünler \nII. Hizmetler \nIII. Formlar \nIV. Hammadde",
+    options: [
+        ["I, II ve IV", "Hammadde bir girdi örneğidir, çıktı değil."],
+        ["Yalnızca I ve II", "Eksik, 'formlar' da metinde bir çıktı örneği olarak verilmiştir."],
+        ["II, III ve IV", "Hammadde bir girdi örneğidir, çıktı değil."],
+        ["I, II ve III", "Metinde bu üç unsurun da 'çıktı'ya örnek olduğu belirtilmiştir."],
+        ["I, II, III ve IV", "Hammadde bir girdi örneğidir, bu nedenle bu seçenek yanlıştır."]
+    ],
+    answer: 3,
+    summary: "Çıktı unsuru için; bitmiş ürünler, hizmetler, formlar örnek olarak verilebilir."
+},
+{
+    q: "6. 'Bilişim sisteminin hedefine ulaşabilmesini sağlamak amacıyla sürekli olarak takip ve kontrol edilmesine ................. denir.' Boşluğa aşağıdaki ifadelerden hangisi gelmelidir?",
+    options: [
+        ["Geribildirim", "Geribildirim, sistem amaçlarıyla mevcut durumu karşılaştırmaktır."],
+        ["Raporlama", "Raporlama, izleme sürecinin bir sonucu olabilir ama sürecin kendisi değildir."],
+        ["Analiz", "Analiz, veriyi yararlı hale getirme işlemidir."],
+        ["İzleme", "Bu, 'izleme' kavramının metindeki tanımıdır."],
+        ["Doğrulama", "Doğrulama, izleme sürecinin bir parçası olabilir ama sürecin kendisi değildir."]
+    ],
+    answer: 3,
+    summary: "'İzleme' bilişim sisteminin hedefine ulaşabilmesini sağlamak amacıyla sürekli olarak takip ve kontrol edilmesidir."
+},
+{
+    q: "7. Aşağıdaki ifadelerden hangisi veya hangileri doğrudur? \nI. Güneş sistemi bir yapay sistem örneğidir. \nII. İnternet bir açık sistem örneğidir. \nIII. Kayıt sistemi bir doğal sistem örneğidir.",
+    options: [
+        ["Yalnızca I", "Yanlış, Güneş sistemi doğal bir sistemdir."],
+        ["Yalnızca II", "Bu ifade doğrudur."],
+        ["I ve II", "I. ifade yanlıştır."],
+        ["II ve III", "III. ifade yanlıştır."],
+        ["I, II ve III", "I ve III. ifadeler yanlıştır."]
+    ],
+    answer: 1,
+    summary: "Doğal Sistemler: Güneş sistemi gibi. Yapay Sistemler: Kayıt sistemi gibi. Diğer yandan açık sistemler... Internet, açık sistemlere örnek gösterilebilir."
+},
+{
+    q: "8. 'Geribildirim' kavramı için ders notlarında verilen tanımlar arasında aşağıdakilerden hangileri yer alır? \nI. Girdilerin değerlendirilmesi veya düzeltilmesi amacıyla geri gönderilen çıktıdır. \nII. Mevcut sistem ile sistem amaçlarının karşılaştırılmasıdır. \nIII. Bilginin kullanılacak kişilere ve çalışmalara dağıtılmasıdır.",
+    options: [
+        ["Yalnızca I", "Eksik, II. tanım da doğrudur."],
+        ["Yalnızca II", "Eksik, I. tanım da doğrudur."],
+        ["I ve II", "Metinde Geribildirim için bu iki tanım da yapılmaktadır."],
+        ["II ve III", "III. ifade Çıktı'nın tanımıdır."],
+        ["I, II ve III", "III. ifade Çıktı'nın tanımı olduğu için bu seçenek yanlıştır."]
+    ],
+    answer: 2,
+    summary: "'Geribildirim' organizasyondaki ilgili kişilere girdilerin değerlendirilmesi veya düzeltilmesi amacıyla geri gönderilen çıktıdır. Bir başka açıklama ile geribildirim mevcut sistem ile sistem amaçlarının karşılaştırılmasıdır."
+},
+{
+    q: "9. Aşağıdaki eşleştirmelerden hangisi yanlıştır?",
+    options: [
+        ["Girdi - Hammadde", "Doğru, hammadde bir girdi örneğidir."],
+        ["İşlem - Üretim süreci", "Doğru, üretim süreci bir işlem örneğidir."],
+        ["Çıktı - Hizmetler", "Doğru, hizmetler bir çıktı örneğidir."],
+        ["İşlem - Enerji", "Yanlış. Metne göre 'enerji' bir girdi örneğidir, işlem değil."],
+        ["Girdi - Veri", "Doğru, veri bir girdi örneğidir."]
+    ],
+    answer: 3,
+    summary: "Girdi unsuru için; hammadde, enerji, veri; işlem unsuru için; üretim süreci... örnek olarak verilebilir."
+},
+{
+    q: "10. Bir sistemin temel üç unsuru aşağıdakilerden hangisidir?",
+    options: [
+        ["Girdi, İşlem, İzleme", "İzleme temel bir unsur değildir, destekleyici bir mekanizmadır."],
+        ["Girdi, İşlem, Çıktı", "Metinde bu üçü, sistemin 'temel üç unsuru' olarak belirtilmiştir."],
+        ["İşlem, Çıktı, Geribildirim", "Geribildirim temel bir unsur değildir, destekleyici bir mekanizmadır."],
+        ["Girdi, Çıktı, Amaç", "Amaç sistemin hedefidir, temel bir unsur değildir."],
+        ["İzleme, Geribildirim, Amaç", "Bunlar destekleyici mekanizmalar ve hedeftir."]
+    ],
+    answer: 1,
+    summary: "Girdi (input), işlem (process) ve çıktı (output) sistemlerin temel üç unsurudur."
+},
+{
+    q: "11. Aşağıdakilerden hangisi bir 'yapay sistem' örneğidir?",
+    options: [
+        ["Güneş Sistemi", "Bu bir doğal sistem örneğidir."],
+        ["İnsan Vücudu", "Bu bir doğal sistemdir."],
+        ["Kayıt Sistemi", "Metinde kayıt sisteminin bir yapay sistem olduğu belirtilmiştir."],
+        ["Ekosistem", "Bu bir doğal sistemdir."],
+        ["Atmosfer", "Bu bir doğal sistemdir."]
+    ],
+    answer: 2,
+    summary: "Sistem tipleri... Yapay Sistemler: Kayıt sistemi gibi."
+},
+{
+    q: "12. 'Mevcut sistem ile sistem amaçlarının karşılaştırılması' olarak da tanımlanan sistem mekanizması hangisidir?",
+    options: [
+        ["İzleme", "İzleme, sürekli takip ve kontroldür."],
+        ["Girdi", "Girdi, işlenecek ham veridir."],
+        ["Çıktı", "Çıktı, işlenmiş bilgidir."],
+        ["İşlem", "İşlem, girdiyi çıktıya dönüştürme eylemidir."],
+        ["Geribildirim", "Bu, geribildirimin metindeki ikinci tanımıdır."]
+    ],
+    answer: 4,
+    summary: "Bir başka açıklama ile geribildirim mevcut sistem ile sistem amaçlarının karşılaştırılmasıdır."
+},
+{
+    q: "13. 'Bilginin kullanılacak kişilere ve çalışmalara dağıtılması' eylemi, hangi sistem unsurunu tanımlamaktadır?",
+    options: [
+        ["Girdi", "Girdi, verinin toplanmasıdır."],
+        ["İşlem", "İşlem, verinin dönüştürülmesidir."],
+        ["İzleme", "İzleme, kontrol mekanizmasıdır."],
+        ["Çıktı", "Bu, 'çıktı' unsurunun metindeki tanımıdır."],
+        ["Geribildirim", "Geribildirim, değerlendirme için geri dönen çıktıdır."]
+    ],
+    answer: 3,
+    summary: "Son temel unsur 'çıktı' ise bilginin kullanılacak kişilere ve çalışmalara dağıtılmasıdır."
+},
+{
+    q: "14. Çevresindeki değişikliklere cevap veren ve geçirgen sınırlara sahip olan sistemlere ne ad verilir?",
+    options: [
+        ["Kapalı Sistem", "Kapalı sistemlerin katı ve geçişmesiz sınırları vardır."],
+        ["Doğal Sistem", "Bu, sistemin kökeniyle ilgili bir sınıflandırmadır, işleyişiyle değil."],
+        ["Yapay Sistem", "Bu, sistemin kökeniyle ilgili bir sınıflandırmadır, işleyişiyle değil."],
+        ["Açık Sistem", "Bu tanım, metindeki 'açık sistem' tanımıyla birebir örtüşmektedir."],
+        ["Ana Sistem", "Bu terim metinde bu şekilde tanımlanmamıştır."]
+    ],
+    answer: 3,
+    summary: "Diğer yandan açık sistemler geçirgen ve ortamdaki değişikliklere cevap veren sistemlerdir."
+},
+{
+    q: "15. Aşağıdaki unsurlardan hangileri 'girdi' unsuruna örnek olarak verilebilir? \nI. Enerji \nII. Veri \nIII. Hammadde \nIV. Hizmetler",
+    options: [
+        ["I, II, III ve IV", "Hizmetler bir çıktı örneğidir."],
+        ["Yalnızca I ve II", "Eksik, hammadde de bir girdi örneğidir."],
+        ["I, II ve III", "Metinde bu üç unsurun da 'girdi'ye örnek olduğu belirtilmiştir."],
+        ["II, III ve IV", "Hizmetler bir çıktı örneğidir."],
+        ["Yalnızca IV", "Hizmetler bir çıktı örneğidir."]
+    ],
+    answer: 2,
+    summary: "Girdi unsuru için; hammadde, enerji, veri... örnek olarak verilebilir."
+},
+{
+    q: "16. 'Matematiksel işlemler' aşağıdaki sistem unsurlarından hangisine bir örnektir?",
+    options: [
+        ["Girdi", "Girdi, işlenecek veridir."],
+        ["Çıktı", "Çıktı, işlemin sonucudur."],
+        ["Geribildirim", "Bu bir kontrol mekanizmasıdır."],
+        ["İzleme", "Bu bir kontrol mekanizmasıdır."],
+        ["İşlem", "Metinde 'matematiksel işlemler' bir işlem unsuru örneği olarak verilmiştir."]
+    ],
+    answer: 4,
+    summary: "...işlem unsuru için; üretim süreci, matematiksel işlemler... örnek olarak verilebilir."
+},
+{
+    q: "17. 'Bilişim sisteminde işlem görecek verinin organizasyon içinden veya dışından bulunması ve toplanması' hangi sistem unsurunu tanımlar?",
+    options: [
+        ["İşlem", "İşlem, verinin dönüştürülmesidir."],
+        ["Çıktı", "Çıktı, bilginin dağıtılmasıdır."],
+        ["İzleme", "İzleme, sistemin kontrol edilmesidir."],
+        ["Geribildirim", "Geribildirim, geri dönen çıktıdır."],
+        ["Girdi", "Bu, 'girdi' unsurunun metindeki tanımıdır."]
+    ],
+    answer: 4,
+    summary: "'Girdi' bilişim sisteminde işlem görecek verinin organizasyon içinden veya dışından bulunması ve toplanmasıdır."
+},
+{
+    q: "18. Metindeki genel sistem modeline göre, 'İzleme' mekanizması hangi iki unsuru birbirine bağlar?",
+    options: [
+        ["İşlem ve Girdi", "Bu bağlantı Geribildirim ile sağlanır."],
+        ["Amaç ve Girdi", "Doğru değil, İzleme tüm süreci denetler."],
+        ["Girdi ve Çıktı", "Bu bağlantı İşlem ile sağlanır."],
+        ["Çıktı ve Amaç", "İzleme, çıktının amaca uygunluğunu denetler ve tüm süreci gözlemler. Şemadaki ok tüm süreci kapsar."],
+        ["Geribildirim ve Amaç", "İki mekanizma farklı işlevlere sahiptir."]
+    ],
+    answer: 3,
+    summary: "Sayfa 1'deki 'Sistem Unsurları' şemasına göre 'İzleme' oku, sürecin çıktısından başlayarak sistemin genel amacına uygunluğunu ve sürecin başını denetleyen bir yapıyı gösterir. En doğru ifade Çıktı ve Amaç arasındaki denetimdir."
+},
+{
+    q: "19. Aşağıdakilerden hangisi bir 'doğal sistem' örneğidir?",
+    options: [
+        ["Bordro Sistemi", "Bu bir yapay sistemdir."],
+        ["Kayıt Sistemi", "Bu bir yapay sistemdir."],
+        ["Güneş Sistemi", "Metinde Güneş Sistemi bir doğal sistem örneği olarak verilmiştir."],
+        ["İnternet", "Bu bir yapay sistemdir (ve açık sistemdir)."],
+        ["Kütüphane Otomasyonu", "Bu bir yapay sistemdir."]
+    ],
+    answer: 2,
+    summary: "Sistem tipleri aşağıdaki gibi açıklanabilir: Doğal Sistemler: Güneş sistemi gibi."
+},
+{
+    q: "20. Sistemde amacın garantilenmesi ve herhangi bir değişme olduğunda bunun sisteme geri bildirilmesi için gerekli olan mekanizma hangisidir?",
+    options: [
+        ["İşlem", "İşlem, veriyi dönüştürür."],
+        ["Girdi", "Girdi, ham veridir."],
+        ["Çıktı", "Çıktı, işlenmiş bilgidir."],
+        ["İzleme", "İzleme sürekli takiptir, geri bildirim ise bu karşılaştırmayı yapar."],
+        ["Geribildirim", "Metinde bu durum, geribildirim mekanizmasının bir işlevi olarak açıklanmıştır."]
+    ],
+    answer: 4,
+    summary: "Sistem amaçlarını garantilemek amacıyla, amaçta herhangi bir değişme olduğunda bunlar sisteme geri bildirilir. Bunun için sistemde izleme mekanizmasının olması... gerekmektedir. Ancak geri bildirim eyleminin kendisi 'Geribildirim'dir."
+}
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

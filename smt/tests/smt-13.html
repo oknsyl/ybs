@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 13</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 13</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Kullanıcı arayüzlerinin sahip olduğu üç temel boyut hangileridir?",
+    options: [
+        ["Görsel, İşitsel, Dokunsal", "Bunlar algısal boyutun alt bileşenleridir, temel boyutlar değil."],
+        ["Fiziksel, Algısal, Kavramsal", "Kullanıcı arayüzü; kullanıcının dokunduğu (Fiziksel), gördüğü/duyduğu (Algısal) ve bildiği (Kavramsal) olmak üzere üç temel boyutta incelenir."],
+        ["Basit, Karmaşık, Orta", "Bu, arayüzün zorluk seviyesidir, bir boyut değildir."],
+        ["Girdi, Çıktı, Kontrol", "Bunlar detay tasarımın farklı alanlarıdır."],
+        ["Donanım, Yazılım, Ağ", "Bunlar sistemin genel bileşenleridir."]
+    ],
+    answer: 1,
+    summary: "Kullanıcı arayüzlerinin üç temel boyutu bulunmaktadır: Fiziksel boyut, Algısal boyut, Kavramsal boyut."
+},
+{
+    q: "2. Kullanıcının, sistemi kullanırken 'gerçekleştirebileceği operasyonlar ve prosedürler ile ilgili bildiği her şey' hangi arayüz boyutunu oluşturur?",
+    options: [
+        ["Fiziksel boyut", "Fiziksel boyut, klavye ve fare gibi dokunulan aygıtları kapsar."],
+        ["Algısal boyut", "Algısal boyut, ekranda görülen veya duyulan unsurları kapsar."],
+        ["Kavramsal boyut", "Kullanıcının sistemin nasıl çalıştığına dair zihinsel modeli ve bilgisi 'Kavramsal Boyut'u oluşturur."],
+        ["İşlevsel boyut", "Bu terim dokümanda bu şekilde kullanılmamıştır."],
+        ["Bilgi boyutu", "Bu terim dokümanda bu şekilde kullanılmamıştır."]
+    ],
+    answer: 2,
+    summary: "Kavramsal Boyut: Kullanıcının, sistemi kullanırken oluşabilecek problemin etki alanı, sistemde değiştirebildiği unsurlar, gerçekleştirilebileceği operasyonlar ve prosedürler ile ilgili bildiği her şey kullanıcı arayüzünün kavramsal yanlarıdır."
+},
+{
+    q: "3. Aşağıdakilerden hangisi iyi bir kullanıcı arayüzü tasarımının kurallarından biri değildir?",
+    options: [
+        ["Öğrenmesi ve Kullanması Kolay Bir Arayüz Tasarımı", "Bu, temel bir arayüz tasarım kuralıdır."],
+        ["Kullanıcılara Geri Bildirim Verme", "Bu, temel bir arayüz tasarım kuralıdır."],
+        ["Kullanıcıyı mümkün olduğunca çok seçenek ve bilgi ile karşılamak", "Yanlış. Tam tersine, iyi bir arayüzün basit olması ve kullanıcıyı temel amaçlara odaklaması istenir."],
+        ["Veri Giriş Hatalarını En Aza İndirme", "Bu, temel bir arayüz tasarım kuralıdır."],
+        ["Alışılmış Terim ve Sembollerin Kullanılması", "Bu, temel bir arayüz tasarım kuralıdır."]
+    ],
+    answer: 2,
+    summary: "İyi bir kullanıcı arayüzü tasarımının temel kuralları arasında 'Temel Amaçlara Odaklanma' ve 'Çekici Bir Düzen ve Tasarım Yaratma' gibi maddeler yer alır. Kullanıcıyı gereksiz bilgiyle yormak bu kurallara aykırıdır."
+},
+{
+    q: "4. Kullanıcıların tasarım sürecine 'danışman' olarak dahil edildiği, tasarımın kullanıcılarla birlikte değerlendirildiği ve geliştirildiği yaklaşıma ne ad verilir?",
+    options: [
+        ["Teknik Tasarım", "Bu, sistemin teknik detaylarına odaklanır."],
+        ["Kullanıcı Merkezli Arayüz Tasarımı", "Kullanıcıyı tasarım sürecinin merkezine koyan ve onun geri bildirimleriyle ilerleyen bu yaklaşıma 'Kullanıcı Merkezli Tasarım' denir."],
+        ["Prototipleme", "Prototipleme, bu yaklaşımda kullanılan bir tekniktir, yaklaşımın kendisi değil."],
+        ["Çevik Tasarım", "Bu bir yazılım geliştirme metodolojisidir."],
+        ["Geleneksel Tasarım", "Geleneksel tasarımda kullanıcı genellikle sürecin sonunda dahil olur."]
+    ],
+    answer: 1,
+    summary: "Kullanıcı merkezli tasarımda kullanıcılar tasarım sürecinin danışmanları olarak ele alınır. Bu yaklaşımda tasarımın erken aşamalarından itibaren kullanıcıya odaklanılır ve onun değerlendirmeleriyle ilerlenir."
+},
+{
+    q: "5. 'Fokus grup görüşmeleri', 'laboratuar deneyleri' ve 'gözlemleme' gibi teknikler, kullanıcı merkezli tasarımın hangi aşamasında kullanılır?",
+    options: [
+        ["Arayüzlerin programlanması", "Bu teknikler, programlama öncesi tasarımın doğruluğunu anlamak için kullanılır."],
+        ["Arayüzlerin değerlendirilmesi", "Bu teknikler, geliştiricilerin oluşturduğu arayüz tasarımlarının son kullanıcılar tarafından ne kadar kullanışlı olduğunu değerlendirmek için kullanılır."],
+        ["Arayüzlerin dokümante edilmesi", "Bu, teknik yazarların yaptığı bir iştir."],
+        ["Arayüzlerin bütçelenmesi", "Bu, projenin planlama aşamasında yapılır."],
+        ["Arayüzlerin pazarlanması", "Bu, ürünün satışıyla ilgili bir faaliyettir."]
+    ],
+    answer: 1,
+    summary: "Geliştiriciler arayüzlerin değerlendirilmesi için; Anketler, Fokus grup görüşmeleri, Tasarımı gözden geçirme, Kâğıt ve kalem ile değerlendirme, Uzman değerlendirmeleri, Laboratuar deneyleri ve Gözlemleme gibi birçok teknik kullanabilirler."
+},
+{
+    q: "6. 'Bilişim sisteminin ürettiği bilgiyi kullanıcılara aktarma kanalı' olarak tanımlanan kavram hangisidir?",
+    options: [
+        ["Arayüz", "Arayüz, kullanıcı ile sistem arasındaki etkileşim ortamıdır."],
+        ["Girdi", "Girdi, sisteme girilen ham veridir."],
+        ["Çıktı", "Sistemin işlediği veriyi bilgi olarak kullanıcılara sunduğu kanal 'Çıktı'dır."],
+        ["Rapor", "Rapor, bir çıktı türüdür, çıktının genel tanımı değil."],
+        ["Veri Akışı", "Veri akışı, verinin sistem içindeki hareketidir."]
+    ],
+    answer: 2,
+    summary: "Çıktı, bilişim sisteminin ürettiği bilgiyi kullanıcılara aktarma kanalıdır."
+},
+{
+    q: "7. Çıktı tasarımı öncesinde yapılması gereken ön çalışmalardan biri aşağıdakilerden hangisi değildir?",
+    options: [
+        ["Çıktının amacının belirlenmesi", "Bu, yapılması gereken bir ön çalışmadır."],
+        ["Çıktının kim için hazırlanacağının belirlenmesi", "Bu, yapılması gereken bir ön çalışmadır."],
+        ["Çıktının hangi programlama diliyle kodlanacağının belirlenmesi", "Bu, tasarım değil, uygulama aşamasının bir konusudur."],
+        ["Çıktının alınması için kullanılacak teknolojinin belirlenmesi", "Bu, yapılması gereken bir ön çalışmadır."],
+        ["Çıktıyla ilgili güvenlik ve gizlilik unsurlarının belirlenmesi", "Bu, yapılması gereken bir ön çalışmadır."]
+    ],
+    answer: 2,
+    summary: "Çıktı tasarımı ön çalışmaları; çıktının amacı, hedef kitlesi, içeriği, teknolojisi, sıklığı ve güvenlik unsurları gibi konuları içerir. Programlama dili seçimi bu aşamanın konusu değildir."
+},
+{
+    q: "8. 'Yazıcılar', 'Ekran Çıktısı', 'Ses Çıktısı' ve 'CD-ROM' gibi unsurlar neyin örnekleridir?",
+    options: [
+        ["Girdi Teknolojileri", "Bunlar bilgiyi sisteme girmek için değil, sistemden almak için kullanılır."],
+        ["Çıktı Teknolojileri", "Bu unsurlar, bilginin kullanıcıya sunulması için kullanılabilecek farklı çıktı teknolojileridir."],
+        ["Depolama Teknolojileri", "Bazıları depolama için kullanılsa da (CD-ROM), hepsi bu kategoriye girmez ve temel amaçları bilgiyi sunmaktır."],
+        ["Arayüz Kontrol Araçları", "Bunlar arayüzdeki buton, menü gibi elementlerdir."],
+        ["Sistem Donanımları", "Bu genel bir ifadedir, daha spesifik olarak 'Çıktı Teknolojileri'dir."]
+    ],
+    answer: 1,
+    summary: "Türüne, içeriğine ve hedef kitleye bağlı olarak çıktı tasarımında Yazıcılar, Ekran Çıktısı, Ses Çıktısı, CD-ROM gibi çeşitli teknolojiler kullanılabilir."
+},
+{
+    q: "9. Bir raporda 'En Çok Borcu Olanlar' listesinin borç miktarına göre değil de isme göre alfabetik sıralanması, hangi tür bir yanılgı unsuruna örnektir?",
+    options: [
+        ["Grafiksel Tercihler", "Bu, renk veya punto boyutu gibi görsel seçimlerle ilgilidir."],
+        ["Limitlerin Belirlenmesi", "Bu, bir verinin gösterildiği aralıkların yanıltıcı olmasıyla ilgilidir."],
+        ["Sıralama", "Beklenen sıralama kriteri yerine farklı bir kriterin kullanılması, 'Sıralama' kaynaklı bir yanılgı unsurudur."],
+        ["İçerik Hatası", "Veri yanlış değildir, sadece sunumu yanıltıcıdır."],
+        ["Teknoloji Seçimi", "Bu, kullanılan teknolojiyle ilgili bir sorun değildir."]
+    ],
+    answer: 2,
+    summary: "Sıralama: Raporlarda kullanılan sıralama yöntemlerinin kullanıcılar üzerinde farklı etkileri olabilir. Beklentinin dışında bir sıralama yapılması yanıltıcı bir unsur olabilir."
+},
+{
+    q: "10. 'Bir bilişim sisteminden alınması istenen çıktı için işlenen ham veri' olarak tanımlanan kavram hangisidir?",
+    options: [
+        ["Bilgi", "Bilgi, işlenmiş verinin kendisidir."],
+        ["Girdi", "Sistemin çıktı üretebilmesi için işlediği ham veriye 'Girdi' denir."],
+        ["Veritabanı", "Veritabanı, girdilerin saklandığı yerdir."],
+        ["Arayüz", "Arayüz, girdinin sisteme aktarıldığı ortamdır."],
+        ["Süreç", "Süreç, girdiyi işleyen eylemdir."]
+    ],
+    answer: 1,
+    summary: "Girdi, bir bilişim sisteminden alınması istenen çıktı için işlenen ham veridir; bu nedenle bir sistemdeki girdilerin kalitesi, çıktıların kalitesi üzerinde belirleyicidir."
+},
+{
+    q: "11. Girdi tasarımı ön çalışmaları arasında aşağıdakilerden hangileri bulunur? \nI. Uygun veri giriş yönteminin seçimi \nII. Giriş hacminin düşürülmesi \nIII. Etkin girdi kontrollerinin geliştirilmesi",
+    options: [
+        ["Yalnızca I", "Eksik, diğer maddeler de ön çalışmalardandır."],
+        ["I ve II", "Eksik, girdi kontrollerinin geliştirilmesi de bir ön çalışmadır."],
+        ["I, II ve III", "Veri giriş yöntemini seçmek, girilecek veri miktarını azaltmaya çalışmak ve etkin kontroller geliştirmek, girdi tasarımı öncesi yapılması gereken temel çalışmalardır."],
+        ["Yalnızca II ve III", "Eksik, veri giriş yöntemini seçmek de bir ön çalışmadır."],
+        ["Yalnızca III", "Eksik, diğer maddeler de ön çalışmalardandır."]
+    ],
+    answer: 2,
+    summary: "Girdiler ile ilgili tasarımlara başlamadan önce; Uygun veri giriş yönteminin seçimi, Giriş hacminin düşürülmesi ve Etkin girdi kontrollerinin geliştirilmesi gibi işlemlerin tamamlanması uygun olacaktır."
+},
+{
+    q: "12. 'Veri girişinin belirgin bir zaman süreci içinde ve toplu olarak yapılması' hangi veri giriş yöntemini tanımlar?",
+    options: [
+        ["Çevrimiçi (Online)", "Çevrimiçi yöntemde veri girildiği anda kontrol edilir ve sisteme alınır."],
+        ["Yığın (Batch)", "Verilerin biriktirilip daha sonra toplu halde sisteme işlendiği bu yönteme 'Yığın' (Batch) denir."],
+        ["Manuel Giriş", "Bu, verinin elle girilme şeklidir, zamanlamasını belirtmez."],
+        ["Otomatik Giriş", "Bu, verinin bir cihaz tarafından okunmasıdır, zamanlamasını belirtmez."],
+        ["Gerçek Zamanlı Giriş", "Bu, çevrimiçi yöntemin bir özelliğidir."]
+    ],
+    answer: 1,
+    summary: "Yığın (Batch): Veri girişinin belirgin bir zaman süreci içinde ve toplu olarak yapılması."
+},
+{
+    q: "13. Aşağıdakilerden hangisi etkin bir girdi ekranı tasarımı kuralı değildir?",
+    options: [
+        ["Kullanıcı erişiminin sadece veri girişi yapılabilecek alanlarla kısıtlanması", "Bu, hataları önlemek için önemli bir kuraldır."],
+        ["Alan için kabul edilebilir değerlerin listelenmesi", "Bu, hataları önlemek için önemli bir kuraldır."],
+        ["Tüm alanların kullanıcı tarafından manuel olarak doldurulmasının zorunlu olması", "Yanlış. Tam tersine, 'sabit veri girişi aşamasında varsayılan değerlerin kullanımı' gibi yöntemlerle kullanıcının iş yükünü azaltmak hedeflenir."],
+        ["Kullanıcılara kayıt ekleme, değiştirme, silme ve görme olanaklarının verilmesi", "Bu, kullanıcıya kontrol sağlamak için önemli bir kuraldır."],
+        ["Görüntünün uygulama bütününde tutarlı olması", "Bu, kullanılabilirliği artıran önemli bir kuraldır."]
+    ],
+    answer: 2,
+    summary: "Etkin bir girdi ekranı tasarımında, 'sabit veri girişi aşamasında varsayılan değerlerin kullanımı' gibi kurallarla kullanıcının işi kolaylaştırılır. Her alanı manuel doldurmaya zorlamak iyi bir tasarım değildir."
+},
+{
+    q: "14. Bir sistemin doğru, güvenli ve kesintisiz çalışabilmesi için yapılan kontrollar hangi dört ana başlık altında toplanır?",
+    options: [
+        ["Girdi, Çıktı, Arayüz, Veritabanı", "Bunlar tasarım alanlarıdır, kontrol başlıkları değil."],
+        ["Bütünlük, Erişim, Girdi, Çıktı Bütünlük", "Kontrol tasarımı bu dört ana başlığı kapsar."],
+        ["Donanım, Yazılım, Ağ, Güvenlik", "Bunlar sistemin genel bileşenleri ve bir alanıdır."],
+        ["Kullanıcı, Yönetici, Analist, Geliştirici", "Bunlar paydaş rolleridir."],
+        ["Fiziksel, Mantıksal, Kavramsal, Operasyonel", "Bu terimler farklı bağlamlarda kullanılır."]
+    ],
+    answer: 1,
+    summary: "Bir sistemin doğru, güvenli ve kesintisiz çalışabilmesi için yapılan kontrollar dört ana başlık altında toplanabilir: Bütünlük kontrolleri, Erişim kontrolleri, Girdi kontrolleri, Çıktı bütünlük kontrolleri."
+},
+{
+    q: "15. 'Bilişim sisteminin hangi bölümünün kimler tarafından kullanılabileceğinin mekanizması için tasarım yapılması' hangi kontrol türüne aittir?",
+    options: [
+        ["Bütünlük Kontrolleri", "Bütünlük kontrolleri, verinin doğruluğu ve tamlığı ile ilgilidir."],
+        ["Girdi Kontrolleri", "Girdi kontrolleri, sisteme girilen verinin geçerliliği ile ilgilidir."],
+        ["Çıktı Bütünlük Kontrolleri", "Bu, üretilen çıktının doğruluğu ve doğru kişiye ulaşmasıyla ilgilidir."],
+        ["Erişim Kontrolları", "Kullanıcıların yetkilerini belirleyerek sistemin belirli bölümlerine erişimlerini yöneten bu kontroller 'Erişim Kontrolları'dır."],
+        ["Güvenlik Kontrolleri", "Bu genel bir ifadedir, doğru terim Erişim Kontrollarıdır."]
+    ],
+    answer: 3,
+    summary: "Erişim Kontrolları: Bilişim sisteminin hangi bölümünün kimler tarafından kullanılabileceğinin mekanizması için tasarım yapılması."
+},
+{
+    q: "16. 'Alan kombinasyonu kontrolü', 'değer limitleri kontrolü' ve 'veri doğrulama kontrolü' gibi kontroller hangi ana başlık altında yer alır?",
+    options: [
+        ["Erişim Kontrolları", "Erişim kontrolleri kullanıcı yetkileriyle ilgilidir."],
+        ["Bütünlük Kontrolları", "Bütünlük kontrolleri verinin genel doğruluğuyla ilgilidir."],
+        ["Girdi Kontrolları", "Sisteme veri girilirken yapılan bu tür geçerlilik denetimleri 'Girdi Kontrolları' başlığına aittir."],
+        ["Çıktı Bütünlük Kontrolları", "Bu, üretilen çıktının doğruluğuyla ilgilidir."],
+        ["Veritabanı Kontrolları", "Bu genel bir ifadedir."]
+    ],
+    answer: 2,
+    summary: "Girdi Kontrolları arasında; Etkin kodlama, Alan kombinasyonu kontrolü, Değer limitleri kontrolü, Eksiksizlik kontrolu ve Veri doğrulama kontrolü gibi kontroller yer alır."
+},
+{
+    q: "17. 'Birçok farklı uygulamada kullanılması amaçlanan, formal tanımlı ve merkezi kontrollü verilerin bilgisayar temelli sistemlerde depolanması için kullanılan yaklaşım' hangisidir?",
+    options: [
+        ["Dosya Sistemi", "Dosya sistemi daha basit ve ilişkisel olmayan bir veri saklama yöntemidir."],
+        ["Veritabanı", "Bu tanım, veriyi merkezi ve yapısal bir şekilde depolayan 'Veritabanı' kavramına aittir."],
+        ["Veri Ambarı", "Veri ambarı, analiz amaçlı büyük veri setlerini saklar."],
+        ["Ana Dosya", "Ana dosya, veritabanının bir parçasıdır."],
+        ["Merkezi Sistem", "Bu genel bir ifadedir."]
+    ],
+    answer: 1,
+    summary: "Veritabanı, bir çok farklı uygulamada kullanılması amaçlanan formal tanımlı ve merkezi kontrollü verilerin, bilgisayar temelli sistemlerde depolanması için kullanılan bir yaklaşımdır."
+},
+{
+    q: "18. 'Bir varlıkla ilgili kalıcı ana verileri içeren' dosya tipi hangisidir?",
+    options: [
+        ["Hareket dosyası", "Hareket dosyası, günlük olay ve işlemleri içerir."],
+        ["Ana dosya", "Müşteri veya ürün gibi bir varlığın temel ve kalıcı bilgilerini tutan dosyaya 'Ana dosya' denir."],
+        ["Tablo dosyası", "Tablo dosyası, referans verilerini (örn: il kodları) içerir."],
+        ["Çalışma dosyası", "Çalışma dosyası, geçici olarak kullanılan bir dosyadır."],
+        ["Arşiv dosyası", "Arşiv dosyası, eski verilerin saklandığı dosyadır."]
+    ],
+    answer: 1,
+    summary: "Ana Dosya: Bir varlıkla ilgili kalıcı ana verileri içerir. Ör.: Müşteri ile ilgili genel verileri içeren MUSTERI dosyası."
+},
+{
+    q: "19. 'Sistemdeki günlük olay ve hareket verilerini içeren' dosya tipi hangisidir?",
+    options: [
+        ["Hareket dosyası", "Günlük satışlar, hasta vizitleri gibi sürekli değişen ve biriken olay verilerini tutan dosyaya 'Hareket dosyası' denir."],
+        ["Ana dosya", "Ana dosya, kalıcı ve daha az değişen verileri tutar."],
+        ["Yedek dosyası", "Yedek dosyası, başka bir dosyanın güvenlik kopyasıdır."],
+        ["Çalışma dosyası", "Çalışma dosyası geçici verileri tutar."],
+        ["Tablo dosyası", "Tablo dosyası referans verilerini tutar."]
+    ],
+    answer: 0,
+    summary: "Hareket Dosyası: Sistemdeki günlük olay ve hareket verilerini içerir. Ör.: Hasta vizit verilerini içeren VIZIT dosyası."
+},
+{
+    q: "20. Aşağıdakilerden hangileri dosya organizasyon şekillerindendir? \nI. Sıralı Organizasyon \nII. İndeksli Organizasyon \nIII. Doğrudan Erişimli Organizasyon",
+    options: [
+        ["Yalnızca I", "Eksik, diğerleri de organizasyon şekilleridir."],
+        ["I ve II", "Eksik, Doğrudan Erişimli Organizasyon da bir yöntemdir."],
+        ["I, II ve III", "Sıralı, İndeksli ve Doğrudan Erişimli organizasyonlar, temel dosya organizasyon şekilleridir."],
+        ["Yalnızca II ve III", "Eksik, Sıralı Organizasyon da bir yöntemdir."],
+        ["Yalnızca III", "Eksik, diğerleri de organizasyon şekilleridir."]
+    ],
+    answer: 2,
+    summary: "Veritabanındaki dosyalar için sıkça kullanılan farklı dosya organizasyonları; Sıralı Organizasyon, İndeksli Organizasyon, İndeksli Sırasal Organizasyon ve Doğrudan Erişimli Organizasyon'dur."
+},
+{
+    q: "21. 'Kayıtların belli bir alana göre indekslenerek tutulduğu ve indekslenen alana girilmiş olan değerin tekrarına izin verilmeyen' dosya organizasyon şekli hangisidir?",
+    options: [
+        ["Sıralı Organizasyon", "Sıralı organizasyonda kayıtlar fiziksel sıradadır."],
+        ["İndeksli Sırasal Organizasyon", "Bu organizasyon şeklinde indekslenen değerin tekrarına izin verilir."],
+        ["Doğrudan Erişimli Organizasyon", "Bu organizasyonda kayıtlara doğrudan adresleriyle erişilir."],
+        ["İndeksli Organizasyon", "Bu tanım, her bir kayıt için benzersiz bir indeks oluşturan ve bu sayede kayıtlara hızlı erişim sağlayan İndeksli Organizasyon'a aittir."],
+        ["Hiyerarşik Organizasyon", "Bu bir veritabanı modelidir, dosya organizasyon şekli olarak listelenmemiştir."]
+    ],
+    answer: 3,
+    summary: "İndeksli Organizasyon: Kayıtlar belli bir alana göre indekslenerek tutulur. Herhangi bir kaydın indekslenen alanı için girilmiş olan değerin aynısının başka bir kayıt için girilmesine izin verilmez."
+},
+{
+    q: "22. 'Bir varlığı tek ve asgari şekilde tanımlayabilen alan ya da alanların kombinasyonu' olarak tanımlanan anahtar türü hangisidir?",
+    options: [
+        ["Aday anahtar", "Aday anahtar, birincil anahtar olabilecek herhangi bir alandır."],
+        ["Yabancı anahtar", "Yabancı anahtar, başka bir tablonun birincil anahtarına referans verir."],
+        ["İkincil anahtar", "İkincil anahtar, kayıtlara ulaşmak için kullanılan alternatif bir alandır."],
+        ["Birincil anahtar", "Bir tablodaki her bir kaydı benzersiz ve tek olarak tanımlayan bu anahtar türüne 'Birincil anahtar' (Primary Key) denir."],
+        ["Benzersiz anahtar", "Bu, birincil anahtarın bir özelliğidir, dokümandaki tanım değil."]
+    ],
+    answer: 3,
+    summary: "Birincil anahtar: Bir varlığı tek ve asgari şekilde tanımlayabilen alan ya da alanların kombinasyonu."
+},
+{
+    q: "23. Bir dosyada bulunan ve başka bir dosyanın birincil anahtarı olan alana ne ad verilir?",
+    options: [
+        ["Aday anahtar", "Aday anahtar, birincil anahtar olma potansiyeli taşıyan alandır."],
+        ["Birincil anahtar", "Birincil anahtar, kendi tablosundaki kayıtları benzersiz kılar."],
+        ["Yabancı anahtar", "İki tablo arasında ilişki kurmak için kullanılan ve bir tablodaki birincil anahtara referans veren alana 'Yabancı anahtar' (Foreign Key) denir."],
+        ["İkincil anahtar", "İkincil anahtar, arama ve sıralama için kullanılan bir alandır."],
+        ["İlişkisel anahtar", "Bu terim dokümanda bu şekilde kullanılmamıştır."]
+    ],
+    answer: 2,
+    summary: "Yabancı anahtar: Bir dosyada bulunan ve başka bir dosyanın birincil anahtarı olan alan."
+},
+{
+    q: "24. 'Sistemdeki herhangi bir dosyanın emniyet amacıyla alınmış olan ve sürekli olarak yenilenmesi gereken kopyası' hangi dosya tipini tanımlar?",
+    options: [
+        ["Arşiv dosyası", "Arşiv dosyası, eski verileri saklamak içindir ve sürekli yenilenmez."],
+        ["Çalışma dosyası", "Çalışma dosyası, geçici veriler için kullanılır."],
+        ["Hareket dosyası", "Hareket dosyası, günlük işlemleri kaydeder."],
+        ["Yedek dosyası", "Veri kaybına karşı emniyet amacıyla alınan ve düzenli olarak güncellenen bu kopyalara 'Yedek dosyası' denir."],
+        ["Kopya dosya", "Bu genel bir ifadedir, doğru terim Yedek dosyasıdır."]
+    ],
+    answer: 3,
+    summary: "Yedek Dosyası: Sistemdeki herhangi bir dosyanın emniyet amacıyla alınmış olan ve sürekli olarak yenilenmesi gereken kopyasıdır."
+},
+{
+    q: "25. 'Bilişim sistemi tarafından kullanılan referans verilerini içeren' (örneğin il kodları, üye tipleri gibi) dosya tipi hangisidir?",
+    options: [
+        ["Ana dosya", "Ana dosya, müşteri gibi ana varlıkların bilgilerini tutar."],
+        ["Tablo dosyası", "Sistemde sıkça başvurulan, genellikle az değişen ve diğer kayıtlara anlam katan kodları veya açıklamaları içeren bu tür dosyalara 'Tablo dosyası' (lookup table) denir."],
+        ["Hareket dosyası", "Hareket dosyası, günlük olayları tutar."],
+        ["Arşiv dosyası", "Arşiv dosyası, eski verileri saklar."],
+        ["Referans dosyası", "Bu doğru bir tanımdır ancak dokümanda kullanılan terim 'Tablo dosyası'dır."]
+    ],
+    answer: 1,
+    summary: "Tablo Dosyası: Bilişim sistemi tarafından kullanılan referans verilerini içerir. Ör.: Üye tipi verilerini içeren UYE_TIPI dosyası."
+},
+{
+    q: "26. 'Son kullanıcıları ve bu kullanıcıların bilgisayar ile etkileşimini inceleyen alan' aşağıdakilerden hangisidir?",
+    options: [
+        ["Arayüz Tasarımı", "Arayüz tasarımı, bu alandaki çalışmaların bir sonucudur, alanın kendisi değildir."],
+        ["Kullanıcı Deneyimi (UX)", "Bu yakın bir kavramdır ancak dokümanda geçen spesifik terim değildir."],
+        ["İnsan Bilgisayar Etkileşimi (HCI)", "Bu tanım, kullanıcı ve bilgisayar arasındaki etkileşimi inceleyen 'İnsan Bilgisayar Etkileşimi' alanına aittir."],
+        ["Ergonomi", "Ergonomi, insan bilgisayar etkileşiminin sadece bir parçasıdır."],
+        ["Sistem Analizi", "Sistem analizi daha geniş bir kavramdır."]
+    ],
+    answer: 2,
+    summary: "İnsan bilgisayar etkileşimi (Human Computer Interaction - HCI), son kullanıcıları ve bu kullanıcıların bilgisayar ile etkileşimini inceleyen bir alandır."
+},
+{
+    q: "27. Aşağıdakilerden hangisi kullanıcı arayüzü kontrol araçlarından biri değildir?",
+    options: [
+        ["Menü Çubuğu", "Bu bir arayüz kontrol aracıdır."],
+        ["Onay Kutusu (Checkbox)", "Bu bir arayüz kontrol aracıdır."],
+        ["Diyalog Penceresi", "Bu bir arayüz kontrol aracıdır."],
+        ["Veri Akış Oku", "Veri Akış Oku, bir arayüz kontrol aracı değil, bir Veri Akış Diyagramı (DFD) sembolüdür."],
+        ["Kaydırma Çubuğu", "Bu bir arayüz kontrol aracıdır."]
+    ],
+    answer: 3,
+    summary: "Menü Çubuğu, Onay Kutusu, Diyalog Penceresi ve Kaydırma Çubuğu gibi unsurlar arayüz kontrol araçlarıdır. Veri Akış Oku ise bir modelleme diyagramı olan DFD'de kullanılır."
+},
+{
+    q: "28. Kullanıcı merkezli tasarımın üç önemli prensibi arasında hangileri yer alır? \nI. En erken aşamada kullanıcıya ve işine odaklanma \nII. Kullanışlılığı sağlamak amacıyla tasarımın değerlendirilmesi \nIII. Tekrarlanan geliştirmenin kullanılması",
+    options: [
+        ["Yalnızca I", "Eksik, diğer iki prensip de önemlidir."],
+        ["I ve II", "Eksik, tekrarlanan geliştirme de bu yaklaşımın bir parçasıdır."],
+        ["I, II ve III", "Kullanıcı merkezli tasarımın üç temel prensibi; erken aşamada kullanıcıya odaklanma, kullanışlılık için tasarımı değerlendirme ve tekrarlanan (iterative) geliştirme kullanmadır."],
+        ["Yalnızca II ve III", "Eksik, en önemli adımlardan biri sürece kullanıcıyla başlamaktır."],
+        ["Yalnızca III", "Eksik, diğer iki prensip de önemlidir."]
+    ],
+    answer: 2,
+    summary: "Kullanıcı merkezli tasarımda üç önemli prensip vardır: En erken aşamada kullanıcıya ve işine odaklanma, Kullanışlılığı sağlamak amacıyla tasarımın değerlendirilmesi, Tekrarlanan geliştirmenin kullanılması."
+},
+{
+    q: "29. Bir şirketin faturalarını veya sipariş formlarını müşterilerine göndermesi ne tür bir çıktıdır?",
+    options: [
+        ["İçsel Çıktı", "İçsel çıktılar, kurum içinde kalır."],
+        ["Dışsal Çıktı", "Kurum dışındaki kişi veya kurumlara (müşteri, tedarikçi, devlet vb.) yönelik olan çıktılar 'dışsal çıktı' olarak adlandırılır."],
+        ["Operasyonel Çıktı", "Bu çıktının kullanım amacıdır, türü değil."],
+        ["Resmi Çıktı", "Bu, çıktının niteliğidir, türü değil."],
+        ["Elektronik Çıktı", "Bu, çıktının teknolojisidir, türü değil."]
+    ],
+    answer: 1,
+    summary: "Temel olarak çıktılar içsel (kurum içi) ve dışsal (kurum dışı) olarak kategorize etmek mümkündür. Müşteriye gönderilen fatura gibi belgeler dışsal çıktılara örnektir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 6</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 6</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Bir sistem projesinin ilerlemeye değer olup olmadığını ortaya çıkarmak için yapılan sorgulamalar bütününe ne ad verilir?",
+    options: [
+        ["Proje Yönetimi", "Proje yönetimi, projenin yürütülmesiyle ilgilidir."],
+        ["Sistem Analizi", "Sistem analizi, gereksinimlerin belirlenmesiyle ilgilidir."],
+        ["Fizibilite Çalışması", "Bir projenin yapılabilirliğini ve mantıklı olup olmadığını değerlendiren sorgulamalar bütününe fizibilite çalışması denir."],
+        ["Risk Analizi", "Risk analizi, fizibilite çalışmasının bir parçasıdır ama tamamı değildir."],
+        ["Maliyet Analizi", "Maliyet analizi, ekonomik fizibilitenin bir parçasıdır."]
+    ],
+    answer: 2,
+    summary: "Talep edilen projenin birçok sorgulamadan geçirilerek ilerlemeye değer olup olmadığı ortaya çıkarılmalıdır. Bu bir dizi sorgulamaya fizibilite çalışması ismi verilmektedir."
+},
+{
+    q: "2. Aşağıdakilerden hangileri bir fizibilite çalışmasının temel başlıkları arasında yer alır? \nI. Ekonomik fizibilite \nII. Teknik fizibilite \nIII. Operasyonel fizibilite \nIV. Hukuki fizibilite",
+    options: [
+        ["Yalnızca I ve II", "Eksik, operasyonel ve hukuki fizibilite de temel başlıklardandır."],
+        ["I, II ve III", "Eksik, hukuki fizibilite de temel bir başlıktır."],
+        ["II, III ve IV", "Eksik, ekonomik fizibilite de temel bir başlıktır."],
+        ["I, III ve IV", "Eksik, teknik fizibilite de temel bir başlıktır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, fizibilite çalışmasının yedi temel başlığı arasında yer almaktadır."]
+    ],
+    answer: 4,
+    summary: "Fizibilite çalışması temel olarak yedi başlık altında yapılır: Ekonomik, Teknik, Organizasyonel ve kültürel, Operasyonel, Zamanlama, Hukuki, Politik fizibilite."
+},
+{
+    q: "3. 'Azaltılmış personel giderleri' veya 'daha yüksek kâr marjları' gibi kolayca hesaplanabilen faydalara ne ad verilir?",
+    options: [
+        ["Dokunulamaz fayda", "Dokunulamaz faydalar kolayca hesaplanamayan faydalardır."],
+        ["Tekerrür eden fayda", "Bu bir maliyet türüdür, fayda değil."],
+        ["Dokunulur fayda", "Kolayca hesaplanabilen ve parasal değeri olan faydalar 'dokunulur fayda' olarak adlandırılır."],
+        ["Bir seferlik fayda", "Bu bir maliyet türüdür, fayda değil."],
+        ["Operasyonel fayda", "Bu genel bir ifadedir, doğru terim dokunulur faydadır."]
+    ],
+    answer: 2,
+    summary: "Dokunulur faydalar (tangible benefits) kolayca hesaplanabilen faydalardır (örneğin azaltışmış personel giderleri, daha yüksek kar marjları gibi)."
+},
+{
+    q: "4. 'Çalışan moralinin yükselmesi' gibi kolayca hesaplanamayan faydalar hangi kategoriye girer?",
+    options: [
+        ["Dokunulur fayda", "Dokunulur faydalar kolayca hesaplanabilir."],
+        ["Dokunulamaz fayda", "Değerinin sayısal olarak ölçülmesi zor olan, 'çalışan moralinin yükselmesi' gibi faydalar dokunulamaz faydalardır."],
+        ["Stratejik fayda", "Bu genel bir ifadedir, doğru terim dokunulamaz faydadır."],
+        ["Kültürel fayda", "Bu genel bir ifadedir, doğru terim dokunulamaz faydadır."],
+        ["Gizli fayda", "Bu terim dokümanda kullanılmamıştır."]
+    ],
+    answer: 1,
+    summary: "Dokunulamaz faydalar (intangible benefits) ise kolayca hesaplanamayan faydalardır (örneğin çalışan moralinin yükselmesi gibi)."
+},
+{
+    q: "5. 'Yeni donanım ve yazılımın satın alınması' gibi projenin başlangıcında yapılan maliyetler ne tür maliyetlerdir?",
+    options: [
+        ["Tekerrür eden maliyet", "Tekerrür eden maliyetler sürekli devam eden maliyetlerdir."],
+        ["Dokunulamaz maliyet", "Bu maliyetin parasal değeri nettir, dokunulamaz değildir."],
+        ["Operasyonel maliyet", "Operasyonel maliyetler genellikle tekerrür eder."],
+        ["Bir seferlik maliyet", "Projenin başlangıcı veya kurulumuyla ilişkili olan ve genellikle bir kez yapılan maliyetler 'bir seferlik maliyet' olarak adlandırılır."],
+        ["Gizli maliyet", "Bu terim dokümanda kullanılmamıştır."]
+    ],
+    answer: 3,
+    summary: "Bir seferlik maliyetler projenin başlangıcı ve geliştirilmesi ya da sistemin çalıştırılması ile ilişkili maliyetlerdir (örneğin yeni donanım ve yazılımın satın alınması gibi)."
+},
+{
+    q: "6. 'Yazılımın bakım maliyeti' gibi sistemin kullanılması süresince devam eden maliyetler hangi kategoriye girer?",
+    options: [
+        ["Bir seferlik maliyet", "Bir seferlik maliyetler projenin başında yapılır."],
+        ["Tekerrür eden maliyet", "Sistemin ömrü boyunca düzenli olarak ortaya çıkan maliyetler 'tekerrür eden maliyet' olarak sınıflandırılır."],
+        ["Dokunulamaz maliyet", "Bakım maliyeti genellikle parasal olarak nettir."],
+        ["Sermaye maliyeti", "Bu terim dokümanda bu şekilde kullanılmamıştır."],
+        ["Geliştirme maliyeti", "Geliştirme maliyeti genellikle bir seferliktir."]
+    ],
+    answer: 1,
+    summary: "Tekerrür eden maliyetler ise sistemin kullanılması süresince devam eden maliyetlerdir (örneğin yazılımın bakım maliyeti gibi)."
+},
+{
+    q: "7. Ekonomik fizibilite çalışmasının adımları arasında hangileri bulunur? \nI. Finansal faydaların hesaplanması \nII. Geliştirme ve operasyonel maliyetlerin hesaplanması \nIII. Maliyet/fayda analizinin yapılması",
+    options: [
+        ["Yalnızca I", "Eksik, maliyetlerin hesaplanması ve analiz de gereklidir."],
+        ["I ve II", "Eksik, son adımda bu iki unsurun analizi yapılır."],
+        ["I, II ve III", "Ekonomik fizibilite; faydaların, maliyetlerin hesaplanması ve bu ikisinin analiz edilmesi adımlarından oluşur."],
+        ["Yalnızca II ve III", "Eksik, faydaların da hesaplanması gerekir."],
+        ["Yalnızca III", "Analiz yapabilmek için önce fayda ve maliyetlerin hesaplanması gerekir."]
+    ],
+    answer: 2,
+    summary: "Ekonomik fizibilite... aşağıdaki adımlardan oluşur: Finansal faydaların hesaplanması, Geliştirme ve operasyonel maliyetlerin hesaplanması, Maliyet/fayda analizinin yapılması."
+},
+{
+    q: "8. 'Mevcut nakit giderlerin gelecekteki beklenen getiriler ile karşılaştırılması' kavramına dayanan analiz tekniği hangisidir?",
+    options: [
+        ["Başa baş noktası", "Bu, projenin maliyetini ne kadar sürede çıkardığıyla ilgilidir."],
+        ["Yatırım getirisi", "Bu, yatırımın karlılık oranıyla ilgilidir."],
+        ["Net bugünkü değer", "Bu, projenin bugünkü değeriyle ilgilidir."],
+        ["Paranın zaman değeri (TVM)", "Gelecekteki paranın bugünkü değeriyle aynı olmadığını ve karşılaştırma yapılması gerektiğini ifade eden temel kavram budur."],
+        ["Risk analizi", "Bu, projenin potansiyel riskleriyle ilgilidir."]
+    ],
+    answer: 3,
+    summary: "Bu tekniklerden biri olan paranın zaman değeri (time value of money - TVM) mevcut nakit giderlerin gelecekteki beklenen getiriler ile karşılaştırılması kavramına dayanmaktadır."
+},
+{
+    q: "9. İndirgeme oranının (i) %10 (0.1) olduğu bir projede, 2 yıl sonra elde edilecek bir nakit akışının bugünkü değerini bulmak için kullanılacak indirgeme faktörü P(i) kaçtır?",
+    options: [
+        ["0.909", "Bu 1. yılın faktörüdür (1/1.1)."],
+        ["1.21", "Bu, (1+i)^n değeridir, 1/(1+i)^n değil."],
+        ["0.826", "Formül (1 / (1 + 0.1)^2) = (1 / 1.21) ≈ 0.826'dır."],
+        ["0.20", "Bu, oranın kendisinin 2 ile çarpımıdır, doğru bir hesaplama değildir."],
+        ["2.1", "Bu, (1+i) + (1+i) gibi hatalı bir toplamdır."]
+    ],
+    answer: 2,
+    summary: "Kullanılacak formül P(i) = (1/(1+i))^n şeklindedir. Verilen değerler yerine konulduğunda P(0.1) = (1 / (1+0.1)^2) = 1 / 1.1^2 = 1 / 1.21, bu da yaklaşık 0.826 sonucunu verir."
+},
+{
+    q: "10. 'Projenin birikmiş nakit akışının, projenin başlangıç ve devam eden yatırımına eşit olması için gerekli olan zamanın tespiti' hangi analiz tekniğinin tanımıdır?",
+    options: [
+        ["Net bugünkü değer (NPV)", "NPV, projenin bugünkü parasal değerini ölçer."],
+        ["Yatırım getirisi (ROI)", "ROI, projenin karlılık oranını ölçer."],
+        ["Paranın zaman değeri (TVM)", "TVM, bu tekniklerin dayandığı ana kavramdır."],
+        ["Başa baş noktası (BEA)", "Bu tanım, projenin 'ne kadar zamanda kendini amorti ettiğini' ölçen Başa Baş Noktası analizine aittir."],
+        ["Fayda/Maliyet Oranı", "Bu, toplam faydanın toplam maliyete bölünmesidir."]
+    ],
+    answer: 3,
+    summary: "Başa baş noktası (Break-even analysis - BEA) Projenin birikmiş nakit akışının, projenin başlangıç ve devam eden yatırımına eşit olması için gerekli olan zamanın tespitidir."
+},
+{
+    q: "11. 'Geliştirme yapan organizasyonun sunulan sistemi kurma yeteneğinin değerlemesi' hangi fizibilite türünün tanımıdır?",
+    options: [
+        ["Ekonomik fizibilite", "Bu, projenin finansal olarak yapılabilirliğidir."],
+        ["Operasyonel fizibilite", "Bu, sistemin iş problemlerini çözüp çözemeyeceğidir."],
+        ["Teknik fizibilite", "Bu tanım, organizasyonun teknik yeterliliğini ve kapasitesini ölçen teknik fizibiliteye aittir."],
+        ["Organizasyonel fizibilite", "Bu, projenin organizasyon kültürüyle uyumudur."],
+        ["Zamanlama fizibilitesi", "Bu, projenin zamanında bitirilip bitirilemeyeceğidir."]
+    ],
+    answer: 2,
+    summary: "Teknik fizibilite, geliştirme yapan organizasyonun sunulan sistemi kurma yeteneğinin değerlemesidir."
+},
+{
+    q: "12. Tespit edilen teknik risklere çözüm olarak aşağıdakilerden hangileri sunulabilir? \nI. İlave eğitim \nII. Danışmanların işe alımı \nIII. Daha deneyimli çalışanların işe alımı \nIV. Proje kapsamının değiştirilmesi",
+    options: [
+        ["I ve III", "Eksik, diğer maddeler de çözüm önerisidir."],
+        ["II ve IV", "Eksik, diğer maddeler de çözüm önerisidir."],
+        ["I, II ve IV", "Eksik, daha deneyimli çalışanların işe alımı da bir çözümdür."],
+        ["I, II, III", "Eksik, proje kapsamının değiştirilmesi de bir çözümdür."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, teknik risklere karşı sunulabilecek çözüm önerileridir."]
+    ],
+    answer: 4,
+    summary: "Teknik risklere çözüm olarak; İlave eğitim, Danışmanların işe alımı, Daha deneyimli çalışanların işe alımı, Proje kapsamı ve yaklaşımının değiştirilmesi sunulabilir."
+},
+{
+    q: "13. 'Bilgisayar fobisi' veya 'işini kaybetme korkusu' gibi sorunlar hangi fizibilite türü kapsamında değerlendirilir?",
+    options: [
+        ["Teknik fizibilite", "Teknik fizibilite, teknik yeteneklerle ilgilidir."],
+        ["Politik fizibilite", "Politik fizibilite, kilit paydaşların projeye bakışıyla ilgilidir."],
+        ["Operasyonel fizibilite", "Operasyonel fizibilite, sistemin iş problemlerini çözme yeteneğiyle ilgilidir."],
+        ["Organizasyonel ve kültürel fizibilite", "Çalışanların sisteme karşı tutumları, korkuları ve adaptasyon sorunları bu fizibilite türünün konusudur."],
+        ["Hukuki fizibilite", "Hukuki fizibilite, yasal sonuçlarla ilgilidir."]
+    ],
+    answer: 3,
+    summary: "Organizasyonel ve kültürel fizibilite, 'Düşük seviyede bilgisayar yetkinliği', 'Bilgisayar fobisi' ve 'Artan otomasyon sebebi ile alakalı işini kaybetme korkusu' gibi sorunların değerlendirilmesini kapsar."
+},
+{
+    q: "14. 'Yeni sistemin yasal ve sözleşmeye ait sonuçlarının değerlemesi' hangi fizibilite türünün tanımıdır?",
+    options: [
+        ["Politik fizibilite", "Bu, kilit paydaşların projeye bakışıdır."],
+        ["Hukuki fizibilite", "Bu tanım, projenin yasalara ve sözleşmelere uygunluğunu değerlendiren hukuki fizibiliteye aittir."],
+        ["Operasyonel fizibilite", "Bu, sistemin iş problemlerini çözme yeteneğidir."],
+        ["Zamanlama fizibilitesi", "Bu, projenin takvime uygunluğudur."],
+        ["Kültürel fizibilite", "Bu, projenin kurum kültürüne uyumudur."]
+    ],
+    answer: 1,
+    summary: "Hukuki fizibilite, yeni sistemin yasal ve sözleşmeye ait sonuçlarının değerlemesidir."
+},
+{
+    q: "15. 'Organizasyondaki anahtar paydaşların sunulan sisteme bakışının değerlendirilmesi süreci' hangi fizibilite türünü ifade eder?",
+    options: [
+        ["Teknik fizibilite", "Bu, teknik kapasiteyle ilgilidir."],
+        ["Organizasyonel fizibilite", "Bu, genel kurum kültürü ve çalışanların adaptasyonuyla ilgilidir."],
+        ["Politik fizibilite", "Kilit paydaşların (örneğin üst yöneticiler) projeye olan desteğini veya direncini ölçen bu süreç, politik fizibilitedir."],
+        ["Operasyonel fizibilite", "Bu, sistemin pratik olarak işleyip işlemeyeceğiyle ilgilidir."],
+        ["Hukuki fizibilite", "Bu, yasal uygunlukla ilgilidir."]
+    ],
+    answer: 2,
+    summary: "Politik fizibilite, organizasyondaki anahtar paydaşların sunulan sisteme bakışının değerlendirilmesi sürecidir."
+},
+{
+    q: "16. 'Projenin belirlenen tamamlama tarihi ve proje süresinin, organizasyonun kısıtlarına göre değerlendirilmesi' hangi fizibilite türüdür?",
+    options: [
+        ["Operasyonel fizibilite", "Bu, sistemin iş problemlerini çözme yeteneğidir."],
+        ["Hukuki fizibilite", "Bu, yasal ve sözleşmesel uygunluktur."],
+        ["Zamanlama fizibilitesi", "Projenin takvime uygunluğunu ve belirlenen sürede bitip bitemeyeceğini değerlendiren bu süreç, zamanlama fizibilitesidir."],
+        ["Teknik fizibilite", "Bu, organizasyonun sistemi kurma yeteneğidir."],
+        ["Politik fizibilite", "Bu, kilit paydaşların projeye bakış açısıdır."]
+    ],
+    answer: 2,
+    summary: "Zamanlama fizibilitesi, projeyi tamamlama tarihi ve proje süresinin organizasyon kısıtlarına göre değerlemesidir."
+},
+{
+    q: "17. 'Net kasa tahsilatının projenin nakit giderlerine bölünmesiyle oluşan oran' olarak tanımlanan maliyet/fayda analiz tekniği hangisidir?",
+    options: [
+        ["Net bugünkü değer (NPV)", "NPV, projenin bugünkü parasal değerini hesaplar, bir oran değildir."],
+        ["Yatırım getirisi (ROI)", "Bu tanım, yatırımın karlılığını bir oran olarak gösteren Yatırım Getirisi'ne (ROI) aittir."],
+        ["Başa baş noktası (BEA)", "BEA, projenin kendini ne kadar sürede amorti ettiğini gösterir."],
+        ["İndirgeme oranı", "Bu, gelecekteki nakit akışlarının bugünkü değerini hesaplamak için kullanılan bir orandır, analiz tekniğinin kendisi değil."],
+        ["Paranın zaman değeri (TVM)", "Bu, analizlerin dayandığı temel kavramdır."]
+    ],
+    answer: 1,
+    summary: "Yatırım getirisi (Return on investment - ROI) Net kasa tahsilatının projenin nakit giderlerine bölünmesiyle oluşan orandır."
+},
+{
+    q: "18. Aşağıdakilerden hangisi 'Organizasyonel ve Kültürel Fizibilite' kapsamında değerlendirilen sorunlardan biri değildir?",
+    options: [
+        ["Çalışanların işini kaybetme korkusu", "Bu, organizasyonel ve kültürel bir sorundur."],
+        ["Düşük seviyede bilgisayar yetkinliği", "Bu, organizasyonel ve kültürel bir sorundur."],
+        ["Sistemin mevcut donanımla uyumsuzluğu", "Bu, 'Teknik Fizibilite' kapsamında değerlendirilen bir risktir."],
+        ["Çalışanların veya yönetimin kontrolü kaybetme hissi", "Bu, organizasyonel ve kültürel bir sorundur."],
+        ["Uzun zamandır devam eden iş prosedürlerinin bozulması", "Bu, organizasyonel ve kültürel bir sorundur."]
+    ],
+    answer: 2,
+    summary: "Sistemin donanım uyumsuzluğu gibi konular teknik yeterlilikle ilgilidir ve Teknik Fizibilite'nin konusudur. Diğer maddeler ise kurum kültürü ve çalışanların adaptasyonu ile ilgili olduğu için Organizasyonel ve Kültürel Fizibilite'de ele alınır."
+},
+{
+    q: "19. 'İndirgeme oranı kullanılarak ve gelir ile giderlerin her ikisi de düşünülerek projenin bugünkü değerinin hesaplanması' hangi analiz tekniğidir?",
+    options: [
+        ["Yatırım getirisi (ROI)", "ROI bir karlılık oranıdır."],
+        ["Başa baş noktası (BEA)", "BEA projenin kendini amorti etme süresidir."],
+        ["Net bugünkü değer (NPV)", "Projenin tüm nakit akışlarının bugünkü değere indirgenerek net değerinin bulunması NPV'nin tanımıdır."],
+        ["Fayda analizi", "Bu genel bir ifadedir, spesifik bir teknik değildir."],
+        ["Maliyet analizi", "Bu genel bir ifadedir, spesifik bir teknik değildir."]
+    ],
+    answer: 2,
+    summary: "Net bugünkü değer (Net present value- NPV) İndirgeme oranı kullanılarak ve gelir ve giderlerin her ikisi de düşünülerek projenin bugünkü değerinin hesaplanmasıdır."
+},
+{
+    q: "20. 'Çalışan moralinin kaybedilmesi' ne tür bir maliyettir?",
+    options: [
+        ["Dokunulur maliyet", "Dokunulur maliyetlerin parasal değeri nettir (örn: donanım maliyeti)."],
+        ["Tekerrür eden maliyet", "Bu, maliyetin zamanlamasıyla ilgilidir (örn: bakım maliyeti)."],
+        ["Bir seferlik maliyet", "Bu, maliyetin zamanlamasıyla ilgilidir (örn: kurulum maliyeti)."],
+        ["Dokunulamaz maliyet", "Parasal değerinin net olarak hesaplanması zor olan 'çalışan moralinin kaybedilmesi' gibi maliyetler dokunulamaz maliyettir."],
+        ["Operasyonel maliyet", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Faydalara benzer olarak bir bilgi sisteminin maliyetleri de dokunulur ve dokunulamaz maliyetler olarak ayrılabilir. Çalışan moralinin kaybedilmesi dokunulamaz maliyete örnek olarak verilebilir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

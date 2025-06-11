@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 3</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 3</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. İşletmenin operasyonel seviyesindeki günlük rutin hareketlerini (transactions) yürüten ve kaydeden sistemlere ne ad verilir?",
+    options: [
+        ["Yönetim Bilişim Sistemleri (MIS)", "MIS, orta kademe yönetimin karar verme süreçlerine odaklanır."],
+        ["Karar Destek Sistemleri (DSS)", "DSS, yarı yapısal ve nadir problemlerin çözümüne odaklanır."],
+        ["Hareket İşleme Sistemleri (TPS)", "Bu, işletmenin temel, günlük faaliyetlerini ve hareketlerini yürüten ve kaydeden sistemlerin tanımıdır."],
+        ["Uzman Sistemler (ES)", "Uzman sistemler, belirli bir alandaki uzmanın bilgisini taklit eder."],
+        ["Ofis Otomasyon Sistemleri", "Bu sistemler genel ofis işlerini destekler, temel ticari hareketlere odaklanmaz."]
+    ],
+    answer: 2,
+    summary: "Hareket İşleme Sistemleri (Transaction Processing Systems - TPS) işletmenin operasyonel seviyesindeki yöneticilerine hizmet verir ve işletmenin temel faaliyetlerini ve hareketlerini yürüten ve kaydeden bilgisayarlı sistemlerdir."
+},
+{
+    q: "2. 'Sipariş takibi', 'bordro işlemleri' ve 'kayıt tutma' gibi faaliyetler hangi bilişim sistemi grubuna örnektir?",
+    options: [
+        ["Hareket İşleme Sistemleri (TPS)", "Bu faaliyetler, bir işletmenin temel ve günlük hareketleri olduğu için TPS'e örnektir."],
+        ["Karar Destek Sistemleri (DSS)", "Bu faaliyetler rutin ve yapısal olduğu için DSS'in odak alanı dışındadır."],
+        ["Yönetim Bilişim Sistemleri (MIS)", "MIS, bu hareketlerden üretilen özet raporlarla ilgilenir, hareketin kendisiyle değil."],
+        ["Uzman Sistemler (ES)", "Bu faaliyetler uzman bilgisi gerektiren karmaşık problemler değildir."],
+        ["Stratejik Sistemler", "Bu faaliyetler operasyonel seviyededir, stratejik değil."]
+    ],
+    answer: 0,
+    summary: "Sipariş takibi, bordro sistemleri, otel rezervasyonları, kayıt tutma gibi işlemler Hareket İşleme Sistemlerine (TPS) örnektir."
+},
+{
+    q: "3. 'Yarı-yapısal ve nadir karşılaşılan problemlerin çözümü için, analitik modeller ve veri analiz araçlarını kullanan' sistemler hangisidir?",
+    options: [
+        ["Hareket İşleme Sistemleri (TPS)", "TPS, yapısal ve rutin problemleri ele alır."],
+        ["Yönetim Bilişim Sistemleri (MIS)", "MIS, genellikle geçmiş verilere dayalı özet raporlar sunar."],
+        ["Uzman Sistemler (ES)", "Uzman sistemler, belirli kurallara dayalı olarak uzman taklidi yapar."],
+        ["Karar Destek Sistemleri (DSS)", "Bu, Karar Destek Sistemlerinin tanımıdır. Analitik modeller kullanarak nadir karşılaşılan problemlere odaklanır."],
+        ["Veritabanı Yönetim Sistemleri", "Bu, veriyi yöneten bir araçtır, karar destek sisteminin kendisi değildir."]
+    ],
+    answer: 3,
+    summary: "Karar Destek Sistemleri (Decision Support Systems – DSS) yarı-yapısal ve nadir karşılaşılan problemlerin çözümü için, analitik modeller ve veri analiz araçlarını sıkça kullanan sistemlerdir."
+},
+{
+    q: "4. Bir bilişim sisteminin geliştirilmesi ve işletilmesi için gerekli finansal kaynakları sağlayan paydaş kimdir?",
+    options: [
+        ["Sistem Geliştiriciler", "Geliştiriciler sistemi kodlayanlardır."],
+        ["Sistem Kullanıcıları", "Kullanıcılar sistemi işleri için kullananlardır."],
+        ["Sistem Analistleri", "Analistler iş ihtiyaçlarını teknik özelliklere çevirenlerdir."],
+        ["Sistem Sahipleri", "Sistem sahipleri, sistem için finansal kaynakları sağlayan ve faydalarını uman paydaşlardır."],
+        ["Sistem Tasarımcıları", "Tasarımcılar sistemin teknik yapısını tasarlayanlardır."]
+    ],
+    answer: 3,
+    summary: "Sistem sahipleri, bilişim sisteminin geliştirilmesi ve işletilmesi için gerekli finansal kaynakları sağlayan ve sistemden işletme adına faydalar bekleyen paydaşlardır."
+},
+{
+    q: "5. Organizasyonun 'yönetim seviyesine' hizmet vererek yöneticilere raporlar sunan ve planlama/kontrol konularında destek olan sistem türü hangisidir?",
+    options: [
+        ["Yönetim Bilişim Sistemleri (MIS)", "Bu tanım, Yönetim Bilişim Sistemlerinin metindeki tanımıyla tam olarak örtüşmektedir."],
+        ["Hareket İşleme Sistemleri (TPS)", "TPS, 'operasyonel seviyeye' hizmet eder."],
+        ["Karar Destek Sistemleri (DSS)", "DSS, spesifik ve yarı yapılandırılmış kararları destekler."],
+        ["Uzman Sistemler (ES)", "Uzman sistemler, kural tabanlı çıkarımlar yapar."],
+        ["Bütünleşik Sistemler", "Bu genel bir ifadedir, spesifik bir sistem türü değildir."]
+    ],
+    answer: 0,
+    summary: "Yönetim bilişim sistemleri (Management Information Systems – MIS) Organizasyonun yönetim seviyesine hizmet veren, yöneticilere raporlar sunarak planlama, kontrol ve karar verme konularında destek olan sistemlerdir."
+},
+{
+    q: "6. 'Satış yönetimi' ve 'envanter kontrolü' gibi uygulamalar, hangi bilişim sistemi grubuna dahildir?",
+    options: [
+        ["Karar Destek Sistemleri (DSS)", "Bu uygulamalar daha çok rutin kontrol ve raporlama amaçlıdır."],
+        ["Hareket İşleme Sistemleri (TPS)", "Satışın kendisi TPS ile kaydedilirken, satışın yönetimi MIS'in konusudur."],
+        ["Uzman Sistemler (ES)", "Bu uygulamalar uzmanlık gerektiren çıkarımlar yapmaz."],
+        ["Ofis Otomasyon Sistemleri", "Bu sistemler genel ofis verimliliğine odaklanır."],
+        ["Yönetim Bilişim Sistemleri (MIS)", "Satış yönetimi ve envanter kontrolü, yönetime raporlama yaptığı için klasik MIS uygulamalarıdır."]
+    ],
+    answer: 4,
+    summary: "Satış yönetimi ve envanter kontrolü sistemleri Yönetim Bilişim Sistemlerine (MIS) örnek olarak verilebilir."
+},
+{
+    q: "7. Kurumun problemlerini ve isteklerini inceleyerek, insan, veri, işlem ve teknoloji unsurlarını birlikte kullanıp iyileştirmeler sağlayan paydaş kimdir?",
+    options: [
+        ["Sistem Sahipleri", "Sistem sahipleri projeyi finanse eder ve yönlendirir."],
+        ["Sistem Analistleri", "Bu, sistem analistinin tanımıdır. İş ihtiyaçları ile teknik çözümler arasında bir köprü görevi görürler."],
+        ["Sistem Kullanıcıları", "Kullanıcılar sistemi kullanan ve ihtiyaçları belirten kişilerdir."],
+        ["Sistem Geliştiriciler", "Geliştiriciler teknik çözümü inşa eden kişilerdir."],
+        ["Proje Yöneticisi", "Proje yöneticisi projenin genel yönetiminden sorumludur."]
+    ],
+    answer: 1,
+    summary: "Sistem analistleri insan, veri, işlem, iletişim ve bilişim teknolojisi unsurlarını birlikte kullanarak ilgili kurumda iyileşmeler sağlama amacıyla kurumun problemlerini ve isteklerini inceleyen kişilerdir."
+},
+{
+    q: "8. Aşağıdakilerden hangisi bir bilişim sistemi paydaşı değildir?",
+    options: [
+        ["Sistem Sahipleri", "Sistem sahipleri en önemli paydaşlardandır."],
+        ["Sistem Kullanıcıları", "Sistem kullanıcıları projenin başarısı için kritik paydaşlardır."],
+        ["Sistem Geliştiriciler", "Sistem geliştiriciler teknik uygulamayı yapan paydaşlardır."],
+        ["Rakipler", "Rakipler, sistemin geliştirildiği 'çevre'nin bir parçasıdır, projenin bir 'paydaşı' değildir."],
+        ["Sistem Tasarımcıları", "Sistem tasarımcıları teknik tasarımı yapan paydaşlardır."]
+    ],
+    answer: 3,
+    summary: "Paydaşlar, projenin geliştirilmesi ve başarısıyla doğrudan ilgili olan kişilerdir. Rakipler ise projenin içinde yer almaz, dış çevrenin bir unsurudur."
+},
+{
+    q: "9. 'Fiyatlandırma ve karlılık analizi' veya 'üretim planlaması' gibi spesifik ve yarı yapısal problemlerin çözümünde kullanılan sistem türü hangisidir?",
+    options: [
+        ["Hareket İşleme Sistemleri (TPS)", "Bu sistemler rutin ve yapısal işlemleri yapar."],
+        ["Karar Destek Sistemleri (DSS)", "Fiyatlandırma gibi analitik model gerektiren konular, DSS'in tipik uygulama alanlarıdır."],
+        ["Yönetim Bilişim Sistemleri (MIS)", "MIS, genel performans raporları sunar, bu tür spesifik analizleri yapmaz."],
+        ["Uzman Sistemler (ES)", "Bu problemler belirli bir uzmanın kural setinden çok, analitik modelleme gerektirir."],
+        ["Operasyonel Sistemler", "Bu genel bir ifadedir, bu analizler operasyonel seviyeden çok taktiksel seviyededir."]
+    ],
+    answer: 1,
+    summary: "Üretim planlaması, fiyatlandırma ve karlılık analizi Karar Destek Sistemlerine (DSS) örnek olarak verilebilir."
+},
+{
+    q: "10. Bir bilişim sistemini işlerini yapmak için fiilen kullanan kişilere ne ad verilir?",
+    options: [
+        ["Sistem Sahipleri", "Sistem sahipleri projeyi finanse eder."],
+        ["Sistem Analistleri", "Analistler iş ihtiyaçlarını belirler."],
+        ["Sistem Tasarımcıları", "Tasarımcılar teknik yapıyı oluşturur."],
+        ["Sistem Kullanıcıları", "Sistemi günlük işlerinde kullanan kişiler 'sistem kullanıcıları'dır."],
+        ["Sistem Yöneticileri", "Sistem yöneticileri sistemin teknik altyapısını yönetir."]
+    ],
+    answer: 3,
+    summary: "Sistem kullanıcıları bilişim sistemini işlerini yapmak için fiilen kullanan kişilerdir."
+},
+{
+    q: "11. 'Belirli bir alandaki uzmanın yaklaşımını taklit ederek, bilgi ve deneyimlerini bir kural tabanında saklayan ve çıkarım yapan' sistemler hangisidir?",
+    options: [
+        ["Karar Destek Sistemleri (DSS)", "DSS, analitik modellere dayanır, kural tabanına değil."],
+        ["Yapay Zeka Sistemleri", "Uzman sistemler, yapay zekanın bir alt dalıdır, ancak bu tanım spesifik olarak uzman sistemlere aittir."],
+        ["Yönetim Bilişim Sistemleri (MIS)", "MIS, özet raporlar sunar, çıkarım yapmaz."],
+        ["Uzman Sistemler (ES)", "Bu, uzman sistemlerin tanımıdır. Bilgi tabanı ve çıkarım motoru temel bileşenleridir."],
+        ["Nöral Ağlar", "Nöral ağlar, yapay zekanın farklı bir tekniğidir ve öğrenme üzerine odaklanır."]
+    ],
+    answer: 3,
+    summary: "Uzman Sistemler (Expert Systems - ES), belirli bir alandaki uzmanın yaklaşımını taklit ederek, bu uzmanın bilgi ve deneyimlerini bir kural tabanında saklayan ve bu kurallara dayanarak çıkarımlar yapan sistemlerdir."
+},
+{
+    q: "12. Veritabanı, girdi-çıktı, kullanıcı arayüzü ve ağlar gibi teknik konularda uzmanlaşarak sistemin nasıl çalışacağını belirleyen paydaş kimdir?",
+    options: [
+        ["Sistem Analistleri", "Analistler 'ne' yapılacağını belirler, 'nasıl' yapılacağını değil."],
+        ["Sistem Geliştiriciler", "Geliştiriciler, tasarıma göre kodlama yaparlar."],
+        ["Sistem Sahipleri", "Sistem sahipleri iş hedeflerini belirler."],
+        ["Sistem Tasarımcıları", "Bu tanım, sistemin teknik yapısını tasarlayan 'sistem tasarımcıları'na aittir."],
+        ["BT Danışmanları", "Danışmanlar dışarıdan destek sağlayan paydaşlardır."]
+    ],
+    answer: 3,
+    summary: "Sistem tasarımcıları veritabanı, girdi-çıktı, kullanıcı arayüzü ve ağlar gibi teknik konularda uzmanlaşmış ve sistem analistleri tarafından belirlenen iş isteklerini teknik çözümlere dönüştüren paydaşlardır."
+},
+{
+    q: "13. ‘Beş yıllık karlılık’ ve ‘beş yıllık personel planlaması’ gibi konulara odaklanan ve bir uzmanın yaklaşımını temel alarak çözümler üreten sistemler hangisidir?",
+    options: [
+        ["Hareket İşleme Sistemleri (TPS)", "TPS, günlük ve operasyonel işlemlere odaklanır."],
+        ["Yönetim Bilişim Sistemleri (MIS)", "MIS, geçmiş verileri özetleyen periyodik raporlar sunar."],
+        ["Karar Destek Sistemleri (DSS)", "DSS, yarı yapılandırılmış ve genellikle tek seferlik kararları destekler."],
+        ["Uzman Sistemler (ES)", "Bu örnekler, metinde doğrudan Uzman Sistemler için verilmiştir ve bir uzmanın yaklaşımını temel alma tanımıyla örtüşmektedir."],
+        ["Planlama Sistemleri", "Bu genel bir ifadedir, metinde geçen spesifik bir sistem türü değildir."]
+    ],
+    answer: 3,
+    summary: "Uzman sistemler (Expert Systems – ES): Belirli bir problem hakkında bir uzmanın nasıl yaklaşım uyguladığını temel alarak çözümler üretebilen... sistemlerdir. Beş yıllık karlılık ve beş yıllık personel planlaması sistemleri bu sistemlere örnek olarak verilebilir."
+},
+{
+    q: "14. Bilgisayar programlarını yazan ve test eden teknik uzmanlara ne ad verilir?",
+    options: [
+        ["Sistem Analistleri", "Analistler iş ihtiyaçlarını belirler."],
+        ["Sistem Geliştiriciler (Programcılar)", "Bu tanım, sistemi fiilen kodlayan ve test eden 'sistem geliştiricileri' veya 'programcılar'a aittir."],
+        ["Sistem Operatörleri", "Operatörler sistemin günlük çalışmasını denetler."],
+        ["Veritabanı Yöneticileri", "Bu kişiler veritabanının yönetiminden sorumludur."],
+        ["Sistem Tasarımcıları", "Tasarımcılar, geliştiricilerin ne yapacağını belirten teknik planı çizer."]
+    ],
+    answer: 1,
+    summary: "Sistem geliştiriciler bilgisayar programlarını yazan ve test eden teknik uzmanlardır ve programcı olarak da adlandırılırlar."
+},
+{
+    q: "15. Bir bilişim sisteminin geliştirilmesi, işletilmesi ve bakımı için projeye gerekli fon kaynaklarının aktarılmasını sağlayan paydaş aşağıdakilerden hangisidir?",
+    options: [
+        ["Sistem Analistleri", "Analistler, iş gereksinimlerini belirler."],
+        ["Proje Yöneticisi", "Proje yöneticisi fonu yönetir, ancak genellikle sağlayan taraf değildir."],
+        ["Sistem Geliştiriciler", "Geliştiriciler, sistemi teknik olarak inşa eder."],
+        ["BT Danışmanları", "Danışmanlar dışarıdan uzmanlık desteği sağlar."],
+        ["Sistem Sahipleri", "Bu tanım, metinde 'sistem sahipleri' için yapılan tanımın birebir aynısıdır."]
+    ],
+    answer: 4,
+    summary: "Sistem sahipleri... genellikle bilişim sisteminin geliştirilmesi, işletilmesi ve bakımı için projeye gerekli fon kaynaklarının aktarılmasını sağlarlar."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

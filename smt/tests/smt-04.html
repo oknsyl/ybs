@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 4</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 4</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. Aşağıdakilerden hangileri bilişim sistemi projelerini tetikleyen unsurlar arasında yer alır? \nI. Problemler \nII. Fırsatlar \nIII. Direktifler",
+    options: [
+        ["Yalnızca I", "Eksik, diğer iki unsur da tetikleyicidir."],
+        ["I ve II", "Eksik, direktifler de önemli bir tetikleyicidir."],
+        ["Yalnızca III", "Eksik, problemler ve fırsatlar da tetikleyicidir."],
+        ["I, II ve III", "Metinde bir bilişim projesini bu üç unsurun tetiklediği belirtilmiştir."],
+        ["Yalnızca I ve III", "Eksik, fırsatlar da önemli bir tetikleyicidir."]
+    ],
+    answer: 3,
+    summary: "Bilişim sistemi projelerini genellikle tetikleyen üç unsur vardır: Problemler (mevcut sistemin yetersiz kalması), Fırsatlar (e-iş olanakları) ve Direktifler (devlet zorunlulukları)."
+},
+{
+    q: "2. 'Bilişim sistemi geliştiricilerinin gerçekleştirdikleri tüm eylemleri ve izledikleri adımları içeren süreçler toplamı' olarak tanımlanan ve her sistemin doğup eninde sonunda ölmesi nedeniyle bu ismi alan kavram hangisidir?",
+    options: [
+        ["Proje Yönetimi", "Proje yönetimi, bu sürecin sadece bir parçasıdır."],
+        ["Sistem Analizi", "Sistem analizi, bu sürecin sadece bir adımıdır."],
+        ["Sistem Geliştirme Yaşam Döngüsü (SGYD)", "Bu, SGYD'nin tanımıdır. Süreçlerin bütününü ifade eder ve bir döngü olmasının nedeni sistemlerin de bir ömrü olmasıdır."],
+        ["Uygulama Geliştirme", "Uygulama geliştirme, bu sürecin bir parçasıdır."],
+        ["Fizibilite Çalışması", "Fizibilite çalışması, planlama adımının bir faaliyetidir."]
+    ],
+    answer: 2,
+    summary: "Bilişim sistemi geliştirme süreci... Bu genellikle 'Sistem Geliştirme Yaşam Döngüsü - SGYD' (System Development Life Cycle - SDLC) olarak adlandırılır çünkü her bilişim sistemi doğar ve er geç ölür."
+},
+{
+    q: "3. Sistem Geliştirme Yaşam Döngüsü'nün (SGYD) dört temel adımı aşağıdakilerden hangileridir?",
+    options: [
+        ["Planlama, Analiz, Test, Bakım", "Test ve Bakım, Uygulama adımının alt faaliyetleridir."],
+        ["Analiz, Tasarım, Kodlama, Kurulum", "Kodlama ve Kurulum, Uygulama adımının alt faaliyetleridir."],
+        ["Planlama, Analiz, Tasarım, Uygulama", "SGYD'nin dört ana ve sıralı adımı bunlardır."],
+        ["Fizibilite, Modelleme, Geliştirme, Destek", "Bunlar spesifik faaliyetlerdir, ana adımlar değil."],
+        ["İstek Belirleme, Tasarım, Test, Raporlama", "Bunlar spesifik faaliyetlerdir, ana adımlar değil."]
+    ],
+    answer: 2,
+    summary: "Sistem Geliştirme Yaşam Döngüsü; Planlama, Analiz, Tasarım ve Uygulama olmak üzere dört temel adımdan oluşur."
+},
+{
+    q: "4. 'Problemin tanımlanması' ve 'proje fizibilitesinin saptanması' gibi faaliyetler, SGYD'nin hangi temel adımında gerçekleştirilir?",
+    options: [
+        ["Planlama", "'Problemin tanımlanması' ve 'proje fizibilitesi' planlama adımının temel faaliyetleridir."],
+        ["Analiz", "Analiz adımında sistem isterleri tespit edilir ve modellenir."],
+        ["Tasarım", "Tasarım adımında sistemin mantıksal ve fiziksel özellikleri belirlenir."],
+        ["Uygulama", "Uygulama adımında programlama ve kurulum yapılır."],
+        ["Bakım", "Bakım, sistem kurulduktan sonraki destek faaliyetleridir."]
+    ],
+    answer: 0,
+    summary: "Planlama adımı; Problemin tanımlanması, Proje fizibilitesini saptanması ve Proje yönetimi gibi faaliyetleri içerir."
+},
+{
+    q: "5. 'Sistem isterlerinin modellenmesi' ve 'alternatiflerin değerlendirilmesi' gibi faaliyetler, SGYD'nin hangi temel adımına aittir?",
+    options: [
+        ["Planlama", "Planlama adımında problemin genel tanımı yapılır."],
+        ["Analiz", "Sistem gereksinimlerinin incelenmesi, yapılandırılması ve modellenmesi Analiz adımının konusudur."],
+        ["Tasarım", "Tasarım adımında bu modellere dayalı olarak sistemin özellikleri belirlenir."],
+        ["Uygulama", "Uygulama adımında sistem kodlanır ve kurulur."],
+        ["Değerlendirme", "Bu genel bir ifadedir, SGYD'nin ana adımlarından biri değildir."]
+    ],
+    answer: 1,
+    summary: "Analiz adımı; Sistem isterlerinin tespiti, Sistem isterlerinin modellenmesi ve Alternatiflerin değerlendirilmesi gibi faaliyetleri içerir."
+},
+{
+    q: "6. 'Bilişim sistemi geliştirmenin amacı' aşağıdakilerden hangilerini kapsar? \nI. Zamanında bitirmek \nII. Belirlenen bütçe kapsamında kalmak \nIII. Kullanıcıların isterlerini karşılamak",
+    options: [
+        ["Yalnızca I", "Eksik, bütçe ve kullanıcı isterleri de hedeftir."],
+        ["I ve II", "Eksik, kullanıcı isterlerini karşılamak en önemli hedeflerden biridir."],
+        ["Yalnızca III", "Eksik, zaman ve bütçe kısıtları da önemlidir."],
+        ["I, II ve III", "Bu üç madde, bilişim sistemi geliştirmenin temel amaçlarını tam olarak ifade etmektedir."],
+        ["Yalnızca II ve III", "Eksik, zamanında bitirmek de önemli bir hedeftir."]
+    ],
+    answer: 3,
+    summary: "Bilişim sistemi geliştirmenin amacı zamanında, belirlenen bütçe kapsamında ve kullanıcıların isterlerini ve gereksinimlerini karşılayan kaliteli sistemler elde etmektir."
+},
+{
+    q: "7. Aşağıdaki faaliyetlerden hangisi SGYD'nin 'Tasarım' adımında yer almaz?",
+    options: [
+        ["Genel tasarım", "Bu, tasarım adımının bir parçasıdır."],
+        ["Arayüz ve diyalogların tasarımı", "Bu, tasarım adımının bir parçasıdır."],
+        ["Veritabanı tasarımı", "Bu, tasarım adımının bir parçasıdır."],
+        ["Uygulama geliştirme", "Bu, 'Uygulama' adımının bir faaliyetidir, tasarımın değil."],
+        ["Girdi, çıktı ve kontrollerin tasarımı", "Bu, tasarım adımının bir parçasıdır."]
+    ],
+    answer: 3,
+    summary: "Tasarım adımı genel tasarım, arayüz, girdi/çıktı ve veritabanı tasarımlarını içerir. 'Uygulama geliştirme' ise bir sonraki adım olan Uygulama fazının bir parçasıdır."
+},
+{
+    q: "8. 'Kurulum, destek ve bakım' faaliyetleri hangi SGYD adımının bir parçasıdır?",
+    options: [
+        ["Planlama", "Planlama, projenin başlangıç adımıdır."],
+        ["Analiz", "Analiz, gereksinimlerin belirlendiği adımdır."],
+        ["Tasarım", "Tasarım, sistemin nasıl olacağının planlandığı adımdır."],
+        ["Uygulama", "Sistemin programlanması, test edilmesi, kurulması ve destek verilmesi Uygulama adımının faaliyetleridir."],
+        ["Sonlandırma", "Bu, SGYD'nin temel adımlarından biri değildir."]
+    ],
+    answer: 3,
+    summary: "Uygulama adımı; Uygulama geliştirme ve Kurulum, destek ve bakım gibi faaliyetleri içerir."
+},
+{
+    q: "9. Başarılı bir bilişim sistemi geliştirme ekibinin karakteristikleri arasında aşağıdakilerden hangileri bulunur? \nI. Açık ve tam iletişim \nII. Güven \nIII. Farklılıkların ve belirsizliklerin tolere edilmesi \nIV. Paylaşılan sorumluluk",
+    options: [
+        ["I ve II", "Eksik, diğer maddeler de başarılı bir ekibin özellikleridir."],
+        ["I, II, III ve IV", "Metinde bu dört maddenin tümü, başarılı bir geliştirme ekibinin karakteristikleri olarak listelenmiştir."],
+        ["Yalnızca III ve IV", "Eksik, iletişim ve güven de çok önemlidir."],
+        ["II ve III", "Eksik, diğer maddeler de başarılı bir ekibin özellikleridir."],
+        ["I, III ve IV", "Eksik, güven de çok önemlidir."]
+    ],
+    answer: 1,
+    summary: "Başarılı bir bilişim sistemi geliştirme ekibinin karakteristiklerinden başlıcaları; Deneyim, yetenek ve amaç farklılıklarının bulunması, Farklılıkların ve belirsizliklerin tolere edilmesi, Açık ve tam iletişim, Güven, Birbirine saygı, Paylaşılan sorumluluktur."
+},
+{
+    q: "10. 'Veritabanı tasarımı' faaliyeti, SGYD'nin hangi temel adımında gerçekleştirilir?",
+    options: [
+        ["Planlama", "Planlama adımında projenin genel çerçevesi çizilir."],
+        ["Analiz", "Analiz adımında veri gereksinimleri modellenir, ancak veritabanı tasarlanmaz."],
+        ["Tasarım", "Veritabanının mantıksal ve fiziksel tasarımı, Tasarım adımının temel faaliyetlerinden biridir."],
+        ["Uygulama", "Uygulama adımında tasarlanan veritabanı oluşturulur ve kullanılır."],
+        ["Bakım", "Bakım, sistem çalışırken yapılan güncellemelerdir."]
+    ],
+    answer: 2,
+    summary: "Tasarım adımı, diğerlerinin yanı sıra 'Veritabanı tasarımı' faaliyetini de içerir."
+},
+{
+    q: "11. Aşağıdakilerden hangisi bilişim sistemi geliştirme proje ekibinde yer alan rollerden biri değildir?",
+    options: [
+        ["Sistem analistleri", "Sistem analistleri ekibin temel rollerindendir."],
+        ["Programcılar", "Programcılar (geliştiriciler) ekibin temel rollerindendir."],
+        ["İşletme yöneticileri", "İşletme yöneticileri de iş ihtiyaçlarını belirtmek için ekibe dahil olurlar."],
+        ["Son müşteriler", "Son müşteriler 'sistem kullanıcıları' olarak paydaştır, ancak genellikle geliştirme 'proje ekibinin' doğrudan bir üyesi değildirler."],
+        ["Bilişim sistemi yöneticileri", "Bilişim sistemi yöneticileri de ekibin bir parçasıdır."]
+    ],
+    answer: 3,
+    summary: "Bilişim sistemi geliştirme proje ekipleri genelde; Bilişim sistemi yöneticileri, Sistem analistleri, Programcılar, İşletme yöneticileri, Diğer bilişim sistemi yöneticileri ve teknikerlerden oluşur."
+},
+{
+    q: "12. Aşağıdakilerden hangisi başarılı bir bilişim sistemi geliştirme ekibinin özelliklerinden biri olarak sayılamaz?",
+    options: [
+        ["Birbirine saygı ve ekip birliğinin önemi", "Bu, başarılı bir ekibin özelliğidir."],
+        ["Açık ve tam iletişim", "Bu, başarılı bir ekibin özelliğidir."],
+        ["Tüm ekip üyelerinin aynı yetenek ve düşünce yapısına sahip olması", "Bu bir dezavantajdır. Başarılı ekiplerde deneyim, yetenek ve amaç farklılıklarının bulunması istenir."],
+        ["Güven", "Bu, başarılı bir ekibin temel özelliklerindendir."],
+        ["Farklılıkların ve belirsizliklerin tolere edilmesi", "Bu, başarılı bir ekibin özelliğidir."]
+    ],
+    answer: 2,
+    summary: "Başarılı bir bilişim sistemi geliştirme ekibinin karakteristiklerinden biri, 'deneyim, yetenek ve amaç farklılıklarının bulunması'dır. Herkesin aynı olması değil."
+},
+{
+    q: "13. SGYD'nin 'Analiz' adımının temel çıktıları nelerdir?",
+    options: [
+        ["Proje planı ve fizibilite raporu", "Bunlar 'Planlama' adımının çıktılarıdır."],
+        ["Test edilmiş program modülleri", "Bunlar 'Uygulama' adımının çıktılarıdır."],
+        ["Veritabanı şemaları ve arayüz tasarımları", "Bunlar 'Tasarım' adımının çıktılarıdır."],
+        ["Belirlenmiş ve modellenmiş sistem isterleri", "Analiz adımı, sistemin 'ne' yapması gerektiğini belirleyen isterlerin tespiti ve modellenmesiyle sonuçlanır."],
+        ["Kullanıcı eğitim dokümanları", "Bunlar 'Uygulama' veya destek fazının çıktılarıdır."]
+    ],
+    answer: 3,
+    summary: "Analiz adımının temel amacı ve çıktısı, organizasyonun problemini çözmek için sistemin karşılaması gereken gereksinimleri (isterleri) incelemek ve yapılandırmaktır."
+},
+{
+    q: "14. Bilişim sistemi geliştirme hedefi olan 'kaliteli bir sistem', hangi temel kriterleri sağlamalıdır?",
+    options: [
+        ["Sadece en yeni teknolojiyi kullanmak", "Teknoloji bir araçtır, tek başına kaliteyi garantilemez."],
+        ["Mümkün olan en düşük bütçeyle tamamlanmak", "Düşük bütçe önemlidir ama tek başına kaliteyi tanımlamaz."],
+        ["Zamanında, bütçe dahilinde ve kullanıcı isterlerini karşılayarak tamamlanmak", "Bu üç kriter, kaliteli bir sistem geliştirme projesinin temel hedeflerini oluşturur."],
+        ["Sadece çok hızlı çalışmak", "Hız önemlidir ama tek kalite kriteri değildir."],
+        ["Sadece görsel olarak çekici olmak", "Görsellik önemlidir ama tek kalite kriteri değildir."]
+    ],
+    answer: 2,
+    summary: "Bilişim sistemi geliştirmenin amacı zamanında, belirlenen bütçe kapsamında ve kullanıcıların isterlerini ve gereksinimlerini karşılayan kaliteli sistemler elde etmektir."
+},
+{
+    q: "15. SGYD adımlarının sıralı olmak zorunda olmaması ve her bir sürecin belirli bir sonucu ve çıktısı olması, bu sürecin hangi özelliğini vurgular?",
+    options: [
+        ["Sürecin esnek ve yinelemeli (iterative) olabileceğini", "Adımların sıralı olmak zorunda olmaması, gerektiğinde önceki adımlara dönülebileceğini ve esnek bir yapıya sahip olduğunu gösterir."],
+        ["Sürecin her zaman katı ve doğrusal olduğunu", "Tam tersi, sıralı olmak zorunda değildir."],
+        ["Sürecin sadece teknik kişileri ilgilendirdiğini", "Süreç tüm paydaşları ilgilendirir."],
+        ["Sürecin sadece büyük projeler için geçerli olduğunu", "Bu süreç her ölçekteki projeye uyarlanabilir."],
+        ["Sürecin her zaman aynı sürede tamamlandığını", "Her projenin süresi farklıdır."]
+    ],
+    answer: 0,
+    summary: "SGYD, bilişim sistemi geliştiricilerinin gerçekleştirdikleri tüm eylemleri ve izledikleri adımları içeren süreçler toplamıdır. Süreçler sıralı olmak zorunda değildir."
+},
+{
+    q: "16. SGYD'nin 'Tasarım' adımının temel girdisi, bir önceki adım olan 'Analiz'de üretilen hangi çıktıdır?",
+    options: [
+        ["Fizibilite raporu ve proje planı", "Bunlar 'Planlama' adımının çıktılarıdır ve Analiz adımına girdi oluştururlar."],
+        ["Test edilmiş program modülleri ve kullanıcı dokümanları", "Bunlar 'Uygulama' adımının çıktılarıdır."],
+        ["Modellenmiş sistem isterleri ve önerilen çözüm tanımı", "Analiz adımında belirlenen ve modellenen ihtiyaçlar, Tasarım adımının temel girdisini oluşturur."],
+        ["Bakım ve destek planı", "Bu, 'Uygulama' adımının bir parçasıdır."],
+        ["Proje ekibi rolleri ve sorumlulukları", "Bu, genellikle 'Planlama' adımında netleştirilir."]
+    ],
+    answer: 2,
+    summary: "Sistem Geliştirme Yaşam Döngüsü'nde her adım, bir öncekinin çıktılarını girdi olarak kullanır. Analiz adımında ortaya çıkan sistem gereksinimleri ve modellemeler, Tasarım adımında fiziksel ve mantıksal özelliklere dönüştürülür."
+},
+{
+    q: "17. 'Tasarım' adımı kapsamında aşağıdaki faaliyetlerden hangileri gerçekleştirilir? \nI. Genel tasarım \nII. Arayüz ve diyalogların tasarımı \nIII. Veritabanı tasarımı",
+    options: [
+        ["Yalnızca I", "Eksik, diğer faaliyetler de Tasarım adımına aittir."],
+        ["I ve II", "Eksik, veritabanı tasarımı da bu adımda yapılır."],
+        ["Yalnızca III", "Eksik, genel tasarım ve arayüz tasarımı da bu adımdadır."],
+        ["I, II ve III", "Metinde bu üç faaliyetin de 'Tasarım' adımının birer parçası olduğu listelenmiştir."],
+        ["Yalnızca II ve III", "Eksik, genel tasarım da bu adımda yapılır."]
+    ],
+    answer: 3,
+    summary: "Tasarım adımı; Genel tasarım, Arayüz ve diyalogların tasarımı, Girdi, çıktı ve kontrollerin tasarımı ve Veritabanı tasarımı gibi faaliyetlerden oluşur."
+},
+{
+    q: "18. Bilişim sistemi geliştirme proje ekiplerinde genellikle aşağıdaki rollerden hangisi bulunmaz?",
+    options: [
+        ["Sistem analistleri", "Analistler ekibin temel bir parçasıdır."],
+        ["İşletme yöneticileri", "İşletme yöneticileri, iş ihtiyaçlarını belirtmek üzere ekibe katılırlar."],
+        ["Pazarlama uzmanları", "Pazarlama uzmanları birer paydaş veya sistem kullanıcısı olabilir, ancak genellikle geliştirme ekibinin temel bir rolü olarak sayılmazlar."],
+        ["Programcılar", "Programcılar (geliştiriciler) ekibin teknik kalbini oluşturur."],
+        ["Bilişim sistemi yöneticileri", "Bu yöneticiler de proje ekibinde yer alır."]
+    ],
+    answer: 2,
+    summary: "Bilişim sistemi geliştirme proje ekipleri genelde; Bilişim sistemi yöneticileri, Sistem analistleri, Programcılar, İşletme yöneticileri ve diğer teknikerlerden oluşur."
+},
+{
+    q: "19. Başarılı bir geliştirme ekibinde, farklı görüşlerin ve proje sürecindeki belirsizliklerin hoşgörüyle karşılanması hangi karakteristiğe işaret eder?",
+    options: [
+        ["Açık ve tam iletişim", "İletişim, görüşlerin paylaşılmasıdır; bu ise o görüşlere karşı tutumla ilgilidir."],
+        ["Farklılıkların ve belirsizliklerin tolere edilmesi", "Bu ifade, başarılı bir ekibin farklılıklara ve belirsizliklere karşı dayanıklı ve hoşgörülü olması gerektiğini doğrudan tanımlar."],
+        ["Güven", "Güven, bu hoşgörüyü destekleyen bir temeldir ama tanımın kendisi değildir."],
+        ["Paylaşılan sorumluluk", "Bu, ekibin başarıyı ve başarısızlığı ortak üstlenmesidir."],
+        ["Ekip birliğinin önemi", "Bu, genel bir hedeftir; tanım ise spesifik bir tutumu ifade eder."]
+    ],
+    answer: 1,
+    summary: "Başarılı bir bilişim sistemi geliştirme ekibinin karakteristiklerinden biri de 'Farklılıkların ve belirsizliklerin tolere edilmesi'dir."
+},
+{
+    q: "20. Hazırlanan tasarıma göre bileşenlerin kodlanması ve test edilmesi hangi SGYD adımının bir parçasıdır?",
+    options: [
+        ["Planlama", "Planlama, projenin en başında yapılır."],
+        ["Analiz", "Analiz, 'ne' yapılacağını belirler."],
+        ["Tasarım", "Tasarım, 'nasıl' yapılacağını planlar."],
+        ["Uygulama", "Tasarlanan sistemin kodlanması, test edilmesi ve kurulması 'Uygulama' adımının temel faaliyetleridir."],
+        ["Değerlendirme", "Bu, genellikle uygulama sonrası yapılan bir faaliyettir."]
+    ],
+    answer: 3,
+    summary: "Uygulama adımı, organizasyondaki bilişim sisteminin programlanması, test edilmesi, kurulması ve sisteme destek verilmesi işlevlerini içerir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

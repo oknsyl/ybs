@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 2</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 2</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+    q: "1. Bir sistemi, işlevlerine dayanarak alt sistemlere veya bileşenlerine ayırma işlemine ne ad verilir?",
+    options: [
+        ["Sistem Sınırı", "Bu, sistem ile çevresi arasındaki ayrımdır."],
+        ["Otomasyon Sınırı", "Bu, sistemin otomatik ve manuel kısımları arasındaki ayrımdır."],
+        ["Fonksiyonel Dağılma", "Metne göre, sistemi alt sistemlere dayanarak bileşenlerine ayırmaya 'fonksiyonel dağılma' denir."],
+        ["Sistematik Düşünce", "Bu, bir olguyu sistem olarak tanımlayabilmektir."],
+        ["Alt Sistem", "Bu, ayırma işleminin sonucunda ortaya çıkan bileşendir, işlemin kendisi değil."]
+    ],
+    answer: 2,
+    summary: "Sistem karakteristiklerinden biri, sistemlerin birbiri ile ilgili alt sistemlerden oluşmasıdır. Sistemi alt sistemlere dayanarak bileşenlerine ayırmaya 'fonksiyonel dağılma' denir."
+},
+{
+    q: "2. 'Sistemin amacını en az kaynaklarla yerine getirebilmesi' olarak tanımlanan iyi tasarlanmış sistem özelliği aşağıdakilerden hangisidir?",
+    options: [
+        ["Yararlılık (Effectiveness)", "Yararlılık, sistemin amacını karşılayabilmesidir."],
+        ["Verimlilik (Efficiency)", "Bu, verimliliğin metindeki tanımıdır. En az kaynakla amaca ulaşmayı ifade eder."],
+        ["Güvenirlilik (Dependability)", "Bu, sistemin güvenilir olmasıdır."],
+        ["Dinçlik (Robustness)", "Bu, sistemin hatalara rağmen çalışmaya devam edebilmesidir."],
+        ["Esneklik (Flexibility)", "Bu, sistemin değişikliklere açık olmasıdır."]
+    ],
+    answer: 1,
+    summary: "Verimlilik (Efficiency): Sistemin amacını en az kaynaklarla yerine getirebilmesidir."
+},
+{
+    q: "3. 'Sistemin otomasyona geçilmiş kısmı ile manüel olarak yürütülmekte olan kısmı arasındaki ayırım' ne olarak adlandırılır?",
+    options: [
+        ["İş Çevresi", "İş çevresi, sistem dışındaki unsurları ifade eder."],
+        ["Sistem Sınırı", "Bu, sistem ile çevresi arasındaki ayrımdır."],
+        ["Alt Sistem Bölümü", "Bu genel bir ifadedir, spesifik bir terim değildir."],
+        ["Otomasyon Sınırı", "Bu, 'otomasyon sınırı' kavramının metindeki tanımıdır."],
+        ["Fonksiyonel Sınır", "Bu terim metinde bu şekilde kullanılmamıştır."]
+    ],
+    answer: 3,
+    summary: "Sistemin otomasyona geçilmiş kısmı ile manüel olarak yürütülmekte olan kısmı arasındaki ayırım 'otomasyon sınırı' olarak adlandırılır."
+},
+{
+    q: "4. Sistematik düşünce süreci aşağıdakilerden hangilerini içerir? \nI. Alt sistemlerin belirlenmesi \nII. Sınırların yerlerinin belirlenmesi \nIII. Sistemin girdi ve çıktılarının belirlenmesi \nIV. Alt sistemler arasındaki ilişkilerin belirlenmesi",
+    options: [
+        ["Yalnızca I ve II", "Eksik, diğer maddeler de sistematik düşüncenin parçasıdır."],
+        ["I, II ve III", "Eksik, alt sistemler arası ilişkilerin belirlenmesi de önemlidir."],
+        ["Yalnızca IV", "Bu sadece bir adımdır, sürecin tamamı değildir."],
+        ["II, III ve IV", "Eksik, alt sistemlerin belirlenmesi ilk adımlardandır."],
+        ["I, II, III ve IV", "Metinde bu maddelerin tümü sistematik düşüncenin adımları olarak listelenmiştir."]
+    ],
+    answer: 4,
+    summary: "Sistematik düşünce: alt sistemlerin belirlenebilmesi, sistem karakteristiklerinin ve fonksiyonlarının belirlenmesi, sınırların yerlerinin belirlenmesi, sistemin girdi ve çıktılarının belirlenmesi, alt sistemler arasındaki ilişkilerin belirlenmesidir."
+},
+{
+    q: "5. 'Sistemin hata ve kusurları müsamaha ederek çalışmaya devam edebilmesi' özelliği aşağıdakilerden hangisidir?",
+    options: [
+        ["Güvenirlilik (Dependability)", "Güvenilirlik, sistemin güvenilir olmasıdır."],
+        ["Esneklik (Flexibility)", "Esneklik, değişikliklere açık olmasıdır."],
+        ["Dinçlik (Robustness)", "Bu, 'dinçlik' veya 'sağlamlık' kavramının metindeki tanımıdır."],
+        ["Basitlik (Simplicity)", "Basitlik, amacını basit bir yapıda gerçekleştirmesidir."],
+        ["Kabul edilebilirlik (Acceptability)", "Bu, kullanıcılar tarafından benimsenmesidir."]
+    ],
+    answer: 2,
+    summary: "Dinçlik (Robustness): Sistemin hata ve kusurları müsahama ederek çalışmaya devam edebilmesidir."
+},
+{
+    q: "6. Bir sistem ile onun dışında kalan ancak bağlantı ve ilişki içinde olduğu tüm diğer sistemlerden oluşan en büyük sisteme ne ad verilir?",
+    options: [
+        ["Ana Sistem", "Bu genel bir ifadedir."],
+        ["Üst Sistem", "Bu genel bir ifadedir."],
+        ["Çevre", "Metne göre en büyük sistem 'çevre'dir."],
+        ["Toplum", "Toplum, çevrenin bir parçasıdır ama tamamı değildir."],
+        ["İş Çevresi", "İş çevresi, çevrenin bir alt kümesidir."]
+    ],
+    answer: 2,
+    summary: "En büyük sistem 'çevre'dir. Çevre; sistem dışında, ancak bağlantı ve ilişki içinde olduğu tüm diğer sistemlerden oluşmaktadır."
+},
+{
+    q: "7. 'Sistemin kullanıcıları tarafından benimsenmesi ve sahiplenilmesi' olarak tanımlanan sistem özelliği hangisidir?",
+    options: [
+        ["Yararlılık (Effectiveness)", "Bu, sistemin amacını karşılayabilmesidir."],
+        ["Verimlilik (Efficiency)", "Bu, sistemin amacını en az kaynakla yerine getirebilmesidir."],
+        ["Güvenirlilik (Dependability)", "Bu, sistemin güvenilir olmasıdır."],
+        ["Esneklik (Flexibility)", "Bu, sistemin değişikliklere açık olmasıdır."],
+        ["Kabul edilebilirlik (Acceptability)", "Bu, 'kabul edilebilirlik' özelliğinin tanımıdır."]
+    ],
+    answer: 4,
+    summary: "Kabul edilebilirlik (Acceptability): Sistemin kullanıcıları tarafından benimsenmesi ve sahiplenilmesidir."
+},
+{
+    q: "8. 'Bir organizasyonda karar verme, koordinasyon, kontrol ve analiz konularına destek olmak amacıyla verinin toplanması, saklanması, işlenmesi ve kazanılan bilginin dağıtılması için ilişkili parçaların oluşturduğu küme' ne olarak isimlendirilir?",
+    options: [
+        ["Sistem", "Bu genel bir tanımdır, bilgi sistemi daha spesifiktir."],
+        ["Veritabanı", "Veritabanı, bilgi sisteminin bir parçasıdır."],
+        ["Bilişim Sistemi", "Bu, metindeki 'Bilgi Sistemi (Information Systems = IS)' tanımıdır."],
+        ["Yazılım", "Yazılım, bilgi sisteminin bir parçasıdır."],
+        ["Donanım", "Donanım, bilgi sisteminin bir parçasıdır."]
+    ],
+    answer: 2,
+    summary: "Bir organizasyonda karar verme, koordinasyon, kontrol ve analiz konularına destek olmak amacıyla verinin toplanması, saklanması, işlenmesi ve kazanılan bilginin dağıtılması için ilişkili parçaların oluşturduğu küme bilgi sistemi (Information Systems = IS) olarak isimlendirilmektedir."
+},
+{
+    q: "9. Aşağıdakilerden hangileri iyi tasarlanmış bir sistemin özelliklerindendir? \nI. Güvenirlilik \nII. Dinçlik \nIII. Esneklik \nIV. Karmaşıklık",
+    options: [
+        ["I ve II", "Eksik, Esneklik de bir özelliktir."],
+        ["I, II ve III", "Bu üçü de metinde listelenen özelliklerdendir. Karmaşıklık ise istenmeyen bir durumdur."],
+        ["Yalnızca IV", "Karmaşıklık bir özellik değildir, basitlik bir özelliktir."],
+        ["II, III ve IV", "Karmaşıklık bir özellik değildir."],
+        ["I, II, III ve IV", "Karmaşıklık bir özellik değildir."]
+    ],
+    answer: 1,
+    summary: "İyi tasarlanmış bir sistemin özellikleri arasında Güvenirlilik, Dinçlik ve Esneklik sayılırken, Basitlik (Simplicity) bir özelliktir; Karmaşıklık ise kaçınılması gereken bir durumdur."
+},
+{
+    q: "10. 'Organizasyondaki insanlar, objeler ve olaylar ile ilgili ham olgular' olarak tanımlanan kavram hangisidir?",
+    options: [
+        ["Bilgi", "Bilgi, işlenmiş veridir."],
+        ["Veri", "Bu, 'Veri (Data)' kavramının metindeki tanımıdır."],
+        ["Veri Akışı", "Bu, verinin sistem içinde hareketidir."],
+        ["İşleme Mantığı", "Bu, verinin nasıl dönüştürüleceğinin adımlarıdır."],
+        ["Girdi", "Girdi, verinin toplanması eylemidir; verinin kendisi değildir."]
+    ],
+    answer: 1,
+    summary: "'Veri' organizasyondaki insanlar, objeler ve olaylar ile ilgili ham olgulardır."
+},
+{
+    q: "11. Bilgi Sisteminin üç önemli öğesi aşağıdakilerden hangileridir?",
+    options: [
+        ["Donanım, Yazılım, Veritabanı", "Bunlar elektronik bilişim sisteminin bileşenleridir, bilgi sisteminin temel öğeleri değil."],
+        ["Veri, Veri Akışı, İşleme Mantığı", "Metinde bu üçü, bilgi sisteminin üç önemli öğesi olarak listelenmiştir."],
+        ["Girdi, İşlem, Çıktı", "Bunlar genel bir sistemin temel unsurlarıdır."],
+        ["Analiz, Tasarım, Uygulama", "Bunlar Sistem Geliştirme Yaşam Döngüsü adımlarıdır."],
+        ["İnsan, Süreç, Teknoloji", "Bu genel bir yaklaşımdır, metindeki spesifik liste değildir."]
+    ],
+    answer: 1,
+    summary: "Bilgi sisteminin üç önemli öğesi şunlardır: Veri, Veri akışı, İşleme mantığı."
+},
+{
+    q: "12. 'İşlenmiş ve insan yorumuna uygun bir şekilde sunulmuş veri' olarak tanımlanan kavram hangisidir?",
+    options: [
+        ["Veri (Data)", "Veri, ham olgudur."],
+        ["Rapor", "Rapor, bilginin sunum şekillerinden biridir ama kavramın kendisi değildir."],
+        ["Bilgi (Information)", "Bu, 'Bilgi' kavramının metindeki tanımıdır."],
+        ["İşlem (Process)", "İşlem, veriyi bilgiye dönüştürme eylemidir."],
+        ["Çıktı (Output)", "Çıktı, bilginin dağıtılmasıdır."]
+    ],
+    answer: 2,
+    summary: "'Bilgi' (Information) ise işlenmiş ve insan yorumuna uygun bir şekilde sunulmuş veridir."
+},
+{
+    q: "13. 'Sistem içinde akan ve hareket eden veri grubu' ne olarak adlandırılır?",
+    options: [
+        ["İşleme Mantığı", "Bu, verinin dönüşüm adımlarıdır."],
+        ["Veri Deposu", "Bu, verinin saklandığı yerdir."],
+        ["Protokol", "Bu, veri iletim kurallarıdır."],
+        ["Veri Akışları (Data flows)", "Bu, 'veri akışları'nın metindeki tanımıdır."],
+        ["Veri Paketi", "Bu, ağlarda veri iletim birimidir."]
+    ],
+    answer: 3,
+    summary: "Veri akışları (Data flows), sistem içinde akan ve hareket eden veri grubudur."
+},
+{
+    q: "14. 'Verinin dönüştürülmesindeki adımların ve bu adımları tetikleyen olayların açıklanması' hangi bilgi sistemi öğesini tanımlar?",
+    options: [
+        ["Veri", "Veri, işlenecek ham olgudur."],
+        ["Veri Akışı", "Bu, verinin hareketidir."],
+        ["Algoritma", "Algoritma, işleme mantığını ifade etme yollarından biridir."],
+        ["Yordam", "Yordam, bilgi sisteminin bir bileşenidir."],
+        ["İşleme Mantığı (Processing logic)", "Bu, 'işleme mantığı'nın metindeki tanımıdır."]
+    ],
+    answer: 4,
+    summary: "İşleme mantığı (Processing logic), verinin dönüştürülmesindeki adımların ve bu adımları tetikleyen olayların açıklanmasıdır."
+},
+{
+    q: "15. Aşağıdakilerden hangileri elektronik ortamdaki bilişim sistemlerinin bileşenlerindendir? \nI. Donanım \nII. Yazılım \nIII. Veritabanı \nIV. İnsanlar",
+    options: [
+        ["Yalnızca I ve II", "Eksik, veritabanı ve insanlar da bileşenlerdendir."],
+        ["I, II ve III", "Eksik, 'insanlar' da önemli bir bileşendir."],
+        ["I, II, III ve IV", "Metinde bu dört unsur ve 'yordamlar' bilişim sistemlerinin bileşenleri olarak sayılmıştır."],
+        ["Yalnızca II ve III", "Eksik, donanım ve insanlar da bileşenlerdendir."],
+        ["Yalnızca IV", "Diğer teknik bileşenler de vardır."]
+    ],
+    answer: 2,
+    summary: "Elektronik ortamdaki bu bilgi sistemleri bilişim sistemlerini oluşturmakta ve donanım, yazılım, veritabanı, yordamlar ve insanlar bileşenlerinden oluşmaktadır."
+},
+{
+    q: "16. Bir sistemin amacını tam olarak karşılayabilme yeteneğine ne denir?",
+    options: [
+        ["Verimlilik", "Verimlilik, amacı en az kaynakla karşılamaktır."],
+        ["Yararlılık", "Bu, 'yararlılık (effectiveness)' kavramının tanımıdır."],
+        ["Güvenirlilik", "Bu, sistemin güvenilir olmasıdır."],
+        ["Esneklik", "Bu, değişikliklere adapte olabilmesidir."],
+        ["Basitlik", "Bu, sistemin amacını basit bir yapıda gerçekleştirmesidir."]
+    ],
+    answer: 1,
+    summary: "Yararlılık (Effectiveness): Sistemin amacını karşılayabilmesidir."
+},
+{
+    q: "17. Bir e-ticaret sitesinde, müşterinin doldurduğu 'Sipariş Formu' bilgilerinin, 'Sipariş Onaylama' işlemine gönderilmesi, bilgi sistemi öğelerinden hangisine bir örnektir?",
+    options: [
+        ["İşleme Mantığı", "İşleme mantığı, siparişin hangi kurallara göre onaylanacağını belirler; bilginin kendisinin hareketi değildir."],
+        ["Veri", "Formdaki her bir bilgi (ad, adres vb.) tek başına bir 'veri'dir. Ancak bu verilerin bir grup olarak bir işlemden diğerine gönderilmesi 'veri akışı'dır."],
+        ["Veri Akışı", "Bir noktadan diğerine akan ve hareket eden veri grubu 'veri akışı' olarak tanımlanır. Bu senaryo, tanıma tam olarak uymaktadır."],
+        ["Veri Deposu", "Eğer bu sipariş bilgileri bir veritabanına kaydedilseydi, o veritabanı bir 'veri deposu' olurdu."],
+        ["Geribildirim", "Geribildirim, genellikle bir işlem sonucunda, önceki bir adımı düzeltmek veya bilgilendirmek için geri dönen bilgidir."]
+    ],
+    answer: 2,
+    summary: "Veri akışları (Data flows), sistem içinde akan ve hareket eden veri grubudur. Bir formdaki bilgilerin bir bütün olarak bir işlem modülüne gönderilmesi, veri akışına klasik bir örnektir."
+},
+{
+    q: "18. Bir sistem ile onun çevresi arasındaki ayrıma 'sistem sınırı' denirken, bir sistemin içindeki otomatik ve manuel kısımlar arasındaki ayrıma ne denir?",
+    options: [
+        ["İşlem Sınırı", "Bu terim metinde geçmemektedir."],
+        ["Fonksiyonel Sınır", "Bu terim metinde geçmemektedir."],
+        ["Veri Sınırı", "Bu terim metinde geçmemektedir."],
+        ["Alt Sistem Sınırı", "Bu terim metinde geçmemektedir."],
+        ["Otomasyon Sınırı", "Bu iki kavram arasındaki ayrım 'otomasyon sınırı' olarak tanımlanmıştır."]
+    ],
+    answer: 4,
+    summary: "Bir sistem ile onun çevresi arasındaki ayırıma 'sistem sınırı' adı verilir. Sistemin otomasyona geçilmiş kısmı ile manüel olarak yürütülmekte olan kısmı arasındaki ayırım 'otomasyon sınırı' olarak adlandırılır."
+},
+{
+    q: "19. Bir bankacılık sisteminde, para çekme talebi geldiğinde, sistemin 'Müşteri bakiyesi talep edilen tutardan büyük veya eşitse işlemi onayla, değilse reddet' şeklindeki kural setine ne ad verilir?",
+    options: [
+        ["Veri Akışı", "Veri akışı, para çekme talebi gibi bilgilerin hareketidir, kuralın kendisi değil."],
+        ["Girdi", "Girdi, müşterinin talep ettiği tutar gibi ham bilgidir."],
+        ["İşleme Mantığı", "Bu, bir verinin hangi adımlara ve kurallara göre dönüştürüleceğini tanımlar. Senaryodaki kural seti, işleme mantığına bir örnektir."],
+        ["Veri Deposu", "Veri deposu, müşteri bakiyesi gibi bilgilerin saklandığı yerdir."],
+        ["Çıktı", "Çıktı, işlemin 'onaylandı' veya 'reddedildi' sonucudur."]
+    ],
+    answer: 2,
+    summary: "İşleme mantığı (Processing logic), verinin dönüştürülmesindeki adımların ve bu adımları tetikleyen olayların açıklanmasıdır. Bir işlemin hangi koşullarda nasıl bir sonuç üreteceğini belirleyen kurallar bütünü, işleme mantığını oluşturur."
+},
+{
+    q: "20. 'Sistemin olabilecek değişikliklere açık olması' hangi sistem özelliğini tanımlar?",
+    options: [
+        ["Dinçlik (Robustness)", "Dinçlik, hatalara rağmen çalışabilmektir."],
+        ["Verimlilik (Efficiency)", "Verimlilik, en az kaynakla amaca ulaşmaktır."],
+        ["Güvenirlilik (Dependability)", "Güvenirlilik, sistemin güvenilir olmasıdır."],
+        ["Esneklik (Flexibility)", "Bu, 'esneklik' kavramının metindeki tanımıdır."],
+        ["Kabul edilebilirlik (Acceptability)", "Bu, kullanıcılar tarafından benimsenmesidir."]
+    ],
+    answer: 3,
+    summary: "Esneklik (Flexibility): Sistemin olabilecek değişikliklere açık olmasıdır."
+},
+{
+    q: "21. Bir sistemin dışında kalan ancak sistemle ilişki içinde olan Rakipler, Hükümet, Müşteriler ve Tedarikçiler gibi unsurların tamamını kapsayan yapıya ne ad verilir?",
+    options: [
+        ["Alt Sistem", "Alt sistemler, ana sistemin içindeki bileşenlerdir."],
+        ["Sistem Sınırı", "Sistem sınırı, sistemi çevresinden ayıran çizgidir, çevrenin kendisi değil."],
+        ["Otomasyon Sınırı", "Bu, sistemin otomatik ve manuel kısımları arasındaki ayrımdır."],
+        ["Çevre", "Sistemin dışında kalan ancak onunla etkileşen tüm unsurlar 'çevre' olarak tanımlanır. Rakipler, müşteriler gibi unsurlar da bu çevrenin bir parçasıdır."],
+        ["Paydaşlar", "Paydaşlar sistemin geliştirilmesiyle doğrudan ilgili kişilerdir; çevre ise daha geniş bir kavramdır."]
+    ],
+    answer: 3,
+    summary: "En büyük sistem 'çevre'dir. Çevre; sistem dışında, ancak bağlantı ve ilişki içinde olduğu tüm diğer sistemlerden oluşmaktadır. Sayfa 3'teki şemada da bu unsurlar 'İş Çevresi' başlığı altında gösterilmiştir."
+},
+{
+    q: "22. Aşağıdaki ifadelerden hangisi yanlıştır?",
+    options: [
+        ["Sistemler birbiri ile ilgili alt sistemlerden oluşurlar.", "Doğru, bu bir sistem karakteristiğidir."],
+        ["En büyük sistem 'çevre'dir.", "Doğru, bu metinde belirtilmiştir."],
+        ["Sistemin amacını gerçekleştirebilecek basitlikte olmasına 'Basitlik' denir.", "Doğru, bu bir sistem özelliğidir."],
+        ["Ham olgulara 'Bilgi' denir.", "Yanlış. Ham olgulara 'Veri' denir. Bilgi, işlenmiş veridir."],
+        ["Bilgi sisteminin üç önemli öğesinden biri 'veri akışı'dır.", "Doğru, bu öğelerden biridir."]
+    ],
+    answer: 3,
+    summary: "'Veri' organizasyondaki insanlar, objeler ve olaylar ile ilgili ham olgulardır. 'Bilgi' (Information) ise işlenmiş ve insan yorumuna uygun bir şekilde sunulmuş veridir."
+},
+{
+    q: "23. Aşağıdaki sistem bileşenlerinden hangisi, diğer üçünü kapsayan en genel kavramdır?",
+    options: [
+        ["Donanım", "Bu bir bileşendir."],
+        ["Yazılım", "Bu bir bileşendir."],
+        ["Veritabanı", "Bu bir bileşendir."],
+        ["Bilişim Sistemi", "Bilişim sistemi; donanım, yazılım, veritabanı, yordamlar ve insanları içeren bir bütündür."],
+        ["İnsanlar", "Bu bir bileşendir."]
+    ],
+    answer: 3,
+    summary: "Elektronik ortamdaki bu bilgi sistemleri bilişim sistemlerini oluşturmakta ve donanım, yazılım, veritabanı, yordamlar ve insanlar bileşenlerinden oluşmaktadır."
+},
+{
+    q: "24. Bir bilgi sisteminin temel amacı aşağıdakilerden hangisidir?",
+    options: [
+        ["Sadece veri toplamak", "Bu sadece bir parçasıdır."],
+        ["Sadece veri saklamak", "Bu sadece bir parçasıdır."],
+        ["Veriyi işleyerek karar verme ve kontrol gibi süreçlere destek olacak bilgiyi sağlamak", "Bu, bilgi sisteminin metindeki tanımında belirtilen ana amaçtır."],
+        ["Sadece yazılım geliştirmek", "Bu, bilgi sistemini oluşturma sürecidir, amacı değil."],
+        ["Sadece donanım altyapısını kurmak", "Bu, bilgi sisteminin bir gerekliliğidir, amacı değil."]
+    ],
+    answer: 2,
+    summary: "Bir organizasyonda karar verme, koordinasyon, kontrol ve analiz konularına destek olmak amacıyla verinin toplanması, saklanması, işlenmesi ve kazanılan bilginin dağıtılması için ilişkili parçaların oluşturduğu küme bilgi sistemi... olarak isimlendirilmektedir."
+},
+{
+    q: "25. 'Sistemin amacını karşılayabilmesi' olarak tanımlanan özellik ile 'sistemin amacını en az kaynakla yerine getirebilmesi' olarak tanımlanan özellik sırasıyla hangileridir?",
+    options: [
+        ["Verimlilik - Yararlılık", "Sıralama yanlıştır."],
+        ["Yararlılık - Verimlilik", "İlk tanım Yararlılık (Effectiveness), ikinci tanım ise Verimlilik (Efficiency) kavramlarına karşılık gelir."],
+        ["Güvenirlilik - Dinçlik", "Bu özellikler farklı kavramları tanımlar."],
+        ["Esneklik - Basitlik", "Bu özellikler farklı kavramları tanımlar."],
+        ["Kabul edilebilirlik - Yararlılık", "İlk tanım Yararlılık'tır ancak ikincisi Kabul edilebilirlik değildir."]
+    ],
+    answer: 1,
+    summary: "Yararlılık (Effectiveness): Sistemin amacını karşılayabilmesidir. Verimlilik (Efficiency): Sistemin amacını en az kaynaklarla yerine getirebilmesidir."
+}
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

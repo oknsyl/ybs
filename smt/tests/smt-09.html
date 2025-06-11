@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Modelleme ve Tasarım - 9</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Sistem Modelleme ve Tasarım - 9</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+    q: "1. İş fonksiyon ve kurallarının anlaşılması için proje ekibinin kullanıcılarla yaptığı, ancak en çok zaman alan ve en çok kaynak maliyetine sahip olan durum tespiti yöntemi hangisidir?",
+    options: [
+        ["Anket", "Anket, geniş kitlelere ulaşır ancak derinlemesine bilgi için genellikle yetersizdir ve daha az maliyetlidir."],
+        ["Gözlem", "Gözlem, süreçleri yerinde görmektir ve genellikle mülakat kadar uzun sürmeyebilir."],
+        ["Prototipleme", "Prototipleme, bir model oluşturmaktır ve maliyeti değişkenlik gösterebilir."],
+        ["Mülakat Yöntemi", "Kullanıcılarla birebir veya grup halinde yapılan görüşmeler, detaylı bilgi sağlasa da en çok zaman ve kaynak gerektiren tekniktir."],
+        ["JAD (Birleşik Uygulama Tasarımı)", "JAD, tek bir oturumda bilgi toplamayı hedefler ve zamanı verimli kullanmayı amaçlar."]
+    ],
+    answer: 3,
+    summary: "Mülakat yöntemi, iş fonksiyonlarının ve kurallarının anlaşılması için çok etkili bir yöntem olmasına rağmen, hazırlık, uygulama ve takip süreçleri nedeniyle en çok zaman alan ve kaynak maliyetine sahip olan tekniktir."
+},
+{
+    q: "2. Mülakat sürecinin üç temel adımı doğru sırayla hangisidir?",
+    options: [
+        ["Yönetilmesi, Takip Edilmesi, Hazırlanılması", "Sıralama yanlıştır, hazırlık ilk adımdır."],
+        ["Hazırlanılması, Takip Edilmesi, Yönetilmesi", "Sıralama yanlıştır, yönetme (görüşmenin yapılması) takip etmekten önce gelir."],
+        ["Takip Edilmesi, Hazırlanılması, Yönetilmesi", "Sıralama yanlıştır, takip etme son adımdır."],
+        ["Hazırlanılması, Yönetilmesi, Takip Edilmesi", "Bir mülakat süreci; önce hazırlık yapmayı, sonra görüşmeyi yönetmeyi ve son olarak da görüşme sonuçlarını takip etmeyi içerir."],
+        ["Yönetilmesi, Hazırlanılması, Takip Edilmesi", "Sıralama yanlıştır, hazırlık ilk adımdır."]
+    ],
+    answer: 3,
+    summary: "Bir mülakatın başarılı olması için izlenmesi gereken üç temel adım vardır: 1. Görüşme için hazırlanılması, 2. Görüşmelerin yönetilmesi, 3. Görüşmelerin takip edilmesi."
+},
+{
+    q: "3. Aşağıdakilerden hangisi 'Görüşme için hazırlanılması' adımında yer alan bir faaliyet değildir?",
+    options: [
+        ["Görüşme amacının onaylanması", "Bu, hazırlık adımının bir parçasıdır."],
+        ["Görüşmeleri kaydetme şekline karar verilmesi", "Bu, hazırlık adımının bir parçasıdır."],
+        ["Görüşme notlarının dikkatlice kayıt edilmesi", "Bu, mülakatın 'yönetilmesi' sırasında yapılan bir faaliyettir, hazırlık aşamasında değil."],
+        ["Görüşmelerde kullanılacak detaylı soruların hazırlanması", "Bu, hazırlık adımının en önemli parçalarından biridir."],
+        ["Görüşmelere hangi kullanıcıların katılacağının belirlenmesi", "Bu, hazırlık adımının bir parçasıdır."]
+    ],
+    answer: 2,
+    summary: "Görüşme notlarının kayıt edilmesi, mülakatın yapıldığı an olan 'yönetilme' adımında gerçekleştirilir. Hazırlık adımı ise mülakat öncesi yapılan planlama faaliyetlerini kapsar."
+},
+{
+    q: "4. 'Karar veren kişiler ve çevreleri hakkında bilgi toplayabilmesi', hangi durum tespiti yönteminin diğerlerinden en büyük farkıdır?",
+    options: [
+        ["Anket", "Anketler genellikle kişilerin belirttiği görüşleri toplar, çevreleri hakkında derinlemesine bilgi vermez."],
+        ["Mülakat", "Mülakatlar da kişilerin beyanlarına dayanır."],
+        ["Prototip", "Prototip, bir sistemin modelidir ve kullanıcı davranışını test eder, çevresini değil."],
+        ["Gözlemleme Yöntemi", "Kullanıcıları kendi doğal çalışma ortamlarında izlemek olan gözlemleme, onların çevreleriyle olan etkileşimleri hakkında benzersiz bilgiler sağlar."],
+        ["İnceleme", "İnceleme, mevcut dokümanlara odaklanır."]
+    ],
+    answer: 3,
+    summary: "Gözlemleme yönteminin diğer metotlardan en büyük farkı, sadece söylenenleri değil, aynı zamanda karar veren kişilerin çalışma ortamlarını ve bu ortamdaki davranışlarını da analiz etme imkanı sunmasıdır."
+},
+{
+    q: "5. Analiz sırasında, 'belli bir kavramı test etmek ya da bir yaklaşımı doğrulamak amacıyla sistemlerin çalışan ön ve daha küçük modellerini' oluşturma tekniği hangisidir?",
+    options: [
+        ["Gözlemleme", "Gözlemleme, mevcut süreci izlemektir."],
+        ["Prototipleme Yöntemi", "Sistemlerin çalışan, küçük ve öncül modellerini oluşturarak fikirleri somutlaştırma ve test etme yöntemine prototipleme denir."],
+        ["Minyatürleştirme", "Bu genel bir ifadedir, doğru terim prototiplemedir."],
+        ["Simülasyon", "Simülasyon, bir sistemin davranışını taklit eder ama her zaman çalışan bir model olmak zorunda değildir."],
+        ["Model Çıkarma", "Bu genel bir ifadedir."]
+    ],
+    answer: 1,
+    summary: "Prototipler, sistemlerin çalışan ön ve daha küçük modelleridir. Analiz sırasında çalışan bir model ile belli bir kavramı test etmek ya da bir yaklaşımı doğrulamak amacıyla prototip kullanılır."
+},
+{
+    q: "6. 'İsterlerin tanımlanması ya da sistemin tasarımı için sadece bir oturumla ve bütün gerekli insanların katılımıyla gerçekleştirilen yapısal bir işlem' olarak tanımlanan yöntem hangisidir?",
+    options: [
+        ["Toplu Mülakat", "Bu genel bir ifadedir, JAD daha yapısal bir süreçtir."],
+        ["Beyin Fırtınası", "Beyin fırtınası JAD içinde kullanılabilir ama JAD'ın kendisi daha kapsamlı bir tekniktir."],
+        ["Birleşik Uygulama Tasarımı (JAD)", "Tüm kilit paydaşları (kullanıcı, teknik personel, proje ekibi vb.) tek bir oturumda bir araya getirerek hızlı ve etkili bir şekilde isterleri belirlemeyi amaçlayan bu yapısal tekniğe JAD denir."],
+        ["Odak Grup Toplantısı", "Odak grup, genellikle belirli bir konudaki görüşleri almak için yapılır, sistem tasarımı için değildir."],
+        ["Proje Başlatma Toplantısı", "Bu, projenin başlangıcını duyuran genel bir toplantıdır."]
+    ],
+    answer: 2,
+    summary: "Birleşik Uygulama Tasarımı (JAD), sistem isterlerini belirlemek veya sistem tasarımı yapmak için kullanıcıları, yöneticileri ve analistleri yoğun toplantılar süresince bir araya getiren yapısal bir işlemdir."
+},
+{
+    q: "7. Aşağıdakilerden hangisi Birleşik Uygulama Tasarımı (JAD) oturumunun katılımcıları arasında yer almaz?",
+    options: [
+        ["Birleşik Uygulama Tasarımı Lideri", "JAD Lideri, oturumu yöneten kilit bir roldür."],
+        ["Kullanıcılar", "Kullanıcılar, ihtiyaçları belirtmek için mutlaka katılmalıdır."],
+        ["Teknik Personel", "Teknik personel, teknik fizibilite ve olanaklar hakkında bilgi vermek için katılır."],
+        ["Proje Takımı Üyeleri", "Proje ekibinin ilgili üyeleri de oturumun doğal katılımcılarıdır."],
+        ["Rakip Firma Analisti", "JAD oturumları, kurum içi bir faaliyettir. Rakip firmadan birinin bu toplantıya katılması söz konusu değildir."]
+    ],
+    answer: 4,
+    summary: "Birleşik Uygulama Tasarımı (JAD) katılımcıları; JAD Lideri, Kullanıcılar, Teknik Personel ve Proje Takımı Üyeleri'nden oluşur."
+},
+{
+    q: "8. 'Durum Tespiti Stratejileri' arasında aşağıdakilerden hangileri bulunur? \nI. Var olan dokümandaki tüm bilgilerin öğrenilmesi \nII. Var olan sistemin çalışır halde gözlemlenmesi \nIII. Anlaşılamayan isterlerin prototiplenmesi \nIV. Tespit edilen unsurların doğrulanması",
+    options: [
+        ["I ve II", "Eksik, prototipleme ve doğrulama da stratejinin parçasıdır."],
+        ["III ve IV", "Eksik, dokümanları incelemek ve gözlem yapmak da stratejinin parçasıdır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, etkili bir durum tespiti için izlenmesi gereken stratejik adımlardır."],
+        ["Yalnızca I, II ve IV", "Eksik, anlaşılamayan isterler için prototip yapmak önemli bir stratejidir."],
+        ["Yalnızca II ve III", "Eksik, doküman inceleme ve doğrulama da stratejinin parçasıdır."]
+    ],
+    answer: 2,
+    summary: "Etkili bir durum tespiti stratejisi; mevcut dokümanları öğrenme, sistemi gözlemleme, sorular hazırlama, görüşmeler düzenleme, prototipleme ve bulguları doğrulama gibi adımları içerir."
+},
+{
+    q: "9. Aşağıdakilerden hangisi Bilgisayar Etik Enstitüsü tarafından belirlenen 10 temel kuraldan biri değildir?",
+    options: [
+        ["Bir bilgisayar diğer insanlara zarar vermek için kullanılmamalıdır.", "Bu, temel etik kurallarından biridir."],
+        ["Diğer insanların bilgisayar dosyalarını araklamamalıdır.", "Bu, temel etik kurallarından biridir."],
+        ["Kopyalanmış ya da uygun olmayan bir yazılım kullanılmamalıdır.", "Bu, temel etik kurallarından biridir."],
+        ["Tüm kişisel veriler şifrelenerek saklanmalıdır.", "Bu iyi bir güvenlik uygulamasıdır, ancak listelenen 10 temel etik kuralı arasında bu spesifik ifade yer almamaktadır."],
+        ["Yazdığınız ya da tasarımını yaptığınız yazılımının sosyal sonuçları düşünülmelidir.", "Bu, temel etik kurallarından biridir."]
+    ],
+    answer: 3,
+    summary: "Listelenen 10 temel etik kuralı arasında veri şifreleme ile ilgili spesifik bir madde yoktur. Diğer seçenekler ise doğrudan listelenmiş kurallardır."
+},
+{
+    q: "10. 'Kurulan sistemin bir gösterimi' olarak tanımlanan ve karmaşıklığı azaltma, iletişimi sağlama gibi faydaları olan kavram hangisidir?",
+    options: [
+        ["Diyagram", "Diyagram, bir model türüdür, kavramın kendisi değil."],
+        ["Model", "'Model', gerçek dünyanın veya kurulan bir sistemin basitleştirilmiş bir gösterimidir ve çeşitli faydalar sağlar."],
+        ["Prototip", "Prototip, çalışan bir model türüdür."],
+        ["Şema", "Şema, bir model türüdür."],
+        ["Doküman", "Doküman, modeli içerebilir ama modelin kendisi değildir."]
+    ],
+    answer: 1,
+    summary: "Model, kurulan sistemin gösterimidir. Soyutlama ile karmaşıklığı azaltma, ekip ile iletişimi sağlama ve gelecekteki bakım için doküman elde etme gibi faydaları vardır."
+},
+{
+    q: "11. 'Bir sistemin bazı taraflarının kısa notlar, raporlar ve listeler ile tanımlanması' hangi model tipine örnektir?",
+    options: [
+        ["Matematiksel Model", "Matematiksel model, sistemi formüllerle tanımlar."],
+        ["Grafiksel Model", "Grafiksel model, sistemi diyagram ve şemalarla gösterir."],
+        ["Tanımsal Model", "Kısa notlar, raporlar ve organizasyon şemaları gibi metin veya liste tabanlı gösterimler 'Tanımsal Model' sınıfına girer."],
+        ["Fiziksel Model", "Bu terim model tipleri arasında bu şekilde listelenmemiştir."],
+        ["Mantıksal Model", "Bu terim model tipleri arasında bu şekilde listelenmemiştir."]
+    ],
+    answer: 2,
+    summary: "Tanımsal Model: Bir sistemin bazı taraflarının kısa notlar, raporlar ve listeler ile tanımlanmasıdır. Örneğin; organizasyon şemaları gibi."
+},
+{
+    q: "12. Aşağıdakilerden hangileri sistem isterlerinin modellenmesinin sağladığı faydalardandır? \nI. Soyutlama ile karmaşıklığın azaltılması \nII. Diğer geliştirme ekibi ile iletişimin sağlanması \nIII. Tüm detayların hatırlanması",
+    options: [
+        ["Yalnızca I", "Eksik, diğer faydaları da vardır."],
+        ["I ve II", "Eksik, detayların hatırlanmasına yardımcı olma da bir faydasıdır."],
+        ["I, II ve III", "Karmaşıklığı azaltmak, iletişimi kolaylaştırmak ve detayları hatırlamak, modellemenin temel faydalarıdır."],
+        ["Yalnızca II ve III", "Eksik, karmaşıklığı azaltma da önemli bir faydasıdır."],
+        ["Yalnızca III", "Eksik, diğer faydaları da vardır."]
+    ],
+    answer: 2,
+    summary: "Sistem isterlerinin modellenmesi ile; Soyutlama ile karmaşıklığın azaltılması, Tüm detayların hatırlanması, Diğer geliştirme ekibi ile iletişimin sağlanması gibi faydalar sağlanabilir."
+},
+{
+    q: "13. 'Veri akış diyagramı' veya 'varlık-ilişki diyagramı' gibi gösterimler hangi model tipine aittir?",
+    options: [
+        ["Tanımsal Model", "Tanımsal model, metin ve listelerden oluşur."],
+        ["Matematiksel Model", "Matematiksel model, formüllerden oluşur."],
+        ["İlişkisel Model", "Bu bir veritabanı modelidir, genel bir model tipi değil."],
+        ["Grafiksel Model", "Diyagramlar ve şemalarla yapılan gösterimler 'Grafiksel Model' olarak adlandırılır."],
+        ["Yapısal Model", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Grafiksel Model: Bir sistemin bazı taraflarının diyagram ve şemalarla gösterimleridir. Örneğin veri akışının veri akış diyagramı ile gösterimi gibi."
+},
+{
+    q: "14. Aşağıdakilerden hangisi 'Görüşmelerin takip edilmesi' adımında yapılması gereken bir faaliyet değildir?",
+    options: [
+        ["Elde edilen bilginin incelenmesi ve dokümante edilmesi", "Bu, takip adımının bir parçasıdır."],
+        ["Katılımcılara e-posta aracılığı ile teşekkür edilmesi", "Bu, takip adımında yapılması gereken bir nezaket kuralıdır."],
+        ["Görüşme süresinin limitlerine karar verilmesi", "Bu, mülakatın 'yönetilmesi' sırasında yapılması gereken bir iştir."],
+        ["Eksik bilgi elde edilen alanlar için yeni soru listesi hazırlanması", "Bu, takip adımının bir parçasıdır."],
+        ["Görüşmelerdeki diğer proje üyeleri ile elde edilen bilgilerin gözden geçirilmesi", "Bu, takip adımının bir parçasıdır."]
+    ],
+    answer: 2,
+    summary: "Görüşme süresinin limitlerine karar verilmesi, mülakatın yapıldığı an olan 'yönetilme' adımında ele alınır. Takip adımı ise mülakat sonrasında yapılan değerlendirme ve tamamlama faaliyetlerini içerir."
+},
+{
+    q: "15. 'Kullanım senaryosu diyagramı' ve 'sınıf diyagramı' gibi modeller, hangi aşamada kullanılan modeller arasında listelenmiştir?",
+    options: [
+        ["Planlama Aşaması", "Planlama aşamasında daha çok iş planları ve fizibilite raporları kullanılır."],
+        ["Tasarım Aşaması", "Bu modeller tasarımda da kullanılabilir ancak listede analiz aşaması için verilmiştir."],
+        ["Uygulama Aşaması", "Uygulama aşamasında kod ve test sonuçları gibi çıktılar olur."],
+        ["Analiz Aşaması", "Kullanım senaryosu, sınıf diyagramı, veri akış diyagramı gibi modeller, sistem isterlerinin tanımlandığı analiz aşamasında kullanılır."],
+        ["Test Aşaması", "Test aşamasında test senaryoları ve sonuç raporları kullanılır."]
+    ],
+    answer: 3,
+    summary: "Analiz aşamasında kullanılan bazı modeller arasında; Olay listesi, Veri akış diyagramları, Varlık-ilişki diyagramı, Sınıf diyagramı, Kullanım senaryosu diyagramı gibi modeller yer alır."
+},
+{
+    q: "16. Gözlemleme yöntemi adımları arasında aşağıdakilerden hangisi yer almaz?",
+    options: [
+        ["Neyin gözlemleneceğine karar verilmesi", "Bu, gözlemleme yönteminin bir adımıdır."],
+        ["Ne zaman gözlem yapılacağına karar verilmesi", "Bu, gözlemleme yönteminin bir adımıdır."],
+        ["Katılımcılara açık uçlu sorular sorulması", "Soru sormak, mülakat yönteminin bir parçasıdır. Gözlemleme, müdahale etmeden izlemeyi hedefler."],
+        ["Yeterli anahtar aktiviteyi barındıran kategorilerin yaratılması", "Bu, gözlemleme yönteminin bir adımıdır."],
+        ["Gözlemleme için uygun ölçek ve denetim listelerinin hazırlanması", "Bu, gözlemleme yönteminin bir adımıdır."]
+    ],
+    answer: 2,
+    summary: "Gözlemleme yöntemi, sürece müdahale etmeden izlemeyi içerir. Soru sormak ve tartışmak ise mülakat yönteminin bir özelliğidir."
+},
+{
+    q: "17. Bir sistemin teknik taraflarının bir dizi formül ile tanımlandığı model tipi hangisidir?",
+    options: [
+        ["Grafiksel Model", "Grafiksel model, diyagramlardan oluşur."],
+        ["Tanımsal Model", "Tanımsal model, metin ve listelerden oluşur."],
+        ["Analitik Model", "Bu genel bir ifadedir, doğru terim Matematiksel Model'dir."],
+        ["Matematiksel Model", "Bir sistemin formüllerle ifade edildiği gösterimler 'Matematiksel Model' olarak adlandırılır."],
+        ["Sayısal Model", "Bu genel bir ifadedir."]
+    ],
+    answer: 3,
+    summary: "Matematiksel Model: Bir sistemin teknik taraflarının bir dizi formüller ile tanımlanmasıdır."
+},
+{
+    q: "18. 'Görüşmeye uygun kıyafet ile gidilmesi' ve 'görüşme yerine zamanında gidilmesi' gibi unsurlar, mülakat sürecinin hangi adımında dikkat edilmesi gereken hususlardır?",
+    options: [
+        ["Görüşme için hazırlanılması", "Hazırlanma, görüşme öncesi planlamayı içerir."],
+        ["Görüşmelerin yönetilmesi", "Görüşmenin yapıldığı anı ifade eden 'yönetilme' adımında, profesyonel bir duruş sergilemek için bu unsurlara dikkat edilir."],
+        ["Görüşmelerin takip edilmesi", "Takip etme, görüşme sonrası yapılan değerlendirmelerdir."],
+        ["Görüşme planlaması", "Bu, hazırlanma adımının bir diğer adıdır."],
+        ["Görüşme değerlendirmesi", "Bu, takip etme adımının bir diğer adıdır."]
+    ],
+    answer: 1,
+    summary: "Görüşmelerin yönetilmesinde dikkat edilmesi gereken unsurlar arasında; Görüşmeye uygun kıyafet ile gidilmesi ve Görüşme yerine zamanında gidilmesi gibi maddeler yer alır."
+},
+{
+    q: "19. Aşağıdakilerden hangisi 'Durum Tespiti Etikleri'nin temel prensibidir?",
+    options: [
+        ["Mümkün olan en fazla bilgiyi toplamak", "Bu bir amaçtır, etik bir prensip değil."],
+        ["Süreci en hızlı şekilde tamamlamak", "Bu bir hedeftir, etik bir prensip değil."],
+        ["Analistin karşılaştığı hassas bilgileri koruması ve gizliliğe saygı duyması", "Durum tespiti etiğinin temelinde, paydaşlardan öğrenilen hassas bilgilerin korunması ve gizliliğin sağlanması yatar."],
+        ["Sadece yöneticilerle görüşme yapmak", "Bu bir yöntem seçimidir, etik bir prensip değil."],
+        ["Tüm bilgileri yazılı olarak talep etmek", "Bu bir yöntem seçimidir, etik bir prensip değil."]
+    ],
+    answer: 2,
+    summary: "Durum tespiti sırasında hassas olunabilecek bilgiler ile karşılaşılabilir. Böyle bir durumda analist kendisine emanet edilmiş bu bilgileri korumalıdır."
+},
+{
+    q: "20. Mülakat sürecinin 'Takip Edilmesi' adımında aşağıdakilerden hangisi yapılır?",
+    options: [
+        ["Görüşmede kullanılacak sorular hazırlanır.", "Bu 'Hazırlanma' adımında yapılır."],
+        ["Görüşmenin yapılacağı yer ve zaman ayarlanır.", "Bu 'Hazırlanma' adımında yapılır."],
+        ["Katılımcılara e-posta aracılığı ile teşekkür edilir.", "Görüşme sonrasında katılımcılara teşekkür etmek, 'Takip Etme' adımının bir parçasıdır."],
+        ["Görüşme notları dikkatlice kaydedilir.", "Bu 'Yönetilme' adımında yapılır."],
+        ["Görüşme süresinin limitlerine karar verilir.", "Bu 'Yönetilme' adımında yapılır."]
+    ],
+    answer: 2,
+    summary: "Görüşmelerin takip edilmesinde izlenmesi gereken adımlar arasında 'Katılımcılara e-posta aracılığı ile teşekkür edilmesi' de yer alır."
+},
+{
+    q: "21. Aşağıdakilerden hangisi sistem isterlerinin modellenmesinin sağladığı faydalardan biri değildir?",
+    options: [
+        ["Soyutlama ile karmaşıklığın azaltılması", "Bu, modellemenin temel faydalarından biridir; karmaşık bir sistemi daha anlaşılır hale getirir."],
+        ["Kullanıcı ve paydaşlar ile iletişimin sağlanması", "Modeller, teknik olmayan kişilerin sistemi anlaması için ortak bir dil oluşturur ve iletişimi kolaylaştırır."],
+        ["Gelecekteki bakım için doküman elde edilmesi", "Modeller, sistemin nasıl çalıştığını gösteren kalıcı bir dokümantasyon sağlar."],
+        ["Sistemin programlama süresini her zaman kısaltması", "İyi bir model programlamayı kolaylaştırabilir ancak modelleme sürecinin kendisi de zaman alır. Bu, listelenen doğrudan bir fayda değildir."],
+        ["Tüm detayların hatırlanmasının kolaylaşması", "Model, sistemin tüm bileşenlerini ve ilişkilerini bir arada gösterdiği için detayları hatırlamaya yardımcı olur."]
+    ],
+    answer: 3,
+    summary: "Sistem isterlerini modellemenin faydaları; karmaşıklığı azaltma, detayları hatırlama, paydaşlarla iletişimi sağlama ve geleceğe yönelik dokümantasyon oluşturmadır. Programlama süresini kısaltması doğrudan bir fayda olarak listelenmemiştir."
+},
+{
+    q: "22. Mülakat öncesinde, görüşmenin hedeflerini netleştirmek ve herkesin aynı amaç doğrultusunda hareket etmesini sağlamak için yapılan faaliyet hangisidir?",
+    options: [
+        ["Görüşme amacının onaylanması", "Görüşmenin hedeflerinin ve kapsamının önceden netleştirilmesi, bu hazırlık faaliyetinin temelidir."],
+        ["Kullanıcıların belirlenmesi", "Bu, kiminle görüşüleceğini belirlemektir, amacın ne olduğunu değil."],
+        ["Soruların hazırlanması", "Sorular, belirlenen amaca ulaşmak için bir araçtır."],
+        ["Düzenlemelerin sonlandırılması", "Bu, lojistik hazırlıkları (yer, zaman vb.) ifade eder."],
+        ["Kaydetme şekline karar verilmesi", "Bu, görüşme verilerinin nasıl tutulacağıyla ilgili teknik bir karardır."]
+    ],
+    answer: 0,
+    summary: "Bir mülakatın hazırlık adımlarından ilki ve en önemlilerinden biri, 'Görüşme amacının onaylanması'dır. Bu, görüşmenin neden yapıldığını ve neye ulaşmayı hedeflediğini netleştirir."
+},
+{
+    q: "23. Etkili bir durum tespiti stratejisi hangi adımları içerebilir? \nI. Mevcut dokümanları öğrenme \nII. Anlaşılmayan konular için soru hazırlama \nIII. Görüşmeler düzenleme \nIV. Bulguları doğrulama",
+    options: [
+        ["Yalnızca I ve IV", "Eksik, soru hazırlama ve görüşme de önemli adımlardır."],
+        ["II ve III", "Eksik, dokümanları öğrenmek ve bulguları doğrulamak da stratejinin parçasıdır."],
+        ["I, III ve IV", "Eksik, anlaşılamayan konular için soru hazırlamak da önemli bir adımdır."],
+        ["I, II, III ve IV", "Listelenen tüm maddeler, kapsamlı bir durum tespiti stratejisinin temel adımlarını oluşturur."],
+        ["Yalnızca II", "Bu sadece bir adımdır."]
+    ],
+    answer: 3,
+    summary: "Kapsamlı bir durum tespiti stratejisi, mevcut dokümanları incelemekle başlar, gözlem ve görüşmelerle devam eder, anlaşılamayan noktalar için ek sorular hazırlanır ve son olarak elde edilen tüm bulguların doğruluğu teyit edilir."
+},
+{
+    q: "24. 'Başkalarının bilgisayarlarını izinsiz veya uygunsuz bir bedel karşılığında kullanmamak' hangi temel prensibe dayanır?",
+    options: [
+        ["Veri Güvenliği Politikası", "Bu, kurumsal bir politikadır, genel bir etik kural değil."],
+        ["Yazılım Lisanslama Sözleşmesi", "Bu, yazılım kullanımıyla ilgili yasal bir metindir."],
+        ["Bilgisayar Etiği", "Bu ifade, Bilgisayar Etik Enstitüsü tarafından belirlenen 10 temel etik kuraldan biridir."],
+        ["Kişisel Verilerin Korunması Kanunu", "Bu, kişisel verilerin işlenmesiyle ilgili yasal bir düzenlemedir."],
+        ["Kurumsal Davranış Kuralları", "Bu, bir şirketin kendi iç kurallarıdır."]
+    ],
+    answer: 2,
+    summary: "Diğer insanlardan izinsiz ya da uygunsuz bedel karşılığı bilgisayarları kullanmamak, temel bilgisayar etiği kurallarından biridir."
+},
+{
+    q: "25. Aşağıdaki ifadelerden hangisi bir 'model tipi' değil, spesifik bir 'model örneği'dir?",
+    options: [
+        ["Matematiksel Model", "Bu, formüllere dayalı bir model tipidir."],
+        ["Tanımsal Model", "Bu, metin ve listelere dayalı bir model tipidir."],
+        ["Grafiksel Model", "Bu, diyagram ve şemalara dayalı bir model tipidir."],
+        ["Varlık-İlişki Diyagramı", "Bu, analiz aşamasında kullanılan ve 'Grafiksel Model' tipine giren spesifik bir model örneğidir."],
+        ["Soyut Model", "Bu genel bir ifadedir ve belirli bir model tipini ifade etmez."]
+    ],
+    answer: 3,
+    summary: "Matematiksel, Tanımsal ve Grafiksel ifadeleri birer 'model tipi'dir. Varlık-İlişki Diyagramı (ERD) ise, Grafiksel Model tipine ait somut bir modelleme aracı, yani bir 'model örneği'dir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>
