@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 8</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 8</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. `WHILE` ve `REPEAT...UNTIL` tipi koşullu döngüler arasındaki en temel fark nedir?",
+  options: [
+    ["WHILE döngüsü sayısal, UNTIL döngüsü mantıksal koşul kullanır.", "Her ikisi de mantıksal koşul kullanır."],
+    ["WHILE döngüsünde koşul döngünün başında, UNTIL döngüsünde ise sonunda denetlenir.", "Bu, aralarındaki en temel ve kritik farktır. Bu nedenle UNTIL döngüsü her durumda en az bir kere çalışır, WHILE ise hiç çalışmayabilir."],
+    ["WHILE döngüsü sonsuza kadar çalışabilir, UNTIL döngüsü ise çalışamaz.", "Her iki döngü de yanlış kurulursa sonsuz döngüye girebilir."],
+    ["WHILE döngüsü sayaçlı, UNTIL döngüsü koşullu döngüdür.", "Her ikisi de koşullu döngü türüdür."],
+    ["Hiçbir temel farkları yoktur, sadece sözdizimleri farklıdır.", "Hayır, çalışma mantıkları arasında çok önemli bir fark vardır."]
+  ],
+  answer: 1,
+  summary: "Bu temel fark, döngüye girilmeden önce koşulun bilinip bilinmediği durumlarda önemlidir. `WHILE`, koşul en başta yanlışsa döngüye hiç girmez. `REPEAT...UNTIL` ise ne olursa olsun döngüye bir kez girer, işlemlerini yapar ve ancak ondan sonra koşulu kontrol eder."
+},
+{
+  q: "2. `Sayı = 11` başlangıç değeri için, `WHILE (Mod(Sayı,2)=0) Sayı = Sayı / 2` döngüsünün sonunda 'Sayı' değişkeninin değeri ne olur?",
+  options: [
+    ["5.5", "Bu sonuç, döngünün bir kez çalışması durumunda elde edilirdi, ancak döngü hiç çalışmaz."],
+    ["11", "Koşul (`11 % 2 == 0`) başlangıçta YANLIŞ olduğu için, program akışı döngüye hiç girmez ve 'Sayı' değişkeninin değeri değişmeden 11 olarak kalır."],
+    ["0", "Bu hatalı bir sonuçtur."],
+    ["1", "Bu hatalı bir sonuçtur."],
+    ["Program hata verir.", "Program hata vermez, sadece döngüye girmez."]
+  ],
+  answer: 1,
+  summary: "`WHILE` döngüsü bir 'ön-denetimli' döngüdür. Döngünün kapısında bir bekçi (koşul) vardır ve eğer koşul sağlanmıyorsa kimseyi içeri almaz. Bu örnekte 11 çift sayı olmadığı için bekçi program akışını içeri almaz."
+},
+{
+  q: "3. Bir programda `FOR Sayaç=0 TO 199` şeklinde tanımlanan parametreli (sayaçlı) bir döngü toplamda kaç kez çalışır?",
+  options: [
+    ["198", "Bu hatalı bir hesaplamadır."],
+    ["199", "Eğer döngü 1'den başlasaydı 199 kez çalışırdı."],
+    ["200", "Döngü 0'dan başlayıp 199'a kadar (199 dahil) tüm değerleri alacağı için, toplamda `199 - 0 + 1 = 200` kez tekrarlanır."],
+    ["201", "Bu hatalı bir hesaplamadır."],
+    ["Sonsuza kadar", "Bu bir koşullu döngü değil, sayaçlı bir döngüdür ve sonlanma noktası bellidir."]
+  ],
+  answer: 2,
+  summary: "Sayaçlı döngülerde tekrar sayısını hesaplarken başlangıç değerinin 0 mı yoksa 1 mi olduğuna dikkat etmek çok önemlidir. Programlamada indisler ve sayaçlar genellikle 0'dan başlar."
+},
+{
+  q: "4. Koşullu ifadelerin en basit hali olan ve sadece koşulun sağlanması durumunda bir işlem yapan, sağlanmaması durumunda ise program akışına normal devam eden yapı hangisidir?",
+  options: [
+    ["Tip 1 (IF...THEN)", "Bu tip, sadece doğru (TRUE) yolu için bir eylem tanımlar; yanlış yolu için özel bir eylem yoktur."],
+    ["Tip 2 (IF...THEN...ELSE)", "Bu tip, hem doğru hem de yanlış yolları için ayrı eylemler tanımlar."],
+    ["Tip 3 (IF...ELSEIF...ELSE)", "Bu tip, bir dizi zincirleme koşulu tanımlar."],
+    ["switch-case", "Bu, Tip 3'e benzer bir çoklu seçim yapısıdır."],
+    ["while", "Bu bir yinelemeli deyimdir."]
+  ],
+  answer: 0,
+  summary: "Tip 1 koşullu ifade, 'eğer hava yağmurluysa şemsiyeni al' gibidir. Havanın yağmurlu olmaması durumu için özel bir talimat vermez, sadece normal hayatına devam edersin."
+},
+{
+  q: "5. `Sayı = 12` başlangıç değeri için, `WHILE (Mod(Sayı,2)=0) Sayı = Sayı / 2` döngüsünün sonunda 'Sayı' değişkeninin değeri ne olur?",
+  options: [
+    ["12", "Döngü en az bir kez çalışacağı için değer değişir."],
+    ["6", "Bu, döngünün ilk adımından sonraki değerdir."],
+    ["3", "Adımlar: 1) 12 çift, Sayı=6 olur. 2) 6 çift, Sayı=3 olur. 3) 3 tek olduğu için `Mod(3,2)=0` koşulu YANLIŞ olur ve döngü sonlanır. 'Sayı' değişkeninin son değeri 3'tür."],
+    ["1.5", "Döngü 3 değerinde sonlanır."],
+    ["0", "Bu hatalı bir sonuçtur."]
+  ],
+  answer: 2,
+  summary: "Bu soru, bir `WHILE` döngüsünün adımlarını takip etme (trace etme) yeteneğini ölçer. Her adımda koşul yeniden kontrol edilir ve koşul yanlış olana kadar döngü devam eder."
+},
+{
+  q: "6. İlkel koşulların `AND` ve `OR` gibi mantıksal bağlaçlarla birbirine bağlanmasıyla elde edilen koşullara ne ad verilir?",
+  options: [
+    ["İlişkisel Koşullar", "İlişkisel koşullar `>` veya `<` gibi karşılaştırmalardır."],
+    ["Sayısal Koşullar", "Sayısal koşul diye bir tanım yoktur, sayısal ifadeler vardır."],
+    ["Bileşik Koşullar (Compound Conditions)", "Birden fazla ilkel koşulun mantıksal bağlaçlarla birleştirilmesiyle 'bileşik koşullar' oluşturulur. Örneğin: `(puan > 50) AND (devamsizlik < 10)`."],
+    ["Parametreli Koşullar", "Bu, döngülerle ilgili bir terimdir."],
+    ["Basit Koşullar", "İlkel koşullar basit koşullardır."]
+  ],
+  answer: 2,
+  summary: "Bileşik koşullar, programların daha karmaşık ve gerçek hayata uygun kararlar almasını sağlar. Sadece tek bir şarta değil, birden çok şartın aynı anda sağlanıp sağlanmadığına bakarak karar verilebilir."
+},
+{
+  q: "7. Aşağıdakilerden hangisi, problemleri daha küçük ve çözümü kolay alt problemlere bölerek programın okunabilirliğini ve verimliliğini artıran bir yapıdır?",
+  options: [
+    ["Koşullu İfadeler", "Koşullu ifadeler karar verme mekanizmalarıdır."],
+    ["Döngüler", "Döngüler işlemleri tekrarlar."],
+    ["Alt Programlar (Subprograms)", "Alt programlar (fonksiyonlar), 'böl ve yönet' prensibini uygulayarak karmaşık problemleri daha basit, yönetilebilir ve yeniden kullanılabilir parçalara ayırmanın temel yoludur."],
+    ["Değişkenler", "Değişkenler veri saklar."],
+    ["Sabitler", "Sabitler değeri değişmeyen verileri saklar."]
+  ],
+  answer: 2,
+  summary: "Büyük bir projeyi tek bir dosya halinde yazmak yerine, her bir işlevi kendi alt programına (fonksiyonuna) bölmek, hem kodun anlaşılmasını kolaylaştırır hem de aynı işlevin programın farklı yerlerinde tekrar tekrar yazılmasını önler."
+},
+{
+  q: "8. Koşullu döngüler genel olarak hangi durumlarda kullanılır?",
+  options: [
+    ["Döngüde gerçekleşecek işlem sayısının programcı tarafından önceden tam olarak bilindiği durumlarda", "Bu durumlar için genellikle parametreli (sayaçlı) `FOR` döngüleri daha uygundur."],
+    ["Döngüde gerçekleşecek işlem sayısının önceden belirlenemediği durumlarda", "Koşullu döngüler, bir sayaçtan çok 'kullanıcı çıkış tuşuna basana kadar' veya 'dosyanın sonuna gelene kadar' gibi belirsiz sayıda tekrar gerektiren durumlar için idealdir."],
+    ["Sadece sayısal işlemlerin tekrar edileceği durumlarda", "Her türlü işlemi tekrar etmek için kullanılabilirler."],
+    ["Programın her zaman en az bir kere çalışmasının istendiği durumlarda", "Bu sadece `UNTIL` tipi koşullu döngüler için geçerlidir."],
+    ["Hiçbir koşula bağlı olmadan sürekli tekrar eden işlemler için", "Sürekli tekrar sonsuz döngü anlamına gelir, koşullu döngüler bir sonlanma koşuluna sahiptir."]
+  ],
+  answer: 1,
+  summary: "Bir `FOR` döngüsü, 'bu işlemi tam 100 kere yap' demek için kullanılır. Bir `WHILE` döngüsü ise 'bu işlemi sonuç 'evet' olduğu sürece yapmaya devam et' demek için kullanılır. Tekrar sayısı belli değilse, koşullu döngü doğru seçimdir."
+},
+{
+  q: "9. Tip 3 koşullu ifadeler (`IF...ELSEIF...ELSE`) oluşturulurken dikkat edilmesi gereken en önemli noktalardan biri nedir?",
+  options: [
+    ["Tüm koşulların aynı anda doğru olabilmesi", "Tam tersine, bu durum mantıksal hatalara yol açar."],
+    ["Koşulların etki alanlarının birbirleriyle kesişmemesi (sadece bir koşulun sağlanması)", "Bir `IF...ELSEIF` zincirinde, program akışı ilk doğru koşulu bulduğu anda ilgili bloğu çalıştırır ve zincirin geri kalanını kontrol etmeden çıkar. Eğer koşullar kesişirse, beklenmedik bir bloğun çalışması gibi mantık hataları oluşabilir."],
+    ["Her zaman en az 5 adet `ELSEIF` kullanılması", "Böyle bir sayı kısıtlaması yoktur."],
+    ["Sadece sayısal karşılaştırmalar yapılması", "Her türlü mantıksal ifade kullanılabilir."],
+    ["`ELSE` bloğunun mutlaka en başta yer alması", "`ELSE` bloğu her zaman en sonda yer alır."]
+  ],
+  answer: 1,
+  summary: "Bir not hesaplama sisteminde, `IF (Puan > 50)` ve `ELSEIF (Puan > 70)` gibi bir sıralama hatalıdır. Çünkü 75 alan bir öğrenci ilk koşulu (`>50`) sağladığı için, ikinci koşul (`>70`) hiç kontrol edilmez. Koşullar ya kesişmeyecek şekilde ya da en özelden en genele doğru (örn: `>90`, `>80`, `>70`...) sıralanmalıdır."
+},
+{
+  q: "10. Hangi döngü yapısı, içindeki kod bloğunun her durumda en az bir kere çalışacağını garanti eder?",
+  options: [
+    ["WHILE", "WHILE döngüsü, koşul başlangıçta yanlışsa hiç çalışmayabilir."],
+    ["FOR", "FOR döngüsünün başlangıç ve bitiş değerleri aynıysa hiç çalışmayabilir (örn: FOR i=1 TO 0)."],
+    ["UNTIL (veya REPEAT...UNTIL)", "`UNTIL` döngülerinde koşul sonda denetlendiği için, program akışı döngü bloğuna en az bir kez girer, işlemleri yapar ve sonra koşulu kontrol eder."],
+    ["FOREACH", "Bu, bir koleksiyonun elemanları üzerinde gezen özel bir `FOR` döngüsüdür ve koleksiyon boşsa hiç çalışmaz."],
+    ["Hiçbiri, tüm döngüler hiç çalışmama ihtimaline sahiptir.", "Bu ifade yanlıştır, `UNTIL` en az bir kez çalışır."]
+  ],
+  answer: 2,
+  summary: "`UNTIL` döngüsü, 'önce yap, sonra sor' prensibiyle çalışır. `WHILE` döngüsü ise 'önce sor, sonra yap' prensibine dayanır. Bu nedenle, döngüdeki işlemlerin en az bir kez yapılması zorunluysa `UNTIL` doğru seçimdir."
+},
+{
+  q: "11. Döngüler genel olarak hangi iki ana türde sınıflandırılır?",
+  options: [
+    ["WHILE ve FOR döngüleri", "Bunlar spesifik döngü türleridir, ana sınıflandırma değildir."],
+    ["Basit ve Bileşik Döngüler", "Bu terimler genellikle deyimler için kullanılır."],
+    ["Koşullu ve Seçimli Döngüler", "Seçimli, döngüler için bir sınıflandırma değildir."],
+    ["Parametreli (Sayaçlı) Döngüler ve Koşullu Döngüler", "Döngüler, tekrar sayısının önceden belli olup olmadığına göre temel olarak bu iki gruba ayrılır. `FOR` sayaçlıya, `WHILE` ve `UNTIL` ise koşulluya örnektir."],
+    ["İlkel ve Yapısal Döngüler", "Bu terimler veri tipleri için kullanılır."]
+  ],
+  answer: 3,
+  summary: "Bir döngü kurarken sorulması gereken ilk soru şudur: 'Bu işlemi tam olarak kaç kere yapacağımı biliyor muyum?'. Cevap 'evet' ise Parametreli/Sayaçlı (`FOR`) döngü, 'hayır' ise Koşullu (`WHILE`, `UNTIL`) döngü kullanılır."
+},
+{
+  q: "12. Bir `notlar` dizisindeki tüm öğrencilerin notlarını işlemek için döngü kurulduğunda, `Harf`, `Katsayı` gibi sonuç değişkenlerinin de birer dizi (`Harfler[Sayaç]`, `Katsayılar[Sayaç]`) olarak tanımlanmasının sebebi nedir?",
+  options: [
+    ["Programın daha yavaş çalışmasını sağlamak için", "Bu bir sebep değildir."],
+    ["Döngünün her adımında bir önceki öğrencinin hesaplanan sonucunun kaybolmasını önlemek için", "Eğer sonuçlar normal değişkenlere atansaydı, döngünün her yeni adımında bu değişkenlerin üzerine yeni değer yazılır ve eski değer kaybolurdu. Döngü bittiğinde sadece son öğrencinin bilgileri kalırdı. Sonuçları da bir diziye atayarak her öğrencinin bilgisi kendi indisinde saklanmış olur."],
+    ["Bellekte daha fazla yer kaplamak için", "Bu bir amaç değil, bir sonuçtur."],
+    ["Kodun daha karmaşık görünmesini sağlamak için", "Bu bir amaç değildir."],
+    ["Döngünün sonsuza girmesini engellemek için", "Bunun sonsuz döngüyle bir ilgisi yoktur."]
+  ],
+  answer: 1,
+  summary: "Bir döngü içinde yapılan hesaplamaların sonuçlarını korumak için, bu sonuçların da döngü sayacıyla indislenmiş bir diziye kaydedilmesi gerekir. Aksi takdirde, döngü her döndüğünde, bir önceki adımda elde edilen değerli bilgiler ezilerek kaybolur."
+},
+{
+  q: "13. Koşullu ifadeler, program akışını bir mantıksal ifadenin hangi değerine bağlı olarak denetimli bir biçimde değiştirir?",
+  options: [
+    ["Sayısal (Integer veya Float) değere", "Sayısal değerler koşulun içinde kullanılabilir ama koşulun sonucu sayısal değildir."],
+    ["Karakter Dizisi (String) değere", "Metinler koşulda karşılaştırılabilir ama koşulun sonucu metin değildir."],
+    ["Doğru (TRUE) ya da Yanlış (FALSE) değere", "Bir koşullu ifadenin temelindeki mantıksal ifade her zaman değerlendirilir ve sonuç olarak 'doğru' veya 'yanlış' üretir. Programın akışı bu sonuca göre yönlendirilir."],
+    ["NULL (boş) değere", "Null kontrolü bir koşul olabilir, ancak koşulun sonucu her zaman true/false'tur."],
+    ["Dizi (Array) değere", "Diziler koşul içinde kullanılabilir ama sonuç bir dizi değildir."]
+  ],
+  answer: 2,
+  summary: "Koşullu ifadeler, programın yol ayrımlarıdır. Yol ayrımındaki trafik ışığı ise her zaman 'yeşil' (doğru) veya 'kırmızı' (yanlış) yanar. Program bu ışığın rengine göre hangi yola sapacağına karar verir."
+},
+{
+  q: "14. `Sayı = 11` başlangıç değeri için, `DO Sayı = Sayı / 2 UNTIL (Mod(Sayı,2)=1)` döngüsünün sonunda 'Sayı' değişkeninin değeri ne olur?",
+  options: [
+    ["11", "Döngü en az bir kez çalışacağı için değer değişir."],
+    ["3", "Bu, `WHILE` döngüsü için farklı bir senaryonun sonucu olurdu."],
+    ["5.5", "Koşul sonda denetlendiği için döngü en az bir kez çalışır. `Sayı = 11 / 2 = 5.5` olur. Daha sonra `Mod(5.5, 2) = 1` koşulu kontrol edilir (birçok dilde bu işlem tamsayı olmayanlar için farklı sonuçlar verse de, mantıksal olarak 1'e eşit olmayacağı varsayılır), ancak sorulan döngü sonundaki değerdir ve o da 5.5'tir."],
+    ["12", "Bu hatalı bir sonuçtur."],
+    ["Program döngüye hiç girmez.", "`UNTIL` döngüsü her zaman en az bir kez çalışır."]
+  ],
+  answer: 2,
+  summary: "`REPEAT...UNTIL` döngüsünün 'en az bir kez çalışma' garantisi, `WHILE` döngüsünden en önemli farkıdır. Bu örnekte `Sayı` değişkeni 11 gibi tek bir sayı olsa bile, döngü bir kez çalışır, bölme işlemi yapılır ve `Sayı`'nın değeri 5.5 olur."
+},
+{
+  q: "15. Bir koşulun mantıksal tersini denetlemek için genellikle hangi ön ek kullanılır?",
+  options: [
+    ["AND", "Bu bir bağlaçtır."],
+    ["OR", "Bu bir bağlaçtır."],
+    ["IF", "Bu, koşul yapısını başlatan bir anahtar kelimedir."],
+    ["NOT (veya `!`)", "`NOT` mantıksal işlemcisi, bir koşulun sonucunu tersine çevirir. Yani, doğru ise yanlış, yanlış ise doğru yapar. `NOT is_integer(sayi)` ifadesi, 'sayı bir tamsayı DEĞİLSE' anlamına gelir."],
+    ["THEN", "Bu, `IF`'ten sonra gelen eylemi belirtir."]
+  ],
+  answer: 3,
+  summary: "`NOT` operatörü, mantıksal bir ifadenin 'değilini' almak için kullanılır. Bu, 'eşit değilse', 'içermiyorsa', 'doğru değilse' gibi durumları kontrol etmeyi çok kolaylaştırır."
+},
+{
+  q: "16. `FOR Sayaç=1 TO 10` döngüsü kaç kez çalışır?",
+  options: [
+    ["9", "Başlangıç değeri de dahil olduğu için yanlış bir sayım."],
+    ["10", "Döngü 1'den başlayıp 10'a kadar (10 dahil) tüm değerleri alacağı için toplam 10 kez tekrarlanır."],
+    ["11", "Başlangıç değeri 0 olsaydı ve 10'a kadar gitseydi 11 kez çalışırdı."],
+    ["1", "Bu sadece ilk adımdır."],
+    ["0", "Döngü en az bir kez çalışır."]
+  ],
+  answer: 1,
+  summary: "Bir `FOR` döngüsünün tekrar sayısını bulmak için `(Bitiş - Başlangıç) + 1` formülü kullanılır. Bu durumda `(10 - 1) + 1 = 10`'dur."
+},
+{
+  q: "17. Collatz Problemi örneğinde, bir sayının 1'e ulaşıp ulaşmayacağının kaç adımda gerçekleşeceği önceden bilinemediği için ne tür bir döngü kullanılması zorunludur?",
+  options: [
+    ["Parametreli (Sayaçlı) Döngü", "Tekrar sayısı belli olmadığı için `FOR` gibi bir sayaçlı döngü kullanılamaz."],
+    ["Koşullu Döngü", "Döngünün sonlanma kuralı bir sayaca değil, 'hesaplanan sayı 1'e eşit mi?' gibi bir mantıksal koşula bağlı olduğu için `WHILE` veya `UNTIL` gibi bir koşullu döngü kullanılmalıdır."],
+    ["Sonsuz Döngü", "Programın bir noktada sonlanması hedeflenir."],
+    ["İç İçe Döngü", "İç içe döngü bir gereklilik değildir."],
+    ["Seçimli Deyim", "Seçimli deyimler döngü değildir."]
+  ],
+  answer: 1,
+  summary: "Collatz Problemi, tekrar sayısının başlangıç değerine göre tamamen değiştiği, bu nedenle sonucun ne zaman elde edileceğinin bilinemediği durumlara mükemmel bir örnektir. Bu gibi senaryolarda, programcı bir sonlanma 'koşulu' belirler ve bu koşul sağlanana kadar devam eden bir koşullu döngü kurar."
+},
+{
+  q: "18. Akış diyagramlarında koşullu ifadeler hangi geometrik şekil ile gösterilir?",
+  options: [
+    ["Dikdörtgen", "Dikdörtgen, genellikle yapılacak bir işlemi veya bir eylemi temsil eder."],
+    ["Paralelkenar", "Paralelkenar, genellikle veri girişi veya çıkışını temsil eder."],
+    ["Elips veya Oval", "Elips, genellikle sürecin başlangıcını veya sonunu temsil eder."],
+    ["Eşkenar Dörtgen", "Eşkenar dörtgen, bir karar noktasını veya bir koşulu temsil eder. İçinden genellikle 'Doğru (T)' ve 'Yanlış (F)' olmak üzere iki farklı akış yolu çıkar."],
+    ["Daire", "Daire, genellikle akışları birleştiren bir bağlantı noktası olarak kullanılır."]
+  ],
+  answer: 3,
+  summary: "Akış diyagramları, bir programın mantıksal akışını görselleştirmek için standart şekiller kullanır. Eşkenar dörtgen, programın bir 'yol ayrımına' geldiğini ve bir koşula göre hangi yöne gideceğine karar vermesi gerektiğini simgeler."
+},
+{
+  q: "19. Koşullu ifadeler için 'Akış Kontrol Deyimleri' denmesinin sebebi nedir?",
+  options: [
+    ["Programdaki tüm verileri kontrol ettikleri için", "Tüm verileri değil, belirli bir koşulu kontrol ederler."],
+    ["Programın normalde doğrusal olan akışını, bir koşula bağlı olarak denetimli bir biçimde değiştirdikleri için", "Normalde bir program yukarıdan aşağıya doğru akar. Koşullu ifadeler bu akışı kesintiye uğratarak, koşulun sonucuna göre akışın farklı bir kod bloğuna 'atlamasını' veya bazı blokları 'es geçmesini' sağlar."],
+    ["Sadece döngülerin akışını kontrol edebildikleri için", "Döngüler de birer akış kontrol deyimidir ama koşullu ifadeler genel program akışını kontrol eder."],
+    ["Programın başlangıç ve bitişini kontrol ettikleri için", "Bunu yapmazlar."],
+    ["Programın ne kadar hızlı aktığını kontrol ettikleri için", "Hızla değil, yönle ilgilenirler."]
+  ],
+  answer: 1,
+  summary: "Akış kontrol deyimleri, bir programın 'yol haritasını' çizen yapılardır. Programın hangi koşulda hangi yola sapacağını, hangi yolu tekrarlayacağını bu deyimler belirler."
+},
+{
+  q: "20. `IF...THEN...ELSE` yapısı hangi tip koşullu ifadedir?",
+  options: [
+    ["Tip 1", "Tip 1, sadece `IF...THEN` içerir."],
+    ["Tip 2", "Tip 2, bir koşulun hem doğru (THEN) hem de yanlış (ELSE) olması durumları için ayrı yollar tanımlayan yapıdır."],
+    ["Tip 3", "Tip 3, `IF...ELSEIF...ELSE` şeklinde zincirleme koşullar içerir."],
+    ["Tip 4", "Tip 4 diye bir sınıflandırma belirtilmemiştir."],
+    ["Koşulsuz İfade", "Bu yapı tamamen koşula bağlıdır."]
+  ],
+  answer: 1,
+  summary: "Koşullu ifadelerin tipleri, sundukları dallanma sayısına göre artar. Tip 1 tek bir dal sunarken (sadece doğruysa), Tip 2 iki dal (doğruysa veya yanlışsa) sunar."
+},
+{
+  q: "21. Prolog ve Lisp gibi mantıksal programlama dillerinde neden `IF...THEN` gibi özel bir koşul sözcüğü bulunmaz?",
+  options: [
+    ["Bu diller çok eski olduğu için", "Bu dillerin yapısıyla ilgilidir, yaşlarıyla değil."],
+    ["Bu dillerin tümüyle mantıksal karşılaştırmalar üzerine kurulu olması nedeniyle", "Imperative dillerde program akışı doğrusaldır ve `IF` bu akışı kırmak için gerekir. Prolog gibi dillerde ise programın kendisi bir dizi mantıksal kural ve sorgudan oluşur, bu nedenle akışı kırmak için ek bir `IF` yapısına ihtiyaç duyulmaz."],
+    ["Bu dillerde koşul kontrolü yapılamadığı için", "Tam tersine, bu dillerin temeli koşul kontrolüdür."],
+    ["Bu dillerin sadece sayısal hesaplama yapması nedeniyle", "Bu diller özellikle sembolik ve mantıksal hesaplamalarda güçlüdür."],
+    ["Sözdizimlerinin çok karmaşık olması nedeniyle", "Bu bir neden değildir."]
+  ],
+  answer: 1,
+  summary: "Bazı programlama paradigmaları, 'karar verme' eylemini dilin temel bir parçası olarak görür. Prolog'da her şey zaten bir kuralın doğruluğunu sorgulamak üzerine kurulu olduğu için, `IF` gibi bir komuta gerek kalmaz."
+},
+{
+  q: "22. Maaş hesaplama örneğinde, çocuk yardımı, dil tazminatı gibi farklı hesaplamaların her birini ayrı bir alt program (fonksiyon) olarak tasarlamanın temel faydası nedir?",
+  options: [
+    ["Programın daha uzun sürmesini sağlamak", "Bu bir fayda değildir."],
+    ["Ana problemi (maaş hesabı), çözümü daha kolay alt problemlere bölmek", "Bu, 'böl ve yönet' yaklaşımıdır. Her bir eklentiyi kendi içinde bir problem olarak ele alıp çözen küçük fonksiyonlar yazmak, devasa bir maaş hesaplama kodu yazmaktan daha kolay ve yönetilebilirdir."],
+    ["Tüm hesaplamaları tek bir değişkende toplamak", "Bu bir fayda değildir."],
+    ["Programın sadece tek bir kişi için çalışmasını sağlamak", "Tam tersine, bu yapı programı daha genel ve esnek hale getirir."],
+    ["Tüm kodun tek bir dosyada olmasını zorunlu kılmak", "Alt programlar kodun daha modüler ve farklı dosyalara bölünebilir olmasını sağlar."]
+  ],
+  answer: 1,
+  summary: "Alt program kullanmak, bir evi inşa ederken duvarları, çatıyı ve pencereleri ayrı ayrı ustaların yapmasına benzer. Herkes kendi uzmanlık alanına odaklanır ve sonunda parçalar birleştirilerek ana yapı (program) tamamlanır. Bu yaklaşım hem daha hızlı hem de daha az hatalıdır."
+},
+{
+  q: "23. Bir `notHesapla(puan)` fonksiyonunun, gelen puana göre birden fazla sonucu (harf, katsayı, ects) `RETURN` ifadesiyle tek seferde geri döndürebilmesi için, kullanılan programlama dilinin hangi özelliği desteklemesi gerekir?",
+  options: [
+    ["Koşullu döngüleri desteklemesi", "Bu durumla ilgisi yoktur."],
+    ["Parametreli döngüleri desteklemesi", "Bu durumla ilgisi yoktur."],
+    ["Yüksek işlemci önceliğini desteklemesi", "Bu durumla ilgisi yoktur."],
+    ["Liste (List) gibi düşük düzeyli veri türlerini desteklemesi", "Bir fonksiyon normalde sadece tek bir değer döndürür. Ancak dil, birden çok değeri tek bir paket (liste, dizi, nesne vb.) içinde toplayıp bu paketi tek bir sonuç gibi döndürmeye izin veriyorsa, birden fazla sonuç döndürülebilir."],
+    ["Hiçbir özellik gerekmez, tüm diller bunu yapabilir.", "Hayır, bu özellik her dilde bu kadar kolay olmayabilir."]
+  ],
+  answer: 3,
+  summary: "Fonksiyonların genellikle tek bir 'cevap' vermesi beklenir. Birden çok cevabı aynı anda vermek için, bu cevapları bir 'zarfa' veya 'kutuyu' (liste, dizi gibi bir veri yapısı) koyup tek bir paket olarak göndermek gerekir. Bu, dilin bu tür veri yapılarını esnek bir şekilde desteklemesini gerektirir."
+},
+{
+  q: "24. `WHILE (Mod(Sayı,2)=0)` döngüsü ile `UNTIL (Mod(Sayı,2)=1)` döngüsünün aynı işi yapması neyi gösterir?",
+  options: [
+    ["İki döngünün de her zaman aynı sayıda çalıştığını", "Hayır, başlangıç değerine göre çalışma sayıları farklı olabilir."],
+    ["`=` ve `!=` operatörlerinin aynı anlama geldiğini", "Burada `Mod(Sayı,2)=0` ile `Mod(Sayı,2)=1` farklı mantıksal ifadelerdir."],
+    ["`WHILE`'dan `UNTIL`'e geçerken döngünün sonlanma koşulunun mantıksal olarak değillenmesi (tersine çevrilmesi) gerektiğini", "`WHILE` 'koşul doğru iken devam et' der. `UNTIL` ise 'koşul doğru olana kadar devam et' der. Aynı işlevi elde etmek için, birinin devam etme koşulunun, diğerinin durma koşulu olması gerekir. Yani `(koşul)` ile `NOT (koşul)` mantığı geçerlidir."],
+    ["`UNTIL` döngüsünün daha verimli olduğunu", "Verimlilikleri duruma göre değişir, bu örnek bunu göstermez."],
+    ["`WHILE` döngüsünün daha güvenilir olduğunu", "Güvenilirlikleri duruma göre değişir, bu örnek bunu göstermez."]
+  ],
+  answer: 2,
+  summary: "`WHILE` döngüsünün koşulu 'devam etme' koşuludur. `UNTIL` döngüsünün koşulu ise 'durma' koşuludur. Bu nedenle, aynı mantığı bu iki farklı döngüyle kurmak istediğinizde, koşul ifadesini birinden diğerine geçerken mantıksal olarak tersine çevirmeniz gerekir."
+},
+{
+  q: "25. `IF (Puan>=90) THEN ... ELSEIF (Puan>=80) THEN ...` şeklindeki not hesaplama yapısının mantıksal olarak doğru çalışmasının sebebi nedir?",
+  options: [
+    ["Koşulların en düşükten en yükseğe doğru sıralanması", "Eğer böyle sıralansaydı, 95 alan bir öğrenci `Puan>=80` koşulunu da sağlayacağı için mantık hatası olurdu."],
+    ["Koşulların en yüksekten en düşüğe doğru sıralanması", "`ELSEIF` yapısı, bir önceki koşul yanlışsa devreye girer. Puan 95 ise ilk `IF` çalışır ve diğerleri kontrol edilmez. Puan 85 ise ilk `IF` yanlış olur, ikinci `ELSEIF (Puan>=80)` doğru olur ve çalışır. Bu sıralama, her puanın sadece kendi doğru aralığına girmesini sağlar."],
+    ["Tüm `ELSEIF`'lerin aynı anda çalışması", "`ELSEIF` zincirinde sadece bir blok çalışır."],
+    ["Her koşulun bir öncekinden bağımsız olması", "Tam tersine, her `ELSEIF` bir öncekinin yanlış olmasına bağımlıdır."],
+    ["`=` operatörünün her koşulda kullanılması", "Koşullar `>=` operatörünü kullanıyor."]
+  ],
+  answer: 1,
+  summary: "Bu tür zincirleme `IF` yapılarında sıralama hayati önem taşır. En özel veya dar koşuldan (en yüksek puan) başlayıp en genel koşula (en düşük puan) doğru gitmek, her durumun yalnızca bir kez ve doğru koşul tarafından yakalanmasını garanti eden en güvenli yöntemdir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

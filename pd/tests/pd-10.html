@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 10</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 10</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Bir gösterge (pointer) değişkeninin, daha önceden serbest bırakılmış bir bellek adresini göstermesi durumunda ortaya çıkan probleme ne ad verilir?",
+  options: [
+    ["Bellek Sızıntısı (Memory Leak)", "Bu, ayrılan belleğin geri verilmemesi sorunudur."],
+    ["Yığın Taşması (Stack Overflow)", "Bu, yığıt belleğinin dolması durumudur."],
+    ["Sallanan Gösterge (Dangling Pointer)", "Serbest bırakılmış bir bellek adresini gösteren göstergeye 'sallanan gösterge' denir. Bu adrese erişmeye çalışmak, programın çökmesine neden olabilir."],
+    ["Tip Uyumsuzluğu (Type Mismatch)", "Bu, uyumsuz tipler arasında işlem yapmaya çalışmaktır."],
+    ["Kayıt Ataması (Record Assignment)", "Bu, bir kaydın içeriğini diğerine kopyalama işlemidir."]
+  ],
+  answer: 2,
+  summary: "Sallanan göstergeler, programlamadaki en tehlikeli hatalardan biridir çünkü sorun hemen ortaya çıkmayabilir. Serbest bırakılan bellek alanı başka bir veri için kullanıldığında, sallanan gösterge artık tamamen ilgisiz bir veriye işaret eder ve bu durumun tespiti çok zordur."
+},
+{
+  q: "2. Farklı veri tiplerinin etkileşimlerini kısıtlayarak tip hatalarını yakalamayı hedefleyen programlama dili özelliğine ne denir?",
+  options: [
+    ["Dinamik Tipleme", "Dinamik tipleme, tipler arasında daha fazla esneklik sağlar, kısıtlama getirmez."],
+    ["Örtülü Tip Dönüşümü (Coercion)", "Bu, kısıtlamaları azaltan bir mekanizmadır."],
+    ["Kuvvetli Tipleme (Strong Typing)", "Bir dilin 'kuvvetli tipli' olması, o dilin derleyicisinin farklı tipler arasında geçersiz işlemler yapılmasına izin vermediği ve bu tür hataları yakaladığı anlamına gelir."],
+    ["Gösterge Aritmetiği", "Bu, göstergelerle yapılan matematiksel işlemlerdir."],
+    ["İşlemci Yüklemesi (Operator Overloading)", "Bu, bir operatöre birden fazla anlam yüklemektir."]
+  ],
+  answer: 2,
+  summary: "Kuvvetli tipleme, bir programın daha güvenilir olmasını sağlayan bir 'güvenlik ağı' gibidir. Uyumsuz veri tiplerinin birbiriyle karışmasını engelleyerek birçok potansiyel hatayı daha derleme aşamasında ortaya çıkarır."
+},
+{
+  q: "3. 'Bileşim (Union)' veya Pascal'daki adıyla 'Değişken Kayıt (Record Variant)' tipinin en önemli riski nedir?",
+  options: [
+    ["Bellekte çok fazla yer kaplamaları", "Genellikle en büyük elemanı kadar yer kaplarlar, bu ana sorun değildir."],
+    ["Dilin tip sistemini zayıflatmaları ve tip denetimine izin vermemeleri", "Bir union, o an içinde bir tamsayı mı yoksa bir metin mi tuttuğunu bilmeden erişime izin verebilir. Bu durum, tip denetimini atlatır ve programın güvenilirliğini ciddi şekilde azaltır."],
+    ["Tanımlamalarının çok zor olması", "Sözdizimleri karmaşık olsa da ana risk bu değildir."],
+    ["Sadece sayısal verileri saklayabilmeleri", "Farklı türden verileri saklayabilirler."],
+    ["Çalışma zamanında yavaş olmaları", "Performans değil, güvenlik ve güvenilirlik ana sorundur."]
+  ],
+  answer: 1,
+  summary: "Union'lar, aynı bellek alanını farklı veri tipleri için kullanma esnekliği sunar, ancak bu esneklik büyük bir riskle birlikte gelir. Bellekteki verinin o anki gerçek tipini bilmeden yanlış bir tiple erişmeye çalışmak, öngörülemeyen hatalara yol açabilir."
+},
+{
+  q: "4. Diziler (Array) ve Kayıtlar (Record) arasındaki temel fark nedir?",
+  options: [
+    ["Dizilerin boyutu sabit, kayıtlarınki dinamiktir.", "Bu genel bir kural değildir."],
+    ["Diziler ilkel tiplerden, kayıtlar yapısal tiplerden oluşur.", "Her ikisi de yapısal tiptir."],
+    ["Dizilere indisle, kayıtlara ise anahtar-değer ile erişilir.", "Kayıtlara alan adıyla erişilir, anahtar-değer ile değil."],
+    ["Diziler C'de, kayıtlar ise Pascal'da bulunur.", "Her iki yapı da birçok dilde mevcuttur (C'de `struct` olarak)."],
+    ["Diziler homojen (aynı türden), kayıtlar ise heterojen (farklı türlerden) veri elemanları içerir.", "Bir dizi sadece tamsayıları tutabilirken, bir 'öğrenci' kaydı bir tamsayı (numara), bir metin (ad) ve bir ondalıklı sayıyı (ortalama) aynı anda içerebilir."]
+  ],
+  answer: 4,
+  summary: "Bir dizi, bir 'koli yumurta' gibidir; içindeki her şey aynı türdendir. Bir kayıt ise bir 'yemek tarifi' gibidir; içinde farklı türden ve miktarda malzemeler (un, şeker, yumurta) bulunur."
+},
+{
+  q: "5. Programlama dilleri alanına 'kuvvetli tipleme' kavramını tanıtan dil hangisidir?",
+  options: [
+    ["C", "C ve C++, kuvvetli tiplemeyi tam olarak gerçekleştirmeyen dillere örnektir."],
+    ["Pascal", "Pascal, program güvenilirliğini ve doğruluğunu artırmak amacıyla tasarlanmıştır. Bu hedefe ulaşmak için getirdiği en önemli yeniliklerden biri, derleyicinin katı tip denetimi yaptığı 'kuvvetli tipleme' anlayışıdır."],
+    ["Java", "Java kuvvetli tipli bir dildir ancak kavramı ilk tanıtan dil değildir."],
+    ["FORTRAN", "İlk FORTRAN sürümlerinde tip denetimi oldukça zayıftı."],
+    ["PL/I", "PL/I, tiplendirilmemiş göstergeleri nedeniyle kuvvetli tiplemeden uzaktı."]
+  ],
+  answer: 1,
+  summary: "Pascal, program güvenilirliğini ve doğruluğunu artırmak amacıyla tasarlanmıştır. Bu hedefe ulaşmak için getirdiği en önemli yeniliklerden biri, derleyicinin katı tip denetimi yaptığı 'kuvvetli tipleme' anlayışıdır."
+},
+{
+  q: "6. Bir işlemcinin işlenenlerinin birbirleriyle uyumlu tiplerde olup olmadığının denetlenmesi işlemine ne ad verilir?",
+  options: [
+    ["Tip Denetimi (Type Checking)", "Bu, `a + b` gibi bir işlemde, `a` ve `b`'nin toplanabilir tiplerde olup olmadığını kontrol etme işlemidir."],
+    ["Tip Dönüşümü (Type Conversion)", "Bu, bir tipi diğerine çevirme işlemidir."],
+    ["Kuvvetli Tipleme (Strong Typing)", "Bu, tip denetimini katı bir şekilde uygulayan dil özelliğidir, denetimin kendisi değil."],
+    ["Tip Ataması (Type Assignment)", "Bu, bir değişkene tip belirleme işlemidir."],
+    ["Durağan Denetim (Static Checking)", "Bu, denetimin ne zaman yapıldığını belirtir (derleme zamanı)."]
+  ],
+  answer: 0,
+  summary: "Tip denetimi, programlamada 'elma ile armutları toplamaya' çalışmak gibi mantıksal hataları önleyen bir mekanizmadır. Derleyici veya yorumlayıcı, yapılacak işlemin işlenenlerin tiplerine uygun olup olmadığını kontrol eder."
+},
+{
+  q: "7. Yaygın olarak kullanılan imperative dillerden hangisinde, matematiksel kümeleri modelleyen bir 'küme (set)' veri tipi standart olarak tanımlıdır?",
+  options: [
+    ["C", "C dilinde standart bir küme tipi yoktur."],
+    ["Java", "Java'da `Set` bir arayüzdür ve kütüphanelerle sağlanır, dilin temel bir tipi değildir."],
+    ["Pascal", "Yaygın olarak kullanılan imperative dillerden sadece Pascal'da kümeler, `set of ...` yapısıyla dilin temel bir veri tipi olarak tanımlıdır."],
+    ["C++", "C++'da `std::set` bir kütüphane bileşenidir."],
+    ["FORTRAN", "FORTRAN'da küme tipi bulunmaz."]
+  ],
+  answer: 2,
+  summary: "Pascal'ın `set` veri tipi, bir elemanın belirli bir gruba ait olup olmadığını (`in` anahtar kelimesi ile) kontrol etmeyi çok kolaylaştırır. Örneğin, bir harfin 'sesli harfler' kümesine ait olup olmadığı tek bir işlemle sınanabilir."
+},
+{
+  q: "8. C ve FORTRAN dillerinde dizi indislerinin alt sınırları için varsayılan değerler sırasıyla nedir?",
+  options: [
+    ["0 ve 0", "FORTRAN'ın varsayılanı 0 değildir."],
+    ["1 ve 1", "C'nin varsayılanı 1 değildir."],
+    ["0 ve 1", "C ve C++'da tüm indisler için alt sınır varsayılan olarak sıfır, FORTRAN 77 ve FORTRAN 90'da ise varsayılan olarak bir kabul edilir."],
+    ["1 ve 0", "Bu sıralama yanlıştır."],
+    ["Her ikisinde de belirtilmesi zorunludur.", "Hayır, bu dillerin varsayılan değerleri vardır."]
+  ],
+  answer: 2,
+  summary: "Programlamada 'sıfır tabanlı indeksleme' (C gibi) ve 'bir tabanlı indeksleme' (FORTRAN gibi) iki farklı yaklaşımdır. Bu küçük fark, farklı diller arasında geçiş yapan programcılar için dikkat edilmesi gereken bir detaydır."
+},
+{
+  q: "9. Tip dönüşümleriyle ilgili olarak, `float` tipindeki bir değerin `int` tipine dönüştürülmesi ne tür bir dönüşümdür ve neden risklidir?",
+  options: [
+    ["Genişleyen dönüşümdür ve riskli değildir.", "Tam tersi, bu bir daralan dönüşümdür."],
+    ["Örtülü dönüşümdür ve her zaman güvenlidir.", "Bu bir daralan dönüşümdür ve güvenli değildir."],
+    ["Daralan dönüşümdür çünkü veri kaybı (ondalık kısmın silinmesi) olabilir.", "`int` tipi ondalık değerleri saklayamadığı için, `float` bir değeri `int`'e dönüştürmek sayının ondalık kısmının tamamen kaybolmasına neden olur. Bu nedenle bu bir 'daralan' dönüşümdür."],
+    ["Dışsal dönüşümdür ve hiçbir zaman veri kaybı olmaz.", "Dışsal olarak yapılsa bile veri kaybı olabilir."],
+    ["Tip denetimi hatasıdır ve asla yapılamaz.", "Programcı tarafından bilinçli olarak (casting) yapılabilir."]
+  ],
+  answer: 2,
+  summary: "Genişleyen dönüşüm, küçük bir kaptaki suyu büyük bir kaba boşaltmaya benzer; su kaybı olmaz. Daralan dönüşüm ise büyük bir kaptaki suyu küçük bir kaba boşaltmaya benzer; suyun bir kısmı (veri) taşarak kaybolur."
+},
+{
+  q: "10. Bir gösterge (pointer) tipinin temel olarak iki kullanım amacı nedir?",
+  options: [
+    ["Dizileri ve kayıtları tanımlamak", "Bunlar ayrı veri yapılarıdır."],
+    ["Dolaylı adresleme ve dinamik bellek yönetimi", "Göstergeler, ya var olan bir veriye dolaylı yoldan erişmek ya da program çalışırken 'heap' adı verilen bellek alanından yeni yerler ayırıp bu yerlere erişmek için kullanılır."],
+    ["Tip denetimi ve tip dönüşümü yapmak", "Bu, tip sistemiyle ilgili bir konudur."],
+    ["Döngüleri ve koşullu ifadeleri kontrol etmek", "Bu, akış kontrol deyimlerinin görevidir."],
+    ["Sözdizim ve anlam çözümlemesi yapmak", "Bu, derleyicinin görevidir."]
+  ],
+  answer: 1,
+  summary: "Göstergeler programcıya belleği yönetme konusunda büyük bir güç verir. Bu güç, hem var olan veriye farklı bir yoldan ulaşmayı (dolaylı adresleme) hem de programın çalışma anındaki ihtiyaçlarına göre belleği şekillendirmeyi (dinamik bellek yönetimi) kapsar."
+},
+{
+  q: "11. Farklı veri tiplerinden oluşan alanları tek bir yapı altında toplayan veri tipine ne ad verilir?",
+  options: [
+    ["Dizi (Array)", "Diziler aynı türden (homojen) elemanlar içerir."],
+    ["Küme (Set)", "Kümeler aynı sıralı türden elemanlar içerir."],
+    ["Kayıt (Record / Struct)", "Kayıtlar, farklı veri tiplerindeki (heterojen) alanları (örn: bir tamsayı `id`, bir metin `ad`, bir ondalıklı `fiyat`) tek bir mantıksal bütün altında toplar."],
+    ["Bileşim (Union)", "Union, farklı tipleri aynı bellek alanında saklar ama aynı anda değil."],
+    ["Gösterge (Pointer)", "Gösterge bir bellek adresi tutar."]
+  ],
+  answer: 2,
+  summary: "Bir 'öğrenci'yi tanımlamak için onun numarasını (tamsayı), adını (metin) ve not ortalamasını (ondalıklı sayı) bir araya getirmeniz gerekir. İşte bu farklı türdeki verileri tek bir 'öğrenci kimliği' altında toplayan yapıya kayıt denir."
+},
+{
+  q: "12. Örtülü tip dönüşümlerinin (coercion) program güvenilirliğini azaltabilmesinin sebebi nedir?",
+  options: [
+    ["Her zaman programın çökmesine neden olmaları", "Her zaman çökmezler, bu da sorunu daha tehlikeli yapar."],
+    ["Programcının farkında olmadığı potansiyel hataları gizleyebilmeleri", "Derleyici, uyumsuz tipler arasında otomatik bir dönüşüm yaptığında, bu durum aslında programcının bir yazım hatasını (yanlış değişken kullanması gibi) bir tip uyuşmazlığı hatası olarak yakalamasını engelleyebilir."],
+    ["Sadece daralan dönüşümlere izin vermeleri", "Genellikle genişleyen dönüşümlere izin verirler."],
+    ["Programların daha yavaş çalışmasına neden olmaları", "Asıl sorun performans değil, gizli hatalardır."],
+    ["Sadece C dilinde bulunmaları", "Birçok dilde bu mekanizma vardır."]
+  ],
+  answer: 1,
+  summary: "Örtülü tip dönüşümü, 'aşırı yardımsever' bir derleyici gibidir. Sizden gelen hatalı bir isteği düzeltmeye çalışırken, aslında altta yatan daha büyük bir mantık hatasını fark etmenizi engelleyebilir. Bu nedenle Ada gibi bazı diller, bu tür otomatik dönüşümleri en aza indirir."
+},
+{
+  q: "13. Dizilerin en önemli özelliği olarak belirtilen ve onları basit değişkenlerden ayıran temel nitelik nedir?",
+  options: [
+    ["Farklı tiplerde veri tutabilmeleri", "Bu kayıtların özelliğidir, diziler homojendir."],
+    ["Değerlerinin değiştirilememesi", "Bu sabitlerin özelliğidir."],
+    ["Elemanlarına bir indis aracılığıyla ulaşılabilmesi", "Bir dizinin gücü, tek bir isim kullanarak yüzlerce elemana, sadece konumlarını (`[0]`, `[1]`, `[2]`...) belirterek erişebilme yeteneğidir."],
+    ["Bellekte az yer kaplamaları", "Çok sayıda eleman içerdikleri için çok yer kaplayabilirler."],
+    ["Her zaman dinamik boyutta olmaları", "Statik diziler de vardır."]
+  ],
+  answer: 2,
+  summary: "100 adet değişken tanımlamak yerine tek bir isimle 100 elemanlı bir dizi tanımlamak ve `dizi[50]` gibi bir ifadeyle doğrudan 50. elemana erişebilmek, dizilerin programlamaya getirdiği en büyük kolaylıktır."
+},
+{
+  q: "14. `(int)toplam` gibi bir ifadeyle programcının bilinçli olarak yaptığı tip dönüşümüne ne ad verilir?",
+  options: [
+    ["Zorunlu Dönüşüm (Coercion)", "Bu, derleyicinin otomatik yaptığı örtülü dönüşümdür."],
+    ["Tip Denetimi", "Bu bir kontrol işlemidir."],
+    ["Dışsal Tip Dönüşümü (Explicit Type Conversion / Cast)", "Programcının, bir değişkenin tipini belirli bir işlem için geçici olarak başka bir tipe dönüştürmesini açıkça belirttiği bu işleme 'cast' denir."],
+    ["Fonksiyon Çağrısı", "Bu bir fonksiyon çağrısı değildir."],
+    ["Daralan Dönüşüm", "Bu, dönüşümün bir türüdür. `(int)` cast işlemi genellikle daralan bir dönüşüm yapar ama işlemin adı 'dışsal dönüşüm'dür."]
+  ],
+  answer: 2,
+  summary: "Bazen bir dilin otomatik tip dönüşüm kuralları istediğimiz sonucu vermez. Bu gibi durumlarda, `(int)` veya `(float)` gibi 'cast' operatörlerini kullanarak derleyiciye 'bu dönüşümü benim sorumluluğumda yap' talimatını verebiliriz."
+},
+{
+  q: "15. Java dilinin gösterge (pointer) veri tipine dilde doğrudan yer vermemesinin temel amacı nedir?",
+  options: [
+    ["Programların daha yavaş çalışmasını sağlamak.", "Bu bir amaç değildir."],
+    ["Bellek kullanımını artırmak.", "Bu bir amaç değildir."],
+    ["Sallanan gösterge gibi güvenlik ve güvenilirlik problemlerini önlemek.", "Göstergelerin doğrudan bellek manipülasyonuna izin vermesi, 'sallanan gösterge' gibi tespiti zor ve tehlikeli hatalara yol açabilir. Java, bu tür sorunları en baştan engellemek için göstergeleri dilden çıkarıp bellek yönetimini kendi üzerine almıştır."],
+    ["C++ ile uyumsuz olmak.", "Bu birincil amaç değildir."],
+    ["Programcıların işini zorlaştırmak.", "Tam tersine, bellek yönetimi sorumluluğunu azaltarak işleri kolaylaştırmayı hedefler."]
+  ],
+  answer: 2,
+  summary: "Java'nın tasarım felsefelerinden biri 'güvenilirlik'tir. Bu amaca ulaşmak için, C/C++'da güçlü ama aynı zamanda büyük bir hata kaynağı olan göstergeleri kaldırıp, bellek yönetimini otomatik hale getiren bir 'çöp toplayıcı' (garbage collector) mekanizması kurmuştur."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

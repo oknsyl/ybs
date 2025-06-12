@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 9</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 9</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Başka veri tipleri aracılığıyla tanımlanmayan ve bir dilin temel yapı taşı olan veri tiplerine ne ad verilir?",
+  options: [
+    ["Yapısal Veri Tipleri", "Yapısal tipler, tam tersine, diğer tiplerin bir araya gelmesiyle oluşur (örn: diziler)."],
+    ["Kullanıcı Tanımlı Tipler", "Bu, ilkel tiplerden yola çıkarak oluşturulan yeni tipler olabilir, ancak temel kategori değildir."],
+    ["İlkel (Primitive) Veri Tipleri", "İlkel tipler, bir dilin en temel, bölünemeyen veri türleridir. Sayılar, karakterler ve mantıksal değerler bu gruba girer."],
+    ["Sıralı Tipler (Ordinal Types)", "Sıralı tipler, ilkel tiplerin bir alt kümesidir."],
+    ["İlişkili Tipler (Associative Types)", "Bu, ilişkili dizilerle ilgili bir kavramdır."]
+  ],
+  answer: 2,
+  summary: "İlkel tipler, bir programlama dilinin 'atomları' gibidir; daha küçük parçalara ayrılamazlar ve diğer tüm karmaşık veri yapıları bu temel tipler üzerine inşa edilir."
+},
+{
+  q: "2. Bir programlama dilinde, `type gunler = (Pazartesi, Sali, Carsamba, Persembe, Cuma, Cumartesi, Pazar)` şeklinde bir tanım yapılması, hangi tür veri tipi oluşturmaya bir örnektir?",
+  options: [
+    ["Altalan (Subrange) Tipi", "Altalan tipi, var olan bir tipin bir alt aralığını alır (örn: 1..5)."],
+    ["Sayımlama (Enumeration) Tipi", "Sayımlama tipi, bir tipin alabileceği tüm olası değerlerin sembolik isimlerle listelenerek kullanıcı tarafından tanımlanmasını sağlar. Bu, programın okunabilirliğini ve güvenilirliğini artırır."],
+    ["Kayıt (Record) Tipi", "Kayıt tipi, farklı türlerden alanları bir araya getirir."],
+    ["İlişkili Dizi (Associative Array)", "İlişkili dizi, anahtar-değer çiftleriyle indekslenir."],
+    ["İlkel Tip (Primitive Type)", "Bu, kullanıcı tarafından tanımlanan yeni bir tiptir, ilkel değildir."]
+  ],
+  answer: 1,
+  summary: "Sayımlama tipleri, programdaki 'sihirli sayıları' (magic numbers) ortadan kaldırır. `if (gun == 1)` gibi bir kod yerine, `if (gun == Pazartesi)` gibi çok daha anlaşılır ve hataya daha az açık bir kod yazmayı sağlar."
+},
+{
+  q: "3. Ondalıklı sayıları temsil eden `float` ve `double` veri tipleri arasındaki temel fark nedir?",
+  options: [
+    ["float tamsayıları, double ondalıklı sayıları saklar.", "Bu yanlıştır, her ikisi de ondalıklı sayıları saklar."],
+    ["double, float'a göre daha yüksek hassasiyet sunar ve genellikle daha fazla bellek kullanır.", "Temel fark budur. `double` (çift hassasiyet), ondalıklı kısımdaki basamak sayısını daha doğru bir şekilde saklamak için `float`'a göre genellikle daha fazla bellek kullanır."],
+    ["float sadece pozitif, double sadece negatif sayıları saklar.", "Bu yanlıştır, her ikisi de işaretli sayılar saklayabilir."],
+    ["float C dilinde, double ise Java'da kullanılır.", "Bu yanlıştır, çoğu modern dil her iki tipi de destekler."],
+    ["Aralarında işlevsel olarak hiçbir fark yoktur.", "Aralarında hassasiyet ve bellek kullanımı açısından önemli bir fark vardır."]
+  ],
+  answer: 1,
+  summary: "`double`, ismindeki 'çift' kelimesinden de anlaşılabileceği gibi, `float`'a kıyasla daha fazla ondalık basamak hassasiyeti gerektiren bilimsel veya finansal hesaplamalar için kullanılır. Bu daha yüksek hassasiyetin bedeli, daha fazla bellek kullanımıdır."
+},
+{
+  q: "4. Bir sıralı tipin (ordinal type) kesintisiz bir alt grubunu temsil eden ve ilk olarak Pascal dilinde tanıtılan veri tipine ne ad verilir?",
+  options: [
+    ["Sayımlama (Enumeration) Tipi", "Sayımlama tipi, değerleri listeleyerek yeni bir tip oluşturur."],
+    ["Karakter (Char) Tipi", "Karakter tipi sıralı bir tiptir, ancak bir alt grup değildir."],
+    ["Altalan (Subrange) Tipi", "Altalan tipi, `type Notlar = 0..100` gibi, var olan bir sıralı tipin belirli bir aralığını alarak yeni ve daha kısıtlı bir tip tanımlar."],
+    ["Dizi (Array) Tipi", "Dizi, elemanlardan oluşan bir koleksiyondur."],
+    ["İlkel Tip (Primitive Type)", "Bu genel bir kategoridir."]
+  ],
+  answer: 2,
+  summary: "Altalan tipleri, programın güvenilirliğini artıran önemli bir mekanizmadır. Bir değişkeni '0..100' aralığında tanımladığınızda, derleyici o değişkene 101 gibi geçersiz bir değer atanmasını engelleyerek potansiyel bir hatayı daha oluşmadan önler."
+},
+{
+  q: "5. Karakter dizgilerinin uzunluklarının yönetimi konusunda, C ve C++ gibi dillerin, tanımlanan sabit bir uzunluğa kadar değişen uzunlukta olmasına izin veren yaklaşımına ne ad verilir?",
+  options: [
+    ["Durağan Uzunluk (Static Length)", "Bu yaklaşımda dizginin uzunluğu derleme zamanında sabitlenir ve değiştirilemez."],
+    ["Değişen Uzunluk (üst sınır var)", "PL/I, C ve C++ gibi diller bu yaklaşımı benimser. Bir maksimum boyut belirlenir ancak dizgi bu boyuttan daha kısa olabilir."],
+    ["Değişen Uzunluk (üst sınır yok)", "Bu yaklaşım, dinamik bellek yönetimi olan dillerde görülür ve en esnek yöntemdir."],
+    ["Sıfırla Sonlandırılmış Uzunluk", "Bu, C'nin değişen uzunluğu (üst sınırla) gerçekleştirme yöntemidir, yaklaşımın kendisi değildir."],
+    ["Dinamik Bellek Yönetimi", "Bu, bir tekniktir, üç ana yaklaşımdan birinin adı değildir."]
+  ],
+  answer: 1,
+  summary: "Karakter dizgilerinin uzunlukları üç farklı stratejiyle yönetilebilir: Tamamen sabit (Durağan), bir tavana kadar esnek (Değişen Uzunluk - üst sınır var) veya tamamen esnek (Değişen Uzunluk - üst sınır yok). C/C++ ikinci yaklaşımı kullanır."
+},
+{
+  q: "6. Aşağıdaki ilkel veri tiplerinden hangisi 'sıralı (ordinal)' bir tip değildir?",
+  options: [
+    ["Tamsayı (Integer)", "Tamsayılar sıralıdır (her tamsayının bir ardılı ve önceli vardır)."],
+    ["Karakter (Char)", "Karakterler ASCII/Unicode tablosundaki sıralarına göre sıralıdır."],
+    ["Mantıksal (Boolean)", "Mantıksal tip genellikle (FALSE, TRUE) olarak sıralı kabul edilir."],
+    ["Ondalıklı Sayı (Float/Double)", "Ondalıklı sayılar sıralı bir tip değildir, çünkü iki ondalıklı sayı arasında her zaman sonsuz sayıda başka ondalıklı sayı bulunur. Yani bir sayının 'bir sonraki' ondalıklı sayı diye bir ardılı yoktur."],
+    ["Sayımlama Tipi (Enumeration Type)", "Sayımlama tipleri, tanımlandıkları sıraya göre sıralıdır."]
+  ],
+  answer: 3,
+  summary: "Bir tipin 'sıralı' olması, o tipin değerleri arasında net bir 'önceki' ve 'sonraki' ilişkisi kurulabilmesi anlamına gelir. Bu özellik, `FOR` döngülerinde sayaç olarak veya dizilerde indis olarak kullanılabilmeleri için önemlidir. Ondalıklı sayılarda bu net ardıllık ilişkisi yoktur."
+},
+{
+  q: "7. Aşağıdakilerden hangisi ilkel sayısal veri tiplerinden biri değildir?",
+  options: [
+    ["Tamsayı (Integer)", "Bu, ilkel sayısal veri tiplerinden biridir."],
+    ["Kayan Noktalı (Floating Point)", "Bu, ilkel sayısal veri tiplerinden biridir."],
+    ["Onlu (Decimal)", "Bu, ilkel sayısal veri tiplerinden biridir."],
+    ["Mantıksal (Boolean)", "Mantıksal tip, 'true' veya 'false' değerlerini alır ve sayısal bir tip olarak sınıflandırılmaz."],
+    ["Hiçbiri", "Listede sayısal olmayan bir tip bulunmaktadır."]
+  ],
+  answer: 3,
+  summary: "İlkel veri tipleri kendi içinde Sayısal, Mantıksal, Karakter gibi gruplara ayrılır. Tamsayı, Kayan Noktalı ve Onlu tipler 'Sayısal' grubuna aittir. Mantıksal tip ise ayrı bir kategoridir."
+},
+{
+  q: "8. Birçok programlama dilinde, Mantıksal (Boolean) bir değerin saklanması için 1 bit yeterli olmasına rağmen neden genellikle 1 baytlık (8 bit) bir bellek alanı kullanılır?",
+  options: [
+    ["Çünkü 1 bitlik değere 8 farklı durum sığdırılabilir.", "1 bit sadece 2 durum sığdırabilir."],
+    ["Bellekteki tek bir bite doğrudan erişmenin verimsiz ve zor olması nedeniyle", "Modern bilgisayar mimarilerinde bellek, genellikle baytlar halinde adreslenir. Sadece tek bir biti okumak veya yazmak için tüm baytı alıp üzerinde maskeleme işlemleri yapmak gerekir. Bu ek işlemlerden kaçınmak için, kullanım kolaylığı ve verimlilik adına genellikle en küçük adreslenebilir birim olan 1 bayt kullanılır."],
+    ["Diğer 7 bitin hata kontrolü için kullanılması nedeniyle", "Bu, ağ protokollerinde görülen bir tekniktir, genel boolean saklama için geçerli değildir."],
+    ["Gelecekte `true` ve `false` dışında yeni mantıksal değerler eklenebileceği için", "Mantıksal cebir iki temel değere dayanır."],
+    ["Bu tamamen rastgele bir tasarım kararıdır.", "Hayır, donanım mimarisinden kaynaklanan pratik bir sebebi vardır."]
+  ],
+  answer: 1,
+  summary: "Bu durum, 'teorik minimum' ile 'pratik verimlilik' arasındaki bir ödünleşmedir. Teoride 1 bit yetsin de, pratikte bilgisayarın en rahat çalıştığı birim olan 1 baytı kullanmak daha hızlı ve kolaydır. Bu, 7 bitlik bir alanın boşa harcanması anlamına gelse de, hız kazancı bu israfı telafi eder."
+},
+{
+  q: "9. Karakter dizgi (string) veri tipi için aşağıdakilerden hangisi söylenemez?",
+  options: [
+    ["Bazı dillerde ilkel bir veri tipi olarak yer alır.", "FORTRAN77 ve BASIC gibi dillerde karakter dizgiler ilkel bir tiptir."],
+    ["Bazı dillerde tek karakterlerden oluşan bir dizi olarak ele alınır.", "Pascal, C ve C++ gibi dillerde bu yaklaşım benimsenmiştir."],
+    ["Uzunlukları statik veya dinamik olabilir.", "Farklı diller, dizgi uzunlukları için farklı stratejiler (sabit, sınırla-değişken, sınırsız-değişken) uygular."],
+    ["Tüm modern dillerde sadece ilkel bir veri tipi olarak bulunur.", "Bu ifade yanlıştır. Örneğin C++ ve Java gibi modern dillerde hem ilkel dizi yaklaşımı hem de daha gelişmiş 'String' nesneleri bulunur."],
+    ["Nesneleri, karakterler dizisidir.", "Bu, karakter dizgi veri tipinin temel tanımıdır."]
+  ],
+  answer: 3,
+  summary: "Karakter dizgilerinin nasıl ele alındığı, bir dilin tasarım felsefesi hakkında ipuçları verir. Eski diller onu daha çok ilkel bir yapı olarak görürken, C gibi diller belleğe daha yakın bir bakış açısıyla onu bir karakter dizisi olarak ele almış, Java gibi daha modern diller ise onu güçlü metotlara sahip bir nesne haline getirmiştir."
+},
+{
+  q: "10. Mantıksal (Boolean) veri tipinin yer almadığı ve bu işlevi tamsayılar (0 ve 1) ile gören programlama dili hangisidir?",
+  options: [
+    ["Pascal", "Pascal, ALGOL 60'ı takip ederek `Boolean` tipini destekler."],
+    ["Java", "Java, `boolean` adında özel bir ilkel tipe sahiptir."],
+    ["C", "C dilinde ayrı bir mantıksal tip yoktur. İlişkisel ifadeler doğru ise 1, yanlış ise 0 değeri döndürür ve `if` deyimi 0 değerini yanlış, sıfır dışındaki tüm değerleri ise doğru kabul eder."],
+    ["Ada", "Ada, `Boolean` adında bir tipe sahiptir."],
+    ["ALGOL 60", "Mantıksal veri tipi ilk olarak ALGOL 60 tarafından tanıtılmıştır."]
+  ],
+  answer: 2,
+  summary: "C dilinin bu kendine özgü yaklaşımı, onu hem esnek hem de bazen kafa karıştırıcı yapar. `if(sayi)` gibi bir ifade, `if(sayi != 0)` anlamına gelir. Bu, diğer dillerden gelen programcılar için alışılması gereken bir durumdur."
+},
+{
+  q: "11. C dilinde `char sehir[] = \"Ankara\";` şeklinde tanımlanan bir karakter dizisinin bellekte kaç elemanlık (kaç bayt) yer kapladığı söylenebilir?",
+  options: [
+    ["5", "'Ankara' kelimesi 6 harflidir, 5 değil."],
+    ["6", "C dilinde karakter dizgileri, dizinin sonunu belirten özel bir 'null' karakteri (ASCII kodu 0 olan karakter) ile sona erdirilir. Bu nedenle 6 harflik 'Ankara' kelimesi, sondaki null karakteriyle birlikte bellekte 7 elemanlık yer kaplar."],
+    ["7", "Bu doğru cevaptır. 'Ankara' 6 karakterdir, artı 1 de null karakteri için ayrılır."],
+    ["8", "Bu hatalı bir hesaplamadır."],
+    ["Derleyiciye bağlı olarak değişir.", "C standardına göre bu durum nettir."]
+  ],
+  answer: 2,
+  summary: "C'de bir metnin nerede bittiğini anlamak için özel bir 'bitiş işareti' kullanılır. Bu işaret, görünmez olan null karakteridir. Bu nedenle C'de bir metni saklamak için her zaman metnin uzunluğundan bir bayt daha fazla yere ihtiyaç duyulur."
+},
+{
+  q: "12. Aşağıdakilerden hangisi bir 'Sıralı Tip (Ordinal Type)' olarak kabul edilir?",
+  options: [
+    ["`float`", "Ondalıklı sayılar sıralı değildir."],
+    ["`double`", "Ondalıklı sayılar sıralı değildir."],
+    ["`string`", "Metinlerin sıralaması (alfabetik) mümkün olsa da, genellikle temel bir sıralı tip olarak kabul edilmezler."],
+    ["`char`", "Karakterler (char), temel aldıkları karakter tablosundaki (örn: ASCII) sayısal kodlarına göre net bir sıralamaya sahiptir. 'A' dan sonra 'B' gelir. Bu yüzden sıralı bir tiptir."],
+    ["`array`", "Dizi, bir veri yapısıdır, bir veri tipi değildir."]
+  ],
+  answer: 3,
+  summary: "Bir tipin 'sıralı' olması, o tipin her bir değeri için bir 'önceki' ve 'sonraki' değerin net bir şekilde tanımlanabilmesi demektir. Bu özellik, `FOR` döngülerinde `FOR c='A' TO 'Z'` gibi yapıların kurulabilmesine olanak tanır."
+},
+{
+  q: "13. Karakter dizgi (string) veri tipinin, ilkel bir veri tipi olarak kabul edildiği diller arasında aşağıdakilerden hangisi yer alır?",
+  options: [
+    ["C++", "C++'da karakter dizgileri, karakterlerden oluşan diziler ve özel 'string' sınıfları olarak ele alınır."],
+    ["Pascal", "Pascal'da karakter dizgileri, tek karakterlerden oluşan diziler şeklinde saklanır."],
+    ["Ada", "Ada'da karakter dizgileri, tek karakterlerden oluşan diziler şeklinde saklanır."],
+    ["FORTRAN 90", "FORTRAN77, FORTRAN 90 ve BASIC gibi dillerde karakter dizgileri, kendine has işlemcileri olan ilkel bir veri tipi olarak kabul edilir."],
+    ["C", "C'de karakter dizgileri, null karakteriyle sonlanan bir karakter dizisi olarak ele alınır."]
+  ],
+  answer: 3,
+  summary: "Programlama dilleri, metinleri (string) ele almak için farklı yaklaşımlar benimser. BASIC ve FORTRAN gibi diller, metni temel bir yapı taşı (ilkel tip) olarak görürken; C ve Pascal gibi diller metni, karakterlerin bir araya geldiği bir koleksiyon (dizi) olarak görür."
+},
+{
+  q: "14. Sayımlama (Enumeration) tiplerinin programlara sağladığı en önemli fayda nedir?",
+  options: [
+    ["Programın çalışma hızını artırmak", "Doğrudan bir hız artışı sağlamaz."],
+    ["Bellek kullanımını azaltmak", "Genellikle bellek kullanımına önemli bir etkisi yoktur."],
+    ["Okunabilirliği ve güvenilirliği artırmak", "Sayısal kodlar (0, 1, 2) yerine anlamlı isimler (Kirmizi, Yesil, Mavi) kullanılmasını sağlayarak kodun okunmasını kolaylaştırır ve geçersiz bir değer atanmasını engelleyerek güvenilirliği artırır."],
+    ["Daha karmaşık matematiksel hesaplamalar yapmayı sağlamak", "Bu bir faydası değildir."],
+    ["Sadece tamsayılarla çalışmayı zorunlu kılmak", "Tamsayıların yerine geçen isimler sunar."]
+  ],
+  answer: 2,
+  summary: "Sayımlama tipleri, kodu kendi kendine 'belgeleyen' bir yapıya kavuşturur. `if (trafik_isigi == 0)` yerine `if (trafik_isigi == Kirmizi)` yazmak, kodun amacını anında açıklar ve olası mantık hatalarını azaltır."
+},
+{
+  q: "15. C dilindeki `enum` yapısının, Pascal'daki `type` deyiminden temel farkı nedir?",
+  options: [
+    ["C'deki `enum` yeni bir tip yaratırken, Pascal'daki `type` yaratmaz.", "Tam tersi doğrudur."],
+    ["C'deki `enum` yapısı gerçek anlamda yeni bir tip yaratmaz, sadece bir dizi isimlendirilmiş tamsayı sabiti oluşturur.", "Pascal'da bir sayımlama tipi tanımladığınızda, o tipe sadece tanımladığınız değerleri atayabilirsiniz. C'de ise `enum` ile oluşturulan isimler aslında birer tamsayıdır (0, 1, 2...) ve tip denetimi daha zayıftır."],
+    ["C'deki `enum` sadece karakterler için, Pascal'daki `type` ise sadece sayılar için kullanılır.", "Bu yanlıştır."],
+    ["İkisi arasında işlevsel olarak hiçbir fark yoktur.", "Aralarında tip güvenliği açısından önemli bir felsefe farkı vardır."],
+    ["C'deki `enum` daha az okunabilirdir.", "Tam tersine, `define` kullanımına göre daha okunabilir bir alternatif olarak sunulmuştur."]
+  ],
+  answer: 1,
+  summary: "C'nin `enum`'u, bir dizi `#define` komutunu daha düzenli bir şekilde bir araya getirme kolaylığı sağlar. Pascal'ın `type`'ı ise derleyicinin katı kurallar uyguladığı, tamamen yeni ve güvenli bir veri tipi yaratır. Pascal'ın yaklaşımı daha güvenilir, C'nin yaklaşımı ise daha esnektir."
+},
+{
+  q: "16. İlkel sayısal veri tipleri hangi üç temel türden oluşur?",
+  options: [
+    ["short, int, long", "Bunlar tamsayı tipinin alt türleridir."],
+    ["tamsayı, kayan noktalı ve onlu", "İlkel sayısal tipler genel olarak bu üç kategoriye ayrılır: tam sayılar (integer), kesirli sayılar (floating point) ve finansal hesaplamalar için onlu sayılar (decimal)."],
+    ["char, byte, int", "Char ve byte her zaman sayısal tip olarak kabul edilmez."],
+    ["boolean, integer, float", "Boolean sayısal bir tip değildir."],
+    ["ASCII, Unicode, UTF-8", "Bunlar karakter kodlama standartlarıdır."]
+  ],
+  answer: 1,
+  summary: "Programlama dilleri, farklı sayısal ihtiyaçlar için farklı çözümler sunar. Genel tam sayılar, bilimsel/mühendislik hassasiyeti gerektiren ondalıklı sayılar ve finansal doğruluk gerektiren onlu sayılar bu çözümlerin temelini oluşturur."
+},
+{
+  q: "17. `float` ve `double` gibi veri tipleri, ne tür sayıları temsil etmek için kullanılır?",
+  options: [
+    ["Sadece pozitif tamsayıları", "Tamsayılar için `integer` gibi tipler kullanılır."],
+    ["Gerçel (reel) sayıları, yani ondalıklı kısmı olan sayıları", "Bu tipler, 3.14, -0.005, 2.5e6 gibi tam olmayan, kesirli veya bilimsel gösterimle ifade edilen sayıları temsil etmek için kullanılır."],
+    ["Sadece negatif tamsayıları", "Tamsayılar için `integer` gibi tipler kullanılır."],
+    ["Karmaşık sayıları", "Karmaşık sayıları temsil etmek için genellikle özel kütüphaneler veya yapılar (records) gerekir."],
+    ["Doğal sayıları", "Doğal sayılar, pozitif tamsayılardır."]
+  ],
+  answer: 1,
+  summary: "Programlamada bir ölçümün sonucunu, bir ortalamayı veya herhangi bir kesirli değeri saklamak istediğinizde, `float` veya `double` gibi ondalıklı sayı tiplerini kullanırsınız."
+},
+{
+  q: "18. C dilinde `char` ve `int` veri tiplerinin dönüşümlü olarak kullanılabilmesi ne anlama gelir?",
+  options: [
+    ["`char` tipi `int` tipinden daha fazla yer kaplar.", "Tam tersine, `int` daha fazla yer kaplar."],
+    ["Bu iki tip arasında atama yapılamaz.", "Yapılabilir, örnekte de gösterilmiştir."],
+    ["Bir karaktere sayısal bir değer eklenerek başka bir karakter elde edilebilir.", "C'de her karakterin bir ASCII sayısal karşılığı olduğu için, `'A' + 1` işlemi, ASCII tablosunda 'A'dan sonra gelen karakter olan 'B'yi verir. Bu, `char` ve `int` arasındaki esnek geçişkenliği gösterir."],
+    ["Tüm tamsayılar aynı zamanda birer karakterdir.", "Bu doğru bir ifade değildir."],
+    ["Bu özellik sadece Pascal dilinde geçerlidir.", "Bu özellik C dilinde belirgindir."]
+  ],
+  answer: 2,
+  summary: "C'nin donanıma yakın felsefesi, karakterleri aslında küçük tamsayılar olarak görmesine neden olur. Bu durum, karakterler üzerinde aritmetik işlemler yapma gibi esnek ama aynı zamanda dikkatli kullanılması gereken imkanlar sunar."
+},
+{
+  q: "19. Karakter dizilerinin uzunluğunun derleme zamanında belirlendiği ve sonradan değiştirilemediği yaklaşım hangisidir?",
+  options: [
+    ["Değişen Uzunluk (üst sınır var)", "Bu yaklaşımda uzunluk çalışma zamanında değişebilir."],
+    ["Değişen Uzunluk (üst sınır yok)", "Bu yaklaşımda uzunluk tamamen dinamiktir."],
+    ["Durağan Uzunluk (Static Length)", "FORTRAN 77, COBOL ve Pascal gibi dillerde kullanılan bu yaklaşımda, bir karakter dizisi tanımlanırken uzunluğu belirtilir ve bu uzunluk program boyunca sabit kalır."],
+    ["Sıfırla Sonlandırma (Null Termination)", "Bu, C'nin kullandığı bir tekniktir ve değişen uzunluğa (üst sınırla) izin verir."],
+    ["Dinamik Bellek Yönetimi", "Bu, genellikle değişen uzunluklu dizgiler için gereken bir tekniktir."]
+  ],
+  answer: 2,
+  summary: "Durağan uzunluklu karakter dizgileri, bellek yönetimi açısından verimli olsalar da esnek değildirler. Örneğin, 20 karakterlik bir alana 5 karakterlik bir metin atadığınızda, geri kalan 15 karakterlik alan boşa harcanmış olur."
+},
+{
+  q: "20. C'deki `enum renkler {kirmizi, yesil, mavi}` tanımında, `yesil` isminin karşılık geldiği tamsayı değeri nedir?",
+  options: [
+    ["0", "`kirmizi`'nın karşılık geldiği değerdir."],
+    ["1", "Bir `enum` listesinde, eğer özel bir değer atanmamışsa, ilk eleman 0 değerini alır ve sonraki her eleman bir artarak devam eder. Bu nedenle `yesil` 1 değerine karşılık gelir."],
+    ["2", "`mavi`'nin karşılık geldiği değerdir."],
+    ["'yesil'", "Bu bir karakter dizisidir, tamsayı değeri değildir."],
+    ["Tanımsızdır, bir değeri yoktur.", "Hayır, varsayılan bir tamsayı değeri vardır."]
+  ],
+  answer: 1,
+  summary: "C dilindeki `enum` yapısı, aslında derleyiciye 'bu isimleri şu tamsayılarla değiştir' diyen bir komut setidir. Varsayılan olarak 0'dan başlar ve birer birer artar. Bu, kodda sayılar yerine anlamlı isimler kullanmayı sağlayan pratik bir yöntemdir."
+},
+{
+  q: "21. Bir dizinin indis tipi olarak aşağıdakilerden hangisi genellikle kullanılamaz?",
+  options: [
+    ["Tamsayı (Integer)", "Bu en yaygın indis tipidir."],
+    ["Karakter (Char)", "Karakterler sıralı bir tip olduğu için bazı dillerde indis olarak kullanılabilir."],
+    ["Mantıksal (Boolean)", "Boolean (TRUE/FALSE) sıralı bir tip olduğu için bazı dillerde (örn: 0 ve 1 olarak) indis olarak kullanılabilir."],
+    ["Ondalıklı Sayı (Float)", "Ondalıklı sayılar sıralı bir tip olmadığı için (örn: 1.5 ile 1.6 arasında sonsuz sayı vardır), bir dizinin '1.5'inci elemanı' gibi bir kavram anlamsızdır. Bu nedenle indis olarak kullanılamazlar."],
+    ["Sayımlama Tipi (Enumeration)", "Sayımlama tipleri de sıralı olduğu için indis olarak kullanılabilir."]
+  ],
+  answer: 3,
+  summary: "Bir dizinin indisleri, elemanların net bir sırasını belirtmelidir. Bu nedenle, sadece 'bir sonraki' değeri net olarak bilinen sıralı (ordinal) tipler indis olarak kullanılabilir. Tamsayılar bu iş için en doğal seçimdir."
+},
+{
+  q: "22. Bir dilin, programcıya `type Notlar = 0..100` gibi bir altalan tipi tanımlama imkanı vermesinin en önemli faydası nedir?",
+  options: [
+    ["Programın daha esnek olmasını sağlamak", "Tam tersine, değişkenin alabileceği değerleri kısıtlayarak esnekliği azaltır ama güvenilirliği artırır."],
+    ["Programın güvenilirliğini artırmak", "Bir `Notlar` değişkenine yanlışlıkla `101` değerinin atanması, derleyici tarafından bir hata olarak algılanabilir. Bu tür otomatik kontroller, programdaki mantık hatalarını azaltır."],
+    ["Programın daha hızlı derlenmesini sağlamak", "Derleme süresine önemli bir etkisi yoktur, hatta ek kontroller nedeniyle bir miktar artırabilir."],
+    ["Daha az bellek kullanılmasını sağlamak", "Genellikle temel tiple aynı miktarda bellek kullanır."],
+    ["Tüm dillerde bu özelliğin standart olması", "Bu özellik her dilde bulunmaz, özellikle Pascal ile popüler olmuştur."]
+  ],
+  answer: 1,
+  summary: "Altalan tipleri, bir değişkene 'sınırlarını bilmesini' öğretir. Programcı, bir değişkenin sadece belirli bir aralıkta değer alması gerektiğini biliyorsa, bu kuralı derleyiciye bildirerek, bu kuralın ihlal edildiği durumların otomatik olarak tespit edilmesini sağlayabilir."
+},
+{
+  q: "23. C dilinde karakter dizilerinin sonunu belirtmek için kullanılan özel karaktere ne ad verilir?",
+  options: [
+    ["Boşluk Karakteri (' ')", "Boşluk, metnin içinde yer alabilen normal bir karakterdir."],
+    ["Sıfırla gösterilen özel karakter (null)", "C, bir karakter dizisinin bittiği yeri anlamak için dizinin sonuna ASCII kodu 0 olan ve `\\0` ile gösterilen bir 'null' karakteri ekler."],
+    ["Satır Sonu Karakteri (\\n)", "Bu, yeni bir satıra geçmeyi sağlayan bir karakterdir."],
+    ["Tab Karakteri (\\t)", "Bu, metin içinde boşluk bırakmayı sağlayan bir karakterdir."],
+    ["Yıldız Karakteri (*)", "Bu bir operatör veya normal bir karakter olabilir."]
+  ],
+  answer: 1,
+  summary: "C'nin null ile sonlandırma tekniği, 'Değişen Uzunluk (üst sınır var)' yaklaşımını verimli bir şekilde uygular. Bellekte 100 karakterlik yer ayrılmış olsa bile, metin 5 karakter uzunluğundaysa 6. karaktere null konularak metnin orada bittiği anlaşılır."
+},
+{
+  q: "24. Mantıksal (boolean) veri tipini ilk olarak tanıtan programlama dili hangisidir?",
+  options: [
+    ["C", "C dilinde özel bir boolean tipi yoktur."],
+    ["FORTRAN", "İlk FORTRAN sürümlerinde boolean tipi bulunmuyordu."],
+    ["Pascal", "Pascal, boolean tipini destekler ancak ilk tanıtan dil değildir."],
+    ["Java", "Java, boolean tipini destekler ancak ilk tanıtan dil değildir."],
+    ["ALGOL 60", "Modern programlama dillerindeki birçok yapısal özelliğin temelini atan ALGOL 60, `true` ve `false` değerlerini alabilen mantıksal veri tipini de ilk olarak tanıtan dildir."]
+  ],
+  answer: 4,
+  summary: "Mantıksal veri tipi, `if` gibi koşullu ifadelerin temelini oluşturur. ALGOL 60'ın bu tipi dile resmi olarak dahil etmesi, programların daha okunabilir ve yapısal olarak daha doğru kurulabilmesi için atılmış önemli bir adımdı."
+},
+{
+  q: "25. `short`, `int` ve `long` gibi tanımlamalar, hangi ilkel veri tipinin farklı boyut ve değer aralıklarına sahip alt türleridir?",
+  options: [
+    ["Ondalıklı Sayı", "Bunlar ondalıklı sayıların alt türleri değildir (`float`, `double` gibi)."],
+    ["Tamsayı", "Bu üçü de, farklı büyüklükteki tamsayıları daha verimli bir şekilde saklamak için oluşturulmuş tamsayı tipinin alt kategorileridir. Küçük bir sayı için `long` kullanmak bellek israfı olabilir."],
+    ["Karakter", "Bunlar karakterlerin alt türleri değildir."],
+    ["Mantıksal", "Mantıksal tipin genellikle alt türü yoktur."],
+    ["Katar", "Bunlar metinsel tipler değildir."]
+  ],
+  answer: 1,
+  summary: "Programcılar, bellek kullanımını optimize etmek için saklayacakları tamsayının büyüklüğüne en uygun tipi seçerler. Bir öğrencinin yaşını saklamak için `short` yeterliyken, bir ülkenin nüfusunu saklamak için `long` gerekebilir. Bu, 'doğru iş için doğru aleti kullanmak' gibidir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 12</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 12</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Yazılım geliştirme sürecinin ilk ve en önemli aşaması olarak kabul edilen ve sonraki aşamalarda geri dönüşü maliyetli olacak hataları önlemeyi amaçlayan aşama hangisidir?",
+  options: [
+    ["Tasarım", "Tasarım aşaması, analiz aşamasının çıktılarına dayanır ve ondan sonra gelir."],
+    ["Kodlama", "Kodlama, analiz ve tasarım tamamlandıktan sonra yapılan bir aşamadır."],
+    ["Test", "Test, genellikle kodlama bittikten sonra yapılan bir aşamadır."],
+    ["Analiz", "Analiz, problemin doğru anlaşılıp çözüm yolunun belirlendiği ilk ve en kritik aşamadır. Bu aşamadaki bir hata, projenin tamamını etkiler."],
+    ["Bakım", "Bakım, proje teslim edildikten sonraki süreci kapsar."]
+  ],
+  answer: 3,
+  summary: "Bir binanın temelini yanlış atmak ne kadar maliyetliyse, bir yazılımın analizini yanlış yapmak da o kadar maliyetlidir. Analiz aşaması, projenin üzerine inşa edileceği sağlam zemini oluşturur."
+},
+{
+  q: "2. Bir yazılım projesindeki test sürecinde, projenin doğrudan programcı ve veritabanı uzmanları gibi teknik ekip tarafından test edildiği ilk aşamaya ne ad verilir?",
+  options: [
+    ["Beta Testi", "Beta testi, belirli bir son kullanıcı grubu tarafından yapılır."],
+    ["A/B Testi", "A/B testi, kullanıcıların haberi olmadan programın farklı sürümlerinin test edilmesidir."],
+    ["Kabul Testi", "Kabul testi, müşterinin projeyi teslim alıp almayacağına karar verdiği daha genel bir test sürecidir."],
+    ["Alfa Testi", "Alfa testi, yazılımın dışarıya açılmadan önce, kendi iç ekibi tarafından yapılan ilk kapsamlı testtir."],
+    ["Yükleme Testi", "Yükleme testi, sistemin kullanılacağı yerde yapılan bir testtir."]
+  ],
+  answer: 3,
+  summary: "Alfa testi, yazılımın 'aile içinde' yapılan ilk ciddi sınavıdır. Geliştirici ekip, son kullanıcılara sunmadan önce kendi ürünlerini her yönüyle test ederek bariz hataları ve eksiklikleri giderir."
+},
+{
+  q: "3. Yazılım geliştirme sürecindeki hata türlerinden hangisi, dilin dilbilgisi kurallarına uymamaktan kaynaklanır ve tespiti en kolay olanıdır?",
+  options: [
+    ["Mantıksal Hatalar", "Bu hataların tespiti en zor olanıdır çünkü kod sözdizimsel olarak doğrudur."],
+    ["Çalışma-anı (Runtime) Hataları", "Bu hatalar program çalışırken ortaya çıkar ve genellikle veri uyuşmazlıklarından kaynaklanır."],
+    ["Sözdizim (Syntax) Hataları", "Bir komutun sonuna noktalı virgül koymayı unutmak gibi yazım yanlışları sözdizim hatalarıdır. Bu hatalar, derleyici veya yorumlayıcı tarafından program hiç çalışmadan yakalandığı için tespiti ve düzeltmesi en kolay olanlardır."],
+    ["Kullanıcı Hataları", "Bu, kullanıcının programı yanlış kullanmasıdır."],
+    ["Tasarım Hataları", "Bu, programın mantığındaki veya akışındaki genel bir hatadır."]
+  ],
+  answer: 2,
+  summary: "Sözdizim hataları, bir metindeki 'imla hataları' gibidir. Kelime işlemci programının bu hataları kırmızıyla çizerek anında göstermesi gibi, derleyiciler de sözdizim hatalarını programcıya konumuyla birlikte bildirir."
+},
+{
+  q: "4. Tasarım aşamasında, sistemin fonksiyonlarını müşterinin anlayacağı dilde, teknik jargon kullanmadan anlatan bölüme ne ad verilir?",
+  options: [
+    ["Teknik Tasarım", "Teknik tasarım, tam tersine, geliştiricilere yönelik donanım ve yazılım detaylarını içerir."],
+    ["Program Tasarımı", "Bu, tasarımın kodlanabilir modüllere çevrilmesidir."],
+    ["Veritabanı Tasarımı", "Bu, veritabanı yapısını belirler."],
+    ["Kavramsal Sistem Tasarım", "'Kavramsal sistem tasarım', projenin ne yapacağını basit ve anlaşılır bir dille müşteriye sunar ve onayını alır."],
+    ["Storyboard", "Storyboard, ekranların görsel taslağıdır, kavramsal tasarımın bir parçasıdır."]
+  ],
+  answer: 3,
+  summary: "Kavramsal tasarım, bir mimarın müşterisine maket üzerinden 'Burası salon olacak, buradan güneş alacak, mutfak buraya bakacak' diye anlatması gibidir. Teknik detaylar yerine, projenin ana fikri ve işlevleri üzerinde durulur."
+},
+{
+  q: "5. Beta testini alfa testinden ayıran en önemli özellik nedir?",
+  options: [
+    ["Beta testini programcılar yapar.", "Programcılar alfa testini yapar."],
+    ["Beta testi, proje yayınlanmadan önce yapılır.", "Her ikisi de genellikle yayınlanmadan önce yapılır, ancak beta daha yakındır."],
+    ["Beta testi, yapılandırılmış bir kontrol listesi kullanır.", "Bu alfa testinin bir özelliğidir. Beta testinde genellikle doğaçlama bir kullanım esastır."],
+    ["Beta testini, önceden belirlenmiş bir son kullanıcı grubu yapar.", "Alfa testi iç ekip tarafından yapılırken, beta testi ürünü ilk deneyecek olan 'gönüllü' veya 'seçilmiş' gerçek kullanıcılar tarafından yapılır."],
+    ["Beta testi daha kısa sürer.", "Kullanıcı geri bildirimlerine bağlı olduğu için süresi değişebilir."]
+  ],
+  answer: 3,
+  summary: "Alfa testi 'laboratuvar ortamında' mühendisler tarafından yapılır. Beta testi ise ürünün 'kontrollü bir şekilde sokağa çıkarılıp' gerçek kullanıcıların elinde nasıl çalıştığının gözlemlenmesidir."
+},
+{
+  q: "6. Bir yazılım projesinin döngüsel bir yapıya sahip olması ne anlama gelir?",
+  options: [
+    ["Projenin hiç bitmediği", "Proje biter ancak geliştirilmeye devam edebilir."],
+    ["Projenin sadece tek bir aşamadan oluştuğu", "Proje birden çok aşamadan oluşur."],
+    ["Test aşamasından sonra, eksiklikleri gidermek için aynı aşamaların tekrarlanabilmesi", "Yazılım geliştirme, 'yap-test et-düzelt-tekrar test et' şeklinde bir döngüdür. Her test aşamasından sonra elde edilen geri bildirimlerle proje, analiz veya tasarım aşamasına geri dönebilir."],
+    ["Her aşamanın bir öncekinden tamamen bağımsız olduğu", "Tam tersine, her aşama bir öncekinin çıktısına bağımlıdır."],
+    ["Projenin her zaman aynı sürede tamamlandığı", "Döngüsel yapı nedeniyle süre değişebilir."]
+  ],
+  answer: 2,
+  summary: "Döngüsel yapı, yazılımın sürekli olarak iyileştirilmesine olanak tanır. Bu, 'tek seferde mükemmeli yapma' hedefi yerine, 'her döngüde daha iyisini yapma' felsefesine dayanır."
+},
+{
+  q: "7. Analiz aşamasının ilk adımı ve temel başlangıç noktası nedir?",
+  options: [
+    ["Ekranları tasarlamak", "Bu, tasarım aşamasının bir parçasıdır."],
+    ["Kodlamaya başlamak", "Bu, kodlama aşamasının görevidir."],
+    ["Problemin tanımlanması", "Her şey, 'Biz tam olarak neyi çözmeye çalışıyoruz?' sorusunun cevabını netleştirmekle, yani problemin bütün yönleriyle tanımlanmasıyla başlar."],
+    ["Test senaryolarını yazmak", "Bu, test aşamasıyla ilgilidir."],
+    ["Veritabanını oluşturmak", "Veritabanı ihtiyacı, problemin tanımından sonra ortaya çıkar."]
+  ],
+  answer: 2,
+  summary: "Doğru problemi çözmek, problemi doğru çözmekten daha önemlidir. Analiz aşamasının ilk hedefi, yanlış bir problemi çözmek için yola çıkmayı engellemek ve projenin hedefini net bir şekilde ortaya koymaktır."
+},
+{
+  q: "8. 'Kara Kutu (Black Box)' testi olarak da adlandırılan ve entegre sistemin istenilen fonksiyonları yerine getirip getirmediğini inceleyen test hangisidir?",
+  options: [
+    ["Modül ve Birim Testi", "Bu testte kodun içi bilinir ('Beyaz Kutu')."],
+    ["Performans Testi", "Bu test sistemin hızını ve kaynak kullanımını ölçer."],
+    ["Fonksiyon Testi", "Fonksiyon testi veya 'kara kutu' testi, programın iç kod yapısını bilmeden, sadece bir kullanıcının yaptığı gibi girdiler verip doğru çıktıları üretip üretmediğini kontrol eder. Sistemin 'ne yaptığı' ile ilgilenir, 'nasıl yaptığı' ile değil."],
+    ["Kabul Testi", "Kabul testi, müşterinin katıldığı daha genel bir süreçtir."],
+    ["Yükleme Testi", "Bu test, sistemin kurulacağı ortamda yapılır."]
+  ],
+  answer: 2,
+  summary: "'Kara Kutu' benzetmesi, test eden kişinin programın içine bakamaması, sadece dışarıdan düğmelerine basıp sonuçlarını görebilmesi anlamına gelir. Bu test, sistemin belirtilen gereksinimleri karşılayıp karşılamadığını doğrular."
+},
+{
+  q: "9. Kodlama aşamasında karşılaşılan, sözdizimsel olarak doğru ancak istenmeyen sonuçlar üreten (örn: sonsuz döngü) hata türü hangisidir?",
+  options: [
+    ["Sözdizim (Syntax) Hataları", "Bunlar yazım yanlışlarıdır ve derleyici tarafından yakalanır."],
+    ["Çalışma-anı (Runtime) Hataları", "Bunlar genellikle program çalışırken veri uyuşmazlıklarından kaynaklanır."],
+    ["Mantıksal Hatalar", "Kodun dilbilgisi doğrudur, program çalışır ama yanlış iş yapar. Örneğin, 'küçüktür' yerine 'büyüktür' yazmak bir mantık hatasıdır ve tespiti en zor olanıdır."],
+    ["Derleme Hataları", "Sözdizim hataları bir tür derleme hatasıdır."],
+    ["Bağlayıcı (Linker) Hataları", "Bu, farklı kod modüllerinin birleştirilmesi sırasında oluşan bir hatadır."]
+  ],
+  answer: 2,
+  summary: "Mantıksal hatalar, bir tarifi doğru malzemelerle ve doğru adımlarla ama yanlış miktarlarla yapmaya benzer. Sonuçta bir 'yemek' ortaya çıkar ama tadı istenildiği gibi olmaz. Bu hataları bulmak için kodun mantığını en baştan gözden geçirmek gerekir."
+},
+{
+  q: "10. Bir yazılım projesinde gereksinimlerin (requirements) hizmet ettiği amaçlar arasında aşağıdakilerden hangisi yer almaz?",
+  options: [
+    ["Geliştiricilere, müşterinin beklentilerini anlatmak.", "Bu, gereksinimlerin temel amaçlarından biridir."],
+    ["Tasarımcılara, sonucun hangi fonksiyonlara sahip olması gerektiğini anlatmak.", "Bu, gereksinimlerin temel amaçlarından biridir."],
+    ["Test takımına, müşteriye istediklerinin yapıldığını göstermek için bir kontrol listesi sunmak.", "Bu, gereksinimlerin temel amaçlarından biridir."],
+    ["Projenin bütçesini ve zaman planını kesin olarak belirlemek.", "Gereksinimler bütçeyi ve planı etkiler ancak tek başına kesin olarak belirlemez; bu daha çok proje yönetimi konusudur."],
+    ["Tümü gereksinimlerin amaçlarındandır.", "Hayır, listede yer almayan bir madde vardır."]
+  ],
+  answer: 3,
+  summary: "Gereksinimler, bir projenin 'anayasası' gibidir. Ne yapılacağını, nasıl görüneceğini ve nasıl test edileceğini tanımlayarak tüm ekibin (geliştirici, tasarımcı, testçi) aynı hedefe yönelik çalışmasını sağlar."
+},
+{
+  q: "11. 'Teknik Tasarım' aşamasında oluşturulan çıktılar arasında hangisi bulunmaz?",
+  options: [
+    ["Sistem mimarisi (donanım parçalarının fonksiyonları)", "Bu, teknik tasarımın bir parçasıdır."],
+    ["Yazılım yapısı (yazılım unsurlarının fonksiyonları)", "Bu, teknik tasarımın bir parçasıdır."],
+    ["Veri yapısı ve akışı", "Bu, teknik tasarımın bir parçasıdır."],
+    ["Müşterinin anlayacağı dilde hazırlanmış kavramsal sunum", "Bu, teknik tasarımdan önceki 'kavramsal sistem tasarımı' aşamasının çıktısıdır."],
+    ["Programcılar için hazırlanmış yönergeler", "Teknik tasarım, programcılar için bir yol haritası görevi görür."]
+  ],
+  answer: 3,
+  summary: "Tasarım iki adımda yapılır: Önce müşteri için 'ne' yapılacağını anlatan 'kavramsal tasarım', ardından bu 'ne'yin 'nasıl' yapılacağını geliştiriciler için detaylandıran 'teknik tasarım' hazırlanır."
+},
+{
+  q: "12. Yazılım geliştirme sürecinde bir hatayı düzeltmenin maliyeti hangi aşamada en yüksektir?",
+  options: [
+    ["Analiz", "Hataların en ucuza düzeltildiği aşamadır."],
+    ["Tasarım", "Bu aşamada düzeltme maliyeti artmaya başlar."],
+    ["Kodlama", "Bu aşamada maliyet daha da artar."],
+    ["Test", "Bu aşamada maliyet kodlamaya göre belirgin şekilde artar."],
+    ["Teslim Sonrası (Bakım)", "Boehm'in araştırmasına göre, bir hata müşteri tarafından bulunduktan sonra (teslim sonrası) düzeltilmesinin maliyeti, analiz aşamasında düzeltilmesine göre kat kat (örneğin 70 kat) daha fazladır."]
+  ],
+  answer: 4,
+  summary: "Bir hatayı ne kadar erken fark ederseniz, düzeltmesi o kadar kolay ve ucuz olur. Planlama aşamasında bir çizim hatasını silgiyle silmek, bina bittikten sonra bir duvarı yıkıp yeniden yapmaktan çok daha basittir."
+},
+{
+  q: "13. Yazılım test sürecinde, farklı birimlerin veya modüllerin birleştirilmesi sırasında ortaya çıkan hataları ve ara yüzlerin doğruluğunu denetleyen test türü hangisidir?",
+  options: [
+    ["Modül ve Birim Testi", "Bu testte her bir modül tek başına test edilir."],
+    ["Fonksiyon Testi", "Bu testte sistemin tamamının işlevselliği kontrol edilir."],
+    ["Performans Testi", "Bu test sistemin hızını ölçer."],
+    ["Entegre Testi (Integration Test)", "Birim testlerinden geçen modüllerin, birbirleriyle 'entegre edildiğinde' uyum içinde çalışıp çalışmadığı bu testle kontrol edilir. Modüller arası iletişim hataları bu aşamada ortaya çıkar."],
+    ["Kabul Testi", "Bu teste müşteri dahil olur."]
+  ],
+  answer: 3,
+  summary: "Birim testi, bir arabanın motorunu, tekerleklerini ve direksiyonunu ayrı ayrı test etmektir. Entegrasyon testi ise bu parçaları birleştirdikten sonra 'motor tekerlekleri doğru döndürüyor mu, direksiyon tekerleklere doğru komut veriyor mu?' diye kontrol etmektir."
+},
+{
+  q: "14. `B = 'Ten'` ataması yapıldığında bir 'Type mismatch' (Tür uyuşmazlığı) hatası veren program, ne tür bir hata ile karşılaşmıştır?",
+  options: [
+    ["Sözdizim Hatası", "Kodun yazımı (`B = 'Ten'`) dilbilgisel olarak doğrudur."],
+    ["Mantıksal Hata", "Bu, programın yanlış sonuç üretmesi durumudur, çökmesi değil."],
+    ["Çalışma-anı (Runtime) Hatası", "Program, çalışmaya başladıktan sonra, tamsayı olarak tanımlanmış bir değişkene metin gibi uyumsuz bir veri atanmaya çalışıldığı anda bu hatayı verir. Bu, çalışma anında ortaya çıkan bir tür uyuşmazlığıdır."],
+    ["Analiz Hatası", "Bu, sürecin bir aşamasıdır, hata türü değil."],
+    ["Donanım Hatası", "Bu, fiziksel bir arızadır."]
+  ],
+  answer: 2,
+  summary: "Çalışma-anı hataları, derleyicinin öngöremeyeceği, ancak program çalışırken belirli koşullar (genellikle kullanıcı girdileri) oluştuğunda meydana gelen hatalardır. 'Sayı giriniz' denilen bir yere metin girilmesi en yaygın örneklerdendir."
+},
+{
+  q: "15. Yazılım geliştirmenin hangi aşamasında projenin 'hikaye tahtası' (storyboard) oluşturulur ve ekran taslakları hazırlanır?",
+  options: [
+    ["Analiz", "Analiz aşamasında ne yapılacağı belirlenir, nasıl görüneceği değil."],
+    ["Tasarım", "Tasarım aşaması, projenin görsel kimliğinin ve kullanıcı arayüzünün oluşturulduğu, ekranların, menülerin ve butonların yerlerinin çizildiği aşamadır. Bu nedenle 'hikaye tahtası' oluşturmaya benzetilir."],
+    ["Kodlama", "Kodlama aşamasında bu taslaklar koda dökülür."],
+    ["Test", "Test aşamasında bu ekranların doğru çalışıp çalışmadığı kontrol edilir."],
+    ["Gereksinim Belirleme", "Bu, analiz aşamasının bir parçasıdır."]
+  ],
+  answer: 1,
+  summary: "Tasarım aşaması, projenin 'kağıt üzerindeki' halidir. Her şeyin nasıl görüneceği ve birbiriyle nasıl etkileşimde bulunacağı, kod yazmaya başlamadan önce bu aşamada netleştirilir."
+},
+{
+  q: "16. Gerçek kullanıcıların, test ettiklerinden habersiz bir şekilde programın A ve B gibi küçük farklılıklar içeren sürümlerini kullanarak hangisini daha çok beğendiklerinin ölçüldüğü test türü nedir?",
+  options: [
+    ["Alfa Testi", "Bu, iç ekip tarafından yapılır."],
+    ["Beta Testi", "Bu, gönüllü kullanıcılar tarafından bilinçli olarak yapılır."],
+    ["A/B Testi", "A/B testi, kullanıcıların haberi olmadan, bir düğmenin rengi veya bir menünün yeri gibi küçük değişikliklerin kullanıcı davranışını nasıl etkilediğini ölçmek için kullanılan bir tekniktir."],
+    ["Kara Kutu Testi", "Bu, bir test yöntemidir, bir test aşaması değil."],
+    ["Birim Testi", "Bu, kod modüllerinin testidir."]
+  ],
+  answer: 2,
+  summary: "Büyük web siteleri, 'satın al' düğmesinin rengini yeşil mi yoksa turuncu mu yapacaklarına karar vermek için A/B testlerini sıkça kullanır. Kullanıcıların yarısına yeşil, diğer yarısına turuncu düğmeyi gösterir ve hangi grubun daha fazla tıklama yaptığını analiz ederek en etkili tasarımı seçerler."
+},
+{
+  q: "17. Bir yazılım için belirlenen gereksinimlerin (ihtiyaçların) 'gerçekçi' olması ne anlama gelir?",
+  options: [
+    ["Müşterinin istediği her şeyin yapılabilir olması", "Müşterinin her isteği gerçekçi olmayabilir."],
+    ["Projenin çok ucuza mal olması", "Gerçekçilik sadece maliyetle ilgili değildir."],
+    ["Projenin mevcut donanım ve teknoloji ile gerçekleştirilmesinin mümkün olup olmadığına bakılması", "Bir gereksinimin gerçekçi olması, o işi yapacak donanımın yeterli hıza veya disk kapasitesine sahip olup olmadığı gibi teknik ve fiziksel kısıtların göz önünde bulundurulması anlamına gelir."],
+    ["Projenin bir haftada bitirilmesi", "Bu genellikle gerçekçi bir beklenti değildir."],
+    ["Sadece tek bir programcı tarafından yapılabilmesi", "Projenin büyüklüğüne bağlıdır."]
+  ],
+  answer: 2,
+  summary: "Bir müşterinin standart bir bilgisayarda saniyede bir trilyon hesaplama yapacak bir yazılım istemesi 'gerçekçi olmayan' bir gereksinimdir. Analiz aşamasında, isteklerin mevcut teknolojik imkanlar dahilinde yapılabilir olup olmadığı mutlaka değerlendirilmelidir."
+},
+{
+  q: "18. Analiz aşamasında kullanılan ve programcıların bir araya gelerek bir problemin çözümüne ilişkin fikirlerini serbestçe ortaya attığı tekniğe ne ad verilir?",
+  options: [
+    ["Kodlama", "Bu ayrı bir aşamadır."],
+    ["Test Etme", "Bu ayrı bir aşamadır."],
+    ["Beyin Fırtınası", "Programcıların bir araya gelerek problemin çözümüne ilişkin fikirlerini üzerinde çok da düşünmeden ortaya söyledikleri bu sürecin sonunda, en doğru çözüm fikrine ulaşılması beklenir."],
+    ["Dokümantasyon", "Bu, sürecin belgelenmesidir."],
+    ["Derleme", "Bu, kodun çevrilmesidir."]
+  ],
+  answer: 2,
+  summary: "Beyin fırtınası, yaratıcı ve yenilikçi çözümler bulmak için kullanılan bir grup tekniğidir. Amaç, ilk başta 'saçma' gibi görünen fikirler de dahil olmak üzere, akla gelen tüm olasılıkları yargılamadan masaya yatırmak ve bu fikir havuzundan en iyisini süzmektir."
+},
+{
+  q: "19. Aşağıdakilerden hangisi kodlama aşamasında karşılaşılabilecek bir hata türü değildir?",
+  options: [
+    ["Sözdizim (Syntax) Hataları", "Bunlar en yaygın kodlama hatalarıdır."],
+    ["Mantıksal Hatalar", "Bunlar kodun yanlış çalışmasına neden olan hatalardır."],
+    ["Çalışma-anı (Runtime) Hataları", "Bunlar program çalışırken ortaya çıkan hatalardır."],
+    ["Kavramsal Tasarım Hataları", "Bu tür hatalar, projenin ne yapacağının yanlış anlaşıldığı 'Tasarım' veya 'Analiz' aşamasına aittir, kodlama aşamasının bir hatası değildir."],
+    ["Tümü kodlama aşamasında karşılaşılabilecek hatalardır.", "Hayır, kavramsal tasarım hatası daha önceki bir aşamaya aittir."]
+  ],
+  answer: 3,
+  summary: "Kodlama aşamasında üç temel hata türüyle karşılaşılır: Yazım yanlışları (Sözdizim), yanlış çalışan kod (Mantıksal) ve program çalışırken patlayan kod (Çalışma-anı). Tasarımın yanlış olması ise daha temel ve önceki bir aşamanın sorunudur."
+},
+{
+  q: "20. Yazılım geliştirme sürecinin dört ana aşaması hangi seçenekte doğru sırayla verilmiştir?",
+  options: [
+    ["Tasarım, Analiz, Kodlama, Test", "Analiz, tasarımdan önce gelir."],
+    ["Analiz, Tasarım, Test, Kodlama", "Test, kodlamadan sonra gelir."],
+    ["Analiz, Tasarım, Kodlama, Test", "Yazılım geliştirme süreci genel olarak; önce ne yapılacağının anlaşıldığı 'Analiz', sonra nasıl görüneceğinin planlandığı 'Tasarım', ardından bu planın koda döküldüğü 'Kodlama' ve son olarak yapılan işin kontrol edildiği 'Test' aşamalarından oluşur."],
+    ["Kodlama, Tasarım, Analiz, Test", "Bu sıralama tamamen yanlıştır."],
+    ["Analiz, Kodlama, Tasarım, Test", "Tasarım, kodlamadan önce gelir."]
+  ],
+  answer: 2,
+  summary: "Bu sıralama, bir bina inşa etmeye benzer: Önce ihtiyacı belirlersiniz (Analiz), sonra projesini çizersiniz (Tasarım), ardından inşaatı yaparsınız (Kodlama) ve en son binanın sağlamlığını kontrol edersiniz (Test)."
+},
+{
+  q: "21. Müşterinin, geliştirilen yazılımı teslim alıp almayacağına karar verdiği ve 'doğru yazılımın üretilip üretilmediğinin' incelendiği test aşaması hangisidir?",
+  options: [
+    ["Birim Testi", "Bu testte sadece küçük modüller test edilir."],
+    ["Entegre Testi", "Bu testte modüllerin birbiriyle uyumu test edilir."],
+    ["Kabul Testi (Acceptance Test)", "Kabul testi, müşterinin bizzat katıldığı ve sistemin kendi gereksinimlerini karşılayıp karşılamadığını, kullanımının kolay olup olmadığını denetlediği son onay testidir. Bu testin sonunda müşteri projeyi 'kabul eder'."],
+    ["Performans Testi", "Bu test sistemin hızını ölçer."],
+    ["Yükleme Testi", "Bu test sistemin kurulacağı ortamda yapılır."]
+  ],
+  answer: 2,
+  summary: "Kabul testi, projenin 'karne günü' gibidir. Geliştirici ekip, yaptıkları işi müşteriye sunar ve müşteri, beklentilerinin karşılanıp karşılanmadığına bakarak bir 'geçer' veya 'kalır' notu verir."
+},
+{
+  q: "22. Kodlama aşamasında bir programlama dili seçilirken göz önünde bulundurulan kriterler arasında hangisi yoktur?",
+  options: [
+    ["Uygunluk (Dilin probleme uygun olması)", "Bu önemli bir kriterdir."],
+    ["Destek (Dil için servis ve dokümantasyon bulunması)", "Bu önemli bir kriterdir."],
+    ["Etkinlik (Dilin derlendiğinde ve çalıştığındaki performansı)", "Bu önemli bir kriterdir."],
+    ["Dilin Popülerliği (Sadece en popüler dilin seçilmesi)", "Popülerlik bir etken olsa da, slaytlarda temel bir kriter olarak listelenmemiştir. Önemli olan, probleme en uygun dilin seçilmesidir."],
+    ["Karmaşıklık (Dilin kontrol ve veri yapılarını desteklemesi)", "Bu önemli bir kriterdir."]
+  ],
+  answer: 3,
+  summary: "Doğru dili seçmek, doğru aleti seçmek gibidir. Küçük bir vidayı sıkmak için dev bir balyoz kullanmak ne kadar yanlışsa, basit bir web sitesi için karmaşık bir sistem programlama dili kullanmak da o kadar yanlıştır. Dilin, yapılacak işe 'uygun' olması en önemli kriterdir."
+},
+{
+  q: "23. Bir yazılımın gereksinimlerinin 'doğrulanabilir' olması ne anlama gelir?",
+  options: [
+    ["Gereksinimin mümkün olduğunun kanıtlanması", "Bu 'gerçekçi' olmasıdır."],
+    ["Gereksinimin test edilebilir ve ölçülebilir olması", "Bir gereksinimin doğrulanabilir olması, proje bittiğinde o gereksinimin karşılanıp karşılanmadığını net bir şekilde test edebilmemiz anlamına gelir. Örneğin 'hızlı olmalı' doğrulanabilir değilken, 'bir saniyeden az sürede cevap vermeli' doğrulanabilir bir gereksinimdir."],
+    ["Gereksinimin müşteri tarafından istenmesi", "Bu ayrı bir kuraldır."],
+    ["Gereksinimin diğer gereksinimlerle çelişmemesi", "Bu 'çelişkisiz' olmasıdır."],
+    ["Gereksinimin eksiksiz olması", "Bu 'bütün' olmasıdır."]
+  ],
+  answer: 1,
+  summary: "Doğrulanabilir gereksinimler, test aşamasını anlamlı kılar. Eğer bir gereksinimi test edemiyorsanız, onun yapılıp yapılmadığını da asla bilemezsiniz. Bu nedenle tüm gereksinimler ölçülebilir ve test edilebilir olmalıdır."
+},
+{
+  q: "24. Yazılım geliştirme sürecinin hangi aşaması, problemin girdilerini, olası çıktılarını ve çözüme yönelik algoritmaları oluşturmayı içerir?",
+  options: [
+    ["Tasarım Aşaması", "Tasarım, bu algoritmalara uygun arayüzler geliştirir."],
+    ["Kodlama Aşaması", "Kodlama, bu algoritmaları bir programlama diline çevirir."],
+    ["Test Aşaması", "Test, bu algoritmanın doğru çalışıp çalışmadığını kontrol eder."],
+    ["Analiz Aşaması", "Analiz aşaması, sadece problemi tanımlamakla kalmaz, aynı zamanda problemin girdilerini, ondan beklenen çıktıları ve girdiden çıktıya nasıl ulaşılacağını gösteren mantıksal adımları (algoritmaları) da belirler."],
+    ["Bakım Aşaması", "Bakım, proje teslim edildikten sonraki süreçtir."]
+  ],
+  answer: 3,
+  summary: "Analiz, bir projenin hem 'ne' sorusuna (problem tanımı) hem de 'nasıl' sorusuna (algoritma) ilk cevabın verildiği yerdir. Bu aşamada oluşturulan algoritmalar, kodlama aşaması için bir yol haritası görevi görür."
+},
+{
+  q: "25. Test aşamasında, her bir modülün veya yazılım biriminin tek bir program gibi kendi içinde test edilmesine ne denir?",
+  options: [
+    ["Entegre Testi", "Bu testte modüller bir arada test edilir."],
+    ["Sistem Testi", "Bu testte tüm sistem bir bütün olarak test edilir."],
+    ["Kabul Testi", "Bu teste müşteri katılır."],
+    ["Modül ve Birim Testi (Module and Unit Test)", "Birim testi, büyük bir sistemin her bir küçük parçasının (modül veya birim) beklendiği gibi çalıştığından emin olmak için tek başına test edilmesidir."],
+    ["Kara Kutu Testi", "Bu, bir test yöntemidir, spesifik bir aşama değildir."]
+  ],
+  answer: 3,
+  summary: "Birim testi, bir araba fabrikasındaki kalite kontrol gibidir. Arabayı bir bütün olarak test etmeden önce, her bir tekerleğin, her bir motor parçasının ve her bir vidanın kendi standartlarına uygun olup olmadığı tek tek kontrol edilir."
+},
+{
+  q: "26. ADDIE modelinin aşamaları hangi seçenekte doğru olarak sıralanmıştır?",
+  options: [
+    ["Analysis – Development – Design – Implementation – Evaluation", "Bu sıralamada Tasarım (Design) ve Geliştirme (Development) adımlarının yeri yanlıştır."],
+    ["Analysis – Design – Development – Evaluation – Implementation", "Bu sıralamada Değerlendirme (Evaluation) ve Uygulama (Implementation) adımlarının yeri yanlıştır."],
+    ["Analysis – Design – Development – Implementation – Evaluation", "ADDIE modelinin açılımı ve doğru sırası Analiz, Tasarım, Geliştirme, Uygulama ve Değerlendirme şeklindedir."],
+    ["Design – Analysis – Development – Implementation – Evaluation", "Analiz her zaman tasarımdan önce gelir."],
+    ["Analysis – Design – Implementation – Development – Evaluation", "Geliştirme (Development) genellikle uygulamadan (Implementation) önce gelir."]
+  ],
+  answer: 2,
+  summary: "ADDIE, özellikle eğitim materyali ve proje yönetiminde kullanılan popüler bir modeldir. Adımları baş harflerinden oluşur: Analysis (Analiz), Design (Tasarım), Development (Geliştirme), Implementation (Uygulama) ve Evaluation (Değerlendirme)."
+},
+{
+  q: "27. Aşağıdakilerden hangisi ADDIE modelinin beş temel aşamasından biri değildir?",
+  options: [
+    ["Analysis (Analiz)", "Bu, ADDIE modelinin ilk aşamasıdır."],
+    ["Design (Tasarım)", "Bu, ADDIE modelinin ikinci aşamasıdır."],
+    ["Implementation (Uygulama)", "Bu, ADDIE modelinin dördüncü aşamasıdır."],
+    ["Maintenance (Bakım)", "'Bakım' aşaması, ADDIE modelinin beş temel bileşeni arasında yer almaz. Model 'Evaluation' (Değerlendirme) ile sonlanır."],
+    ["Evaluation (Değerlendirme)", "Bu, ADDIE modelinin son aşamasıdır."]
+  ],
+  answer: 3,
+  summary: "ADDIE modeli, projenin sonunda bir 'Değerlendirme' aşaması içerir. Geleneksel yazılım yaşam döngülerinde sıkça görülen sürekli 'Bakım' aşaması, bu modelin temel beşlisi arasında sayılmaz."
+},
+{
+  q: "28. Yazılım Geliştirme Yaşam Döngüsü'nün altı aşamalı bir modeli düşünüldüğünde, aşamaların sıralaması ile ilgili aşağıdaki ifadelerden hangisi doğrudur?",
+  options: [
+    ["Test aşaması, Uygulama aşamasından önce gelir.", "Uygulama (kodlama) bittikten sonra yapılan iş test edilir."],
+    ["Analiz aşaması, Tasarım aşamasından önce gelir.", "Doğru sıralama '...Analiz, Tasarım...' şeklindedir. Önce ne yapılacağı analiz edilir, sonra nasıl yapılacağı tasarlanır."],
+    ["Bakım aşaması, Test aşamasından önce gelir.", "Bakım, ürün müşteriye teslim edilip kullanılmaya başlandıktan sonraki son aşamadır."],
+    ["Tasarım aşaması, Planlama aşamasından önce gelir.", "Planlama her zaman projenin ilk adımıdır."],
+    ["Uygulama aşaması, Analiz aşamasından önce gelir.", "Analiz yapılmadan neyin uygulanacağı bilinemez."]
+  ],
+  answer: 1,
+  summary: "Bu soru, altı aşamalı modelin (Planlama, Analiz, Tasarım, Uygulama, Test, Bakım) genel akış mantığını bilmeyi gerektirir. Her aşama, bir sonrakine mantıksal bir zemin hazırlar."
+},
+{
+  q: "29. Altı aşamalı yazılım geliştirme yaşam döngüsü modelinin doğru sıralaması aşağıdakilerden hangisidir?",
+  options: [
+    ["Planlama – Analiz – Uygulama – Tasarım – Test – Bakım", "Uygulama (kodlama), her zaman tasarımdan sonra gelir."],
+    ["Test – Planlama – Analiz – Tasarım – Uygulama – Bakım", "Test, genellikle uygulama bittikten sonra yapılır."],
+    ["Planlama – Tasarım – Analiz – Uygulama – Test – Bakım", "Analiz, ne yapılacağını belirlediği için tasarımdan önce gelmelidir."],
+    ["Planlama – Analiz – Tasarım – Uygulama – Test – Bakım", "Bu, projenin başlangıcından sonuna kadar olan mantıksal ve doğru akışıdır."],
+    ["Planlama – Analiz – Tasarım – Test – Uygulama – Bakım", "Uygulama, test edilmeden önce tamamlanmalıdır."]
+  ],
+  answer: 3,
+  summary: "Bu model, bir projenin fikir aşamasından (Planlama) başlayarak, canlıda desteklenmesine (Bakım) kadar olan tüm adımlarını kapsayan geleneksel ve yapısal bir akışı temsil eder."
+}
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

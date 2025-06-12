@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 4</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 4</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Bir programlama dilinde yazılmış kaynak kodun, hedef makinede çalışabilen taşınabilir bir ara koda çevrilmesi ve bu ara kodun daha sonra bir sanal makine üzerinde yorumlanması işlemine en iyi örnek hangi dildir?",
+  options: [
+    ["C", "C, genellikle doğrudan makine koduna derlenen bir dildir, ara koda çevrilip yorumlanma modelini standart olarak kullanmaz."],
+    ["Assembly", "Assembly, bir çevirici (assembler) ile doğrudan makine diline çevrilen düşük seviyeli bir dildir."],
+    ["Java", "Java, kaynak kodları önce platformdan bağımsız olan 'bytecode' adlı bir ara koda derler, daha sonra bu bytecode her platformdaki Java Sanal Makinesi (JVM) tarafından yorumlanarak çalıştırılır."],
+    ["COBOL", "COBOL da C gibi derlenerek kullanılan bir dildir."],
+    ["Pascal", "Pascal da derlenerek kullanılan klasik bir dildir."]
+  ],
+  answer: 2,
+  summary: "Java'nın 'bir kere yaz, her yerde çalıştır' felsefesi, derleme ve yorumlamayı birleştiren bu hibrit modele dayanır. Kaynak kod, platformdan bağımsız olan bytecode'a derlenir ve bu bytecode, JVM sayesinde farklı işletim sistemlerinde çalışabilir."
+},
+{
+  q: "2. Derleme ve yorumlama yöntemleri 'Zaman Etkinliği' açısından karşılaştırıldığında, hangi yöntem neden daha avantajlıdır?",
+  options: [
+    ["Yorumlama, çünkü kaynak kodu analiz etmekle zaman harcamaz.", "Yorumlayıcı ilk başlangıçta hızlı olsa da, bir deyimi her çalıştırışında tekrar tekrar çevirdiği için genel yürütme süresi daha yavaştır."],
+    ["Derleme, çünkü programdaki her deyim için makine kodu sadece bir defa oluşturulur.", "Derleme işleminde, tüm program bir kez makine koduna çevrilir ve bu çevrilmiş kod defalarca hızlı bir şekilde çalıştırılabilir. Bu da genel olarak zamandan büyük kazanç sağlar."],
+    ["Yorumlama, çünkü hata ayıklaması daha kolaydır.", "Hata ayıklama kolaylığı yorumlayıcının bir avantajıdır, ancak bu zaman etkinliği (çalışma hızı) ile ilgili değildir."],
+    ["Derleme, çünkü daha az bellek kullanır.", "Derleme genellikle daha fazla bellek kullanır çünkü kaynak koda ek olarak bir de amaç program oluşturur."],
+    ["İki yöntemin de zaman etkinliği açısından bir farkı yoktur.", "Hayır, çalışma hızı açısından aralarında belirgin bir fark vardır ve derleme daha hızlıdır."]
+  ],
+  answer: 1,
+  summary: "Derleme, başlangıçta (derleme zamanında) daha uzun sürse de, programın çalıştırılması (çalışma zamanı) çok daha hızlıdır çünkü çeviri işlemi sadece bir kez yapılır. Yorumlama ise her çalıştırmada çeviri yaptığı için yavaştır."
+},
+{
+  q: "3. Bir derleyicinin 'ön ucu (front-end)' ve 'arka ucu (back-end)' arasındaki temel bağımlılık farkı nedir?",
+  options: [
+    ["Ön uç bilgisayara, arka uç programlama diline bağımlıdır.", "Tam tersi doğrudur."],
+    ["Ön uç programlama diline, arka uç bilgisayara (hedef makineye) bağımlıdır.", "Derleyicinin ön ucu, kaynak dilin kurallarını (sözdizim, anlam) analiz eder ve dile özgüdür. Arka ucu ise bu analizi alıp belirli bir bilgisayar mimarisi için makine kodu üretir ve makineye özgüdür."],
+    ["Her ikisi de sadece programlama diline bağımlıdır.", "Hayır, arka uç hedef makinenin mimarisine de bağımlıdır."],
+    ["Her ikisi de sadece bilgisayara bağımlıdır.", "Hayır, ön uç kaynak programlama diline bağımlıdır."],
+    ["İkisi arasında bir bağımlılık farkı yoktur, ikisi de platformdan bağımsızdır.", "Hayır, aralarında net bir görev ve bağımlılık ayrımı vardır."]
+  ],
+  answer: 1,
+  summary: "Bu ayrım, derleyici üretiminde büyük bir esneklik sağlar. Aynı ön uç, farklı bilgisayarlar için yazılmış farklı arka uçlarla birleştirilerek birden çok platform için derleyici üretilebilir."
+},
+{
+  q: "4. Java'nın 'bytecode' ve 'Java Sanal Makinesi (JVM)' yaklaşımının sağladığı en önemli iki avantaj aşağıdakilerden hangisidir?",
+  options: [
+    ["Daha hızlı çalışma ve daha az bellek kullanımı", "Bu yaklaşım genellikle saf derlemeden daha yavaş çalışır."],
+    ["Platform bağımsızlığı ve güvenlik", "Bytecode, JVM olan her makinede çalışabildiği için platform bağımsızlığı sağlar. Ayrıca kodun doğrudan makine üzerinde değil, bir sanal makine katmanında çalışması kötü amaçlı yazılımlara karşı bir koruma (güvenlik) katmanı oluşturur."],
+    ["Kolay hata ayıklama ve hızlı derleme", "Bu yaklaşımda hata ayıklama geleneksel yorumlayıcılar kadar kolay olmayabilir ve bir derleme adımı içerir."],
+    ["Donanıma doğrudan erişim ve eniyileme kolaylığı", "Sanal makine, donanıma doğrudan erişimi kısıtlar."],
+    ["Daha basit sözdizimi ve daha küçük kod boyutu", "Bu yaklaşım sözdizimini etkilemez ve bytecode genellikle kaynak koddan daha büyüktür."]
+  ],
+  answer: 1,
+  summary: "Java'nın başarısının temelinde yatan iki ilke, yazılan kodun farklı işletim sistemlerinde değiştirilmeden çalışabilmesi (platform bağımsızlığı) ve kodun sanal bir makine içinde güvenli bir 'korumalı alan' (sandbox) içinde çalıştırılmasıdır."
+},
+{
+  q: "5. Derleme sürecinde, kaynak programdaki 'puan', 'deger' gibi tanımlayıcılar için bilgilerin (türü, adresi vb.) tutulduğu ve süreç boyunca kullanılan yapıya ne ad verilir?",
+  options: [
+    ["Ayrıştırma Ağacı (Parse Tree)", "Ayrıştırma ağacı, programın hiyerarşik sözdizimsel yapısını gösterir."],
+    ["Token Dizisi", "Token dizisi, metinsel çözümleme sonucu oluşan ve programın birimlerini belirten listedir."],
+    ["Sembol Tablosu (Symbol Table)", "Derleyici, programdaki her bir değişken, fonksiyon gibi tanımlayıcı için bir girdi oluşturarak bu bilgileri sembol tablosunda saklar ve diğer aşamalarda bu tabloya başvurur."],
+    ["Yığıt (Stack)", "Yığıt, programın çalışması sırasında veri depolamak için kullanılan bir bellek alanıdır."],
+    ["Amaç Program (Object Program)", "Amaç program, derleme sürecinin sonunda üretilen makine kodudur."]
+  ],
+  answer: 2,
+  summary: "Sembol tablosu, derleyicinin 'hafızası' gibidir. Bir değişkenle ilk kez karşılaştığında onu tabloya yazar ve daha sonra o değişkene her rastladığında özelliklerini bu tablodan kontrol eder."
+},
+{
+  q: "6. Bir derleyicinin 'eniyileme (optimization)' aşamasının temel amacı nedir?",
+  options: [
+    ["Programdaki sözdizimsel hataları bulmak", "Bu, sözdizim çözümleme aşamasının görevidir."],
+    ["Programı daha okunabilir hale getirmek", "Okunabilirlik insan içindir, eniyileme makinenin performansı içindir."],
+    ["Programın daha etkin (hızlı veya daha az kaynak kullanan) çalışacak bir eşdeğer programa dönüştürülmesi", "Eniyileme, programın yaptığı işi değiştirmeden, o işi daha hızlı veya daha verimli yapmasını sağlayan tekniklerin uygulanmasıdır."],
+    ["Programı platformdan bağımsız bir ara koda çevirmek", "Bu, ara kod oluşturma aşamasının bir amacı olabilir, eniyilemenin değil."],
+    ["Programın kullanıcı arayüzünü iyileştirmek", "Bu, yazılım tasarımı ile ilgili bir konudur, derleyici aşamasıyla değil."]
+  ],
+  answer: 2,
+  summary: "Eniyileme, bir programın mantığını koruyarak performansını artırma sanatıdır. Örneğin, gereksiz hesaplamaları ortadan kaldırmak veya daha hızlı komutları tercih etmek gibi işlemlerle kod daha verimli hale getirilir."
+},
+{
+  q: "7. Aşağıdakilerden hangisi 'makine bağımlı eniyileme'ye bir örnektir?",
+  options: [
+    ["Değerleri bilinen ifadelerin derleme zamanında hesaplanması", "Bu, hedef makinenin özelliklerine bağlı olmayan bir makine bağımsız eniyilemedir."],
+    ["Aynı hesaplamaların program içinde yinelenmesinin önlenmesi", "Bu da makine bağımsız bir eniyilemedir."],
+    ["Bir sayıyı 2 ile çarpma işlemini, bir kaydırma (shift) işlemi ile değiştirmek", "Kaydırma (shift) gibi işlemler, doğrudan merkezi işlem biriminin (CPU) komut setine özgüdür ve bu tür bir değişiklik hedef makinenin özelliklerini kullanır. Bu nedenle makine bağımlı bir eniyilemedir."],
+    ["Kullanılmayan kod parçalarının programdan çıkarılması", "Bu da makine bağımsız bir eniyilemedir."],
+    ["Bir döngünün yapısını daha verimli hale getirmek", "Bu genellikle makine bağımsız bir mantıksal eniyilemedir."]
+  ],
+  answer: 2,
+  summary: "Makine bağımlı eniyileme, hedef işlemcinin 'hilelerini' bilmek gibidir. Örneğin, birçok işlemcide bir sayıyı sola kaydırmak (shift), onu 2 ile çarpmaktan çok daha hızlıdır. Derleyicinin bu bilgiyi kullanarak kodu değiştirmesi makine bağımlı eniyilemedir."
+},
+{
+  q: "8. 'Sıradaki deyimi al, yapılacak işlemleri belirle, işlemleri gerçekleştir' adımlarının sürekli yinelenmesi, hangi dil çeviricisinin çalışma şeklini tanımlar?",
+  options: [
+    ["Derleyici (Compiler)", "Derleyici programı bir bütün olarak ele alır, adım adım değil."],
+    ["Yorumlayıcı (Interpreter)", "Bir yorumlayıcı, programı satır satır veya deyim deyim okur, her bir deyimi anında çevirir ve çalıştırır. Bu döngü, yorumlayıcının temel çalışma prensibidir."],
+    ["Birleştirici (Assembler)", "Assembler, Assembly kodunu makine koduna çevirir, bu döngüsel çalışma şekli ona ait değildir."],
+    ["Bağlayıcı (Linker)", "Bağlayıcı, derlenmiş farklı kod parçalarını birleştirir."],
+    ["Ön-işlemci (Preprocessor)", "Ön-işlemci, derlemeden önce kaynak kod üzerinde metinsel değişiklikler yapar."]
+  ],
+  answer: 1,
+  summary: "Yorumlayıcı, bir şefin yemek tarifini adım adım okuyup her adımı anında yapmasına benzer. Derleyici ise şefin önce tüm tarifi okuyup kendi dilinde notlar alıp daha sonra o notlara bakarak yemeği yapmasına benzer."
+},
+{
+  q: "9. Derleme sürecinde, metinsel çözümleyici (lexical analyzer) tarafından kaynak programın işlenmesi sonucunda ne oluşturulur?",
+  options: [
+    ["Amaç Program (Object Program)", "Bu, derleme sürecinin en sonunda oluşur."],
+    ["Ayrıştırma Ağacı (Parse Tree)", "Bu, sözdizim çözümleyici tarafından oluşturulur."],
+    ["Bir dizi token", "Metinsel çözümleyicinin temel görevi, karakter dizisinden oluşan kaynak programı okuyup, onu 'tanımlayıcı', 'sayı', 'operatör' gibi anlamlı birimlere, yani token'lara ayırmaktır."],
+    ["Ara Kod (Intermediate Code)", "Bu, anlam çözümleme aşamasının sonunda oluşur."],
+    ["Sembol Tablosu", "Sembol tablosu bu aşamada oluşturulur ve kullanılır, ancak temel çıktı token dizisidir."]
+  ],
+  answer: 2,
+  summary: "Derlemenin ilk adımı olan metinsel çözümleme, bir cümlenin kelimelere ayrılmasına benzer. Kaynak kod, 'puan', '=', '10', ';' gibi en küçük anlamlı birimler olan token'lara bölünür."
+},
+{
+  q: "10. Hata bildirme yöntemleri açısından yorumlayıcıların derleyicilere göre temel üstünlüğü nedir?",
+  options: [
+    ["Tüm hataları programın sonunda toplu olarak bildirmesi", "Bu, derleyicilerin çalışma şeklidir ve bir dezavantaj olarak kabul edilir."],
+    ["Hiç hata bildirmemesi, programın çökmesine izin vermesi", "Bu istenen bir durum değildir."],
+    ["Hataları programcı yerine otomatik olarak düzeltmesi", "Bu, günümüzdeki çeviricilerin genel bir yeteneği değildir."],
+    ["İlk hatayı gördüğü yerde durması ve hatayı doğrudan bildirmesi", "Yorumlayıcılar her komutu birer birer ele aldığı için, bir hatayla karşılaştıkları anda çalışmayı durdurur ve hatanın tam olarak nerede olduğunu bildirirler. Bu da hata ayıklamayı (debugging) kolaylaştırır."],
+    ["Sadece sözdizimsel hataları bildirmesi, anlamsal hataları göz ardı etmesi", "Hem derleyiciler hem de yorumlayıcılar her iki tür hatayı da bildirmeye çalışır."]
+  ],
+  answer: 3,
+  summary: "Bir yorumlayıcı kullandığınızda, programınız çalışmaya başlar ve ilk hatanın olduğu satıra gelince durur. Bu, sorunun kaynağını bulmayı çok kolaylaştırır. Derleyici ise önce tüm programı kontrol eder ve size bir hata listesi sunar, bu da kaynağı bulmayı zorlaştırabilir."
+},
+{
+  q: "11. Derleme sürecinin sonunda oluşan makine dilindeki programa ne ad verilir?",
+  options: [
+    ["Kaynak (Source) Program", "Kaynak program, derleyiciye verilen yüksek düzeyli dilde yazılmış programdır."],
+    ["Ara (Intermediate) Program", "Ara program, derleyicinin ön ucu tarafından oluşturulan ve arka uca verilen programdır."],
+    ["Taşınabilir (Portable) Kod", "Taşınabilir kod, genellikle sanal bir makine için üretilen ara koddur."],
+    ["Amaç (Object) Program", "Derleme sürecinin sonucunda oluşan makine dilindeki programa amaç (object) program adı verilir."],
+    ["Yorumlanmış (Interpreted) Program", "Bu terim, yorumlanan diller için kullanılır; derleme sonucu oluşan bir çıktı değildir."]
+  ],
+  answer: 3,
+  summary: "Derleme süreci, bir dilden başka bir dile çeviri sürecidir. Başlangıçtaki programa 'kaynak', çeviri sonucu ortaya çıkan ve bilgisayarın anlayacağı dildeki programa ise 'amaç' denir."
+},
+{
+  q: "12. Java bytecode'unun sadece Java diline özgü olmadığı, Jython, ML, Lisp gibi başka dillerin de Java bytecode'una derlenebildiği bilgisi neyi gösterir?",
+  options: [
+    ["Bu dillerin yakında kullanımdan kalkacağını", "Bu bilgiyle ilgisi olmayan bir yorumdur."],
+    ["Java Sanal Makinesi'nin (JVM) çok dilli bir platform olarak kullanılabileceğini", "Bu durum, JVM'nin sadece Java için değil, üzerine bytecode üretebilen herhangi bir dil için bir çalışma platformu olabileceğini gösterir. Bu, JVM'nin gücünü ve esnekliğini ortaya koyar."],
+    ["Jython, ML ve Lisp'in Java'dan daha eski diller olduğunu", "Bu bilgi dillerin yaşları hakkında bir şey söylemez."],
+    ["Tüm programlama dillerinin aslında aynı olduğunu", "Bu, dillerin farklılıklarını göz ardı eden yanlış bir çıkarımdır."],
+    ["Java'nın diğer tüm dillerden daha güvenli olduğunu", "Güvenlik bir avantaj olsa da, bu spesifik durum JVM'nin çok dilli bir hedef platform olma yeteneği ile ilgilidir."]
+  ],
+  answer: 1,
+  summary: "Java Sanal Makinesi (JVM), başarılı bir 'hedef platform' tasarımıdır. Farklı diller için yazılan derleyiciler, eğer çıktı olarak standart Java bytecode'u üretiyorlarsa, bu dillerde yazılan programlar da JVM'nin platform bağımsızlığı gibi avantajlarından faydalanabilir."
+},
+{
+  q: "13. Ayrıştırma ağacı oluşturulurken, amaç sembolden başlayıp terminal sembollere doğru ilerleyen tekniğe ne ad verilir?",
+  options: [
+    ["Aşağıdan Yukarıya (Bottom-up) Ayrıştırma", "Bu teknikte, bir dizi token'dan başlanır ve amaç sembole ulaşılmaya çalışılır."],
+    ["Geri İzleme (Backtracking)", "Geri izleme, türetme sırasında bir ölü noktaya gelindiğinde bir önceki adıma dönüp farklı bir kural deneme işlemidir."],
+    ["Yukarıdan Aşağıya (Top-down) Ayrıştırma", "Bu teknikte, işleme en tepedeki amaç sembolüyle başlanır ve gramer kuralları kullanılarak, verilen token dizisine ulaşılana kadar ağaç aşağıya doğru genişletilir."],
+    ["Metinsel Çözümleme", "Bu, programın token'lara ayrıldığı, ayrıştırmadan önceki aşamadır."],
+    ["Anlam Çözümleme", "Bu, ayrıştırma ağacı oluşturulduktan sonraki aşamadır."]
+  ],
+  answer: 2,
+  summary: "Yukarıdan aşağıya ayrıştırma, 'Bu cümlenin bir program olmasını bekliyorum, öyleyse bir programın içermesi gereken parçaları içeriyor mu?' diye sorarak bütünden parçaya doğru ilerleyen bir analiz tekniğidir."
+},
+{
+  q: "14. Derleme sürecinde eniyilemenin (optimization) bir dezavantajı olarak ne belirtilmiştir?",
+  options: [
+    ["Programın daha yavaş çalışmasına neden olması", "Tam tersine, eniyilemenin amacı programı daha hızlı hale getirmektir."],
+    ["Amaç programın boyutunu her zaman artırması", "Eniyileme bazen kod boyutunu küçültebilir."],
+    ["Hata ayıklama (debug) işlemini güçleştirebilmesi", "Eniyileme, çalıştırılan deyimlerin sırasını kaynak koddaki sıradan farklılaştırabilir. Bu durum, bir hata oluştuğunda programcının kaynak kodda hangi satırın soruna yol açtığını takip etmesini zorlaştırır."],
+    ["Sadece makine bağımsız eniyilemenin mümkün olması", "Hayır, hem makine bağımsız hem de makine bağımlı eniyileme türleri vardır."],
+    ["Derleme süresini her zaman kısaltması", "Eniyileme, derleme sürecine ek bir adım olduğu için derleme süresini genellikle uzatır."]
+  ],
+  answer: 2,
+  summary: "Programı eniyileştirmek, bir şefin tarifi daha hızlı yapmak için adımların sırasını değiştirmesine benzer. Sonuçta aynı yemek çıksa da, bir sorun olduğunda orijinal tarifin hangi adımında hata yapıldığını bulmak zorlaşır. Bu nedenle hata ayıklama yapılırken eniyileyici genellikle kapatılır."
+},
+{
+  q: "15. Derleyicinin hangi bölümü, metinsel çözümleme, sözdizim çözümleme ve anlam çözümleme aşamalarını içerir?",
+  options: [
+    ["Arka Uç (Back-end)", "Arka uç, eniyileme ve kod oluşturma aşamalarını içerir."],
+    ["Ön Uç (Front-end)", "Bir derleyicinin ön ucu, kaynak programı analiz eden ve bir ara koda dönüştüren bölümdür. Bu analiz, metinsel, sözdizimsel ve anlamsal çözümleme adımlarını kapsar."],
+    ["Sembol Tablosu", "Sembol tablosu, bu aşamalarda kullanılan bir veri yapısıdır, bir bölüm değildir."],
+    ["Eniyileyici (Optimizer)", "Eniyileyici, genellikle arka ucun bir parçasıdır."],
+    ["Kod Oluşturucu (Code Generator)", "Kod oluşturucu, arka ucun son parçasıdır."]
+  ],
+  answer: 1,
+  summary: "Derleme süreci iki ana parçaya ayrılabilir. Ön uç, kaynak kodu 'anlamakla' görevlidir. Arka uç ise bu 'anlaşılan' yapıyı alıp hedef makine için 'uygulamakla' görevlidir."
+},
+{
+  q: "16. Bellek kullanma etkinliği açısından, yorumlayıcıların derleyicilere göre avantajlı olmasının sebebi nedir?",
+  options: [
+    ["Yorumlayıcıların her zaman daha az bellek kullanması", "Bu her zaman doğru değildir; yorumlayıcının kendisi de bellekte yer kaplar."],
+    ["Yüksek düzeyli dil deyimlerinin orijinal şekillerinde kalması ve ek bir amaç program oluşturulmaması", "Derlemede kaynak programa ek olarak bir de büyük olabilen bir amaç program dosyası oluşturulur. Yorumlamada ise sadece kaynak kod ve yorumlayıcının kendisi bellekte bulunur, bu da genellikle daha az bellek kullanımı anlamına gelir."],
+    ["Derleyicilerin sembol tablosu kullanmaması", "Derleyiciler sembol tablosu kullanır."],
+    ["Yorumlayıcıların eniyileme yapmaması", "Eniyileme yapmamak bellek kullanımını doğrudan etkileyen ana faktör değildir."],
+    ["Derleyicilerin programı satır satır işlemesi", "Bu yorumlayıcıların çalışma şeklidir."]
+  ],
+  answer: 1,
+  summary: "Derleme işlemi, elinizdeki bir kitaptan (kaynak program) yola çıkarak tamamen yeni ve genellikle daha kalın bir kitap (amaç program) yazmaya benzer. Yorumlama ise sadece orijinal kitabı okuyup anlatmaya benzer. İkinci durumda bellekte sadece bir kitap olur."
+},
+{
+  q: "17. `sonuc = fonksiyon1(a+b) + fonksiyon2(a+b)` ifadesinde `a+b` işleminin sadece bir kez hesaplanıp sonucunun bir değişkende saklanarak her iki fonksiyonda da kullanılması, ne tür bir eniyileme örneğidir?",
+  options: [
+    ["Makine bağımlı eniyileme", "Bu, işlemcinin komut setine bağlı bir değişiklik değildir."],
+    ["Sözdizimsel eniyileme", "Sözdizimi değil, programın çalışma şekli değişmektedir."],
+    ["Makine bağımsız eniyileme", "Aynı hesaplamanın tekrarlanmasını önlemek, hedef bilgisayarın özelliklerinden bağımsız olarak uygulanabilecek mantıksal bir iyileştirmedir. Bu nedenle makine bağımsız bir eniyilemedir."],
+    ["Hata ayıklama", "Bu bir eniyileme türüdür, hata ayıklama değil."],
+    ["Geri izleme (Backtracking)", "Bu, ayrıştırma sırasında kullanılan bir tekniktir."]
+  ],
+  answer: 2,
+  summary: "Bu eniyileme türü 'ortak alt ifade eliminasyonu' olarak bilinir. Derleyici, aynı ifadenin birden çok kez hesaplandığını fark eder ve bunu sadece bir kez yapıp sonucu yeniden kullanarak programı hızlandırır. Bu, genel bir mantık kuralı olduğu için makine bağımsızdır."
+},
+{
+  q: "18. Sözdizim çözümleyicinin (parser) temel girdileri ve çıktısı nedir?",
+  options: [
+    ["Girdi: Kaynak Program, Çıktı: Amaç Program", "Bu, tüm derleme sürecinin girdi ve çıktısıdır."],
+    ["Girdi: Token Dizisi ve Dilin Grameri, Çıktı: Ayrıştırma Ağacı", "Sözdizim çözümleyici, metinsel çözümleyiciden gelen token dizisini alır, dilin gramer kurallarını kullanarak bu dizinin geçerli bir cümle olup olmadığını kontrol eder ve sonuç olarak cümlenin yapısını gösteren bir ayrıştırma ağacı oluşturur."],
+    ["Girdi: Ayrıştırma Ağacı, Çıktı: Ara Kod", "Bu, anlam çözümleyicinin girdi ve çıktısıdır."],
+    ["Girdi: Kaynak Program, Çıktı: Token Dizisi", "Bu, metinsel çözümleyicinin girdi ve çıktısıdır."],
+    ["Girdi: Ara Kod, Çıktı: Makine Kodu", "Bu, derleyicinin arka ucunun (kod oluşturucu) girdi ve çıktısıdır."]
+  ],
+  answer: 1,
+  summary: "Derleme süreci bir fabrika bandı gibidir. Metinsel çözümleyici, kodu 'token' adı verilen parçalara ayırır. Sözdizim çözümleyici bu parçaları alır, dilin 'montaj talimatlarını' (gramer) kullanarak bir 'iskelet' (ayrıştırma ağacı) oluşturur."
+},
+{
+  q: "19. Yukarıdan aşağıya ayrıştırma tekniğinde, türetme sürecinde yanlış bir kural seçilmesi nedeniyle 'ölü nokta'ya gelinmesi durumunda çözümleyicinin yaptığı işleme ne ad verilir?",
+  options: [
+    ["Eniyileme (Optimization)", "Bu, kodu daha verimli hale getirme işlemidir."],
+    ["Kod oluşturma (Code Generation)", "Bu, makine kodu üretme işlemidir."],
+    ["Geri izleme (Backtracking)", "Çözümleyici bir yola girdiğinde bunun token dizisiyle eşleşmediğini anlarsa, en son karar noktasına geri döner ve daha önce kullanmadığı alternatif bir kuralı dener. Bu geri dönüp başka bir yol deneme işlemine geri izleme denir."],
+    ["Yorumlama (Interpretation)", "Bu, farklı bir dil çevrim yöntemidir."],
+    ["Standartlaştırma (Standardization)", "Bu, bir dil için resmi kurallar belirleme işlemidir."]
+  ],
+  answer: 2,
+  summary: "Yukarıdan aşağıya ayrıştırma bir labirentte yol bulmaya benzer. Yanlış bir yola saptığınızı fark ettiğinizde (ölü nokta), bir önceki yol ayrımına geri dönüp diğer patikayı denersiniz. Bu işleme 'geri izleme' denir."
+},
+{
+  q: "20. Derleme sürecinde 'derleme zamanı' ve 'çalışma zamanı' arasındaki fark nedir?",
+  options: [
+    ["İkisi de aynı anlama gelir.", "Hayır, bunlar iki ayrı ve farklı zaman dilimidir."],
+    ["Derleme zamanı programın yazıldığı, çalışma zamanı test edildiği zamandır.", "Yazma ve test etme bu süreçlerin parçası olabilir ancak temel tanım bu değildir."],
+    ["Derleme zamanı kaynak kodun makine koduna çevrildiği, çalışma zamanı ise bu makine kodunun çalıştırıldığı zamandır.", "Derleyicinin kendisinin çalıştığı ve amaç programı ürettiği süre 'derleme zamanı'dır. Üretilen bu amaç programın kullanıcı tarafından çalıştırıldığı süre ise 'çalışma zamanı'dır."],
+    ["Derleme zamanı yorumlayıcılar, çalışma zamanı derleyiciler için geçerlidir.", "Bu ayrım temel olarak derleme süreci için geçerlidir. Yorumlayıcılarda bu iki zaman iç içe geçmiştir."],
+    ["Derleme zamanı programın hatalarını, çalışma zamanı ise programın doğruluğunu ifade eder.", "Bu anlamsız bir ifadedir."]
+  ],
+  answer: 2,
+  summary: "Bir yazılımı indirdiğinizde, o yazılımın geliştiricisi 'derleme zamanı'nı çoktan yaşamıştır. Sizin programı çift tıklayıp başlattığınız an ise 'çalışma zamanı'nın başladığı andır."
+},
+{
+  q: "21. Bir programlama dili komutlarını makine diline çeviren yazılımlara genel olarak ne ad verilir?",
+  options: [
+    ["İşletim Sistemleri", "İşletim sistemleri donanımı yönetir ve programların çalışması için bir ortam sağlar."],
+    ["Uygulama Yazılımları", "Uygulama yazılımları, kelime işlemci gibi son kullanıcıya yönelik programlardır."],
+    ["Dil Çevirici Yazılımlar", "Bir programlama diliyle yazılmış komutların makine diline çevrimini gerçekleştiren yazılımlara genel olarak dil çevirici yazılımlar denir. Derleyiciler ve yorumlayıcılar bu kategoriye girer."],
+    ["Sürücüler (Drivers)", "Sürücüler, işletim sisteminin belirli bir donanım parçasını kontrol etmesini sağlayan yazılımlardır."],
+    ["Metin Editörleri", "Metin editörleri, kaynak kodu yazmak için kullanılan araçlardır, kodu çevirmezler."]
+  ],
+  answer: 2,
+  summary: "İnsanların anladığı yüksek seviyeli diller ile makinelerin anladığı makine dili arasında bir 'tercümana' ihtiyaç vardır. Bu tercümanlık görevini yapan yazılımların genel adı dil çeviricilerdir."
+},
+{
+  q: "22. Anlam çözümleme aşamasının temel girdi ve çıktısı nedir?",
+  options: [
+    ["Girdi: Kaynak Program, Çıktı: Token Dizisi", "Bu metinsel çözümlemenin girdi ve çıktısıdır."],
+    ["Girdi: Ayrıştırma Ağacı, Çıktı: Soyut Dil ile Gösterilen Ara Program", "Anlam çözümleyici, sözdizimsel olarak doğru olan programın yapısını gösteren ayrıştırma ağacını alır ve ondan daha makineye yakın olan bir ara program (soyut program) üretir."],
+    ["Girdi: Token Dizisi, Çıktı: Ayrıştırma Ağacı", "Bu sözdizim çözümlemenin girdi ve çıktısıdır."],
+    ["Girdi: Ara Program, Çıktı: Makine Kodu", "Bu kod oluşturma aşamasının girdi ve çıktısıdır."],
+    ["Girdi: Dilin Grameri, Çıktı: Hata Mesajları", "Gramer bir girdidir ancak çıktı bu değildir."]
+  ],
+  answer: 1,
+  summary: "Derleme bandında sözdizim çözümleyici, kodun 'iskeletini' (ayrıştırma ağacı) çıkarır. Anlam çözümleyici ise bu iskeleti alıp, ona 'anlam' katarak daha işlevsel bir ara modele dönüştürür."
+},
+{
+  q: "23. Aşağıdakilerden hangisi bir yorumlayıcının çalışma adımlarından biri değildir?",
+  options: [
+    ["Sıradaki deyimi al", "Bu, yorumlayıcının döngüsünün ilk adımıdır."],
+    ["Yapılacak işlemleri belirle", "Bu, alınan deyimi analiz etme adımıdır."],
+    ["İşlemleri gerçekleştir", "Bu, analiz edilen deyimi çalıştırma adımıdır."],
+    ["Tüm programı tarayıp amaç program oluştur", "Bu, bir derleyicinin çalışma şeklidir. Yorumlayıcılar programı bir bütün olarak değil, deyim deyim işler ve ayrı bir amaç program oluşturmazlar."],
+    ["Programdaki deyimler sona erene kadar bu adımları yinele", "Bu, yorumlayıcının genel çalışma prensibini özetler."]
+  ],
+  answer: 3,
+  summary: "Yorumlayıcının çalışma prensibi bir 'oku-anla-yap' döngüsüdür. Derleyicinin ise 'hepsini oku-hepsini anla-hepsini çevir' şeklinde farklı bir prensibi vardır. Amaç program oluşturmak derleyiciye özgüdür."
+},
+{
+  q: "24. Bir yüksek düzeyli programın makine diline çevrilmesi ve o deyimin bilgisayarda çalıştırılmasını birleştiren yaklaşım hangisidir?",
+  options: [
+    ["Derleme", "Derleme, çevirme ve çalıştırma işlemlerini birbirinden net olarak ayırır (derleme zamanı ve çalışma zamanı)."],
+    ["Yorumlama", "Yorumlama yaklaşımı, bir deyimin makine diline çevrimini ve o deyimin bilgisayarda çalıştırılmasını birleştirir; her deyim anında çevrilip çalıştırılır."],
+    ["Eniyileme", "Eniyileme, çevrilen kodu daha verimli hale getirme işlemidir."],
+    ["Ayrıştırma", "Ayrıştırma, derleme sürecinin bir aşamasıdır."],
+    ["Bağlama (Linking)", "Bağlama, derlenmiş farklı modülleri birleştirme işlemidir."]
+  ],
+  answer: 1,
+  summary: "Derlemede çeviri ve çalıştırma iki ayrı dünyadır. Yorumlamada ise bu iki dünya iç içe geçmiştir; çeviri ve çalıştırma her deyim için anında birlikte gerçekleşir."
+},
+{
+  q: "25. Derleyici ve yorumlayıcıların karşılaştırıldığı tabloda, hangi dilin bir yorumlayıcı kullandığı belirtilmiştir?",
+  options: [
+    ["C", "C, derleyici kullanan dillere örnek olarak verilmiştir."],
+    ["C++", "C++, derleyici kullanan dillere örnek olarak verilmiştir."],
+    ["Python", "Python, Ruby ve Java gibi dillerin yorumlayıcı kullandığı belirtilmiştir."],
+    ["Assembly", "Assembly dili bir derleyici (assembler) kullanır, yorumlayıcı değil."],
+    ["Pascal", "Pascal, genellikle derlenerek kullanılan bir dildir."]
+  ],
+  answer: 2,
+  summary: "Genel olarak C ve C++ gibi diller performans odaklı oldukları için derleyici kullanırken; Python ve Ruby gibi diller esneklik ve kullanım kolaylığı için yorumlayıcı kullanır. Java ise hibrit bir model kullanır."
+},
+{
+  q: "26. Bir dil çevirici yazılımı oluşturma sürecine ne ad verilir?",
+  options: [
+    ["Dil standardizasyonu", "Bu, dil için resmi kurallar belirleme sürecidir."],
+    ["Dil çevrimi", "Bu, bir dilde yazılmış programı başka bir dile çevirme işlemidir."],
+    ["Dilin gerçekleştirimi", "Bir dil için derleyici veya yorumlayıcı gibi dil çevirici yazılımların oluşturulması, o dilin gerçekleştirimi (implementation) olarak adlandırılır."],
+    ["Dil soyutlaması", "Bu, dildeki karmaşık yapıları daha basit temsil etme yeteneğidir."],
+    ["Dil ayrıştırması", "Bu, derleme sürecindeki bir aşamadır."]
+  ],
+  answer: 2,
+  summary: "Bir programlama dilinin sadece kurallarını tanımlamak yetmez. O dilde yazılan kodları çalıştıracak bir araca da ihtiyaç vardır. İşte bu aracı (derleyici/yorumlayıcı) yapma sürecine 'dilin gerçekleştirimi' denir."
+},
+{
+  q: "27. Derleyicinin arka ucunda yer alan ve amacı, programın ara kod gösterimini alarak hedef bilgisayar için makine kodunu oluşturmak olan aşama hangisidir?",
+  options: [
+    ["Metinsel Çözümleme", "Bu, ön ucun ilk aşamasıdır."],
+    ["Sözdizim Çözümleme", "Bu, ön ucun ikinci aşamasıdır."],
+    ["Anlam Çözümleme", "Bu, ön ucun üçüncü aşamasıdır."],
+    ["Eniyileme", "Bu, arka ucun bir parçasıdır ancak temel görevi kodu iyileştirmektir."],
+    ["Kod Oluşturma", "Kod oluşturma, derleyicinin arka ucunun temel görevidir ve soyut programı alıp belirli bir bilgisayar için nihai makine kodunu üretir."]
+  ],
+  answer: 4,
+  summary: "Derleyicinin arka ucu, bir 'müteahhit' gibidir. Ön uçtan gelen 'mimari planı' (ara kod) alır ve belirli bir 'arsa' (hedef bilgisayar) için 'binayı inşa eder' (makine kodu oluşturur)."
+},
+{
+  q: "28. Taşınabilir kod üretmek amacıyla kullanılan hibrit yaklaşımda, kaynak program önce neye çevrilir?",
+  options: [
+    ["Doğrudan makine koduna", "Bu saf derleme yöntemidir."],
+    ["Bir sanal makinenin yorumlayacağı bir ara koda (bytecode gibi)", "Hibrit yaklaşımda, kaynak program önce platformdan bağımsız bir ara koda derlenir. Bu ara kod daha sonra her platformdaki sanal makine tarafından yorumlanır."],
+    ["Token dizisine", "Bu, derlemenin çok erken bir aşamasıdır."],
+    ["Ayrıştırma ağacına", "Bu da derlemenin erken bir aşamasıdır."],
+    ["Doğrudan çalıştırılabilir bir dosyaya", "Bu saf derleme sonucudur."]
+  ],
+  answer: 1,
+  summary: "Taşınabilir kodun sırrı, doğrudan belirli bir makinenin diline değil, tüm makinelerin üzerinde çalışabilen hayali bir makinenin (sanal makine) anladığı evrensel bir 'ara dile' (bytecode) çeviri yapmaktır."
+},
+{
+  q: "29. Bir derleyicinin, bir programdaki aynı tanımlayıcının sonraki kullanımlarını, o tanımlayıcı için sembol tablosunda oluşturulmuş olan aynı elemana bağlamasının amacı nedir?",
+  options: [
+    ["Programın daha yavaş çalışmasını sağlamak", "Bu anlamsız bir amaçtır."],
+    ["Bellek israfına neden olmak", "Bu bir amaç değil, istenmeyen bir sonuç olurdu."],
+    ["Programın tutarlılığını sağlamak ve tanımlayıcıyla ilgili bilgilere tek bir yerden erişmek", "Derleyici, 'puan' adında bir değişken gördüğünde, onunla ilgili tüm bilgileri (tipi, adresi vb.) tek bir yere kaydeder. Daha sonra her 'puan' gördüğünde aynı kayda bakarak tutarlılığı korur."],
+    ["Programdaki tüm değişkenlerin aynı isimde olmasını zorunlu kılmak", "Bu anlamsız ve kısıtlayıcı bir durum olurdu."],
+    ["Programın hata ayıklamasını zorlaştırmak", "Bu bir amaç değil, istenmeyen bir sonuç olurdu."]
+  ],
+  answer: 2,
+  summary: "Sembol tablosu bir 'adres defteri' gibidir. Derleyici, bir değişkenle ilk tanıştığında onun bilgilerini bu deftere kaydeder. Daha sonra aynı isimle karşılaştığında, kim olduğunu anlamak için tekrar tekrar analiz yapmak yerine doğrudan bu adres defterine bakar."
+},
+{
+  q: "30. Aşağıdaki ifadelerden hangisi derleme ve yorumlama arasındaki farkı yanlış bir şekilde açıklar?",
+  options: [
+    ["Derleyici tüm programı tarar, yorumlayıcı satır satır işler.", "Bu doğru bir ifadedir."],
+    ["Derleyicinin genel yürütme süresi daha hızlıdır.", "Bu doğru bir ifadedir."],
+    ["Yorumlayıcıda hata ayıklama genellikle daha kolaydır.", "Bu doğru bir ifadedir."],
+    ["Derleyici tüm hataları taradıktan sonra bildirir, yorumlayıcı ilk hatada durur.", "Bu doğru bir ifadedir."],
+    ["Derleyici Java gibi dilleri, yorumlayıcı C gibi dilleri kullanır.", "Bu ifade yanlıştır. Tam tersi, C ve C++ gibi diller derleyici kullanırken, Java hibrit bir model (derleyici+yorumlayıcı) kullanır."]
+  ],
+  answer: 4,
+  summary: "Genel bir kural olarak, performansın kritik olduğu sistem programlama dilleri (C, C++) derleyici kullanır. Esnekliğin ve platform bağımsızlığının önemli olduğu diller (Java, Python) ise yorumlayıcı veya hibrit modeller kullanır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

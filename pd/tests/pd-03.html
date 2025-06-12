@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 3</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 3</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Bir programlama dilinde, 'bir değişkenin kullanılmadan önce mutlaka tanımlanması gerektiği' kuralı, aşağıdakilerden hangisine bir örnektir?",
+  options: [
+    ["Sözdizim (Syntax) kuralı", "Sözdizim, bir deyimin nasıl yazılacağını belirler. Örneğin, her komutun sonuna noktalı virgül koymak bir sözdizim kuralıdır."],
+    ["Anlam (Semantics) kuralı", "Anlam, bir program çalıştırıldığında gerçekleşecek işlemleri ve mantıksal doğruluğu tanımlar. Değişkenin önceden tanımlanması, programın anlamlı ve çalıştırılabilir olması için bir ön koşuldur."],
+    ["Lexeme kuralı", "Lexeme, bir dildeki en düşük düzeyli sözdizimsel birimdir; bu bir kural türü değildir."],
+    ["Metadil kuralı", "Metadil, başka bir dilin sözdizimini tanımlamak için kullanılan dildir (Örn: BNF)."],
+    ["Yorumlama (Interpretation) kuralı", "Yorumlama, bir programı makine diline çevirme yöntemlerinden biridir, bir dil tanım kuralı değildir."]
+  ],
+  answer: 1,
+  summary: "Sözdizim, bir cümlenin 'doğru yazılıp yazılmadığı' ile ilgilenirken; Anlam, cümlenin 'mantıklı olup olmadığı' ile ilgilenir. Değişkenin tanımlanmadan kullanılması, yazım olarak doğru olsa bile mantıksal bir hatadır ve bu bir anlam kuralı ihlalidir."
+},
+{
+  q: "2. `+ab` (prefix), `a+b` (infix) ve `ab+` (postfix) ifadeleri için aşağıdakilerden hangisi doğrudur?",
+  options: [
+    ["Üçü de farklı anlamlı bileşenlere sahiptir.", "Hayır, üç ifade de aynı anlamlı bileşenlere sahiptir: '+' işlemcisi ve 'a' ile 'b' alt ifadeleri."],
+    ["Her biri için farklı bir soyut sözdizim ağacı (AST) çizilir.", "Hayır, üç ifade de aynı hiyerarşik yapıyı ve anlamı temsil ettiği için hepsi için aynı soyut sözdizim ağacı çizilir."],
+    ["Sadece a+b ifadesi bir soyut sözdizim ağacı ile gösterilebilir.", "Hayır, bir ifadenin gösterim şeklinden bağımsız olarak sözdizimsel yapısı bir soyut sözdizim ağacı ile gösterilebilir."],
+    ["Üçü de aynı anlamlı bileşenleri içerir ve aynı soyut sözdizim ağacı ile temsil edilir.", "Bu ifadeler farklı metinsel sözdizimlere sahip olsalar da, hepsi 'a ile b'yi topla' şeklinde aynı soyut anlama gelir ve bu nedenle tek bir soyut sözdizim ağacı ile gösterilirler."],
+    ["Prefix ve postfix ifadeler, infix ifadelere göre daha karmaşık soyut sözdizim ağaçları oluşturur.", "Hayır, ağacın karmaşıklığı ifadenin gösterimine değil, içerdiği işlem ve işlenenlerin ilişkisine bağlıdır. Bu örnekte ağaçlar aynıdır."]
+  ],
+  answer: 3,
+  summary: "Soyut sözdizim ağaçları, bir ifadenin yazıldığı gösterimden (prefix, infix, postfix) bağımsız olarak, onun temel anlamsal yapısını ve işlemci-işlenen ilişkisini gösterir. Bu nedenle bu üç ifade de aynı ağaçla temsil edilir."
+},
+{
+  q: "3. BNF (Backus-Naur Form) ile ilgili aşağıdakilerden hangisi söylenemez?",
+  options: [
+    ["Programlama dillerinin sözdizimini tanımlamak için kullanılan bir metadildir.", "Bu, BNF'nin temel tanımıdır."],
+    ["BNF kullanılarak sözdizimi tanımlanan ilk programlama dili ALGOL60'tır.", "Bu, programlama dilleri tarihinde önemli bir bilgidir."],
+    ["Bir BNF grameri; başlangıç sembolü, kurallar, terminal ve terminal olmayan sembollerden oluşur.", "Bunlar, bir BNF gramerini oluşturan dört temel bölümdür."],
+    ["Bir dilin hem sözdizim (syntax) hem de anlam (semantics) kurallarını tanımlar.", "Bu ifade yanlıştır. BNF, yalnızca bir dilin sözdizimini tanımlamak için kullanılır. Anlam kurallarını tanımlamak için standartlaşmış bir metadil yoktur."],
+    ["Kurallarda `|` sembolü 'veya' anlamına gelir ve alternatif tanımlamalar için kullanılır.", "Bu sembol, bir terminal olmayan sembol için birden fazla olası tanım olduğunda kullanılır."]
+  ],
+  answer: 3,
+  summary: "BNF, bir dilin gramer yapısını, yani 'cümlelerin' nasıl doğru bir şekilde oluşturulacağını kurallarla tanımlayan güçlü bir araçtır. Ancak bir cümlenin ne anlama geldiği (anlam/semantics) BNF'nin kapsamı dışındadır."
+},
+{
+  q: "4. Bir programlama dilindeki en düşük düzeyli sözdizimsel birimlere ne ad verilir?",
+  options: [
+    ["Token", "Token, bir veya daha fazla lexeme'in gruplanmasıyla oluşan kategoridir (örn: 'tamsayı_sabit')."],
+    ["Deyim (Statement)", "Deyim, genellikle bir veya daha fazla token'dan oluşan ve bir işlem belirten tam bir komuttur."],
+    ["İfade (Expression)", "İfade, bir değer üreten token kombinasyonudur."],
+    ["Lexeme", "Bir programdaki en düşük düzeyli sözdizimsel birimlere lexeme adı verilir. Programlar karakterler yerine lexeme'ler dizisi olarak düşünülebilir (örn: `puan`, `=`, `10`, `+`)."],
+    ["Sembol", "Sembol, terminal veya terminal olmayanları ifade eden genel bir terimdir, ancak en düşük düzeyli birim tanımı lexeme'dir."]
+  ],
+  answer: 3,
+  summary: "Bir derleyici veya yorumlayıcı, kaynak kodu okurken onu önce en küçük anlamlı parçalara ayırır. 'puan', '=', '10', ';' gibi bu en küçük parçaların her birine 'lexeme' denir."
+},
+{
+  q: "5. Bir dilin sözdizimini (syntax) anlatmak amacıyla kullanılan dile ne ad verilir?",
+  options: [
+    ["Programlama Dili", "Programlama dili, bilgisayara komut vermek için kullanılır, başka bir dili anlatmak için değil."],
+    ["Makine Dili", "Makine dili, bilgisayarın anladığı en temel dildir."],
+    ["Metadil", "Bir dilin yapısını ve kurallarını tanımlamak için kullanılan bir üst dile 'metadil' denir. BNF buna bir örnektir."],
+    ["Doğal Dil", "Doğal dil (Türkçe, İngilizce gibi) insanlar tarafından konuşulan dildir ve genellikle kesinlikten uzak olduğu için formel tanımlamalarda tercih edilmez."],
+    ["Anlamsal Dil", "Anlamsal dil diye bir kategori yoktur; anlam (semantics) bir dilin özelliklerinden biridir."]
+  ],
+  answer: 2,
+  summary: "Tıpkı Türkçe dilbilgisini anlatmak için yine Türkçe'yi kullanmamız gibi, programlama dillerinin gramerini (sözdizimini) anlatmak için de özel olarak tasarlanmış dillere ihtiyaç duyarız. Bu 'dili anlatan dillere' metadil denir."
+},
+{
+  q: "6. BNF kurallarında, bir kuralın sol tarafındaki terminal olmayan sembolün, kuralın sağ tarafında da yer alması durumuna ne ad verilir?",
+  options: [
+    ["Türetme (Derivation)", "Türetme, bir cümleyi gramer kurallarını kullanarak oluşturma işlemidir."],
+    ["Ayrıştırma (Parsing)", "Ayrıştırma, bir cümlenin gramere uygun olup olmadığını kontrol etme ve yapısını çıkarma işlemidir."],
+    ["Özyineleme (Recursion)", "Bir tanımın kendi kendini içermesi durumuna özyineleme denir. BNF'te bir kuralın sol tarafının sağ tarafta da yer alması, o kuralın özyinelemeli olduğunu gösterir."],
+    ["Soyutlama (Abstraction)", "Soyutlama, karmaşık bir yapıyı daha basit bir isimle temsil etme eylemidir."],
+    ["Genişletme (Extension)", "Genişletme, genellikle EBNF gibi bir formun temel forma yeni özellikler eklemesidir."]
+  ],
+  answer: 2,
+  summary: "Özyineleme, tekrarlı yapıları zarif bir şekilde tanımlamayı sağlar. Örneğin, bir 'tanımlayıcı listesi'nin 'bir tanımlayıcı ve ardından gelen başka bir tanımlayıcı listesi' olarak tanımlanması özyinelemeli bir kuraldır."
+},
+{
+  q: "7. `puan = dogru * 10;` şeklindeki bir kod satırında, 'dogru' kelimesi bir `Tanımlayıcı` (Identifier) token'ına karşılık gelirken, bu token'ı oluşturan 'dogru' kelimesinin kendisi nedir?",
+  options: [
+    ["Terminal Sembol", "Terminal sembol, BNF'te kullanılan bir terimdir; '+' gibi atomik birimlerdir."],
+    ["Lexeme", "'dogru' kelimesi, kaynak kodundaki en küçük anlamlı birimlerden biridir ve bu birime lexeme denir. Bu lexeme daha sonra 'Tanımlayıcı' olarak sınıflandırılır."],
+    ["Deyim", "Deyim, `puan = dogru * 10;` komutunun tamamıdır."],
+    ["Terminal Olmayan Sembol", "Terminal olmayan sembol, `<ifade>` gibi BNF'te kullanılan bir ara tanımdır."],
+    ["İfade", "İfade, `dogru * 10` gibi bir değer üreten kısımdır."]
+  ],
+  answer: 1,
+  summary: "Lexeme ve token arasındaki fark önemlidir. Lexeme, kaynak koddaki ham metin parçasıdır ('dogru'). Token ise o metin parçasının dilbilgisel kategorisidir ('Tanımlayıcı')."
+},
+{
+  q: "8. Bir cümlenin hiyerarşik sözdizimsel yapısını gösteren, en alttaki düğümlerinde terminal sembollerin, diğer düğümlerinde ise terminal olmayanların yer aldığı ağaç yapısına ne denir?",
+  options: [
+    ["Soyut Sözdizim Ağacı (AST)", "AST, bir ifadenin anlamsal yapısını gösterir ve gösterimden bağımsızdır. Ayrıştırma ağacı ise metinsel sözdizime daha yakındır."],
+    ["Sözdizim Grafiği", "Sözdizim grafiği, gramer kurallarını oval ve dikdörtgen düğümlerle gösteren bir akış şemasıdır."],
+    ["Türetme Ağacı", "Türetme bir süreçtir, bir ağaç yapısı değildir."],
+    ["Ayrıştırma Ağacı (Parse Tree)", "Ayrıştırma ağacı, bir cümlenin belirli bir gramere göre nasıl türetildiğini adım adım gösteren hiyerarşik yapıdır. Kökü başlangıç sembolü, yaprakları ise terminal sembollerdir."],
+    ["BNF Ağacı", "BNF bir metadildir, doğrudan bir ağaç yapısı üretmez; ağaçlar BNF kurallarına göre oluşturulur."]
+  ],
+  answer: 3,
+  summary: "Ayrıştırma ağacı (Parse Tree), bir derleyicinin bir kod parçasının gramere uygun olup olmadığını kontrol ederken oluşturduğu somut, hiyerarşik bir haritadır. Bu ağaç, kodun yapısal doğruluğunu kanıtlar."
+},
+{
+  q: "9. EBNF (Genişletilmiş BNF), temel BNF'e okunabilirliği ve yazılabilirliği artırmak için bazı eklemeler yapar. Aşağıdakilerden hangisi EBNF'in getirdiği bu özelliklerden biri değildir?",
+  options: [
+    ["`[]` (Seçimlik - Optionality)", "Bu, bir bölümün isteğe bağlı (0 veya 1 kez) olabileceğini belirtir ve EBNF'in bir özelliğidir."],
+    ["`{}` (Yineleme - Repetition)", "Bu, bir bölümün sıfır veya daha fazla kez tekrarlanabileceğini belirtir ve EBNF'in bir özelliğidir."],
+    ["`|` (Değiştirme - Alternation)", "Bu, 'veya' anlamına gelir ve alternatif seçenekleri belirtir. Hem BNF hem de EBNF'te bulunur."],
+    ["`:=` (Tanımlama)", "Bu sembol, bir kuralın sol ve sağ tarafını ayırır ve temel BNF'in bir parçasıdır, EBNF'in getirdiği bir yenilik değildir."],
+    ["Parantezleme (Grouping)", "EBNF, kuralların önceliğini belirtmek için genellikle `()` gibi gruplama operatörlerini de destekler, bu da bir yenilik sayılır."]
+  ],
+  answer: 3,
+  summary: "EBNF, temel BNF'in özyineleme ile yaptığı bazı karmaşık tanımlamaları daha basit hale getirmek için `[]` (isteğe bağlı) ve `{}` (tekrar) gibi ek semboller sunar. `:=` sembolü ise zaten BNF'in temel bir parçasıdır."
+},
+{
+  q: "10. Programlama dillerinde durağan (statik) ve dinamik anlam kuralları arasındaki temel fark nedir?",
+  options: [
+    ["Durağan kurallar derleme sırasında, dinamik kurallar ise programın çalışması sırasında kontrol edilir.", "Bu, aralarındaki temel farktır. Derleyici, bir değişkenin doğru tipte kullanılıp kullanılmadığını (durağan anlam) kontrol edebilir, ancak bir dizinin sınırlarını aşıp aşmadığını (dinamik anlam) ancak program çalışırken bilebilir."],
+    ["Durağan kurallar BNF ile gösterilebilirken, dinamik kurallar gösterilemez.", "Tam tersi, her iki kural türü de genellikle BNF ile gösterilemez, çünkü BNF sözdizimi tanımlar."],
+    ["Durağan kurallar programın mantığını, dinamik kurallar ise yazımını belirler.", "Tam tersi, her ikisi de anlamla (mantıkla) ilgilidir. Yazımı sözdizimi belirler."],
+    ["Durağan kurallar sadece nesneye yönelik dillerde, dinamik kurallar ise imperative dillerde bulunur.", "Hayır, her iki tür anlam kuralı da çoğu modern programlama dilinde mevcuttur."],
+    ["Durağan kurallar programcı tarafından, dinamik kurallar ise kullanıcı tarafından yazılır.", "Bu ifade anlamsızdır, her iki kural da dilin tanımının bir parçasıdır."]
+  ],
+  answer: 0,
+  summary: "Bir hatanın ne zaman tespit edilebildiği önemlidir. Eğer bir hata, program hiç çalıştırılmadan, sadece koda bakarak (derleme sırasında) bulunabiliyorsa, bu bir durağan anlam kuralı ihlalidir. Eğer hata ancak program çalışırken ortaya çıkıyorsa, bu bir dinamik anlam kuralı ihlalidir."
+},
+{
+  q: "11. Anlam (semantics) kurallarını tanımlamak için kullanılan resmi yaklaşımlar arasında aşağıdakilerden hangisi yer almaz?",
+  options: [
+    ["İşlemsel (Operational) Anlam", "Bu, bir programı soyut bir makinede çalıştırarak anlamını tanımlayan bir yaklaşımdır."],
+    ["Kurala Dayalı (Axiomatic) Anlam", "Bu, programlardaki işlemlerin öncesi ve sonrası için mantıksal iddialar kullanarak anlamı tanımlayan bir yaklaşımdır."],
+    ["Fonksiyonel (Denotational) Anlam", "Bu, programları eşdeğer matematiksel fonksiyonlara çevirerek anlamını tanımlayan bir yaklaşımdır."],
+    ["Gramer (Grammatical) Anlam", "'Gramer' terimi sözdizim ile ilgilidir. Anlam tanımlama için 'Gramer Anlam' adında resmi bir yaklaşım bulunmamaktadır."],
+    ["Tümü resmi anlam tanımlama yaklaşımlarıdır.", "Hayır, 'Gramer Anlam' bu yaklaşımlardan biri değildir."]
+  ],
+  answer: 3,
+  summary: "Programlama dillerinin anlamını formel olarak tanımlamak için üç temel yaklaşım geliştirilmiştir: İşlemsel (Operational), Kurala Dayalı (Axiomatic) ve Fonksiyonel (Denotational) Anlam. Her biri farklı bir teorik temele dayanır."
+},
+{
+  q: "12. Sözdizim grafiklerinde (syntax graphs) terminal ve terminal olmayan semboller nasıl gösterilir?",
+  options: [
+    ["Terminaller dikdörtgen, terminal olmayanlar oval düğümlerle", "Tam tersi doğrudur."],
+    ["Her ikisi de üçgen düğümlerle", "Bu gösterim sözdizim grafikleri için kullanılmaz."],
+    ["Terminaller oval, terminal olmayanlar dikdörtgensel düğümlerle", "Sözdizim grafiklerinde, `if`, `+` gibi atomik semboller (terminaller) ovaller içinde, `<ifade>`, `<deyim>` gibi ara tanımlar (terminal olmayanlar) ise dikdörtgenler içinde gösterilir."],
+    ["Terminaller kesikli, terminal olmayanlar düz çizgilerle", "Bu gösterim sözdizim grafikleri için kullanılmaz."],
+    ["Her ikisi de daire şeklinde düğümlerle, sadece renkleri farklıdır.", "Şekil önemlidir, sadece renk değil."]
+  ],
+  answer: 2,
+  summary: "Sözdizim grafikleri, gramer kurallarının görsel bir akış şemasıdır. Bu şemalarda, yolun sonunu temsil eden terminaller ovallerle, içinden başka yolların geçtiği ara duraklar olan terminal olmayanlar ise dikdörtgenlerle gösterilir."
+},
+{
+  q: "13. Bir BNF gramerinde terminal olmayan sembolleri belirtmek için hangi işaretler kullanılır?",
+  options: [
+    ["`[]` (Köşeli parantez)", "Bu, EBNF'te 'seçimlilik' (optionality) belirtmek için kullanılır."],
+    ["`{}` (Süslü parantez)", "Bu, EBNF'te 'yineleme' (repetition) belirtmek için kullanılır."],
+    ["`()` (Normal parantez)", "Bu, EBNF'te gruplama için kullanılabilir."],
+    ["`<>` (Küçüktür ve büyüktür işaretleri)", "BNF'te, `<ifade>`, `<deyim>`, `<değişken>` gibi terminal olmayan semboller (ara tanımlar) bu işaretler arasına yazılarak belirtilir."],
+    ["`''` (Tek tırnak)", "Tırnak işaretleri genellikle terminal sembol olan karakter dizilerini belirtmek için kullanılır."]
+  ],
+  answer: 3,
+  summary: "BNF'te, dilin kendisinde görünmeyen ancak gramer kurallarını oluşturmak için kullanılan ara kavramları (deyim, ifade vb.) ayırt etmek için standart bir gösterim kullanılır. Bu gösterim, ismin `<` ve `>` işaretleri arasına alınmasıdır."
+},
+{
+  q: "14. `if-then-else` gibi bir kontrol yapısının anlamlı bileşenlerini (koşul, doğruysa yapılacak iş, yanlışsa yapılacak iş) hiyerarşik olarak gösteren yapı hangisidir?",
+  options: [
+    ["BNF Kuralı", "BNF kuralı bu yapının metinsel yazımını tanımlar, hiyerarşik görselini değil."],
+    ["Sözdizim Grafiği", "Sözdizim grafiği bu yapının olası akış yollarını gösterir."],
+    ["Soyut Sözdizim Ağacı (AST)", "if-then-else gibi yapılar, bir 'koşul', bir 'doğruysa' dalı ve bir 'yanlışsa' dalından oluşan üç dallı bir ağaç olarak soyut sözdizim ağacında gösterilebilir."],
+    ["Lexeme Tablosu", "Lexeme tablosu, koddaki en küçük birimleri listeler."],
+    ["Türetme Süreci", "Türetme, bu yapının gramerden nasıl oluşturulduğunu gösteren bir süreçtir."]
+  ],
+  answer: 2,
+  summary: "Soyut sözdizim ağaçları sadece `a+b` gibi basit ifadeler için değil, `if-then-else` gibi daha karmaşık kontrol yapıları için de kullanılabilir. Ağaç, bu yapıların temel mantıksal bileşenlerini ve ilişkilerini ortaya koyar."
+},
+{
+  q: "15. Bir programlama dilinin sözdizimini tanımlamak için standart bir metadil (BNF) varken, anlamını (semantics) tanımlamak için neden benzer bir standart yoktur?",
+  options: [
+    ["Çünkü anlam kuralları programdan programa değişir.", "Anlam kuralları dilin bir parçasıdır, programdan programa değişmez."],
+    ["Çünkü anlam tanımlama yöntemleri oldukça karmaşıktır ve hiçbiri evrensel kabul görmemiştir.", "Mevcut anlamsal tanımlama yöntemleri (operational, axiomatic, denotational) oldukça karmaşıktır ve her biri farklı teorik temellere dayandığı için hiçbiri BNF gibi tek bir standart haline gelememiştir."],
+    ["Çünkü anlam kurallarını sadece doğal dille anlatmak mümkündür.", "Doğal dille anlatım yaygındır ancak yetersizdir; formel yöntemler de mevcuttur."],
+    ["Çünkü anlamı sadece derleyici bilir.", "Derleyici, anlam kurallarını uygular, onları tanımlamaz."],
+    ["Çünkü tüm dillerin anlamı aynıdır, sadece sözdizimleri farklıdır.", "Bu kesinlikle yanlıştır; her dilin kendine özgü anlamsal kuralları vardır."]
+  ],
+  answer: 1,
+  summary: "Bir dilin gramerini (sözdizimini) tanımlamak, onun ne anlama geldiğini tanımlamaktan daha kolay bir problemdir. Anlam, programın çalışması, durumu, mantığı gibi çok daha karmaşık ve soyut kavramlar içerdiğinden, bunu tanımlayacak tek ve basit bir standart üzerinde anlaşmaya varılamamıştır."
+},
+{
+  q: "16. BNF'te bir kuralın sağ tarafının 'token'lar, 'lexeme'ler veya diğer 'terminal olmayan semboller'den oluştuğu belirtilmiştir. Bu sağ taraf, kuralın sol tarafındaki terminal olmayan sembolün neyini açıklar?",
+  options: [
+    ["Çalışma zamanı hatasını", "Bu bir hata durumuyla ilgili değildir."],
+    ["Bellekteki yerini", "Bu, bellek yönetimiyle ilgili bir konudur."],
+    ["Popülerliğini", "Bu, dilin kullanımıyla ilgili bir metriktir."],
+    ["Soyutlamanın açıklamasını", "Bir kuralın sol tarafı bir soyutlamadır (örn: `<ifade>`). Sağ tarafı ise bu soyutlamanın hangi somut bileşenlerden (token, lexeme vb.) oluştuğunu gösteren açıklamasıdır."],
+    ["Derlenme süresini", "Bu, derleyicinin performansıyla ilgili bir konudur."]
+  ],
+  answer: 3,
+  summary: "BNF kuralları birer tanım cümlesidir. Sol taraf, tanımlanan kavramın adıdır (soyutlama). Sağ taraf ise 'bu kavram şunlardan oluşur' diyen açıklamadır. Örneğin, `<atama_deyim> := <değişken> = <ifade>`."
+},
+{
+  q: "17. BNF kurallarını kullanarak başlangıç sembolünden başlayıp bir dilde geçerli bir cümle (program parçası) oluşturma işlemine ne ad verilir?",
+  options: [
+    ["Standartlaştırma", "Standartlaştırma, bir dil için resmi bir tanım oluşturma sürecidir."],
+    ["Türetme (Derivation)", "Bir gramerden cümle oluşturma işlemi, başlangıç sembolünden başlayarak kuralların sırayla uygulanmasıyla yapılır ve bu sürece türetme denir."],
+    ["Ayrıştırma (Parsing)", "Ayrıştırma, verilen bir cümlenin gramere uygun olup olmadığını kontrol etme, yani türetmenin tersi işlemidir."],
+    ["Genişletme (Extension)", "Genişletme, BNF'e yeni özellikler eklenmesidir (EBNF gibi)."],
+    ["Anlamlandırma (Semantics)", "Anlamlandırma, cümlenin ne işe yaradığını belirleme sürecidir."]
+  ],
+  answer: 1,
+  summary: "Bir gramer, bir dilin tüm geçerli cümlelerini üretebilecek bir 'cümle fabrikası' gibidir. Bu fabrikada, başlangıç sembolü olan ham maddeden başlayıp kuralları uygulayarak bir ürün (cümle) elde etme sürecine 'türetme' denir."
+},
+{
+  q: "18. Bir dil standardının oluşturulmasının temel amacı nedir?",
+  options: [
+    ["Dilin öğrenilmesini zorlaştırmak", "Tam tersine, standartlar dilin daha öngörülebilir ve öğrenilebilir olmasını sağlar."],
+    ["Sadece tek bir şirketin o dili kullanabilmesini sağlamak", "Standartlar, dilin daha geniş bir kitle ve farklı platformlar tarafından kullanılabilmesini hedefler."],
+    ["Çeşitli donanım ortamlarına uyumlu dil gerçekleştirimlerinin üretilebilmesini sağlamak", "Bir dil standardı, farklı derleyici geliştiricilerinin aynı kurallara uymasını sağlayarak, o dilde yazılan bir programın farklı bilgisayarlarda da tutarlı bir şekilde çalışmasına olanak tanır."],
+    ["Dilin sözdizimini sürekli olarak değiştirmek", "Standartlar, tam tersine, dilin sözdizimini belirli bir süre için sabitlemeyi amaçlar."],
+    ["Dilin sadece akademik amaçlarla kullanılmasını sağlamak", "Standartlar genellikle bir dilin ticari ve genel kullanımını desteklemek için oluşturulur."]
+  ],
+  answer: 2,
+  summary: "Bir dil popüler olduğunda, farklı şirketler ve gruplar o dil için kendi derleyicilerini yazmak isteyebilir. Eğer herkesin uyacağı ortak bir 'standart' olmazsa, her derleyici dili farklı yorumlar ve 'aynı' program farklı bilgisayarlarda farklı çalışır. Standartlaştırma bu kaosu önler."
+},
+{
+  q: "19. BNF'in `:=` sembolü nasıl okunmalıdır?",
+  options: [
+    ["eşittir", "Bu matematiksel bir ifadedir, BNF'te bu anlamda kullanılmaz."],
+    ["olabilir", "`:=' sembolü, sol taraftaki sembolün sağ taraftaki yapı 'olabileceğini' veya o yapı ile tanımlandığını belirtir."],
+    ["miras alır", "Bu, nesneye yönelik programlamada kullanılan bir terimdir."],
+    ["daha büyüktür", "Bu bir karşılaştırma operatörüdür."],
+    ["atama yapar", "Bu, birçok programlama dilindeki atama operatörüdür, BNF'teki anlamı bu değildir."]
+  ],
+  answer: 1,
+  summary: "Bir BNF kuralı olan `<deyim> := <değişken> = <ifade>`, 'bir deyim, bir değişken ve ardından gelen eşittir işareti ve ardından gelen bir ifadeden oluşabilir' şeklinde okunur."
+},
+{
+  q: "20. ANSI ve ISO gibi kuruluşların programlama dilleriyle ilgili temel işlevi nedir?",
+  options: [
+    ["Yeni programlama dilleri icat etmek", "Bu kuruluşlar dil icat etmez, mevcut diller için standartlar oluşturur."],
+    ["Programcıları işe almak", "Bu, şirketlerin ve insan kaynakları departmanlarının görevidir."],
+    ["Dil standartlarını oluşturmak ve yayınlamak", "ANSI (Amerikan Ulusal Standartlar Enstitüsü) ve ISO (Uluslararası Standartlar Organizasyonu) gibi kuruluşlar, bir dilin yaygın kullanımını desteklemek için resmi standartlar tanımlar."],
+    ["Programlama dilleri için derleyiciler yazmak", "Bu, yazılım şirketlerinin veya açık kaynak topluluklarının görevidir."],
+    ["Hangi dilin daha iyi olduğuna karar vermek", "Bu kuruluşlar tarafsızdır ve dilleri sıralamak yerine onlar için tutarlı kurallar belirler."]
+  ],
+  answer: 2,
+  summary: "ANSI ve ISO, teknolojiden üretime birçok alanda standartlar belirleyen uluslararası kuruluşlardır. Programlama dilleri alanında da, bir dilin tüm platformlarda tutarlı çalışmasını sağlamak için C, C++ gibi dillerin standartlarını tanımlamışlardır."
+},
+{
+  q: "21. Bir dilin 'durağan (statik) anlam' kuralları ile ilgili aşağıdakilerden hangisi doğrudur?",
+  options: [
+    ["Programın çalıştırılması sırasında kontrol edilirler.", "Çalışma sırasında kontrol edilenler dinamik anlam kurallarıdır."],
+    ["BNF ile kolayca gösterilebilirler.", "BNF sözdizimi tanımlar, statik anlam kurallarını (örn: tip uyumu) gösteremez."],
+    ["Programların derlenmesi sırasında kontrol edilebilirler.", "Derleyici, bir programı makine koduna çevirirken, değişkenlerin tanımlanıp tanımlanmadığı veya tiplerin uyumlu olup olmadığı gibi statik anlam kurallarını kontrol eder."],
+    ["Doğal dil ile açıklanmaları imkansızdır.", "Genellikle doğal dil ile açıklanırlar, ancak bu açıklamalar bazen belirsiz olabilir."],
+    ["Her zaman programın çökmesine neden olurlar.", "Statik anlam hatası genellikle programın derlenmesini engeller, dolayısıyla program hiç çalıştırılamayacağı için çökme olmaz."]
+  ],
+  answer: 2,
+  summary: "Durağan (statik) anlam, 'çalıştırmadan bilinebilecek mantık' olarak düşünülebilir. Bir derleyici, kodu analiz ederek bir tamsayıya metin atamaya çalışmak gibi mantıksal hataları program hiç çalışmadan yakalayabilir. İşte bu kontrollere statik anlam denetimi denir."
+},
+{
+  q: "22. Bir programdaki `if x > 5 { ... }` gibi bir deyimde `>` sembolü, BNF gramerine göre nasıl bir semboldür?",
+  options: [
+    ["Terminal olmayan sembol", "Terminal olmayan semboller `<ifade>` gibi ara tanımlardır."],
+    ["Başlangıç sembolü", "Başlangıç sembolü genellikle `<program>` gibi tüm grameri başlatan semboldür."],
+    ["Terminal sembol", "Bir dildeki `+`, `*`, `>`, `if` gibi atomik (daha fazla bölünemeyen) ve dilde doğrudan yer alan sembollere terminal sembol denir."],
+    ["Özyinelemeli sembol", "Bu, bir tanımın kendi içinde tekrar etmesi durumudur."],
+    ["Anlamsal sembol", "Anlam, bir sembolün kendisi değil, onun yarattığı etkidir."]
+  ],
+  answer: 2,
+  summary: "BNF gramerinde, dilin alfabesini oluşturan ve daha fazla parçalanamayan temel yapı taşlarına 'terminal semboller' denir. Program kodunda gördüğünüz tüm anahtar kelimeler, operatörler ve noktalama işaretleri terminal sembollerdir."
+},
+{
+  q: "23. Bir dilin anlamını, o dildeki programları soyut bir makinede gerçekleştirilmiş eşdeğer programlara çevirerek tanımlayan resmi anlamsal yaklaşım hangisidir?",
+  options: [
+    ["Kurala Dayalı (Axiomatic) Anlam", "Bu yaklaşım mantıksal iddiaları (assertion) kullanır."],
+    ["İşlemsel (Operational) Anlam", "İşlemsel anlam, bir programın anlamını 'adım adım nasıl çalışır' sorusunu cevaplayarak, yani soyut bir makine üzerindeki davranışını taklit ederek tanımlar."],
+    ["Fonksiyonel (Denotational) Anlam", "Bu yaklaşım programları matematiksel fonksiyonlara çevirir."],
+    ["Sözdizimsel (Syntactic) Anlam", "Sözdizim, anlamdan farklı bir kavramdır."],
+    ["Doğal Anlam", "Doğal dil ile yapılan açıklamalar resmi bir yaklaşım değildir."]
+  ],
+  answer: 1,
+  summary: "İşlemsel (Operational) anlam, bir programın ne yaptığını, onu daha basit ve iyi bilinen adımlarla çalışan hayali bir bilgisayarda (soyut makine) çalıştırarak açıklar. 'Bu kod, soyut makinede şu şu adımları işletir' diyerek anlamı tanımlar."
+},
+{
+  q: "24. İlk olarak Pascal dilinin gramerini açıklamak için kullanılan ve kuralları, düğümleri semboller olan yönlendirilmiş grafiklerle gösteren yapı hangisidir?",
+  options: [
+    ["BNF", "BNF metinsel bir gösterimdir, grafiksel değil."],
+    ["EBNF", "EBNF de metinsel bir gösterimdir."],
+    ["Ayrıştırma Ağaçları", "Ayrıştırma ağaçları hiyerarşik ağaçlardır, yönlendirilmiş grafikler değil."],
+    ["Soyut Sözdizim Ağaçları", "Bunlar da hiyerarşik ağaçlardır."],
+    ["Sözdizim Grafikleri (Syntax Graphs)", "Sözdizim grafikleri, gramer kurallarını akış şemalarına benzer şekilde, oval (terminal) ve dikdörtgen (terminal olmayan) düğümlerle gösteren görsel bir yöntemdir."]
+  ],
+  answer: 4,
+  summary: "Sözdizim grafikleri, BNF kurallarının daha kolay anlaşılır bir görsel versiyonunu sunar. Bir kuraldaki farklı yolları takip ederek dilde geçerli bir cümlenin nasıl oluşturulabileceği görsel olarak takip edilebilir."
+},
+{
+  q: "25. `x := y` şeklindeki bir BNF kuralında, `y` aşağıdakilerden hangisini içeremez?",
+  options: [
+    ["Token'lar", "Sağ taraf, token'lardan oluşabilir."],
+    ["Lexeme'ler", "Sağ taraf, lexeme'lerden oluşabilir."],
+    ["Diğer terminal olmayan semboller", "Sağ taraf, başka terminal olmayan sembolleri içerebilir."],
+    ["Terminal semboller", "Sağ taraf, terminal sembollerden oluşabilir."],
+    ["Başka bir `:=` sembolü", "Bir kuralın sağ tarafında başka bir kural tanımı (yani `:=` sembolü) bulunmaz. Sağ taraf sadece terminal ve terminal olmayan semboller dizisidir."]
+  ],
+  answer: 4,
+  summary: "Bir BNF kuralı `SOL_TARAF := SAĞ_TARAF` yapısındadır. Sol taraf her zaman tek bir terminal olmayan semboldür. Sağ taraf ise bu sembolün nelerden oluştuğunu gösteren bir 'tarif' gibidir ve bu tarifin içinde başka bir 'tanım yapma' (`:=`) işlemi bulunmaz."
+},
+{
+  q: "26. Bir dilin dinamik anlam kuralları neyi açıklar?",
+  options: [
+    ["Programdaki yazım hatalarını", "Bu sözdizim konusudur."],
+    ["Değişkenlerin doğru tiplerde kullanılıp kullanılmadığını", "Bu genellikle derleme zamanında kontrol edilen bir durağan anlam kuralıdır."],
+    ["Bir dildeki çeşitli yapıların çalıştırılmasının etkilerini", "Dinamik anlam, bir `if` deyiminin, bir döngünün veya bir fonksiyon çağrısının programın çalışması anında ne gibi sonuçlar doğuracağını ve programın durumunu nasıl değiştireceğini tanımlar."],
+    ["Programın ne kadar bellek kullanacağını", "Bu, dinamik anlamın bir sonucu olabilir ancak temel tanımı değildir."],
+    ["Bir programın derlenip derlenemeyeceğini", "Bu, sözdizimi ve durağan anlam kurallarına bağlıdır."]
+  ],
+  answer: 2,
+  summary: "Dinamik anlam, 'program çalışırken ne olur?' sorusunun cevabıdır. Örneğin, bir programın kullanıcıdan bir sayı girmesini istemesi ve o sayı sıfırsa bir hata vermesi, ancak program çalışırken belirlenebilecek bir dinamik anlam kuralıdır."
+},
+{
+  q: "27. Programlardaki işlemlerin, 'çalışmadan önce' ve 'çalışmadan sonraki' durumları için mantıksal iddialar (assertions) belirlenerek açıklandığı resmi anlamsal yaklaşım hangisidir?",
+  options: [
+    ["Kurala Dayalı (Axiomatic) Anlam", "Bu yaklaşım, bir komutun programın durumu üzerindeki etkisini, 'eğer başlangıçta bu doğruysa, komut çalıştıktan sonra da şu doğru olacaktır' şeklindeki mantıksal aksiyomlarla tanımlar."],
+    ["İşlemsel (Operational) Anlam", "Bu yaklaşım, soyut bir makinedeki adımları taklit eder."],
+    ["Fonksiyonel (Denotational) Anlam", "Bu yaklaşım, programları matematiksel fonksiyonlara dönüştürür."],
+    ["Statik (Static) Anlam", "Statik anlam, derleme zamanı kontrolleridir; resmi bir anlamsal tanımlama yaklaşımı değildir."],
+    ["Dinamik (Dynamic) Anlam", "Dinamik anlam, çalışma zamanı davranışlarıdır; resmi bir anlamsal tanımlama yaklaşımı değildir."]
+  ],
+  answer: 0,
+  summary: "Kurala Dayalı (Axiomatic) Anlam, bir programın doğruluğunu matematiksel olarak kanıtlamak için bir temel sağlar. Her komutun ne işe yaradığını, mantıksal önermeler ve kurallar kullanarak ifade eder."
+},
+{
+  q: "28. Sözdizim ve anlam arasındaki farkı gösteren tarih örneğinde, `10/06/2003` ifadesinin Türkiye'de '10 Haziran 2003', ABD'de ise '6 Ekim 2003' olarak anlaşılması neyi gösterir?",
+  options: [
+    ["Sözdiziminin kişiden kişiye değiştiğini", "Hayır, `TT/TT/TTTT` sözdizimi her iki durum için de aynıdır."],
+    ["Aynı sözdizimsel yapının farklı anlamsal yorumlara sahip olabileceğini", "Bu örnek, `10/06/2003` şeklindeki sözdizimsel olarak doğru bir ifadenin, yorumlandığı bağlama (Türkiye vs. ABD) göre tamamen farklı anlamlara gelebileceğini gösterir."],
+    ["ABD'nin tarih formatının sözdizimsel olarak yanlış olduğunu", "Hayır, her iki format da kendi içinde sözdizimsel olarak geçerlidir."],
+    ["Sözdizim ve anlamın aslında aynı şey olduğunu", "Tam tersine, bu örnek ikisinin ne kadar farklı olduğunu vurgulamak için verilmiştir."],
+    ["Türkiye'de sayısal tarih kullanmanın anlamsız olduğunu", "Bu mantıksız bir çıkarımdır."]
+  ],
+  answer: 1,
+  summary: "Bu örnek, sözdizimsel doğruluğun (doğru formatta yazım) anlamsal doğruluk (doğru anlam) için yeterli olmadığını gösterir. Bir ifadenin anlamı, onu yorumlayan kurallar bütününe (bağlama) bağlıdır."
+},
+{
+  q: "29. Bir BNF gramerini oluşturan dört temel bölüm hangi seçenekte doğru olarak verilmiştir?",
+  options: [
+    ["Lexeme, Token, Deyim, İfade", "Bunlar bir dildeki sözdizimsel birimlerdir, bir gramerin bölümleri değil."],
+    ["Sözdizim, Anlam, Metadil, Standart", "Bunlar dil tanımıyla ilgili genel kavramlardır."],
+    ["Başlangıç Sembolü, Terminal Semboller, Terminal Olmayan Semboller, Kurallar", "Bir BNF grameri bu dört temel bileşenden oluşur: tüm türetmelerin başladığı bir başlangıç sembolü, dilin temel yapıtaşları olan terminaller, ara tanımlar olan terminal olmayanlar ve bu yapıları birbirine bağlayan kurallar."],
+    ["Seçimlik, Yineleme, Değiştirme, Özyineleme", "Bunlar (E)BNF kurallarının sahip olabileceği özelliklerdir, gramerin temel bölümleri değil."],
+    ["İşlemsel, Kurala Dayalı, Fonksiyonel, Durağan", "Bunlar anlamsal tanımlama yaklaşımlarıdır."]
+  ],
+  answer: 2,
+  summary: "Bir BNF grameri, bir dilin tüm kurallarını içeren bir 'anayasa' gibidir. Bu anayasanın dört temel unsuru vardır: her şeyin başladığı bir 'başlangıç maddesi', alfabeyi oluşturan 'terminal semboller', karmaşık kavramları tanımlayan 'ara maddeler' (terminal olmayanlar) ve bu maddeleri birbirine bağlayan 'kurallar'."
+},
+{
+  q: "30. BNF'te, bir terminal olmayan sembol için `|` kullanılarak birden çok tanım yapılabilmesi ne anlama gelir?",
+  options: [
+    ["Tanımın özyinelemeli olduğunu", "Özyineleme, sol tarafın sağ tarafta da olmasıdır."],
+    ["Tanımın geçersiz olduğunu", "Hayır, bu geçerli ve yaygın bir kullanımdır."],
+    ["Bu sembol için birden fazla alternatif yapı olduğunu", "`|` sembolü 'veya' anlamına gelir ve sol taraftaki sembolün, sağ tarafta `|` ile ayrılmış olan yapılardan herhangi biri olabileceğini belirtir."],
+    ["Tanımın EBNF formatında olduğunu", "Bu özellik temel BNF'te de mevcuttur."],
+    ["Tanımın anlamsal bir kural olduğunu", "Bu, sözdizimsel bir kural tanımıdır."]
+  ],
+  answer: 2,
+  summary: "Örneğin, `<ifade> := <değişken> | <değişken> + <değişken>` kuralı, bir 'ifade'nin ya tek bir 'değişken' OLABİLECEĞİNİ ya da 'iki değişkenin toplanması' OLABİLECEĞİNİ belirtir. `|` sembolü bu 'veya' alternatiflerini sunar."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

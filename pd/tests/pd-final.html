@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - Final</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - Final</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. 'Tek Sorumluluk Prensibi' (Single Responsibility Principle) ve 'Arayüz Ayırımı Prensibi' (Interface Segregation Principle) arasındaki temel ilişki ve fark nedir?",
+  options: [
+    ["Her ikisi de sınıflarla ilgilidir ve aralarında fark yoktur.", "Tek Sorumluluk sınıflarla, Arayüz Ayırımı ise arayüzlerle ilgilenir."],
+    ["Tek Sorumluluk kalıtımı, Arayüz Ayırımı ise çokyapılılığı hedefler.", "Her ikisi de daha çok kodun modülerliği ve sorumlulukların dağıtılmasıyla ilgilidir."],
+    ["Her ikisi de aynı amaca (sorumlulukları ayırmaya) hizmet eder; ancak Tek Sorumluluk bunu sınıflar düzeyinde, Arayüz Ayırımı ise arayüzler düzeyinde yapar.", "Bu, ikisi arasındaki en doğru tanımdır. SRP, bir sınıfın değişmesi için tek bir neden olması gerektiğini söyler. ISP ise bir sınıfın, ihtiyacı olmayan metotları içeren bir arayüzü uygulamaya zorlanmaması gerektiğini söyler. İkisinin de kökünde 'bir şeye birden fazla sorumluluk yükleme' fikri yatar."],
+    ["Tek Sorumluluk derleme zamanı, Arayüz Ayırımı ise çalışma zamanı ile ilgilidir.", "Her ikisi de tasarım zamanı prensipleridir."],
+    ["Arayüz Ayırımı, Tek Sorumluluk Prensibi'nin eski bir versiyonudur.", "Hayır, ikisi de SOLID'in farklı ve geçerli prensipleridir."]
+  ],
+  answer: 2,
+  summary: "SOLID prensiplerinden olan bu iki ilke, birbiriyle karıştırılmamalıdır. Unutmayın: SRP, sınıfların 'içini' düzenler ve bir sınıfın sadece bir iş yapmasını sağlar. ISP ise sınıfların 'dış dünyayla olan sözleşmelerini' (arayüzlerini) düzenler ve bir sınıfın bilmediği işler için söz vermesini engeller."
+},
+{
+  q: "2. `FOR Sayaç = 5 TO 15` şeklinde tanımlanan parametreli bir döngü toplamda kaç kez çalışır?",
+  options: [
+    ["9", "Bu hatalı bir hesaplamadır."],
+    ["10", "`15 - 5` işlemi 10 sonucunu verir ancak döngülerde bitiş değeri de dahil olduğu için bu cevap yanlıştır."],
+    ["11", "Döngü, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 ve 15 değerlerini alarak toplamda 11 kez tekrarlanır. Genel formül `(Bitiş - Başlangıç) + 1` şeklindedir."],
+    ["15", "Bu bitiş değeridir, tekrar sayısı değildir."],
+    ["Döngü sonsuza girer.", "Bu bir sayaçlı döngüdür ve başlangıcı ile sonu bellidir."]
+  ],
+  answer: 2,
+  summary: "Sayaçlı döngülerin tekrar sayısını hesaplamak, algoritma analizinin temel bir parçasıdır. Sınır değerlerinin (başlangıç ve bitiş) döngüye dahil olup olmadığını kontrol etmek, doğru sonuca ulaşmak için kritik öneme sahiptir."
+},
+{
+  q: "3. 'Metod Yüklemesi (Overloading)' ve 'Metod Üzerine Yazma (Overriding)' arasındaki en temel fark nedir?",
+  options: [
+    ["Overloading kalıtımla, Overriding ise arayüzlerle ilgilidir.", "Her ikisi de kalıtımla yakından ilgilidir. Overriding doğrudan kalıtımı gerektirir."],
+    ["Overloading çalışma zamanında, Overriding ise derleme zamanında çözülür.", "Tam tersi doğrudur. Hangi 'yüklenmiş' metodun çağrılacağı parametrelere göre derleme zamanında, hangi 'üzerine yazılmış' metodun çağrılacağı ise nesnenin tipine göre çalışma zamanında belirlenir."],
+    ["Overloading'de metotların parametre listeleri farklı, Overriding'de ise aynı olmak zorundadır.", "Bu, aralarındaki en kritik ve temel farktır. Yükleme (Overloading), aynı ismin farklı görevler için 'yeniden yüklenmesidir' ve bu görevler parametrelerine göre ayırt edilir. Üzerine yazma (Overriding) ise, bir alt sınıfın, üst sınıftan gelen bir görevi 'devralıp kendi yöntemiyle yapmasıdır' ve görevin tanımı (isim ve parametreleri) aynı kalmalıdır."],
+    ["Overloading C++'da, Overriding ise Java'da bulunur.", "Her iki kavram da nesneye yönelik programlamanın temelini oluşturur ve her iki dilde de bulunur."],
+    ["Overloading'de metot isimleri farklı, Overriding'de aynıdır.", "Her ikisinde de metot isimleri aynıdır."]
+  ],
+  answer: 2,
+  summary: "Özetle, Overloading 'aynı adlı farklı metotlar' demektir ve derleyici hangisini seçeceğini parametrelere bakarak bilir (statik bağlama). Overriding ise 'üst sınıfın metodunu alt sınıfta ezmek' demektir ve program çalışırken nesnenin gerçek tipine göre hangi versiyonun çalışacağına karar verilir (dinamik bağlama)."
+},
+{
+  q: "4. Java'nın 'bir kere yaz, her yerde çalıştır' felsefesini mümkün kılan ve platform bağımsızlığı sağlayan temel teknoloji ikilisi nedir?",
+  options: [
+    ["Derleyici ve Bağlayıcı (Linker)", "Bu, C/C++ gibi dillerde platforma bağımlı çalıştırılabilir dosyalar üreten standart bir süreçtir."],
+    ["Yorumlayıcı ve Betik Dili", "Bu yaklaşım platform bağımsızlığı sunabilir ancak Java'nın hibrit modelinden farklıdır."],
+    ["Çöp Toplayıcı (Garbage Collector) ve Kalıtım", "Bunlar Java'nın önemli özellikleri olsa da platform bağımsızlığının temel mekanizması değildir."],
+    ["Bytecode ve Java Sanal Makinesi (JVM)", "Java'da kaynak kod, belirli bir işletim sisteminin makine koduna değil, 'bytecode' adı verilen evrensel bir ara koda derlenir. Bu bytecode, her platform için ayrı ayrı yazılmış olan Java Sanal Makinesi (JVM) tarafından yorumlanarak çalıştırılır. Bu yapı platform bağımsızlığı sağlar."],
+    ["Applet ve Uygulama (Application)", "Bunlar, Java programlarının iki farklı türüdür, altta yatan teknoloji değildir."]
+  ],
+  answer: 3,
+  summary: "Java'nın çözümü dâhicedir: 'Kodu her platform için ayrı ayrı yazmak yerine, her platform için bir kez 'tercüman' (JVM) yazalım. Böylece Java dilinde yazılan her kod, bu tercümanların olduğu her yerde sorunsuzca çalışabilsin.' Bu ara dil de 'bytecode'dur."
+},
+{
+  q: "5. 'Açık/Kapalı Prensibi' (Open/Closed Principle) ne anlama gelir?",
+  options: [
+    ["Bir sınıfın kaynak kodunun herkese açık, ancak değiştirilmesinin yasak olması gerektiğini.", "Bu, açık kaynak lisanslarıyla ilgili bir konudur."],
+    ["Bir nesnenin geliştirilmeye (yeni özellikler eklemeye) açık, ancak değiştirilmeye (mevcut kodunu bozmaya) kapalı olması gerektiğini.", "Bu prensip, var olan ve hatasız çalıştığından emin olduğumuz bir kodu değiştirmeden, sisteme yeni işlevler ekleyebilmemiz gerektiğini söyler. Bu, genellikle mevcut sınıftan kalıtım alarak veya arayüzler kullanarak sağlanır."],
+    ["Bir projenin hem açık hem de kapalı kaynak kodlu olabileceğini.", "Bu, lisanslama ile ilgili bir konudur."],
+    ["Sınıfların kapılarının yeni özelliklere kapalı olması gerektiğini.", "Tam tersine, yeni özelliklere 'açık' olmalıdır."],
+    ["Tüm metotların public (açık) olması gerektiğini.", "Bu, kapsülleme ilkesini ihlal eder."]
+  ],
+  answer: 1,
+  summary: "Açık/Kapalı Prensibi, 'Mevcut sisteme dokunma, ona eklentiler yaparak genişlet' der. Bu, çalışan bir sistemin yeni bir özellik eklenirken bozulma riskini ortadan kaldırır ve yazılımı daha sürdürülebilir hale getirir."
+},
+{
+  q: "6. Bir programlama dilinin güvenilirliğini önemli ölçüde artıran 'kuvvetli tipleme (strong typing)' kavramını literatüre ilk kez tanıtan dil hangisidir?",
+  options: [
+    ["C", "C ve C++, esnek yapıları ve gösterge kullanımları nedeniyle kuvvetli tiplemeyi tam olarak gerçekleştirmeyen dillere örnektir."],
+    ["FORTRAN", "İlk programlama dillerinden olan FORTRAN'da tip denetimi oldukça zayıftı."],
+    ["Java", "Java kuvvetli tipli bir dildir ancak bu kavramı literatüre tanıtan ilk dil değildir."],
+    ["ALGOL 60", "ALGOL 60, birçok yapısal programlama ve tip teorisi kavramının temelini atmıştır ancak kuvvetli tiplemeyi getiren dil olarak Pascal kabul edilir."],
+    ["Pascal", "Pascal, program doğruluğunu ve güvenilirliğini artırmak amacıyla tasarlanmıştır. Bu hedef doğrultusunda, derleyicinin katı tip denetimleri yaptığı 'kuvvetli tipleme' anlayışını programlama dilleri dünyasına tanıtan öncü dildir."]
+  ],
+  answer: 4,
+  summary: "Pascal, bir 'eğitim' dili olarak tasarlanmasının bir sonucu olarak, programcıları daha disiplinli ve daha az hataya açık kod yazmaya teşvik eden birçok güvenlik mekanizması getirmiştir. Kuvvetli tipleme, bu mekanizmaların en önemlisidir."
+},
+{
+  q: "7. `WHILE` ve `REPEAT...UNTIL` tipi koşullu döngüler arasındaki en temel fark nedir?",
+  options: [
+    ["WHILE döngüsü sayısal, UNTIL döngüsü mantıksal koşul kullanır.", "Her ikisi de mantıksal bir koşula göre çalışır."],
+    ["WHILE döngüsünde koşul döngünün başında, UNTIL döngüsünde ise sonunda denetlenir.", "Bu, aralarındaki en temel ve kritik farktır. Bu nedenle `UNTIL` döngüsü her durumda en az bir kere çalışırken, `WHILE` döngüsü koşul başlangıçta yanlışsa hiç çalışmayabilir."],
+    ["WHILE döngüsü sonsuza kadar çalışabilir, UNTIL döngüsü ise çalışamaz.", "Her iki döngü de yanlış kurulursa sonsuz döngüye girebilir."],
+    ["WHILE döngüsü sayaçlı, UNTIL döngüsü koşullu döngüdür.", "Her ikisi de koşullu döngü türüdür."],
+    ["Hiçbir temel farkları yoktur, sadece sözdizimleri farklıdır.", "Hayır, çalışma mantıkları arasında çok önemli bir fark vardır."]
+  ],
+  answer: 1,
+  summary: "`WHILE` döngüsü bir 'ön-denetimli' döngüdür; kapıdaki koşul sağlanmazsa içeri kimseyi almaz. `REPEAT...UNTIL` döngüsü ise bir 'son-denetimli' döngüdür; herkesi içeri alır, en az bir kez eylemi gerçekleştirir ve çıkışta koşulu kontrol eder."
+},
+{
+  q: "8. Bir derleyicinin arka ucunda (back-end) yer alan ve amacı, programın yaptığı işi değiştirmeden daha hızlı veya daha az kaynak kullanacak şekilde kodu iyileştirmek olan aşama hangisidir?",
+  options: [
+    ["Anlam Çözümleme", "Bu, ön ucun bir parçasıdır ve kodun anlamını kontrol eder."],
+    ["Sözdizim Çözümleme", "Bu, ön ucun bir parçasıdır ve kodun gramerini kontrol eder."],
+    ["Kod Oluşturma", "Bu, arka ucun bir parçasıdır ancak amacı son makine kodunu üretmektir."],
+    ["Eniyileme (Optimization)", "Eniyileme, programın mantığını koruyarak performansını artırma sanatıdır. Örneğin, gereksiz hesaplamaları ortadan kaldırmak veya daha hızlı komutları tercih etmek gibi işlemlerle kod daha verimli hale getirilir."],
+    ["Metinsel Çözümleme", "Bu, ön ucun ilk aşamasıdır."]
+  ],
+  answer: 3,
+  summary: "Eniyileme aşaması, derleyicinin 'akıllı' davrandığı yerdir. Yazdığınız kodu analiz eder ve 'bunu yapmanın daha verimli bir yolu var' diyerek, programın işlevini bozmadan daha performanslı çalışacak şekilde yeniden düzenler."
+},
+{
+  q: "9. `a - b * c` gibi bir ifadenin sonucunun belirsizliğini ortadan kaldırmak için, işlemcilerin hangi iki özelliği kullanılır?",
+  options: [
+    ["İşlenen Sayısı ve İşlemcinin Yeri", "Bunlar ifadenin yapısını tanımlar ama işlem sırasını belirlemez."],
+    ["Kapsam ve Yaşam Süresi", "Bunlar değişkenlerle ilgili kavramlardır."],
+    ["Öncelik (Precedence) ve İlişkisellik (Associativity)", "Öncelik, `*` ve `+` gibi farklı seviyedeki işlemcilerden hangisinin önce yapılacağını belirler. İlişkisellik ise `a-b-c` gibi aynı seviyedeki işlemcilerin soldan mı yoksa sağdan mı işleneceğini belirler. Bu iki kural, tüm ifadelerin net bir şekilde yorumlanmasını sağlar."],
+    ["Tip Denetimi ve Tip Dönüşümü", "Bunlar, işlem yapılacak verilerin uyumluluğu ile ilgilidir."],
+    ["Kalıtım ve Çokyapılılık", "Bunlar nesneye yönelik programlama kavramlarıdır."]
+  ],
+  answer: 2,
+  summary: "İşlemci Önceliği ve İlişkisellik, programlama dillerinin 'matematiksel dilbilgisi' kurallarıdır. Bu kurallar sayesinde, parantez kullanılmasa bile karmaşık bir ifadenin tüm dünyadaki derleyiciler tarafından aynı şekilde anlaşılıp aynı sonucu üretmesi garanti altına alınır."
+},
+{
+  q: "10. Bir `Hayvan` üst sınıfından türetilen `Kedi` ve `Kopek` alt sınıflarının her ikisinin de `sesCikar()` metodunu kendine özgü bir şekilde (biri 'Miyav', diğeri 'Hav' olarak) tanımlaması, hangi OOP kavramına örnektir?",
+  options: [
+    ["Metod Yüklemesi (Method Overloading)", "Yüklemede aynı sınıf içinde, farklı parametrelerle aynı isimli metotlar olur."],
+    ["Metod Üzerine Yazma (Method Overriding)", "Bu, tam olarak üzerine yazma kavramıdır. Alt sınıf, üst sınıftan gelen bir davranışı devralır ama onu kendi kimliğine uygun şekilde 'ezer' ve yeniden uygular."],
+    ["Soyutlama (Abstraction)", "Soyutlama, detayları gizlemektir."],
+    ["Kapsülleme (Encapsulation)", "Kapsülleme, veri ve metotları birleştirmektir."],
+    ["Tek Sorumluluk Prensibi", "Bu bir SOLID prensibidir, doğrudan bir OOP mekanizması değildir."]
+  ],
+  answer: 1,
+  summary: "Metod Üzerine Yazma, kalıtımın en güçlü yönlerinden biridir. Tüm 'hayvanların' ses çıkardığını (üst sınıf metodu) bilirsiniz, ancak her hayvanın bu eylemi kendine özgü bir şekilde yaptığını (alt sınıfın üzerine yazdığı metot) bilirsiniz. Bu, ortak bir arayüz altında farklı davranışlar sergilemeyi sağlar."
+},
+{
+  q: "11. 'Bağımlılığın Ters Çevrilmesi Prensibi'ne (Dependency Inversion Principle) göre, üst seviye bir modül ile alt seviye bir modül arasındaki ilişki nasıl olmalıdır?",
+  options: [
+    ["Üst seviye modül, alt seviye modülü doğrudan bilmeli ve kullanmalıdır.", "Bu, prensibin ihlal edildiği durumdur."],
+    ["Her iki modül de doğrudan birbirine değil, ikisinin de ortak olarak kullandığı bir soyutlamaya (arayüze) bağımlı olmalıdır.", "Bu prensip, modüller arasındaki doğrudan 'somut' bağımlılıkları koparıp, yerine her ikisinin de 'soyut' bir sözleşmeye (arayüze) uymasını sağlayarak sistemi daha esnek ve değiştirilebilir hale getirir."],
+    ["Alt seviye modül, üst seviye modül hakkında her şeyi bilmelidir.", "Bu, bağımlılığı daha da artırır."],
+    ["Modüller arasında hiçbir ilişki olmamalıdır.", "Bu, sistemin çalışmasını imkansız kılar."],
+    ["Tüm modüller tek bir üst sınıf altında toplanmalıdır.", "Bu farklı bir tasarım desenidir."]
+  ],
+  answer: 1,
+  summary: "Bu prensip, 'prize değil, fişe takıl' mantığına dayanır. Elektrikli aletler (üst seviye modül), duvardaki prizin (alt seviye modül) markasına veya yapısına değil, standart bir fiş arayüzüne (soyutlama) bağımlıdır. Bu sayede aynı aleti farklı ülkelerdeki prizlere bir adaptörle takabilirsiniz."
+},
+{
+  q: "12. C++ dilinin aksine, Java dilinin doğrudan desteklemediği ancak etkisini 'arayüzler (interfaces)' kullanarak sağladığı kalıtım türü hangisidir?",
+  options: [
+    ["Tekli Kalıtım", "Java tekli kalıtımı doğrudan destekler."],
+    ["Çoklu Kalıtım", "Java, C++'da bulunan ve bir sınıfın birden fazla üst sınıftan miras almasına olanak tanıyan çoklu kalıtımı, getirdiği karmaşıklıklar (örn: diamond problem) nedeniyle doğrudan desteklemez."],
+    ["Spesifikasyon için Kalıtım", "Bu bir kalıtım amacıdır, türü değil."],
+    ["Genişletme için Kalıtım", "Bu da bir kalıtım amacıdır."],
+    ["Kısıtlama için Kalıtım", "Bu da bir kalıtım amacıdır."]
+  ],
+  answer: 1,
+  summary: "Java, bir sınıfın sadece tek bir 'gerçek' ebeveyni (üst sınıfı) olabileceğini söyler. Ancak bir sınıfın, birden çok 'rolü' (arayüzü) üstlenebileceğini belirtir. Bu, çoklu kalıtımın gücünü, onun karmaşıklığı olmadan elde etmenin bir yoludur."
+},
+{
+  q: "13. Bir dilin sözdizimini (syntax) tanımlamak için kullanılan BNF gibi metadiller varken, anlamını (semantics) tanımlamak için neden evrensel kabul görmüş tek bir standart yoktur?",
+  options: [
+    ["Çünkü anlam kuralları her programda değişir.", "Anlam kuralları dile aittir, programa değil."],
+    ["Çünkü anlam tanımlama yöntemleri oldukça karmaşıktır ve hiçbiri evrensel kabul görmemiştir.", "Bir dilin gramerini tanımlamak, onun ne anlama geldiğini tanımlamaktan daha basit bir problemdir. Anlam, programın durumu, mantığı gibi çok daha soyut kavramlar içerdiğinden, bunu tanımlayacak tek ve basit bir standart üzerinde anlaşmaya varılamamıştır."],
+    ["Çünkü anlamı sadece derleyici tanımlayabilir.", "Derleyici anlam kurallarını uygular, tanımlamaz."],
+    ["Çünkü tüm dillerin anlamı temelde aynıdır.", "Bu kesinlikle yanlıştır."],
+    ["Çünkü sözdizim, anlamdan daha önemlidir.", "Her ikisi de bir dilin çalışması için eşit derecede önemlidir."]
+  ],
+  answer: 1,
+  summary: "Sözdizimi, bir cümlenin 'dilbilgisi kurallarına uygun' olup olmadığını söyler. Anlam ise o cümlenin 'mantıklı olup olmadığını' söyler. 'Yeşil fikirler renksizce uyur' cümlesi sözdizimsel olarak doğru ama anlamsal olarak saçmadır. İşte bu anlamsal karmaşıklık, tek bir standart oluşturmayı zorlaştırır."
+},
+{
+  q: "14. `Liskov Yerine Geçme Prensibi`ne göre, bir `Kare` sınıfı, `Dikdortgen` sınıfından miras aldığında neden bir ihlal oluşabilir?",
+  options: [
+    ["Çünkü kare bir dikdörtgen değildir.", "Matematiksel olarak her kare aynı zamanda bir dikdörtgendir."],
+    ["Çünkü `Dikdortgen` sınıfının `setGenislik` ve `setYukseklik` metotları, `Kare` sınıfında beklendiği gibi çalışmaz.", "Bir dikdörtgenin genişliğini değiştirmek yüksekliğini etkilemez. Ancak bir karenin genişliğini değiştirdiğinizde, kare kalması için yüksekliğinin de değişmesi gerekir. Bu durum, `Dikdortgen` sınıfının 'davranış sözleşmesini' bozar ve alt sınıfın, üst sınıfın yerine sorunsuzca geçmesini engeller."],
+    ["Çünkü `Kare` sınıfı daha az metoda sahiptir.", "Metot sayısı değil, davranışların tutarlılığı önemlidir."],
+    ["Çünkü kalıtım sadece soyut sınıflardan yapılabilir.", "Bu doğru değildir."],
+    ["Çünkü C++'da bu tür bir kalıtım yasaktır.", "Yasak değildir ancak bu prensibin ihlaline iyi bir örnektir."]
+  ],
+  answer: 1,
+  summary: "Bu prensip, 'kalıtım, sadece bir 'is-a' (bir türüdür) ilişkisinden daha fazlasıdır, aynı zamanda bir 'behaves-like-a' (gibi davranır) ilişkisidir' der. Eğer alt sınıf, üst sınıf gibi davranmıyorsa, bu kalıtım yanlıştır ve Liskov prensibi ihlal edilmiştir."
+},
+{
+  q: "15. Yazılım Geliştirme Yaşam Döngüsü'nün hangi aşaması, sistemin gereksinimlerini, kısıtlamalarını ve hedeflerini tanımlayıp belgelemeyi amaçlar?",
+  options: [
+    ["Tasarım Aşaması", "Tasarım aşaması, bu belirlenen gereksinimlere göre sistemin nasıl inşa edileceğini planlar."],
+    ["Kodlama Aşaması", "Kodlama aşaması, tasarımı koda dönüştürür."],
+    ["Gereksinimlerin Analizi ve Belirlenmesi", "Bu ilk aşama, 'ne inşa edeceğiz?' ve 'neden inşa edeceğiz?' sorularını cevaplar. Projenin geri kalanı bu aşamada üretilen belgelere dayanır."],
+    ["Test Aşaması", "Test aşaması, inşa edilen sistemin gereksinimleri karşılayıp karşılamadığını kontrol eder."],
+    ["Bakım Aşaması", "Bu, proje teslim edildikten sonraki süreçtir."]
+  ],
+  answer: 2,
+  summary: "Gereksinim analizi, bir inşaat projesindeki mimarın müşteriyle oturup ihtiyaçlarını (kaç oda, nasıl bir mutfak vb.) dinleyip kaydettiği en kritik toplantılara benzer. Bu adımda yapılacak bir yanlış anlama, tüm projenin yanlış inşa edilmesine neden olabilir."
+},
+{
+  q: "16. `Dizi (Array)` ve `Kayıt (Record)` veri yapıları arasındaki en temel fark nedir?",
+  options: [
+    ["Diziler bellekte, kayıtlar diskte saklanır.", "Her ikisi de bellekte saklanabilir."],
+    ["Dizilerin boyutu dinamik, kayıtlarınki statiktir.", "Her ikisi için de farklı bellek stratejileri olabilir."],
+    ["Diziler homojen (aynı türden), kayıtlar ise heterojen (farklı türlerden) veri elemanları içerir.", "Bir dizi sadece tamsayıları veya sadece metinleri tutabilirken, bir 'öğrenci' kaydı bir tamsayı (numara), bir metin (ad) ve bir ondalıklı sayıyı (ortalama) aynı anda içerebilir."],
+    ["Dizilere isimle, kayıtlara indisle erişilir.", "Tam tersi doğrudur."],
+    ["Diziler ilkel, kayıtlar yapısal bir tiptir.", "Her ikisi de yapısal (bileşik) birer veri tipidir."]
+  ],
+  answer: 2,
+  summary: "Bir dizi, bir 'koli yumurta' gibidir; içindeki her şey aynı türdendir ve sıralıdır. Bir kayıt ise bir 'cüzdan' gibidir; içinde farklı türden şeyler (kimlik kartı, kredi kartı, nakit para) bulunur ve her birine kendi etiketiyle (alan adı) erişilir."
+},
+{
+  q: "17. Bir programlama dilinde `(int)deger` gibi bir ifade kullanarak, programcının bir tip dönüşümünü bilinçli ve zorunlu olarak yapmasına ne ad verilir?",
+  options: [
+    ["Zorunlu Dönüşüm (Coercion)", "Bu, derleyicinin otomatik ve örtülü olarak yaptığı dönüşümdür."],
+    ["Genişleyen Dönüşüm", "Bu, dönüşümün güvenli olup olmadığını belirten bir türdür."],
+    ["Dışsal Tip Dönüşümü (Explicit Type Conversion / Casting)", "Programcının, bir değişkenin tipini belirli bir işlem için geçici olarak başka bir tipe dönüştürmesini kodda açıkça belirttiği bu işleme 'cast' veya 'dışsal tip dönüşümü' denir."],
+    ["Tip Denetimi", "Bu bir kontrol işlemidir, dönüşüm değil."],
+    ["Daralan Dönüşüm", "Bu dönüşüm genellikle daralan bir dönüşümdür, ancak işlemin adı 'dışsal dönüşüm'dür."]
+  ],
+  answer: 2,
+  summary: "Dışsal tip dönüşümü, programcının derleyiciye 'normalde bu işleme izin vermediğini biliyorum, ama ben ne yaptığımın farkındayım ve bu veri kaybı riskini göze alarak bu dönüşümün yapılmasını istiyorum' demesidir."
+},
+{
+  q: "18. C++ ve Java gibi dillerde, bir sınıfın sadece kendisi ve ondan türetilen alt sınıflar tarafından erişilebilen üyelerini tanımlamak için hangi erişim belirteci kullanılır?",
+  options: [
+    ["`public`", "`public`, erişim için hiçbir sınırlama olmadığını belirtir."],
+    ["`private`", "`private`, sadece o sınıfın kendi içinden erişime izin verir."],
+    ["`protected`", "`protected`, bir üyenin 'aile içinde' kalmasını sağlar. Yani, o sınıf ve o sınıftan miras alan 'çocuk' sınıflar tarafından erişilebilir, ancak dışarıdan tamamen bağımsız sınıflar tarafından erişilemez."],
+    ["`internal`", "Bu, C#'a özgü bir erişim belirtecidir."],
+    ["`static`", "`static` bir erişim belirteci değildir, bir üyenin sınıfa mı yoksa nesneye mi ait olduğunu belirtir."]
+  ],
+  answer: 2,
+  summary: "`protected` üyeler, bir ailenin sadece kendi üyelerinin kullandığı özel eşyalar gibidir. Dışarıdan gelen bir misafir (bağımsız sınıf) bu eşyaları kullanamaz, ama ailenin çocukları (alt sınıflar) kullanabilir."
+},
+{
+  q: "19. Aşağıdakilerden hangisi, kullanıcıdan habersiz olarak programın A ve B gibi küçük farklılıklar içeren sürümlerini sunarak hangi versiyonun daha çok tercih edildiğini ölçen test türüdür?",
+  options: [
+    ["Alfa Testi", "Bu, iç ekip tarafından bilinçli olarak yapılır."],
+    ["Beta Testi", "Bu, gönüllü kullanıcılar tarafından bilinçli olarak yapılır."],
+    ["Birim Testi", "Bu, kod modüllerinin testidir."],
+    ["A/B Testi", "A/B testi, kullanıcıların haberi olmadan, bir düğmenin rengi veya bir menünün yeri gibi küçük değişikliklerin kullanıcı davranışını nasıl etkilediğini (daha fazla tıklama, daha fazla satın alma vb.) istatistiksel olarak ölçmek için kullanılan bir tekniktir."],
+    ["Entegrasyon Testi", "Bu, modüllerin bir arada çalışma testidir."]
+  ],
+  answer: 3,
+  summary: "Büyük web siteleri, 'satın al' düğmesinin rengini yeşil mi yoksa turuncu mu yapacaklarına karar vermek için A/B testlerini sıkça kullanır. Kullanıcıların yarısına yeşil, diğer yarısına turuncu düğmeyi gösterir ve hangi grubun daha fazla tıklama yaptığını analiz ederek en etkili tasarımı seçerler."
+},
+{
+  q: "20. Dinamik bağlama ile, çokyapılı (polymorphic) bir değişkene gönderilen bir mesaja hangi metodun yanıt vereceği ne zaman belirlenir?",
+  options: [
+    ["Derleme zamanında, kod analizi ile", "Bu statik bağlamadır."],
+    ["Programcı tarafından kodun en başında", "Bu bir belirleme değildir."],
+    ["Çalışma zamanında, değişkenin o an gösterdiği nesnenin gerçek tipine göre", "Dinamik bağlamanın gücü budur. Program çalışırken, `sekil.ciz()` komutuyla karşılaştığında, `sekil` değişkeninin içinde o an bir `Daire` mi yoksa bir `Kare` mi olduğuna bakar ve ilgili sınıfın `ciz()` metodunu çağırır."],
+    ["Hiçbir zaman belirlenmez, rastgele bir metot çalışır.", "Bu kaosa yol açardı."],
+    ["İşletim sistemi tarafından, program çalışmadan önce", "Bu mümkün değildir."]
+  ],
+  answer: 2,
+  summary: "Dinamik bağlama, nesneye yönelik programlamanın 'akıllı' davranmasını sağlayan mekanizmadır. Kodun, duruma göre esnek davranmasına ve doğru eylemi çalışma anında seçmesine olanak tanır. Bu, özellikle metod üzerine yazma (overriding) ile birlikte kullanılır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

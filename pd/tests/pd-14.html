@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 14</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 14</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Bir programlama dilinin 'tam (pure) nesneye yönelik' olarak kabul edilmesinin temel gereksinimi nedir?",
+  options: [
+    ["Çoklu kalıtımı desteklemesi", "Bu bir gereksinim değildir, örneğin Java tam nesneye yöneliktir ama çoklu kalıtımı desteklemez."],
+    ["Dildeki tüm verilerin nesne şeklinde gösterilebilmesi", "Tam nesneye yönelik bir dilde, `int` gibi ilkel veri tipleri bile aslında birer nesnedir. Her şeyin nesne olduğu bu yaklaşım, dilin tutarlılığını artırır."],
+    ["Gösterge (pointer) veri tipinin bulunması", "Tam tersine, Java gibi bazı tam nesneye yönelik dillerde göstergeler bulunmaz."],
+    ["Sadece imperative paradigmayı desteklemesi", "Nesneye yönelik paradigma esastır."],
+    ["Derleyiciye sahip olması", "Bu, dilin gerçekleştirim şeklidir, paradigmasıyla ilgili değildir."]
+  ],
+  answer: 1,
+  summary: "C++ gibi hibrit dillerde `int` bir nesne değilken, Smalltalk veya Java gibi tam nesneye yönelik dillerde her şey bir nesnedir. Bu, tam nesneye yönelikliğin en temel ayırt edici özelliğidir."
+},
+{
+  q: "2. SOLID prensiplerinin temel amacı aşağıdakilerden hangisidir?",
+  options: [
+    ["Programların her zaman en hızlı şekilde çalışmasını sağlamak.", "Performans bir sonuç olabilir ama temel amaç değildir."],
+    ["Sürdürülebilir, anlaşılabilir, esnek ve yeniden kullanılabilir yazılımlar geliştirmek.", "SOLID prensipleri, kodun zamanla karmaşıklaşmasını ('Spaghetti Code') önleyerek, bakımının ve geliştirilmesinin kolay olduğu 'Temiz Kod' (Clean Code) yazmak için bir dizi kural sunar."],
+    ["Sadece tek bir programcının anlayabileceği kodlar yazmak.", "Tam tersine, takım çalışmasını ve kodun anlaşılırlığını artırmayı hedefler."],
+    ["Yazılım geliştirme sürecini kısaltmak.", "Başlangıçta süreci biraz uzatabilir ama uzun vadede bakım ve geliştirme süresini kısaltır."],
+    ["Programdaki hata sayısını sıfıra indirmek.", "Hataları azaltmayı hedefler ama sıfıra indirmeyi garanti edemez."]
+  ],
+  answer: 1,
+  summary: "SOLID, iyi bir yazılım mimarisi kurmanın beş temel taşıdır. Bu prensipler, yazılan kodun bugünü kurtarmasını değil, gelecekteki değişikliklere ve yeni ihtiyaçlara kolayca adapte olabilmesini hedefler."
+},
+{
+  q: "3. 'Tek Sorumluluk Prensibi' (Single Responsibility Principle) neyi ifade eder?",
+  options: [
+    ["Bir projedeki tüm işlerden tek bir programcının sorumlu olması gerektiğini.", "Bu, proje yönetimi ile ilgili bir konudur."],
+    ["Bir sınıfın veya metodun değişmesi için sadece tek bir nedenin olması gerektiğini.", "Bu prensibe göre, bir sınıfın veya metodun birden çok sorumluluğu olmamalıdır. Her sınıf veya metot, sadece bir iş yapmalı ve o işi iyi yapmalıdır."],
+    ["Bir sınıfın sadece tek bir alt sınıfı olabileceğini.", "Bu kalıtımla ilgili bir kısıtlama değildir."],
+    ["Bir projenin sadece tek bir programlama diliyle yazılması gerektiğini.", "Bu bir zorunluluk değildir."],
+    ["Bir metodun sadece tek bir satır kod içermesi gerektiğini.", "Bu gerçekçi bir beklenti değildir."]
+  ],
+  answer: 1,
+  summary: "Tek Sorumluluk Prensibi, 'Herkes kendi işini yapsın' der. Bir metodun hem veritabanına kayıt ekleyip hem de kullanıcıya e-posta göndermesi bu prensibin ihlalidir. Bu iki iş, ayrı ayrı metotlara bölünmelidir."
+},
+{
+  q: "4. C++ dilini, C dilinden ayıran ve ona eklenen ilk nesneye yönelik özellikler arasında hangisi yer almaz?",
+  options: [
+    ["Sınıf tanımlama ve türetme", "Bu, C'ye eklenen temel OOP özelliğidir."],
+    ["Public/private erişim kontrolü", "Bu, kapsülleme için eklenen temel bir özelliktir."],
+    ["Constructor / destructor metotları", "Bunlar, nesne yaratıldığında ve yok edildiğinde çalışan özel metotlardır."],
+    ["Metod yükleme (overloading)", "Bu da C++'ın ilk sürümlerinde C'ye eklenen bir özelliktir."],
+    ["Çoklu kalıtım ve sanal metotlar", "Çoklu kalıtım ve sanal metotlar gibi daha gelişmiş özellikler, C++'a daha sonraki aşamalarda eklenmiştir."]
+  ],
+  answer: 4,
+  summary: "C++, C dilinin üzerine bir 'nesneye yönelik katman' eklenerek doğmuştur. İlk başta sınıf, temel kalıtım, erişim kontrolü ve constructor/destructor gibi temel OOP yapıları eklenmiş, zamanla çoklu kalıtım gibi daha karmaşık özellikler dahil edilmiştir."
+},
+{
+  q: "5. 'Açık/Kapalı Prensibi' (Open/Closed Principle) ne anlama gelir?",
+  options: [
+    ["Bir sınıfın kaynak kodunun herkese açık, ancak değiştirilmesinin yasak olması gerektiğini.", "Bu, açık kaynak lisanslarıyla ilgili bir konudur."],
+    ["Bir nesnenin geliştirilmeye (yeni özellikler eklemeye) açık, ancak değiştirilmeye (mevcut kodunu bozmaya) kapalı olması gerektiğini.", "Bu prensip, var olan ve çalışan bir kodu değiştirmeden sisteme yeni işlevler ekleyebilmemiz gerektiğini söyler. Bu genellikle kalıtım veya arayüzler aracılığıyla sağlanır."],
+    ["Bir projenin hem açık hem de kapalı kaynak kodlu olabileceğini.", "Bu, lisanslama ile ilgili bir konudur."],
+    ["Sınıfların kapılarının yeni özelliklere kapalı olması gerektiğini.", "Tam tersine, yeni özelliklere 'açık' olmalıdır."],
+    ["Tüm metotların public (açık) olması gerektiğini.", "Bu, kapsülleme ilkesini ihlal eder."]
+  ],
+  answer: 1,
+  summary: "Açık/Kapalı Prensibi, 'Mevcut sisteme dokunma, ona eklentiler yaparak genişlet' der. Bu, çalışan bir sistemin yeni bir özellik eklenirken bozulma riskini ortadan kaldırır."
+},
+{
+  q: "6. Java ve C++ dilleri arasındaki temel farklardan biri aşağıdakilerden hangisidir?",
+  options: [
+    ["C++, nesneye yönelik programlamayı desteklerken Java desteklemez.", "Her ikisi de nesneye yönelik programlamayı güçlü bir şekilde destekler."],
+    ["Java gösterge (pointer) tipini desteklerken C++ desteklemez.", "Tam tersi doğrudur. C++ göstergeleri desteklerken, Java güvenlik nedenleriyle doğrudan gösterge kullanımına izin vermez."],
+    ["C++ platformdan bağımsızken Java değildir.", "Tam tersi doğrudur. Java, JVM sayesinde platformdan bağımsızdır."],
+    ["Java tekli kalıtıma izin verirken C++ çoklu kalıtımı da destekler.", "Bu, iki dil arasındaki en temel mimari farklardan biridir. Java, çoklu kalıtımın karmaşıklığından arayüzler (interfaces) kullanarak kaçınır."],
+    ["Java'da otomatik çöp toplayıcı (garbage collection) yoktur.", "Tam tersine, otomatik çöp toplayıcı Java'nın en önemli özelliklerinden biridir."]
+  ],
+  answer: 3,
+  summary: "Java ve C++ benzer sözdizimlerine sahip olsalar da, felsefi olarak önemli noktalarda ayrılırlar. Java güvenliği ve taşınabilirliği ön planda tutarken (gösterge yok, tekli kalıtım, çöp toplayıcı var), C++ performansı ve donanıma yakınlığı (gösterge var, çoklu kalıtım, manuel bellek yönetimi) ön planda tutar."
+},
+{
+  q: "7. 'Liskov Yerine Geçme Prensibi' (Liskov Substitution Principle) temel olarak neyi şart koşar?",
+  options: [
+    ["Üst sınıfların, alt sınıfların yerine kullanılabilmesi gerektiğini.", "Tam tersi doğrudur."],
+    ["Türetilmiş alt sınıfların, miras aldıkları üst sınıfın yerine, programın doğruluğunu bozmadan kullanılabilmesi gerektiğini.", "Bu prensip, bir alt sınıfın, üst sınıfın 'sözleşmesine' tamamen uyması gerektiğini söyler. `Kare` sınıfı, eğer `Dikdörtgen` sınıfının yerine geçtiğinde programda beklenmedik hatalara yol açıyorsa, bu prensip ihlal edilmiş demektir."],
+    ["Tüm sınıfların birbirinden bağımsız olması gerektiğini.", "Bu, kalıtım kavramına aykırıdır."],
+    ["Arayüzlerin, sınıfların yerine kullanılması gerektiğini.", "Bu, Bağımlılığın Ters Çevrilmesi Prensibi ile ilgilidir."],
+    ["Sadece aynı isimli metotların birbirinin yerine geçebileceğini.", "Bu çok dar bir tanımdır."]
+  ],
+  answer: 1,
+  summary: "Liskov Yerine Geçme Prensibi, 'Eğer bir ördeğe benziyor, ördek gibi yüzüyor ve ördek gibi vaklıyorsa, o zaman muhtemelen bir ördektir' sözünün programlamadaki karşılığıdır. Bir alt sınıf, üst sınıfının tüm davranışlarını eksiksiz sergileyebilmelidir."
+},
+{
+  q: "8. Bir nesne yaratıldığında bir kez çalıştırılan özel metoda ne denir?",
+  options: [
+    ["Destructor (Yok Edici)", "Bu metot, bir nesne yok edildiği zaman çalışır."],
+    ["Virtual Metod", "Bu, dinamik bağlama için kullanılan bir metottur."],
+    ["Static Metod", "Bu, nesne yaratılmadan da çağrılabilen bir metottur."],
+    ["Constructor (Yapıcı)", "Constructor, bir sınıftan yeni bir nesne oluşturulduğu anda otomatik olarak çağrılan ve genellikle nesnenin başlangıç ayarlarını (ilk değer atamalarını) yapan özel bir metottur."],
+    ["Abstract Metod", "Bu, gövdesi olmayan ve alt sınıflar tarafından gerçekleştirilmesi gereken bir metottur."]
+  ],
+  answer: 3,
+  summary: "Constructor (Yapıcı Metot), bir nesnenin 'doğum anında' çalışan bir koddur. Bir araba nesnesi yaratıldığında, rengini, modelini ve başlangıç hızını ayarlayan kod yapıcı metot içinde yer alır."
+},
+{
+  q: "9. 'Arayüz Ayırımı Prensibi' (Interface Segregation Principle) neyi savunur?",
+  options: [
+    ["Tüm sınıfların tek bir büyük arayüzü gerçekleştirmesi gerektiğini.", "Tam tersini savunur."],
+    ["Nesnelerin, ihtiyaçları olmayan metotları içeren arayüzleri gerçekleştirmeye zorlanmaması gerektiğini.", "Bu prensip, genel amaçlı, büyük arayüzler yerine, her birinin belirli bir yeteneği tanımladığı daha küçük ve özel arayüzler oluşturmayı önerir."],
+    ["Arayüzlerin sadece tek bir metot içermesi gerektiğini.", "Birden fazla metot içerebilir, ancak bu metotlar mantıksal bir bütün oluşturmalıdır."],
+    ["Sınıflar yerine sadece arayüzlerin kullanılması gerektiğini.", "Bu gerçekçi bir yaklaşım değildir."],
+    ["Arayüzlerin birbirinden kalıtım alamayacağını.", "Arayüzler birbirinden kalıtım alabilir."]
+  ],
+  answer: 1,
+  summary: "Arayüz Ayırımı Prensibi, 'kimseyi istemediği bir işi yapmaya zorlama' der. Bir `Bisiklet` sınıfını, `kapilariAc()` gibi anlamsız bir metodu içeren genel bir `Tasit` arayüzünü gerçekleştirmeye zorlamak yerine, `Surulebilir` ve `Kapili` gibi iki ayrı arayüz oluşturmak daha doğru bir tasarımdır."
+},
+{
+  q: "10. C++'ın 'tam (pure) nesneye yönelik' bir programlama dili olarak kabul edilmemesinin sebebi nedir?",
+  options: [
+    ["Çoklu kalıtımı desteklemesi", "Bu bir tasarım tercihidir, tam nesneye yöneliklikle doğrudan ilgili değildir."],
+    ["Dilde var olan (built-in) ilkel veri tiplerinin (int, char vb.) nesne olarak gösterilememesi.", "Tam nesneye yönelik bir dilde her şey bir nesnedir. C++'da `int` gibi ilkel tiplerin nesne olmaması, onun hem imperative hem de OOP özelliklerini barındıran bir hibrit dil olduğunu gösterir."],
+    ["Dinamik bağlamanın `virtual` metotlar gerektirmesi", "Bu, dinamik bağlamanın gerçekleştirim şeklidir, sebepten çok sonuçtur."],
+    ["Constructor ve destructor metotlarının olması", "Bu, OOP dillerinde yaygın bir özelliktir."],
+    ["C dilinin sözdizimini kullanması", "Sözdizimi, dilin paradigmasını belirlemez."]
+  ],
+  answer: 1,
+  summary: "C++, C'nin üzerine kurulduğu için onun ilkel veri tiplerini de miras almıştır. Bu durum, C ile uyumluluk ve performans gibi avantajlar sağlarken, dilin 'her şey bir nesnedir' felsefesine tam olarak uymasını engeller."
+},
+{
+  q: "11. 'Bağımlılığın Ters Çevrilmesi Prensibi' (Dependency Inversion Principle) neyi önerir?",
+  options: [
+    ["Alt seviye sınıfların, üst seviye sınıflara bağımlı olması gerektiğini.", "Tam tersini önerir."],
+    ["Üst seviye sınıfların, alt seviye sınıflara doğrudan bağımlı olmaması gerektiğini.", "Bu prensibe göre, hem üst seviye hem de alt seviye sınıflar doğrudan birbirlerine değil, ikisinin de ortak olarak kullandığı 'soyutlamalara' (genellikle arayüzlere) bağımlı olmalıdır."],
+    ["Tüm sınıfların birbirinden tamamen bağımsız olması gerektiğini.", "Bu, iş birliğini imkansız kılar."],
+    ["Arayüzlerin sınıflara bağımlı olması gerektiğini.", "Tam tersine, sınıflar arayüzlere bağımlı olmalıdır."],
+    ["Bağımlılıkların derleme zamanında değil, çalışma zamanında çözülmesi gerektiğini.", "Bu, dinamik bağlama ile ilgili bir konudur."]
+  ],
+  answer: 1,
+  summary: "Bu prensip, 'detaylara değil, soyut kavramlara bağlan' der. Bir `Araba` sınıfı, doğrudan bir `MichelinLastik` sınıfına değil, genel bir `Lastik` arayüzüne bağımlı olmalıdır. Bu sayede gelecekte `PirelliLastik` sınıfı eklendiğinde `Araba` sınıfını değiştirmek gerekmez."
+},
+{
+  q: "12. Nesneye yönelik programlamayı popülerleştiren ilk programlama dili olarak kabul edilen ve tüm bağlamaların dinamik olarak yapıldığı dil hangisidir?",
+  options: [
+    ["C++", "C++'da bağlama genellikle statiktir, `virtual` ile dinamik hale getirilir."],
+    ["Java", "Java da dinamik bağlamayı yoğun olarak kullanır ancak bu özelliğiyle tanınan ilk popüler dil Smalltalk'tır."],
+    ["SIMULA 67", "SIMULA 67, OOP'nin temelini atmıştır ancak onu popülerleştiren dil değildir."],
+    ["Eiffel", "Eiffel de önemli bir OOP dilidir ancak ilk popülerleşen değildir."],
+    ["Smalltalk", "Smalltalk, nesneye yönelik programlamanın sadece bir laboratuvar kavramı olmadığını, aynı zamanda güçlü ve dinamik uygulamalar geliştirmek için kullanılabileceğini gösteren ilk yaygın dildir. Saf nesne yönelimli yapısı ve dinamik bağlaması ile bilinir."]
+  ],
+  answer: 4,
+  summary: "SIMULA 67 OOP fikrini ortaya atarken, Smalltalk bu fikri alıp onu yaşayan, nefes alan, tamamen dinamik ve etkileşimli bir programlama ortamına dönüştürmüştür. Günümüzdeki birçok modern programlama dili ondan ilham almıştır."
+},
+{
+  q: "13. C++'da dinamik bağlamanın (çokyapılılığın) etkinleştirilebilmesi için, üst sınıftaki metodun hangi anahtar kelime ile tanımlanması gerekir?",
+  options: [
+    ["`static`", "`static` metotlar yeniden tanımlanamaz ve statik olarak bağlanır."],
+    ["`final`", "`final` metotlar yeniden tanımlanamaz."],
+    ["`abstract`", "`abstract` metotlar gövdesizdir, bu farklı bir kavramdır."],
+    ["`virtual`", "Bir üst sınıf metodu `virtual` olarak işaretlendiğinde, derleyiciye 'bu metodun hangi versiyonunun çağrılacağına çalışma zamanında, nesnenin gerçek tipine bakarak karar ver' talimatı verilmiş olur. Bu, dinamik bağlamayı etkinleştirir."],
+    ["`override`", "`override` anahtar kelimesi, bir metodun üzerine yazıldığını belirtmek için kullanılır, dinamik bağlamayı etkinleştirmez."]
+  ],
+  answer: 3,
+  summary: "C++'da performans nedeniyle varsayılan olarak statik bağlama kullanılır. Programcı, bir metodun çokyapılı davranmasını istediğinde, bu isteğini `virtual` anahtar kelimesiyle derleyiciye açıkça belirtmek zorundadır."
+},
+{
+  q: "14. Java'da `final` olarak tanımlanmış bir sınıf (class) için aşağıdakilerden hangisi doğrudur?",
+  options: [
+    ["Bu sınıftan nesne üretilemez.", "Bu, `abstract` olarak tanımlanmış sınıflar için geçerlidir."],
+    ["Bu sınıfın tüm metotları `static` olmak zorundadır.", "Böyle bir zorunluluk yoktur."],
+    ["Bu sınıftan başka bir sınıf türetilemez (kalıtımla alınamaz).", "`final` anahtar kelimesi, bir sınıfın kalıtım hiyerarşisinin 'sonu' olduğunu belirtir. Bu, o sınıftan yeni alt sınıflar oluşturulmasını engeller."],
+    ["Bu sınıf sadece tek bir metot içerebilir.", "Böyle bir kısıtlama yoktur."],
+    ["Bu sınıfın bir arayüzü gerçekleştirmesi zorunludur.", "Böyle bir zorunluluk yoktur."]
+  ],
+  answer: 2,
+  summary: "`final` anahtar kelimesi, 'bu işin son hali budur, daha fazla değiştirilemez' anlamı taşır. Bir sınıfa uygulandığında, o sınıfın kalıtımla genişletilmesini; bir metoda uygulandığında ise o metodun alt sınıflarda üzerine yazılmasını engeller."
+},
+{
+  q: "15. Aşağıdakilerden hangisi C++ ve Java'da bir nesne yok edildiği zaman otomatik olarak çağrılan özel metodun adıdır?",
+  options: [
+    ["Constructor (Yapıcı)", "Bu, nesne yaratıldığında çağrılır."],
+    ["Destructor (Yok Edici)", "Bir nesnenin yaşam süresi sona erdiğinde (örneğin bellekten silinmeden önce), kaynakları temizlemek veya son işlemleri yapmak için otomatik olarak çağrılan metoda destructor denir."],
+    ["Finalizer", "Bu, Java'nın çöp toplayıcısı tarafından çağrılan, destructor'a benzer bir kavramdır ancak kullanımı daha farklıdır."],
+    ["Garbage Collector", "Bu, destructor'ı çağıran mekanizmanın adıdır, metodun kendisi değil."],
+    ["`delete` metodu", "`delete` bir operatördür, bir metot adı değildir."]
+  ],
+  answer: 1,
+  summary: "Yapıcı metotlar (constructors) bir nesnenin 'doğumunu' yönetirken, yok edici metotlar (destructors) o nesnenin 'ölümünü' yönetir. Özellikle manuel bellek yönetimi olan C++'da, nesnenin ayırdığı belleği serbest bırakmak için destructor'lar hayati öneme sahiptir."
+},
+{
+  q: "16. Java'da çoklu kalıtımın getirdiği sorunları yaşamadan benzer bir esneklik sağlamak için kullanılan yapı nedir?",
+  options: [
+    ["Paketler (Packages)", "Paketler, sınıfları gruplamak için kullanılır."],
+    ["Soyut Sınıflar (Abstract Classes)", "Soyut sınıflar kalıtım hiyerarşisinin temelini oluşturur ancak tekli kalıtım kuralına tabidirler."],
+    ["Arayüzler (Interfaces)", "Java, bir sınıfın sadece tek bir üst sınıftan kalıtım almasına izin verirken, birden çok arayüzü 'gerçekleştirmesine' (`implements`) olanak tanır. Bu sayede, farklı kaynaklardan yetenekler kazanarak çoklu kalıtıma benzer bir yapı daha güvenli bir şekilde elde edilir."],
+    ["`final` Sınıflar", "`final` sınıflar kalıtımı engeller."],
+    ["Jenerikler (Generics)", "Jenerikler, tip-güvenli koleksiyonlar oluşturmak için kullanılır."]
+  ],
+  answer: 2,
+  summary: "Java'nın arayüz (interface) mekanizması, çoklu kalıtımın 'ne yapabildiğini miras alma' gücünü, onun 'nasıl yapıldığını miras alma' karmaşıklığından ayırır. Bir sınıf, birden çok 'sözleşmeyi' (arayüzü) imzalayarak farklı yeteneklere sahip olabilir."
+},
+{
+  q: "17. Bir Java programı, çalışmak için bir web tarayıcısına (browser) ihtiyaç duyuyorsa ne tür bir programdır?",
+  options: [
+    ["Uygulama (Application)", "Uygulamalar, `main()` metodu olan ve doğrudan işletim sistemi üzerinde çalışan programlardır."],
+    ["Paket (Package)", "Paket, bir sınıf kütüphanesidir."],
+    ["Arayüz (Interface)", "Arayüz, metot imzalarını içeren bir tanımdır."],
+    ["Applet", "Applet'ler, bir web sayfasının içine gömülerek çalışan ve bir tarayıcı ortamına ihtiyaç duyan küçük Java programlarıdır."],
+    ["Servis (Service)", "Servis, genellikle arka planda çalışan bir uygulamadır."]
+  ],
+  answer: 3,
+  summary: "Java'nın ilk popüler olduğu yıllarda, web sayfalarına dinamik ve interaktif içerik eklemek için 'Applet' teknolojisi çok yaygındı. Bu küçük programlar, tarayıcı sayesinde platformdan bağımsız bir şekilde çalışabiliyordu."
+},
+{
+  q: "18. C++ dilinde `static` olarak tanımlanmış bir veri sahasının (değişkenin) temel özelliği nedir?",
+  options: [
+    ["Sadece constructor metodu içinden erişilebilir.", "Erişim belirtecine bağlı olarak farklı yerlerden erişilebilir."],
+    ["Değeri program boyunca asla değiştirilemez.", "Bu `const` özelliğidir."],
+    ["O sınıfın tüm nesneleri arasında paylaşılır.", "`static` olmayan bir değişken her nesne için ayrı ayrı oluşturulurken, `static` bir değişken o sınıftan üretilen tüm nesneler için tek bir ortak kopyadır. Bir nesnenin bu değişkeni değiştirmesi, diğer tüm nesneleri de etkiler."],
+    ["Sadece tamsayı tipinde olabilir.", "Herhangi bir tipte olabilir."],
+    ["Sadece alt sınıflar tarafından görülebilir.", "Bu `protected` özelliğidir."]
+  ],
+  answer: 2,
+  summary: "`static` değişkenler, bir sınıfa ait 'genel duyuru panosu' gibidir. O sınıftan kaç tane nesne üretilirse üretilsin, hepsi aynı panoya bakar ve o panoya yazar."
+},
+{
+  q: "19. SOLID prensiplerinden hangisi, bir sınıfın veya metodun sadece tek bir sorumluluğu olması ve değişmesi için tek bir nedeni olması gerektiğini savunur?",
+  options: [
+    ["Open/Closed Principle", "Bu prensip, nesnelerin değişime kapalı, genişlemeye açık olması gerektiğini söyler."],
+    ["Liskov Substitution Principle", "Bu prensip, alt sınıfların üst sınıfların yerine geçebilmesi gerektiğini söyler."],
+    ["Single Responsibility Principle", "Bu prensip, her modülün veya sınıfın sadece bir işe odaklanması gerektiğini, böylece bir değişiklik gerektiğinde sadece o işle ilgili sınıfın etkilenmesini hedefler."],
+    ["Interface Segregation Principle", "Bu prensip, büyük arayüzler yerine küçük ve özel arayüzler kullanılması gerektiğini söyler."],
+    ["Dependency Inversion Principle", "Bu prensip, üst seviye modüllerin alt seviye modüllere bağımlı olmaması gerektiğini söyler."]
+  ],
+  answer: 2,
+  summary: "Tek Sorumluluk Prensibi, yazılım tasarımında 'iş bölümü' yapmaktır. Her sınıfın sadece bir uzmanlık alanı olmalıdır. Bu, kodun anlaşılmasını, test edilmesini ve bakımını kolaylaştırır."
+},
+{
+  q: "20. C++'dan farklı olarak Java'da bulunmayan ve bu nedenle bellek yönetimini daha güvenli hale getiren özellik hangisidir?",
+  options: [
+    ["Kalıtım", "Java'da tekli kalıtım vardır."],
+    ["Sınıflar", "Java tamamen sınıflar üzerine kuruludur."],
+    ["Göstergeler (Pointers)", "Java, bellek sızıntısı ve sallanan gösterge gibi sorunları önlemek için programcının belleğe doğrudan erişimini sağlayan göstergelere izin vermez."],
+    ["Metotlar", "Java'da metotlar vardır."],
+    ["Döngüler", "Java'da döngüler vardır."]
+  ],
+  answer: 2,
+  summary: "Java'nın tasarımcıları, C++'da programcıların en çok zorlandığı ve en çok hata yaptığı konulardan ikisinin 'göstergeler' ve 'manuel bellek yönetimi' olduğunu görmüşlerdir. Java'yı tasarlarken bu iki özelliği de dilden çıkararak daha güvenli bir programlama ortamı yaratmayı hedeflemişlerdir."
+},
+{
+  q: "21. Bir alt sınıfın, üst sınıfının tüm özelliklerini ve metotlarını alıp, üst sınıfın davranışını hiç değiştirmeden sadece yeni davranışlar eklemesi, kalıtımın hangi kullanım amacına örnektir?",
+  options: [
+    ["Özelleşme için kalıtım", "Özelleşmede, alt sınıf üst sınıfın bir alttipi olur ama davranışını değiştirebilir."],
+    ["Kısıtlama için kalıtım", "Kısıtlamada, alt sınıf üst sınıfın bazı davranışlarını engeller."],
+    ["Spesifikasyon için kalıtım", "Spesifikasyonda, alt sınıf üst sınıfın eksik bıraktığı bir davranışı tamamlar."],
+    ["Genişletme için kalıtım", "Bu tür kalıtımda, var olan bir sınıfa dokunmadan, ondan yeni bir sınıf türetip bu yeni sınıfa yeni metotlar veya özellikler eklenir."],
+    ["Birleştirme için kalıtım", "Bu, çoklu kalıtımla ilgilidir."]
+  ],
+  answer: 3,
+  summary: "Genişletme için kalıtım, bir eve dokunmadan ona yeni bir 'oda' eklemeye benzer. Mevcut yapı bozulmaz, sadece yeni işlevler kazanır."
+},
+{
+  q: "22. `public class Araba implements Tasit, Kapi` gibi bir tanımın mümkün olduğu Java gibi dillerde, `Tasit` ve `Kapi` ne tür yapılardır?",
+  options: [
+    ["İkisi de üst sınıftır.", "Java'da sadece tek bir üst sınıftan kalıtım alınabilir."],
+    ["İkisi de pakettir.", "Paketler `import` ile dahil edilir."],
+    ["İkisi de arayüzdür (interface).", "Java, bir sınıfın birden çok 'sözleşmeyi' veya 'yetenek setini' gerçekleştirmesine olanak tanıyan arayüzler aracılığıyla çoklu kalıtıma benzer bir esneklik sağlar."],
+    ["`Tasit` bir üst sınıf, `Kapi` bir metottur.", "Bu sözdizimsel olarak yanlıştır."],
+    ["`Tasit` bir arayüz, `Kapi` bir pakettir.", "Bu sözdizimsel olarak yanlıştır."]
+  ],
+  answer: 2,
+  summary: "Java'da bir sınıfın 'kim olduğu' (kalıtım aldığı üst sınıf) tekildir, ancak 'neler yapabildiği' (gerçekleştirdiği arayüzler) çoğul olabilir. Bir `Araba` sınıfı bir `Tasit`'tır, ama aynı zamanda `KapilariOlan` ve `KlimasiOlan` gibi birden çok yeteneğe (arayüze) sahip olabilir."
+},
+{
+  q: "23. Bir sınıf hiyerarşisinde, `Taşıt` gibi doğrudan nesnesi oluşturulmayan ancak `Otomobil` ve `Uçak` gibi alt sınıflar için ortak bir şablon görevi gören sınıflara ne denir?",
+  options: [
+    ["Somut Sınıf (Concrete Class)", "Somut sınıfların nesnesi oluşturulabilir."],
+    ["Final Sınıf (Final Class)", "Final sınıflardan kalıtım yapılamaz."],
+    ["Statik Sınıf (Static Class)", "Statik sınıfların nesnesi oluşturulmaz ama kullanım amacı farklıdır."],
+    ["Arayüz (Interface)", "Arayüzler hiç gerçekleştirim içermez, soyut sınıflar içerebilir."],
+    ["Soyut Sınıf (Abstract Class)", "Soyut sınıflar, bir kalıtım hiyerarşisindeki ortak özellikleri ve davranışları tanımlayan, ancak kendileri doğrudan kullanılamayan 'kavramsal' sınıflardır."]
+  ],
+  answer: 4,
+  summary: "Soyut sınıflar, 'Ne olmalı?' sorusunu cevaplar ama 'Nasıl olmalı?' sorusunu alt sınıflara bırakır. Bir 'Taşıt' sınıfı, tüm taşıtların bir `hiz` özelliği olması gerektiğini söyler, ancak bu hızın nasıl arttırılacağını 'Otomobil' ve 'Uçak' alt sınıflarının kendileri belirler."
+},
+{
+  q: "24. C++'da `static` olarak tanımlanmış bir metodun temel özelliği nedir?",
+  options: [
+    ["Sadece o sınıfın constructor'ı tarafından çağrılabilir.", "Bu doğru değildir."],
+    ["Mutlaka bir nesne örneği üzerinden çağrılmalıdır.", "Tam tersine, nesne örneği yaratılmadan da çağrılabilir."],
+    ["Sınıfın bir örneği (nesnesi) yaratılmadan da doğrudan sınıf ismi üzerinden çağrılabilir.", "`static` bir metot, belirli bir nesneye değil, sınıfın kendisine aittir. Bu nedenle, bir nesne oluşturmaya gerek kalmadan `SinifAdi::MetotAdi()` şeklinde çağrılabilir."],
+    ["Bir alt sınıfta mutlaka üzerine yazılmalıdır (override).", "Statik metotlar üzerine yazılamaz."],
+    ["Sadece `private` olabilir.", "Farklı erişim belirteçlerine sahip olabilir."]
+  ],
+  answer: 2,
+  summary: "`static` metotlar, bir sınıfla ilgili ama belirli bir nesnenin durumuna bağlı olmayan 'yardımcı' veya 'genel' işlevler için kullanılır. Örneğin, bir `Matematik` sınıfının, nesne oluşturmaya gerek kalmadan kullanılabilen `Matematik::karesiniAl(5)` gibi bir statik metodu olabilir."
+},
+{
+  q: "25. Nesneye yönelik tasarımın geleneksel işlevsel tasarıma göre temel avantajı olarak ne gösterilmektedir?",
+  options: [
+    ["Her zaman daha az kod yazılmasını sağlaması", "Bu bir garanti değildir."],
+    ["Programların her zaman daha hızlı çalışması", "Bu bir garanti değildir, bazen tam tersi olabilir."],
+    ["Veri paylaşımının azalması ve değişikliklere daha uygun yazılımlar oluşturulması", "Nesneye yönelik tasarımda veri ve o veriyi işleyen metotlar bir arada (kapsüllenmiş) olduğu için, bir değişiklik yapıldığında sadece o nesne etkilenir. Bu da sistemin bakımını ve genişletilmesini çok daha kolay hale getirir."],
+    ["Sadece tek bir programcının çalışmasına izin vermesi", "Tam tersine, modüler yapısı takım çalışmasını kolaylaştırır."],
+    ["Tüm hataları ortadan kaldırması", "Hataları azaltır ama ortadan kaldırmaz."]
+  ],
+  answer: 2,
+  summary: "Geleneksel tasarımda bir veri yapısını değiştirmek, bir depremin birçok farklı binayı (fonksiyonu) etkilemesi gibidir. Nesneye yönelik tasarımda ise her nesne kendi deprem izolatörüne sahiptir; bir nesnede yapılan değişiklik genellikle diğerlerini etkilemez."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

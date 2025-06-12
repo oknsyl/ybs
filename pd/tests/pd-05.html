@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 5</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 5</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Bir ifadede birden çok işlemci parantez kullanılmadan yer aldığında, hangi işlemcinin önce değerlendirileceğini belirleyen kurala ne ad verilir?",
+  options: [
+    ["İşlemcinin Yeri (Placement)", "Bu, işlemcinin işlenenlere göre nerede durduğunu (prefix, infix, postfix) belirtir."],
+    ["Associativity (İlişkililik)", "Bu, aynı öncelik seviyesindeki işlemcilerin hangi sırayla değerlendirileceğini belirler."],
+    ["İşlenen Sayısı (Arity)", "Bu, bir işlemcinin kaç tane işlenen aldığını (unary, binary) belirtir."],
+    ["Öncelik (Precedence)", "İşlemcilerin öncelikleri, farklı öncelik seviyelerindeki işlemcilerden hangisinin işlenenlerini önce alacağını, yani işlem sırasını belirler."],
+    ["Kapsam (Scope)", "Bu, bir değişkenin programın hangi bölümünde geçerli olduğunu belirten bir kavramdır."]
+  ],
+  answer: 3,
+  summary: "Bir ifadenin sonucunun belirsiz olmasını önlemek için dillerde işlemci öncelik kuralları vardır. Geleneksel olarak çarpma ve bölme, toplama ve çıkarmadan daha yüksek önceliğe sahiptir. Bu nedenle `3 + 5 * 2` ifadesinin sonucu 13'tür, 16 değil."
+},
+{
+  q: "2. Aşağıdakilerden hangisi bir değişkenin temel özelliklerinden biri değildir?",
+  options: [
+    ["İsim", "Değişkenin program içinde çağrılmasını sağlayan özelliğidir."],
+    ["Adres", "Değişkenin bellekteki konumunu belirten özelliğidir."],
+    ["Değer", "Değişkenin ilgili bellek hücresinde tuttuğu içeriktir."],
+    ["Tip", "Değişkenin alabileceği değer aralığını ve işlemlerini belirleyen özelliğidir."],
+    ["Algoritma", "Algoritma, bir problemin çözüm yoludur; bir değişkenin doğrudan bir özelliği değildir."]
+  ],
+  answer: 4,
+  summary: "Bir değişken; İsim, Adres, Değer, Tip, Yaşam Süresi ve Kapsam olmak üzere altı temel özelliğe sahiptir. Bu özellikler, değişkenin program içindeki davranışını ve rolünü tanımlar."
+},
+{
+  q: "3. 'Anahtar Kelime (Keyword)' ile 'Ayrılmış Kelime (Reserved Word)' arasındaki temel fark nedir?",
+  options: [
+    ["Anahtar kelimeler büyük, ayrılmış kelimeler küçük harfle yazılır.", "Bu bir kural değildir; harf duyarlılığı dilin genel özelliğidir."],
+    ["Anahtar kelimeler asla değişken ismi olarak kullanılamaz, ayrılmış kelimeler kullanılabilir.", "Tam tersi doğrudur."],
+    ["Anahtar kelime sadece belirli bir içerikte özel anlam taşırken, ayrılmış kelime hiçbir zaman isim olarak kullanılamaz.", "FORTRAN'daki `REAL` bir anahtar kelimedir; hem tip belirtir hem de değişken adı olabilir. Pascal'daki `begin` ise ayrılmış bir kelimedir ve asla değişken adı olamaz. Bu, aralarındaki temel farktır."],
+    ["Anahtar kelimeler sadece döngülerde, ayrılmış kelimeler sadece fonksiyonlarda kullanılır.", "Bu yanlış bir sınıflandırmadır."],
+    ["İkisi arasında hiçbir fark yoktur, aynı anlama gelirler.", "Hayır, aralarında dilin okunabilirliğini etkileyen önemli bir fark vardır."]
+  ],
+  answer: 2,
+  summary: "Ayrılmış kelimeler (`reserved word`) daha katı bir kuraldır ve programcı tarafından isim olarak kullanılması kesinlikle yasaktır. Anahtar kelimeler (`keyword`) ise bağlama göre anlamı değişebilen, daha esnek ama potansiyel olarak kafa karıştırıcı kelimelerdir."
+},
+{
+  q: "4. `a - b - c` gibi bir ifadenin `(a - b) - c` şeklinde soldan sağa doğru gruplanarak işlenmesi, `-` işlemcisinin hangi özelliğini gösterir?",
+  options: [
+    ["Sağ associative olma", "Sağ associative olsaydı `a - (b - c)` şeklinde işlenirdi."],
+    ["Yüksek öncelikli olma", "Öncelik, farklı işlemciler arasındaki sırayı belirler; bu ise aynı işlemcinin sırasıyla ilgilidir."],
+    ["Tekli (unary) işlemci olma", "Buradaki `-` işlemcisi iki işlenen aldığı için ikili (binary) bir işlemcidir."],
+    ["Sol associative olma", "Bir işlemcinin birden çok kez yer aldığı bir ifadedeki alt ifadeler soldan sağa doğru gruplanıyorsa, o işlemci 'sol associative'dir. Aritmetik işlemcilerin çoğu bu özelliktedir."],
+    ["Postfix gösterimde olma", "Bu gösterim infix (arada) bir gösterimdir."]
+  ],
+  answer: 3,
+  summary: "Associativity (İlişkililik/Birleşme Yönü), aynı öncelikteki operatörlerin hangi sırayla uygulanacağını belirler. `a-b-c` gibi bir ifadede önce `a-b` işleminin yapılması, çıkarma operatörünün sola birleşmeli (sol associative) olduğunu gösterir."
+},
+{
+  q: "5. Bir değişkenin sadece tanımlandığı fonksiyon veya blok içinde geçerli olması ve fonksiyonun çalışması bittiğinde bellekten silinmesi, o değişkenin hangi özelliğiyle ilgilidir?",
+  options: [
+    ["Tip", "Tip, değişkenin değer aralığını belirtir."],
+    ["Değer", "Değer, değişkenin içeriğidir."],
+    ["Yaşam Süresi ve Kapsam", "Değişkenin geçerli olduğu program bölgesi 'kapsam'ını, bellekte kaldığı süre ise 'yaşam süresi'ni belirtir. Fonksiyona özel yerel değişkenler bu iki kavramın en tipik örneğidir."],
+    ["Adres", "Adres, değişkenin bellekteki yeridir."],
+    ["İsim", "İsim, değişkene erişmek için kullanılan etikettir."]
+  ],
+  answer: 2,
+  summary: "Kapsam (scope) 'nerede geçerli?' sorusuna, yaşam süresi (lifetime) ise 'ne kadar süre yaşar?' sorusuna cevap verir. Bir fonksiyonun yerel değişkeninin kapsamı o fonksiyonun içidir ve yaşam süresi de fonksiyonun çalışma süresi kadardır."
+},
+{
+  q: "6. Diğer veri tiplerinden oluşmamış, bir dilin temel yapı taşı olan veri tiplerine ne ad verilir?",
+  options: [
+    ["Yapısal Tipler", "Yapısal tipler, tam tersine, diğer tiplerin bir araya gelmesiyle oluşur (örn: diziler)."],
+    ["Kullanıcı Tanımlı Tipler", "Bu, ilkel tiplerden biri olabilir ancak tüm ilkel tipleri kapsamaz."],
+    ["İlkel (Primitive) Tipler", "İlkel tipler, bir dilin en temel veri türleridir ve başka tiplere bölünemezler. Tamsayı (integer), mantıksal (boolean) ve karakter (char) buna örnektir."],
+    ["Gösterge (Pointer) Tipleri", "Göstergeler, bellek adreslerini tutan ve genellikle yapısal tip olarak kabul edilen bir veri tipidir."],
+    ["Dizi (Array) Tipleri", "Diziler, aynı türden birden çok veriyi bir arada tutan yapısal tiplerdir."]
+  ],
+  answer: 2,
+  summary: "İlkel tipler, bir evin tuğlaları gibidir. Yapısal tipler ise bu tuğlalardan inşa edilen duvarlar, odalar gibi daha büyük yapılardır. Tam sayı, karakter, mantıksal gibi tipler çoğu dilde ilkel olarak bulunur."
+},
+{
+  q: "7. C, C++ ve Java gibi dillerin isimler konusunda 'büyük-küçük harfe duyarlı (case-sensitive)' olması ne anlama gelir?",
+  options: [
+    ["Tüm değişken isimleri büyük harfle yazılmalıdır.", "Bu bir zorunluluk değildir."],
+    ["`TOPLAM`, `toplam` ve `ToPlaM` isimlerinin hepsi aynı değişkeni ifade eder.", "Bu, büyük-küçük harfe duyarlı olmayan diller için geçerlidir."],
+    ["`TOPLAM`, `toplam` ve `ToPlaM` isimleri derleyici tarafından üç ayrı ve farklı değişken olarak algılanır.", "Büyük-küçük harfe duyarlı bir dilde, harflerin kasası değiştiğinde isim de tamamen farklı bir isim olarak kabul edilir."],
+    ["Değişken isimlerinde rakam kullanılamaz.", "Harf duyarlılığının rakam kullanımıyla bir ilgisi yoktur."],
+    ["Değişken isimleri sadece 8 karakter olabilir.", "Harf duyarlılığının isim uzunluğuyla bir ilgisi yoktur."]
+  ],
+  answer: 2,
+  summary: "Büyük-küçük harf duyarlılığı, programlamada sıkça yapılan hatalardan birinin kaynağı olabilir. Bu özelliğe sahip dillerde 'sayi' adında bir değişken tanımlayıp daha sonra 'Sayi' olarak kullanmaya çalışmak hataya yol açar çünkü derleyici için bu ikisi farklı değişkenlerdir."
+},
+{
+  q: "8. Aşağıdakilerden hangisi bir 'isimlendirilmiş sabit (named constant)' kullanmanın avantajlarından biri değildir?",
+  options: [
+    ["Programın okunabilirliğini artırması", "Sihirli bir sayı olan `3.14159` yerine `pi` ismini kullanmak kodu daha okunabilir kılar."],
+    ["Programın bakımını ve değiştirilebilirliğini kolaylaştırması", "Bir dizi boyutu gibi programın birçok yerinde kullanılan bir değeri değiştirmek gerektiğinde, sadece sabit tanımını değiştirmek yeterli olur."],
+    ["Programın çalışma zamanında değerinin değiştirilebilmesi", "Bu bir avantaj değil, tanımın tam tersidir. Sabitlerin değeri program çalışırken değiştirilemez."],
+    ["Yazım hatalarını azaltması", "Uzun ve karmaşık bir sayıyı tekrar tekrar yazmak yerine kısa bir isim kullanmak hata riskini azaltır."],
+    ["Programın güvenilirliğini artırması", "Bir değerin yanlışlıkla değiştirilmesini önleyerek programı daha güvenilir hale getirir."]
+  ],
+  answer: 2,
+  summary: "İsimlendirilmiş sabitler, program içinde değeri hiç değişmeyecek olan önemli verileri (pi sayısı, vergi oranı, maksimum kullanıcı sayısı vb.) bir isimle etiketlemektir. Bu, hem kodu daha anlaşılır kılar hem de gelecekteki değişiklikleri çok kolaylaştırır."
+},
+{
+  q: "9. PHP'de `$sayi++` veya C'de `sayi++` gibi bir ifadede, `++` işlemcisi işlenenden sonra geldiği için hangi konumda kullanılmıştır?",
+  options: [
+    ["Infix", "Infix gösterimde işlemci iki işlenenin arasında yer alır (örn: `a + b`)."],
+    ["Prefix", "Prefix gösterimde işlemci işlenenden önce yer alır (örn: `++sayi`)."],
+    ["Postfix", "Postfix gösterimde işlemci işlenenden sonra yer alır. `sayi++` buna bir örnektir."],
+    ["Unary", "Bu, işlemcinin işlenen sayısını (tek işlenenli) belirtir, konumunu değil."],
+    ["Binary", "Bu işlemci tek işlenen aldığı için binary (iki işlenenli) değildir."]
+  ],
+  answer: 2,
+  summary: "İşlemcinin yeri, ifadenin nasıl yazıldığını ve bazen de nasıl çalıştığını belirler. İşlemcinin işlenenden sonra geldiği bu gösterim 'postfix' veya 'art-ek' olarak adlandırılır."
+},
+{
+  q: "10. Aşağıdaki veri tiplerinden hangisi 'yapısal (structural)' bir veri tipidir?",
+  options: [
+    ["Tamsayı (Integer)", "Bu, ilkel bir veri tipidir."],
+    ["Mantıksal (Boolean)", "Bu, ilkel bir veri tipidir."],
+    ["Karakter (Char)", "Bu, ilkel bir veri tipidir."],
+    ["Diziler (Arrays)", "Diziler, aynı türden birden çok ilkel veya yapısal tipi bir araya getiren bileşik yapılardır. Bu nedenle yapısal bir veri tipidir."],
+    ["Kullanıcı Tanımlı Sıralı Tipler", "Bu, ilkel bir veri tipidir."]
+  ],
+  answer: 3,
+  summary: "Yapısal tipler, ilkel tiplerden oluşan daha karmaşık veri kapları olarak düşünülebilir. Bir dizi, birden çok tamsayıyı; bir kayıt ise farklı tiplerden (tamsayı, karakter dizisi vb.) verileri bir arada tutabilir."
+},
+{
+  q: "11. Imperative programlama paradigmasının temelini oluşturan ve her bellek hücresinin özgün bir adres ile tanımlandığı bilgisayar mimarisine ne ad verilir?",
+  options: [
+    ["Harvard Mimarisi", "Harvard mimarisi, komut ve veri belleklerini ayıran farklı bir mimaridir."],
+    ["von Neumann Mimarisi", "Geleneksel bilgisayar mimarisi olan von Neumann, programların ve verilerin aynı bellekte tutulması ve işlem deyimlerinin bu bellekteki değerleri değiştirmesi prensibine dayanır. Imperative programlama bu mimariye çok uygundur."],
+    ["ARM Mimarisi", "ARM, özellikle mobil cihazlarda kullanılan bir işlemci mimarisidir."],
+    ["Paralel Mimarisi", "Bu, birden çok işlemcinin aynı anda çalıştığı genel bir mimari türüdür."],
+    ["Bulut Mimarisi", "Bu, bilişim hizmetlerinin internet üzerinden sunulduğu bir sistem tasarımıdır."]
+  ],
+  answer: 1,
+  summary: "Imperative dillerin 'git şu bellek adresindeki değeri al, üzerine bunu ekle, sonucu şu adrese yaz' şeklindeki komutları, doğrudan von Neumann mimarisinin çalışma şeklini yansıtır. Bu nedenle bu paradigma, modern bilgisayarların temel donanım yapısıyla doğal bir uyum içindedir."
+},
+{
+  q: "12. Bir değişkenin tipi neyi belirler?",
+  options: [
+    ["Sadece bellekteki adresini", "Adres, tipten bağımsız bir özelliktir."],
+    ["Sadece programcı tarafından verilen ismini", "İsim, programcı tarafından belirlenir."],
+    ["Programın ne kadar hızlı çalışacağını", "Tip seçimi performansı etkileyebilir ama temel tanımı bu değildir."],
+    ["Değişkenin alabileceği değerler kümesini ve o değerlere uygulanabilecek işlemleri", "Bir değişkenin 'tamsayı' olması, onun ondalıklı değerler alamayacağını ve üzerine toplama, çıkarma gibi aritmetik işlemlerin yapılabileceğini belirtir. Bu, tip kavramının temel tanımıdır."],
+    ["Değişkenin ne zaman bellekten silineceğini", "Bu, değişkenin yaşam süresi ile ilgili bir konudur."]
+  ],
+  answer: 3,
+  summary: "Veri tipi, bir değişkene 'oyunun kurallarını' söyler. Hangi değerleri alabileceğini, hangi operasyonlara katılabileceğini ve diğer verilerle nasıl etkileşime gireceğini tanımlar."
+},
+{
+  q: "13. İki farklı alt programın her birinin içinde 'toplam' adında yerel bir değişken tanımlanması durumunda, bu iki değişken için ne söylenebilir?",
+  options: [
+    ["İkisi de aynı bellek adresini kullanan aynı değişkendir.", "Hayır, yerel değişkenler kendi kapsamlarına özeldir."],
+    ["Program hata verir çünkü aynı isimde iki değişken tanımlanamaz.", "Farklı kapsamlarda oldukları sürece aynı isimde değişkenler tanımlanabilir."],
+    ["İsimleri aynı olsa da, her biri kendi alt programına özel, farklı bellek adresleriyle ilişkili iki farklı değişkendir.", "Bir değişkenin kimliği sadece ismiyle değil, kapsamıyla da belirlenir. Farklı fonksiyonlardaki aynı isimli yerel değişkenler, birbirinden tamamen bağımsızdır ve farklı bellek adreslerini kullanırlar."],
+    ["İkinci tanımlanan değişken, birincinin değerini otomatik olarak alır.", "Hayır, aralarında bir ilişki yoktur."],
+    ["Bu değişkenlerden sadece biri kullanılabilir, diğeri pasif kalır.", "Her ikisi de kendi fonksiyonları içinde aktif olarak kullanılabilir."]
+  ],
+  answer: 2,
+  summary: "Kapsam (scope) kavramı, değişken isimlerinin karışmasını önler. Bu sayede, farklı programcılar veya farklı modüller, birbirlerinin kodunu bozma endişesi olmadan aynı isimleri kendi yerel değişkenleri için güvenle kullanabilirler."
+},
+{
+  q: "14. `a + b * c` ifadesinin `a + (b * c)` olarak değerlendirilmesinin sebebi nedir?",
+  options: [
+    ["`+` işlemcisinin `*` işlemcisinden daha yüksek önceliğe sahip olması", "Tam tersine, `*` işlemcisi daha yüksek önceliğe sahiptir."],
+    ["İşlemcilerin soldan sağa doğru işlenmesi (sol associative olması)", "Bu durum, aynı öncelikli işlemciler için geçerlidir. Burada öncelikler farklıdır."],
+    ["`*` işlemcisinin `+` işlemcisinden daha yüksek önceliğe sahip olması", "Geleneksel işlemci önceliği kurallarına göre çarpma ve bölme, toplama ve çıkarmadan önce yapılır. Bu nedenle önce `b*c` işlemi yapılır."],
+    ["C dilinin bu şekilde tasarlanmış olması", "Bu kural sadece C'ye özgü değil, çoğu programlama dilinde standart bir matematiksel kuraldır."],
+    ["Parantezlerin her zaman sağ tarafa konulması", "Bu anlamsız bir kuraldır."]
+  ],
+  answer: 2,
+  summary: "İşlemci önceliği, matematik derslerindeki 'işlem sırası' kuralının programlama dillerindeki karşılığıdır. Bu kural, karmaşık ifadelerin herkes tarafından aynı şekilde ve doğru yorumlanmasını sağlar."
+},
+{
+  q: "15. Java gibi bazı dillerde, artık kullanılmayan nesnelerin ve değişkenlerin kapladığı bellek alanını otomatik olarak geri alan mekanizmaya ne ad verilir?",
+  options: [
+    ["Derleyici (Compiler)", "Derleyici kodu makine diline çevirir."],
+    ["Yorumlayıcı (Interpreter)", "Yorumlayıcı kodu satır satır çalıştırır."],
+    ["Çöp Toplayıcı (Garbage Collector)", "Garbage Collector, programın çalışması sırasında artık referans edilmeyen (kullanılmayan) bellek alanlarını tespit edip otomatik olarak serbest bırakan ve böylece bellek sızıntılarını önleyen bir mekanizmadır."],
+    ["Hata Ayıklayıcı (Debugger)", "Debugger, programdaki hataları bulmak için kullanılır."],
+    ["Sanallaştırıcı (Virtualizer)", "Bu, donanım veya yazılım kaynaklarını sanal olarak oluşturma işlemidir."]
+  ],
+  answer: 2,
+  summary: "Manuel bellek yönetiminin zor ve hataya açık olması nedeniyle Java, C# gibi modern diller, programcıyı bellek temizleme yükünden kurtaran 'Garbage Collector' adlı bir otomasyon mekanizması içerir. Bu, değişkenin yaşam süresi konseptiyle yakından ilişkilidir."
+},
+{
+  q: "16. `a := 10` şeklindeki bir atama işleminde, atama sembolünün sağındaki ve solundaki elemanlar için ne söylenebilir?",
+  options: [
+    ["Sol taraf bir değer, sağ taraf bir değişken olmalıdır.", "Tam tersi doğrudur."],
+    ["Her iki taraf da değişken olmalıdır.", "Sağ taraf bir sabit veya ifade de olabilir."],
+    ["Sağ taraftaki değer, sol taraftaki değişkene aktarılır.", "Tüm programlama dillerindeki atama sembolünün temel anlamı, sağ taraftaki ifadenin sonucunun hesaplanıp sol taraftaki değişkenin temsil ettiği bellek hücresine yazılmasıdır."],
+    ["Sol taraftaki değişken, sağ taraftaki değere dönüştürülür.", "Değişken dönüşmez, değeri değişir."],
+    ["Her iki taraf da sabit bir değer olmalıdır.", "Sol tarafın değeri değiştirilebilen bir değişken olması gerekir."]
+  ],
+  answer: 2,
+  summary: "Atama işlemi, imperative programlamanın en temel eylemidir. Bu eylem, veriyi bir yerden (sağ taraf) alıp başka bir yere (sol taraf) kopyalamaktır."
+},
+{
+  q: "17. İşlenen sayısına (arity) göre, `++` (artırma) ve `-` (negatif yapma) işlemcileri hangi sınıfa girer?",
+  options: [
+    ["İkili (Binary) İşlemciler", "Binary işlemciler `a+b` gibi iki işlenen alır."],
+    ["Tekli (Unary) İşlemciler", "Unary işlemciler `-5` veya `sayi++` gibi tek bir işlenen üzerinde çalışır."],
+    ["Üçlü (Ternary) İşlemciler", "Ternary işlemci `(koşul ? doğru : yanlış)` gibi üç işlenen alır."],
+    ["Sayısal İşlemciler", "Bu, işlemcinin türünü belirtir (sayısal, mantıksal), işlenen sayısını değil."],
+    ["İlişkisel İşlemciler", "Bu da işlemcinin türünü belirtir."]
+  ],
+  answer: 1,
+  summary: "Bir işlemcinin 'arity'si, onun kaç 'argüman' aldığını belirtir. `+` ve `*` gibi işlemciler genellikle iki argüman alırken (binary), `++`, `--` veya `!` (değil) gibi işlemciler tek bir argüman üzerinde çalışır (unary)."
+},
+{
+  q: "18. Aşağıdaki dillerden hangisi, isimlendirilmiş bir sabit tanımlamak için `const` anahtar kelimesini kullanır?",
+  options: [
+    ["C", "C dili, sabit benzeri yapılar için genellikle `#define` ön işlemci komutunu kullanır."],
+    ["PHP", "PHP, sabitleri `define()` fonksiyonu ile tanımlar."],
+    ["Java", "Java, sabitler için `final` anahtar kelimesini kullanır."],
+    ["Pascal", "Pascal, isimlendirilmiş sabitlerin tanımlanması için `const` tanımlayıcısını kullanır."],
+    ["FORTRAN", "FORTRAN'da bu amaçla `PARAMETER` ifadesi kullanılır."]
+  ],
+  answer: 3,
+  summary: "İsimlendirilmiş sabit kavramı birçok dilde bulunsa da, bu kavramı gerçekleştirmek için kullanılan sözdizimi (syntax) dilden dile farklılık gösterir. Pascal'da bu iş için `const` kullanılır."
+},
+{
+  q: "19. `2 ** 3 ** 2` gibi bir üs alma ifadesinin, sağdan sola doğru yani `2 ** (3 ** 2)` şeklinde hesaplanarak sonucun `2 ** 9 = 512` bulunması, üs alma işlemcisinin hangi özelliğini gösterir?",
+  options: [
+    ["Sol associative olma", "Sol associative olsaydı `(2 ** 3) ** 2 = 8 ** 2 = 64` olarak hesaplanırdı."],
+    ["Sağ associative olma", "Bir işlemcinin birden çok kez yer aldığı bir ifadede işlemler sağdan sola doğru gruplanıyorsa, o işlemci 'sağ associative'dir. Üs alma, bu özelliğe sahip olan nadir aritmetik işlemcilerden biridir."],
+    ["Düşük öncelikli olma", "Üs alma genellikle diğer aritmetik işlemcilerden daha yüksek önceliğe sahiptir."],
+    ["Postfix gösterimde olma", "Bu gösterim infix bir gösterimdir."],
+    ["Mantıksal bir işlemci olma", "Üs alma sayısal bir işlemcidir."]
+  ],
+  answer: 1,
+  summary: "Çoğu aritmetik işlemci soldan sağa doğru işlenirken, üs alma gibi bazı işlemciler sağdan sola doğru işlenir. Bu kuralı bilmek, karmaşık matematiksel ifadelerin doğru sonuç vermesi için kritik öneme sahiptir."
+},
+{
+  q: "20. `if (x > 5) OR (y < 10)` gibi bir yapı, hangi tür ifadeye örnektir?",
+  options: [
+    ["Sayısal İfade", "Sayısal ifadeler `5 * 3` gibi sayısal bir sonuç üretir."],
+    ["Atama Deyimi", "Atama deyimi bir değişkene değer aktarır."],
+    ["Mantıksal İfade", "Mantıksal ifadeler; mantıksal değişkenler, mantıksal sabitler (true/false), ilişkisel ifadeler (`x > 5`) ve mantıksal işlemcilerden (`OR`, `AND`) oluşur ve sonuç olarak doğru veya yanlış bir değer üretir."],
+    ["Karakter Dizisi İfadesi", "Bu tür ifadeler metinlerle ilgilidir."],
+    ["Fonksiyon Çağrımı", "Bu, bir fonksiyonun adını ve parametrelerini içerir."]
+  ],
+  answer: 2,
+  summary: "Mantıksal ifadeler, programların karar verme mekanizmalarının temelidir. Bir veya daha fazla koşulun birleştirilerek tek bir 'doğru' veya 'yanlış' sonucu üretilmesini sağlarlar. `if` gibi kontrol yapılarının temelini oluştururlar."
+},
+{
+  q: "21. Diziler (Arrays), Kayıtlar (Records) ve Göstergeler (Pointers) hangi veri tipi grubuna aittir?",
+  options: [
+    ["İlkel Tipler", "İlkel tipler, bölünemeyen temel tiplerdir."],
+    ["Kullanıcı Tanımlı Tipler", "Bunlar kullanıcı tarafından tanımlanabilir ama genel kategorileri yapısal tiptir."],
+    ["Sayısal Tipler", "Bu tipler sadece sayısal veri tutmazlar."],
+    ["Yapısal Tipler", "Yapısal tipler, ilkel veya diğer yapısal tiplerin bir araya gelmesiyle oluşan daha karmaşık veri yapılarıdır. Diziler, kayıtlar ve göstergeler bu gruba girer."],
+    ["Mantıksal Tipler", "Bu tipler sadece doğru/yanlış değeri tutarlar."]
+  ],
+  answer: 3,
+  summary: "Veri tipleri temelde ikiye ayrılır: tek bir değer tutan 'ilkel' tipler ve birden çok değeri organize bir şekilde bir arada tutan 'yapısal' tipler."
+},
+{
+  q: "22. Değişken isimlerinin oluşturulmasında, günümüzdeki modern programlama dillerinin yaklaşımı genellikle nasıldır?",
+  options: [
+    ["İsimlerin en fazla 6 veya 8 karakterle sınırlandırılması", "Bu, eski dillerde (örn: ilk FORTRAN sürümleri) görülen bir yaklaşımdı."],
+    ["İsimlerde sadece büyük harflere izin verilmesi", "Bu yaygın bir kural değildir."],
+    ["İsimler için kullanışlı bir uzunluk sınırı koymak ve çoklu kelimeler için alt çizgi `_` karakterinin kullanımına izin vermek", "Modern diller, `toplam_ogrenci_sayisi` gibi açıklayıcı ve okunabilir değişken isimlerinin kullanılmasını teşvik etmek için esnek uzunluk limitleri ve ayırıcı karakterler sunar."],
+    ["Değişken isimlerinde alt çizgi `_` karakterinin yasaklanması", "Tam tersine, bu karakter genellikle teşvik edilir."],
+    ["Tüm değişken isimlerinin `var_` ön eki ile başlamasının zorunlu olması", "Bu, bazı kodlama stillerinde görülebilse de bir dil kuralı değildir."]
+  ],
+  answer: 2,
+  summary: "İyi bir programlamanın temelinde kodun okunabilir olması yatar. Modern diller de bu prensibi destekleyerek, programcıların `x`, `y` gibi anlamsız isimler yerine, değişkenin amacını açıklayan uzun ve anlaşılır isimler kullanmasına olanak tanır."
+},
+{
+  q: "23. Bir işlemcinin alabileceği işlenen sayısına göre sınıflandırılmasına ne ad verilir?",
+  options: [
+    ["Öncelik (Precedence)", "Bu, işlem sırasını belirler."],
+    ["İşlemcinin Yeri (Placement)", "Bu, işlemcinin konumunu (prefix, infix) belirtir."],
+    ["İşlenen Sayısı (Arity)", "Bir işlemcinin 'arity'si, onun tekli (unary), ikili (binary) veya üçlü (ternary) olup olmadığını, yani kaç işlenen aldığını belirtir."],
+    ["Associativity", "Bu, aynı öncelikli işlemcilerin yönünü belirler."],
+    ["Kapsam (Scope)", "Bu, değişkenlerle ilgili bir kavramdır."]
+  ],
+  answer: 2,
+  summary: "İşlemcilerin genel özellikleri arasında yer alan 'arity', o işlemcinin doğasını anlamak için önemlidir. `a+b`'deki `+` iki işlenen alırken `-a`'daki `-` tek işlenen alır."
+},
+{
+  q: "24. C dilinde bir sabiti tanımlamak için genellikle hangi yöntem kullanılır?",
+  options: [
+    ["`const` tanımlayıcısı", "Bu Pascal'da kullanılır."],
+    ["`define()` fonksiyonu", "Bu PHP'de kullanılır."],
+    ["`final` anahtar kelimesi", "Bu Java'da kullanılır."],
+    ["`let` anahtar kelimesi", "Bu JavaScript'te değişken tanımlamak için kullanılır."],
+    ["`#define` ön işlemci komutu", "C'de, derlemeden önce metinsel değişiklik yapan ön işlemci, `#define PI 3.14` gibi komutlarla isimlendirilmiş sabitler oluşturmak için yaygın olarak kullanılır."]
+  ],
+  answer: 4,
+  summary: "Farklı diller, sabitleri tanımlamak için farklı mekanizmalar sunar. C dilinin kendine özgü yapısı, bu iş için derleme öncesi çalışan bir araç olan ön işlemciyi (preprocessor) ve onun `#define` komutunu kullanır."
+},
+{
+  q: "25. FORTRAN dilinde `REAL` kelimesinin, kullanıldığı yere göre hem bir tip tanımlayıcı (`REAL ELMA`) hem de bir değişken ismi (`REAL = 87.6`) olarak kullanılabilmesi, `REAL` kelimesinin ne tür bir özel kelime olduğunu gösterir?",
+  options: [
+    ["Ayrılmış Kelime (Reserved Word)", "Ayrılmış kelime olsaydı değişken ismi olarak kullanılamazdı."],
+    ["Anahtar Kelime (Keyword)", "Anahtar kelime, sadece belirli bir bağlamda özel bir anlam taşıyan, ancak diğer bağlamlarda normal bir isim olarak kullanılmasına izin verilen kelimedir. Bu durum, dilin okunabilirliğini azaltabilir."],
+    ["İlkel Tip", "REAL bir tipi ifade edebilir ancak sorulan, kelimenin bu ikili kullanımının adıdır."],
+    ["Ön işlemci Komutu", "Bu, C dilindeki `#define` gibi bir özelliktir."],
+    ["Fonksiyon Adı", "Bu bir fonksiyon adı değildir."]
+  ],
+  answer: 1,
+  summary: "Bir kelimenin hem özel bir komut hem de bir değişken adı olarak kullanılabilmesi, eski dillerde görülen bir esneklikti. Ancak bu durum kafa karışıklığına yol açtığı için modern dillerin çoğu, `if`, `for`, `while` gibi tüm özel kelimeleri 'ayrılmış kelime' yaparak bunların değişken olarak kullanılmasını engeller."
+},
+{
+  q: "26. Bir ifadenin bileşenlerinin değerlendirilme sırasını belirleyen 'öncelik' ve 'associativity' kurallarını geçersiz kılıp sırayı programcının belirlemesini sağlayan yapı nedir?",
+  options: [
+    ["Noktalı virgül (;)", "Noktalı virgül genellikle bir deyimi sonlandırır."],
+    ["Parantez (())", "Bir ifadede parantez içine alınan bölüm, diğer tüm öncelik ve associativity kurallarından bağımsız olarak her zaman önce hesaplanır. `(3 + 5) * 2` ifadesi bu sayede 16 sonucunu verir."],
+    ["Alt çizgi (_)", "Alt çizgi, değişken isimlendirmede kullanılır."],
+    ["Atama operatörü (=)", "Atama operatörü bir değişkene değer aktarır."],
+    ["Süslü parantez ({})", "Süslü parantez genellikle bir kod bloğunu tanımlar."]
+  ],
+  answer: 1,
+  summary: "İşlemci öncelik kuralları, parantez olmadığında geçerlidir. Programcı, parantez kullanarak varsayılan işlem sırasını ezebilir ve kendi istediği sırayı zorunlu kılabilir. Bu, ifadeler üzerinde tam kontrol sağlar."
+},
+{
+  q: "27. PHP gibi 'type strict' (katı tipli) olmayan bir dilde, `$sayi = 5;` satırından sonra `$sayi = 'Ahmet';` satırının yazılabilmesi ne anlama gelir?",
+  options: [
+    ["PHP'de değişkenlerin tipi asla değiştirilemez.", "Tam tersi, bu örnekte tipi değişmiştir."],
+    ["Değişkenin tipi, içine atanan son değerin tipine otomatik olarak dönüşür.", "Katı tipli olmayan dillerde bir değişkenin tipi sabit değildir. Değişken, başlangıçta tamsayı tutarken daha sonra içine bir metin atandığında tipi de metin (string) olarak değişir. Buna dinamik tipleme denir."],
+    ["PHP'de tüm değişkenler metin (string) tipindedir.", "Hayır, tamsayı, ondalıklı sayı gibi farklı tipler de vardır."],
+    ["İkinci satır bir hata verecektir.", "Katı tipli olmayan bir dilde bu bir hata değildir."],
+    ["PHP sayısal ve metinsel verileri ayırt edemez.", "Ayırt edebilir, ancak bir değişkenin her iki türü de tutmasına izin verir."]
+  ],
+  answer: 1,
+  summary: "Programlama dilleri, tipleri yönetme konusunda farklı yaklaşımlar sergiler. C veya Java gibi katı tipli diller, bir değişkenin tipinin program boyunca sabit kalmasını zorunlu tutarken, PHP veya Python gibi diller bu konuda daha esnektir ve değişkenin tipinin çalışma zamanında değişmesine izin verir."
+},
+{
+  q: "28. İşlemcilerin genel özelliklerini belirleyen dört temel kavram hangi seçenekte doğru olarak verilmiştir?",
+  options: [
+    ["Sayısal, İlişkisel, Mantıksal, Atama", "Bu, işlemcilerin işlenenlerin niteliğine göre sınıflandırılmasıdır."],
+    ["İşlenen Sayısı, İşlemcinin Yeri, Öncelik, Associativity", "Bu dört kavram, bir işlemcinin nasıl yazılacağını ve bir ifadede nasıl davranacağını belirleyen temel genel özellikleridir."],
+    ["Prefix, Infix, Postfix, Unary", "Bunlar 'İşlemcinin Yeri' ve 'İşlenen Sayısı' özelliklerinin alt kategorileridir, dört temel kavramın tamamı değildir."],
+    ["Değer, Tip, Kapsam, Yaşam Süresi", "Bunlar değişkenlerin özellikleridir, işlemcilerin değil."],
+    ["Toplama, Çıkarma, Çarpma, Bölme", "Bunlar spesifik işlemci örnekleridir."]
+  ],
+  answer: 1,
+  summary: "Bir dildeki işlemcilerin davranışını anlamak için bu dört özelliğe bakılır: Kaç işlenen alıyor? (Arity), İşlenenlere göre nerede duruyor? (Placement), Diğerlerinden daha mı önemli? (Precedence), Kendisi gibilerle yan yana gelince ne yapıyor? (Associativity)."
+},
+{
+  q: "29. Bir değişkenin programdaki deyimler tarafından görülebildiği veya erişilebildiği program bölgesi, o değişkenin hangi özelliğidir?",
+  options: [
+    ["Yaşam Süresi (Lifetime)", "Yaşam süresi, değişkenin bellekte ne kadar süre kaldığıdır."],
+    ["Tip (Type)", "Tip, değişkenin değer aralığıdır."],
+    ["Değer (Value)", "Değer, değişkenin içeriğidir."],
+    ["Kapsam (Scope)", "Bir değişkenin kapsamı, o değişkenin programın hangi satırları arasında tanındığını ve kullanılabileceğini belirler. Örneğin, bir fonksiyon içinde tanımlanan değişkenin kapsamı o fonksiyonla sınırlıdır."],
+    ["Adres (Address)", "Adres, değişkenin bellekteki fiziksel konumudur."]
+  ],
+  answer: 3,
+  summary: "Kapsam, bir değişkenin 'etki alanını' tanımlar. Global kapsama sahip değişkenlere programın her yerinden erişilebilirken, yerel (local) kapsama sahip değişkenlere sadece tanımlandıkları blok veya fonksiyon içinden erişilebilir."
+},
+{
+  q: "30. Imperative programlamada bir programın, işlem deyimleri aracılığıyla bellekteki değerleri değiştirmesi, hangi temel bilgisayar mimarisine dayanır?",
+  options: [
+    ["Bulut Mimarisi", "Bu, dağıtık sistemlerle ilgili bir mimaridir."],
+    ["Paralel Mimarisi", "Bu, çoklu işlemcilerle ilgili bir mimaridir."],
+    ["von Neumann Mimarisi", "Imperative programlama, program komutlarının ve verilerin aynı bellekte bulunduğu ve komutların bu bellekteki verileri değiştirdiği von Neumann mimarisi üzerine kurulmuştur."],
+    ["Kuantum Mimarisi", "Bu, kuantum hesaplama için kullanılan tamamen farklı bir mimaridir."],
+    ["Harvard Mimarisi", "Bu mimari, komut ve veri belleklerini ayırır."]
+  ],
+  answer: 2,
+  summary: "Programlama paradigmaları genellikle temel donanım mimarilerinden etkilenir. Imperative programlamanın 'değişkenler aracılığıyla bellek durumunu değiştirme' mantığı, von Neumann mimarisinin çalışma prensibinin doğrudan bir yazılım yansımasıdır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

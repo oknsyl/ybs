@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 2</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 2</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Nesneye yönelik programlamanın (OOP) temelini oluşturan ve 'sınıf (class)' yapısını programlama dilleri literatürüne kazandıran dil aşağıdakilerden hangisidir?",
+  options: [
+    ["C++", "C++, sınıf kavramını kullanan ve nesneye yönelik programlamayı destekleyen önemli bir dildir ancak bu kavramı ilk ortaya atan dil değildir."],
+    ["Pascal", "Pascal, öğretim amaçlı geliştirilmiş yapısal bir dildir ve sınıf kavramını tanıtan dil değildir."],
+    ["SIMULA 67", "Hiçbir zaman yaygın kullanıma ulaşmamış olmasına rağmen, veri soyutlamayı gerçekleştiren 'sınıf' yapısını geliştirerek kendisinden sonraki nesneye yönelik dillerin temelini oluşturmuştur."],
+    ["COBOL", "COBOL, ticari uygulamalara yönelik geliştirilmiş, yoğun veri işleme ve raporlama yetenekleriyle öne çıkan bir dildir."],
+    ["FORTRAN", "FORTRAN, sayısal hesaplamalar için geliştirilmiş ilk büyük yüksek seviyeli dildir."]
+  ],
+  answer: 2,
+  summary: "Sınıf kavramı, bir veri yapısını ve o veri yapısını işleyen yordamları gruplar. Bu yapı, nesneye yönelik programlamanın temelini oluşturur ve ilk olarak SIMULA 67 dili tarafından tanıtılmıştır."
+},
+{
+  q: "2. Bir programlama dilinin değerlendirilmesinde kullanılan üç temel kriter hangi seçenekte doğru olarak verilmiştir?",
+  options: [
+    ["Hız, Bellek Kullanımı ve Popülerlik", "Bunlar önemli faktörler olsa da, genel değerlendirme için belirlenen üç temel kriter değildir."],
+    ["Okunabilirlik, Yazılabilirlik ve Güvenilirlik", "Bir programlama dilinin değerlendirilmesinde en önde gelen kriterler okunabilirlik, yazılabilirlik ve güvenilirliktir."],
+    ["Sözdizimi, Soyutlama ve Derleyici Desteği", "Sözdizimi ve soyutlama, yazılabilirliği etkileyen faktörlerdir ancak üç ana kriter bu değildir."],
+    ["Platform Bağımsızlığı, Güvenlik ve Maliyet", "Bunlar bir dilin seçiminde etkili olabilecek önemli özelliklerdir fakat temel değerlendirme kriterleri olarak bu üçlü sayılmaz."],
+    ["Veri Tipi Desteği, Kütüphane Sayısı ve Hata Ayıklama Kolaylığı", "Bu özellikler bir dilin gücünü gösterir ancak en temel üç değerlendirme kriteri olarak kabul edilmezler."]
+  ],
+  answer: 1,
+  summary: "Bir programlama dilinin kalitesini ve kullanışlılığını ölçmek için genel olarak kabul görmüş üç ana değerlendirme kriteri bulunur: Okunabilirlik, Yazılabilirlik ve Güvenilirlik."
+},
+{
+  q: "3. Aşağıdakilerden hangisi 'Imperative (Emirsel) Programlama' paradigmasını destekleyen dillerden biri değildir?",
+  options: [
+    ["FORTRAN", "FORTRAN, bir dizi işlem olarak görülen program yapısıyla Imperative paradigmaya iyi bir örnektir."],
+    ["Pascal", "Pascal, yapısal programlama özellikleriyle bilinen ve Imperative paradigmayı destekleyen bir dildir."],
+    ["C", "C dili, bellekteki değerleri değiştiren deyimlerden oluşmasıyla Imperative paradigmanın en bilinen örneklerindendir."],
+    ["COBOL", "COBOL, ticari uygulamalar için geliştirilmiş ve işlem tabanlı yapısıyla Imperative paradigmaya aittir."],
+    ["LISP", "LISP, veriye uygulanacak fonksiyonel dönüşümleri temel alan Fonksiyonel programlama paradigmasının bir örneğidir."]
+  ],
+  answer: 4,
+  summary: "Imperative paradigma; C, FORTRAN, Pascal, COBOL gibi diller tarafından desteklenir. LISP ise Fonksiyonel paradigmayı destekleyen bir dildir."
+},
+{
+  q: "4. Yazılım Geliştirme Yaşam Döngüsü'nün en uzun süren aşaması olarak belirtilen aşama hangisidir?",
+  options: [
+    ["Gereksinimlerin Analizi ve Belirlenmesi", "Bu aşama projenin temelini oluştursa da genellikle en uzun süren aşama değildir."],
+    ["Sistem Tasarımı", "Sistem mimarisinin oluşturulduğu bu kritik aşama, bakım aşamasından daha kısa sürer."],
+    ["Gerçekleştirim ve Birim Sınama", "Kodlamanın yapıldığı bu aşama projenin büyüklüğüne göre değişse de en uzun aşama olarak belirtilmemiştir."],
+    ["Sınama", "Tüm sistemin test edildiği bu aşama, hataların düzeltilmesi ve yeni gereksinimlerin eklenmesi sürecinden daha kısadır."],
+    ["Bakım", "Sistemin kullanımı sırasında fark edilen hataların düzeltilmesi veya ortaya çıkan yeni gereksinimlerin eklenmesi, yaşam döngüsünün en uzun süren aşaması olan bakım aşamasını oluşturur."]
+  ],
+  answer: 4,
+  summary: "Bir yazılım sistemi kullanıcılarına teslim edildikten sonra başlayan bakım aşaması, hem hataların düzeltilmesini hem de yeni isteklerin karşılanmasını içerir ve bu nedenle genellikle yaşam döngüsünün en uzun aşaması olur."
+},
+{
+  q: "5. 'Ne yapılacağının' değil, 'bir işin nasıl yapılacağının' belirtildiği, programın bir dizi işlem olarak görüldüğü ve deyimlerin değişkenler aracılığıyla iletişim kurduğu programlama paradigması hangisidir?",
+  options: [
+    ["Nesneye Yönelik Paradigma", "Bu paradigmada karmaşık veri nesneleri ve metotlar tasarlanır."],
+    ["Fonksiyonel Paradigma", "Bu paradigmada temel olan, veriye uygulanacak fonksiyonel dönüşümlerdir."],
+    ["Mantık Paradigması", "Bu paradigma 'ne yapılması istendiğinin' belirtilmesine odaklanır, 'nasıl yapılacağının' değil."],
+    ["Imperative (Emirsel) Paradigma", "Imperative paradigma, işlem tabanlıdır ve program, bellekteki değerleri değiştiren bir dizi işlem (deyim) olarak görülür."],
+    ["Betik Paradigması", "Bu bir temel programlama paradigması olarak sayılmaz, daha çok belirli bir ortamda çalışan dilleri (örn: web tarayıcısı) tanımlar."]
+  ],
+  answer: 3,
+  summary: "Imperative (Emirsel) paradigma, programı adım adım çalıştırılan ve bellek durumunu değiştiren komutlar dizisi olarak ele alır. Bu, 'bir işin nasıl yapılacağını' tarif etmektir."
+},
+{
+  q: "6. Düşük düzeyli programlama dillerini oluşturan iki temel dil türü aşağıdakilerden hangisidir?",
+  options: [
+    ["Makine Dili ve Birleştirici (Assembly) Dil", "Düşük düzeyli programlama dilleri, bilgisayar donanımına bağımlıdır ve bu kategori makine dili ile birleştirici dilden oluşur."],
+    ["C ve Pascal", "C ve Pascal, donanımdan bağımsız olan yüksek düzeyli programlama dilleridir."],
+    ["FORTRAN ve COBOL", "FORTRAN ve COBOL da yüksek düzeyli programlama dilleridir."],
+    ["Java ve C++", "Java ve C++ da modern ve yüksek düzeyli programlama dilleridir."],
+    ["Prolog ve LISP", "Prolog ve LISP, sırasıyla Mantık ve Fonksiyonel paradigmaları destekleyen yüksek düzeyli dillerdir."]
+  ],
+  answer: 0,
+  summary: "Programlama dilleri düzeylerine göre ikiye ayrılır. Donanıma en yakın olan ve bu nedenle 'düşük düzeyli' olarak adlandırılan kategori, sadece 0 ve 1'lerden oluşan makine dili ile onun sembolik karşılığı olan birleştirici (Assembly) dilden oluşur."
+},
+{
+  q: "7. Aşağıdakilerden hangisi programlama dillerinin temel sınıflandırma gruplarından biri değildir?",
+  options: [
+    ["Sayısal Uygulamalara Yönelik Programlama Dilleri", "Bu, FORTRAN gibi dilleri içeren temel bir sınıflandırma grubudur."],
+    ["Ticari Uygulamalara Yönelik Programlama Dilleri", "Bu, COBOL gibi dilleri içeren temel bir sınıflandırma grubudur."],
+    ["Mobil Uygulamalara Yönelik Programlama Dilleri", "Mobil uygulama geliştirme önemli bir alan olsa da, dört temel sınıflandırma grubundan biri olarak belirtilmemiştir."],
+    ["Yapay Zeka Uygulamaları için Programlama Dilleri", "Bu, Prolog ve LISP gibi dilleri içeren temel bir sınıflandırma grubudur."],
+    ["Sistem Programlama Dilleri", "Bu, C gibi dilleri içeren temel bir sınıflandırma grubudur."]
+  ],
+  answer: 2,
+  summary: "Programlama dilleri temel olarak dört ana uygulama alanına göre sınıflandırılır: Sayısal Uygulamalar, Ticari Uygulamalar, Yapay Zeka Uygulamaları ve Sistem Programlama."
+},
+{
+  q: "8. Bir programlama dilinin 'güvenilirliğini' belirleyen faktörlere hangi iki özellik örnek olarak verilmiştir?",
+  options: [
+    ["Sözdizimi basitliği ve soyutlama yeteneği", "Bu özellikler daha çok dilin 'yazılabilirliğini' etkiler."],
+    ["Okunabilirlik ve program kütüphaneleri", "Okunabilirlik ayrı bir kriterdir, kütüphaneler ise dilin kullanışlılığını artırır."],
+    ["Tip denetimi ve istisnai durum işleme", "Bir dilde bulunan tip denetimi ve istisnai durum (exception) işleme mekanizmaları, o dilde yazılan programların güvenilirliğini doğrudan etkileyen faktörlerdir."],
+    ["Derleme hızı ve bellek yönetimi", "Bunlar performansla ilgili önemli konulardır ancak güvenilirlik için verilen iki temel örnek değildir."],
+    ["Platform bağımsızlığı ve maliyeti", "Bunlar dilin yaygınlaşmasını ve erişilebilirliğini etkileyen faktörlerdir."]
+  ],
+  answer: 2,
+  summary: "Bir programın beklenmedik durumlarda çökmemesi ve veri tiplerini doğru kullanması, güvenilirliği açısından kritiktir. Bu nedenle tip denetimi ve istisnai durum işleme, güvenilirliği belirleyen önemli faktörlerdir."
+},
+{
+  q: "9. ALGOL 60 dilinin programlama dilleri alanına yaptığı en önemli katkılardan biri nedir?",
+  options: [
+    ["Nesneye yönelik programlamayı başlatması", "Bu katkı SIMULA 67 diline aittir."],
+    ["Ticari uygulamalar için standart oluşturması", "Bu başarı daha çok COBOL dili ile ilişkilidir."],
+    ["Resmi olarak sözdizimi tanımlanan ilk dil olması", "ALGOL 60, BNF (Backus-Naur Form) kullanılarak sözdizimi resmi olarak tanımlanan ilk dil olma özelliğini taşır ve bu, dil tasarımında bir dönüm noktasıdır."],
+    ["Sistem programlama için C'ye temel oluşturması", "C, kendi başına geliştirilmiş ve sistem programlamada devrim yaratmış bir dildir."],
+    ["Görsel programlama arayüzü sunması", "Görsel programlama çok daha sonra ortaya çıkan bir yaklaşımdır."]
+  ],
+  answer: 2,
+  summary: "Programlama dili tasarımında standartlaşma ve netlik çok önemlidir. ALGOL 60, sözdiziminin matematiksel bir kesinlikle tanımlandığı ilk dil olarak bu alanda bir çığır açmıştır."
+},
+{
+  q: "10. Programlama dilleri ile paradigmalar arasındaki ilişki için aşağıdakilerden hangisi doğrudur?",
+  options: [
+    ["Her programlama dili sadece bir paradigmayı destekleyebilir.", "Bu ifade yanlıştır. C++ gibi bazı diller birden çok paradigmayı (imperative ve nesneye yönelik) destekleyebilir."],
+    ["Bir paradigma grubundaki diller arasında çok az benzerlik bulunur.", "Tam tersine, paylaşılan kavramlar nedeniyle aynı paradigma grubundaki diller arasında yoğun benzerlik bulunur."],
+    ["Tasarımda kullanılan paradigma ile dilde kullanılan paradigma farklıysa yazılım geliştirme kolaylaşır.", "Tam tersine, tasarım ve dil paradigmaları aynı ise eşleme sağlanarak yazılım geliştirme kolaylaştırılır."],
+    ["Paradigmalar programcıların problemlere bakış açısını değiştirmez.", "Bu ifade yanlıştır. Farklı paradigmalar, farklı programlama stilleri getirir ve programcıların algoritmalara bakış şeklini değiştirir."],
+    ["C++, hem imperative hem de nesneye yönelik programların geliştirilmesini destekleyen çok paradigmalı bir dildir.", "Bu ifade doğrudur. C++, hem C gibi işlem tabanlı (imperative) hem de Smalltalk gibi nesne tabanlı programlamaya olanak tanıyan bir dildir."]
+  ],
+  answer: 4,
+  summary: "Programlama dilleri ve paradigmalar arasında bire bir ilişki olmak zorunda değildir. C++ gibi bazı diller, birden fazla programlama stilini destekleyerek programcıya esneklik sunar ve bu tür dillere 'paradigma bağımsız' veya 'çok paradigmalı' denir."
+},
+{
+  q: "11. Assembly (Birleştirici) dilinin, makine diline göre sağladığı temel avantaj nedir?",
+  options: [
+    ["Donanımdan tamamen bağımsız olması", "Assembly dili, donanıma oldukça bağımlı olan düşük seviyeli bir dildir."],
+    ["Makine işlemlerinin, değerlerin ve bellek yerleşimlerinin yerine isimler ve semboller kullanması", "Assembly, 0 ve 1'lerden oluşan komutlar yerine 'ADD, MOV' gibi sembolik isimler kullanarak komutların okunabilirliğini artırmıştır."],
+    ["Otomatik olarak bellek yönetimi yapması", "Otomatik bellek yönetimi genellikle modern, yüksek seviyeli dillerin bir özelliğidir."],
+    ["Nesneye yönelik programlamayı desteklemesi", "Nesneye yönelik programlama, yüksek seviyeli bir programlama konseptidir."],
+    ["Görsel bir geliştirme ortamı sunması", "Görsel ortamlar, Assembly'den çok sonra geliştirilmiştir."]
+  ],
+  answer: 1,
+  summary: "Makine dili, sadece 0 ve 1'lerden oluştuğu için insanlar tarafından anlaşılması çok zordur. Assembly dili, bu ikili kodlara karşılık gelen 'ADD R1, 28' gibi okunabilir semboller ve isimler getirerek programlamayı bir üst seviyeye taşımıştır."
+},
+{
+  q: "12. IBM tarafından geliştirilen ve amacı hem ticari hem de sayısal uygulamalar gibi çeşitli alanlarda kullanılabilen bir dil olmak olan, aynı zamanda 'istisna işleme' ve 'gösterge (pointer) veri tipi' gibi kavramları tanıtan dil hangisidir?",
+  options: [
+    ["FORTRAN", "FORTRAN temel olarak sayısal uygulamalara yönelikti."],
+    ["PL/I", "PL/I (Programming Language I), çeşitli uygulama alanları için tek bir dil olma amacıyla geliştirilmiş ve istisna işleme, gösterge veri tipi gibi önemli yenilikler getirmiştir."],
+    ["COBOL", "COBOL temel olarak ticari uygulamalara yönelikti."],
+    ["ALGOL", "ALGOL, özellikle akademik çevrelerde etkili olmuş ve blok yapısı gibi kavramları tanıtmıştır."],
+    ["APL", "APL, özellikle matris işlemleri gibi sayısal işlemlerde güçlü olan bir dildi."]
+  ],
+  answer: 1,
+  summary: "PL/I, farklı amaçlara hizmet eden FORTRAN ve COBOL gibi dillerin özelliklerini birleştirerek 'her amaca uygun' bir dil olma hedefiyle yola çıkmış ve programlama dillerine istisna işleme ve gösterge (pointer) gibi kalıcı katkılar yapmıştır."
+},
+{
+  q: "13. Yazılım Geliştirme Yaşam Döngüsü'nün 'Gerçekleştirim ve Birim Sınama' aşamasında tam olarak ne yapılır?",
+  options: [
+    ["Yazılımın hedefleri ve kısıtlamaları belirlenir.", "Bu, 'Gereksinimlerin Analizi ve Belirlenmesi' aşamasında yapılır."],
+    ["Sistemin genel mimarisi oluşturulur ve yazılım modüllere ayrılır.", "Bu, 'Sistem Tasarımı' aşamasında yapılır."],
+    ["Tasarım aşamasında belirlenen modüller için kodlama yapılır ve her birim doğrulanır.", "Bu aşamada tasarım, çalışan program kodlarına dönüştürülür ve her birimin (modülün) kendi başına doğru çalıştığı test edilir."],
+    ["Tüm birimler birleştirilerek sistemin gereksinimlere uygunluğu test edilir.", "Bu, 'Sınama' aşamasında yapılır."],
+    ["Kullanım sırasında ortaya çıkan hatalar düzeltilir.", "Bu, 'Bakım' aşamasında yapılır."]
+  ],
+  answer: 2,
+  summary: "Gerçekleştirim ve birim sınama, soyut bir tasarımın somut kodlara döküldüğü aşamadır. Kodlama (gerçekleştirim) ve yazılan her küçük parçanın doğrulanması (birim sınama) bu aşamada birlikte yürütülür."
+},
+{
+  q: "14. Aşağıdaki programlama paradigmalarından hangisi, programı 'belirli bir koşulun varlığını kontrol ederek ve koşul sağlanıyorsa uygun bir işlem gerçekleştirerek' çalışan bir yapı olarak görür?",
+  options: [
+    ["Imperative Paradigma", "Bu paradigmada program, sıralı olarak işlenen komutlar dizisidir."],
+    ["Nesneye Yönelik Paradigma", "Bu paradigmada program, birbirleriyle etkileşen nesneler koleksiyonudur."],
+    ["Fonksiyonel Paradigma", "Bu paradigmada program, fonksiyonların birbiri ardına uygulanmasıdır."],
+    ["Mantık Paradigması", "Mantık paradigması, 'koşul -> hareket' yapısına dayanır ve deyimler sıralı olarak işlenmek zorunda değildir. Bir koşul sağlandığında ilgili hareket tetiklenir."],
+    ["Yapısal Paradigma", "Yapısal programlama, Imperative paradigma içinde yer alan bir programlama stilidir."]
+  ],
+  answer: 3,
+  summary: "Prolog gibi dillerin kullandığı Mantık paradigması, geleneksel adım adım programlamadan farklıdır. Program, bir dizi kural ve gerçekten oluşur; sistem, bir koşulun doğru olup olmadığını kontrol eder ve buna göre sonuçlar üretir."
+},
+{
+  q: "15. Amacı bilimle uğraşmayan kişilerin sayısal hesaplama gereksinimlerini karşılamak olan, ancak kolay öğrenilen yapısı nedeniyle bir çok programcının ilk öğrendiği dil olan programlama dili hangisidir?",
+  options: [
+    ["BASIC", "BASIC (Beginner’s All purpose Symbolic Instruction Code), adından da anlaşılacağı gibi başlangıç seviyesi için tasarlanmış, kolay öğrenilen yapısıyla çok yaygınlaşmıştır."],
+    ["Pascal", "Pascal da öğretim amaçlı geliştirilmiştir ancak BASIC'in yaygınlığı ve basitliği bu tanıma daha çok uyar."],
+    ["FORTRAN", "FORTRAN, bilim insanları ve mühendisler için geliştirilmiş daha karmaşık bir dildi."],
+    ["C", "C, güçlü ancak öğrenmesi BASIC'e göre daha zor olan bir sistem programlama dilidir."],
+    ["COBOL", "COBOL, ticari veri işleme odaklıdır, genel amaçlı sayısal hesaplama için değildir."]
+  ],
+  answer: 0,
+  summary: "BASIC, 1960'larda Dartmouth College'da, programcı olmayanların da bilgisayarları hesaplamalar için kullanabilmesi amacıyla geliştirilmiştir. Bu basitliği, onu kişisel bilgisayarların ilk yıllarında çok popüler hale getirmiştir."
+},
+{
+  q: "16. 1972 yılında Dennis Ritchie tarafından UNIX işletim sistemi ile ilgili yazılımları geliştirmek için tasarlanan ve günümüzde sistem programlamanın temel taşı olan dil hangisidir?",
+  options: [
+    ["Ada", "Ada, ABD Savunma Bakanlığı tarafından gömülü sistemler için geliştirilmiştir."],
+    ["PL/I", "PL/I, IBM tarafından genel amaçlı bir dil olarak geliştirilmiştir."],
+    ["Pascal", "Pascal, Nicholas Wirth tarafından öğretim amaçlı geliştirilmiştir."],
+    ["C", "C dili, 1972 yılında Dennis Ritchie tarafından Bell Laboratuvarları'nda, UNIX işletim sistemini geliştirmek amacıyla yaratılmıştır ve bu alanda standart haline gelmiştir."],
+    ["Assembly", "Assembly, C'den önce sistem programlamada kullanılıyordu ancak C, yüksek düzeyli dillerin bu alanda yaygınlaşmasını sağlamıştır."]
+  ],
+  answer: 3,
+  summary: "C dilinin doğuşu, doğrudan UNIX işletim sisteminin geliştirilme ihtiyacına bağlıdır. Donanıma yakın çalışabilme yeteneği ve esnekliği, onu sistem programlama için ideal bir dil yapmıştır."
+},
+{
+  q: "17. 'İngilizce'ye yakın ve ticari uygulamalara yönelik' bir dil geliştirme hedefiyle ortaya çıkan, özellikle yoğun veri işleme ve raporlama konularında kolaylıklar sağlayan dil hangisidir?",
+  options: [
+    ["FORTRAN", "FORTRAN, matematiksel formüllere yakınlığıyla bilinir, İngilizce'ye değil."],
+    ["BASIC", "BASIC basit bir dil olsa da ticari veri işleme ve raporlama COBOL'un uzmanlık alanıdır."],
+    ["COBOL", "COBOL (COmmon Business-Oriented Language), adından da anlaşılacağı gibi ticari odaklıdır ve hiyerarşik veri yapıları, raporlama gibi özellikleriyle bu alanda popüler olmuştur."],
+    ["Prolog", "Prolog, mantıksal sorgulamalar ve doğal dil işleme için kullanılır."],
+    ["C++", "C++, genel amaçlı bir dildir ancak COBOL gibi özel ticari odaklı yapılar sunmaz."]
+  ],
+  answer: 2,
+  summary: "1950'lerin sonunda, iş dünyasının artan veri işleme ihtiyaçlarını karşılamak için ABD Savunma Bakanlığı'nın desteğiyle COBOL geliştirilmiştir. Amacı, okunabilir ve iş odaklı bir dil oluşturmaktı."
+},
+{
+  q: "18. Bir programlama dilinin 'yazılabilirliğini' etkileyen en önemli iki etken aşağıdakilerden hangisidir?",
+  options: [
+    ["Tip denetimi ve güvenilirlik", "Bu faktörler dilin güvenilirliğini etkiler."],
+    ["Makine bağımsızlığı ve okunabilirlik", "Bunlar dilin genel kalitesini ve taşınabilirliğini etkiler ancak doğrudan yazılabilirliğin iki temel etkeni değildir."],
+    ["Sözdizimi ve soyutlama yeteneği", "Dilin sözdiziminin ne kadar ifade gücü olduğu ve işlem/veri soyutlama yeteneklerinin ne kadar gelişmiş olduğu, o dilde program yazma kolaylığını (yazılabilirliği) önemli ölçüde etkiler."],
+    ["Derleyici optimizasyonu ve çalışma hızı", "Bunlar programın performansını etkiler, yazım kolaylığını değil."],
+    ["Paradigma sayısı ve kütüphane desteği", "Bunlar dilin esnekliğini ve kullanışlılığını artırsa da, temel iki etken olarak sözdizimi ve soyutlama sayılır."]
+  ],
+  answer: 2,
+  summary: "İyi bir yazılabilirlik, bir programcının fikirlerini kolayca koda dökebilmesi anlamına gelir. Bu, hem dilin kurallarının (sözdizimi) buna uygun olmasıyla hem de karmaşık fikirleri basit yapılarla ifade etme (soyutlama) yeteneğiyle mümkündür."
+},
+{
+  q: "19. Aşağıdaki dillerden hangisi, özellikle güçlü matris işlemleri yeteneğine sahip olmasına rağmen, karmaşık sözdizimi ve bilgisayar kaynaklarını verimsiz kullanması gibi dezavantajlara sahiptir?",
+  options: [
+    ["C", "C, kaynakları oldukça verimli kullanan bir dildir."],
+    ["Pascal", "Pascal, karmaşık sözdiziminden ziyade basitliği ile bilinir."],
+    ["BASIC", "BASIC, basitliği ile öne çıkar, karmaşık sözdizimi bir özelliği değildir."],
+    ["APL", "APL, sayısal ve matris işlemleri için çok güçlü olanaklar sunmasına rağmen, anlaşılması güç karmaşık sözdizimi ve kaynakları verimsiz kullanması nedeniyle yaygınlaşamamıştır."],
+    ["COBOL", "COBOL'un sözdizimi ayrıntılıdır (verbose) ancak APL gibi sembolik bir karmaşıklığı yoktur."]
+  ],
+  answer: 3,
+  summary: "APL, kendine özgü sembolleri ve yoğun sözdizimi ile bilinir. Bu durum, güçlü matematiksel yeteneklerine rağmen programların okunmasını ve anlaşılmasını zorlaştırmış, yaygın kullanımını engellemiştir."
+},
+{
+  q: "20. Yazılım Geliştirme Yaşam Döngüsü'nün 'Sistem Tasarımı' aşamasının temel amacı nedir?",
+  options: [
+    ["Program kodlarını yazmak ve test etmek", "Bu, 'Gerçekleştirim ve Birim Sınama' aşamasının görevidir."],
+    ["Kullanıcıdan gelen gereksinimleri, kısıtlamaları ve hedefleri belgelemek", "Bu, 'Gereksinimlerin Analizi' aşamasının görevidir."],
+    ["Yazılımı kullanıcıya teslim ettikten sonra ortaya çıkan hataları düzeltmek", "Bu, 'Bakım' aşamasının görevidir."],
+    ["Gereksinimleri, donanım ve yazılım sistemlerine ayırarak sistemin mimarisini tanımlamak", "Sistem tasarımı aşaması, gereksinimleri analiz ettikten sonra sistemin genel yapısını ve modüllerini tanımlar."],
+    ["Tüm sistemi bir bütün olarak test edip kullanıcıya teslim etmek", "Bu, 'Sınama' aşamasının görevidir."]
+  ],
+  answer: 3,
+  summary: "Sistem tasarımı, 'ne yapılacağını' belirten gereksinimler ile 'nasıl yapılacağını' gösteren kodlama arasında bir köprü görevi görür. Bu aşamada sistemin ana yapısı, yani mimarisi oluşturulur."
+},
+{
+  q: "21. Bir paradigma grubundan bir dil öğrenmenin, aynı gruptaki başka bir dili öğrenmeyi kolaylaştırmasının nedeni nedir?",
+  options: [
+    ["Tüm dillerin aynı derleyiciyi kullanması", "Farklı diller genellikle farklı derleyiciler kullanır."],
+    ["Tüm dillerin sözdiziminin birebir aynı olması", "Sözdizimleri farklı olabilir, ancak temel kavramlar benzerdir."],
+    ["Paylaşılan ortak kavramlar nedeniyle", "Aynı paradigma grubundaki diller (örneğin OOP dilleri), sınıf, nesne, metot gibi ortak kavramları paylaştığı için birini öğrenen diğerine daha kolay adapte olur."],
+    ["Tüm dillerin aynı şirket tarafından geliştirilmesi", "Aynı paradigmaya ait diller farklı şirketler veya topluluklar tarafından geliştirilebilir."],
+    ["Tüm dillerin sadece aynı işletim sisteminde çalışması", "Aynı paradigmaya ait diller farklı işletim sistemlerinde çalışabilir."]
+  ],
+  answer: 2,
+  summary: "Programlama paradigmaları, problemlere belirli bir bakış açısı sunar. Örneğin, nesneye yönelik bir dili (Java gibi) öğrendikten sonra, başka bir nesneye yönelik dili (C++ gibi) öğrenmek daha kolaydır çünkü temel düşünce yapısı ve kavramlar ortaktır."
+},
+{
+  q: "22. Aşağıdaki dört temel programlama paradigmasından hangisi, programın temelini 'veriler ve bu verilere uygulanacak fonksiyonel dönüşümler' olarak görür?",
+  options: [
+    ["Imperative Paradigma", "Bu paradigma, durumu değiştiren sıralı komutları temel alır."],
+    ["Nesneye Yönelik Paradigma", "Bu paradigma, veri ve metotları içeren nesneleri temel alır."],
+    ["Mantık Paradigması", "Bu paradigma, kuralları ve mantıksal çıkarımları temel alır."],
+    ["Fonksiyonel Paradigma", "Fonksiyonel paradigma, hesaplamayı matematiksel fonksiyonların değerlendirilmesi olarak görür ve durum değişikliklerinden kaçınır."],
+    ["Veri Odaklı Paradigma", "Bu, dört temel paradigma arasında sayılan bir kategori değildir."]
+  ],
+  answer: 3,
+  summary: "Fonksiyonel programlama, bir programı, bir dizi fonksiyonun birleşimi olarak ele alır. Temel fikir, veriyi bir fonksiyona girdi olarak verip çıktı almak ve bu çıktıyı başka bir fonksiyona girdi olarak kullanmaktır."
+},
+{
+  q: "23. Yüksek düzeyli programlama dillerinin, makine dili ve birleştirici dilinin yerini almasının nedenleri arasında aşağıdakilerden hangisi sayılmamıştır?",
+  options: [
+    ["Okunabilir bir gösterime sahip olmaları", "Bu, yüksek düzeyli dillerin okunmasını ve anlaşılmasını kolaylaştıran önemli bir avantajıdır."],
+    ["Makine bağımsızlığı sunmaları", "Bu, yazılan bir programın farklı donanımlarda çalışabilmesini sağlayan önemli bir avantajdır."],
+    ["Program kütüphaneleri bağlayabilmeleri", "Bu, hazır kod bloklarını kullanarak geliştirmeyi hızlandıran önemli bir avantajdır."],
+    ["Donanıma doğrudan ve en hızlı erişim sağlamaları", "Bu, düşük seviyeli dillerin bir özelliğidir. Yüksek düzeyli diller, donanım ve yazılım arasında bir soyutlama katmanı oluşturduğu için bu avantajı sunmaz."],
+    ["Daha az bellek kullanmaları", "Yüksek seviyeli diller genellikle daha fazla soyutlama ve ek özellikler nedeniyle düşük seviyeli dillere göre daha fazla bellek kullanma eğilimindedir."]
+  ],
+  answer: 3,
+  summary: "Yüksek düzeyli diller; okunabilirlik, makine bağımsızlığı ve kütüphane desteği gibi avantajlar sunduğu için düşük düzeyli dillerin yerini almıştır. Donanıma hızlı erişim ve minimum bellek kullanımı ise düşük düzeyli dillerin avantajlarıdır."
+},
+{
+  q: "24. C dilinin sözdizimi ve yapısı temel alınarak geliştirilen, veri soyutlamayı ve nesneye yönelik programlamayı destekleyen dil aşağıdakilerden hangisidir?",
+  options: [
+    ["Java", "Java, C/C++ sözdiziminden etkilenmiş olsa da C'nin doğrudan bir sonraki adımı olarak geliştirilmemiştir."],
+    ["C++", "C++ programlama dili, C diline nesneye yönelik programlama ve veri soyutlama gibi özellikler eklenerek geliştirilmiştir."],
+    ["Ada", "Ada, C'den bağımsız olarak ABD Savunma Bakanlığı'nın ihtiyaçları için geliştirilmiş bir dildir."],
+    ["Pascal", "Pascal, C'den farklı bir dil ailesine aittir ve öğretim amaçlı geliştirilmiştir."],
+    ["SIMULA 67", "SIMULA 67, nesneye yönelik programlamanın temelini atmıştır ancak C dili temel alınarak geliştirilmemiştir."]
+  ],
+  answer: 1,
+  summary: "C++, isminin de işaret ettiği gibi, C dilinin yeteneklerini bir adım öteye taşıyarak ona nesneye yönelik programlama (OOP) ve daha gelişmiş veri soyutlama özellikleri ekleyen bir dildir."
+},
+{
+  q: "25. Özellikle sistem programlaması alanında, C dilinin geliştirilmesiyle birlikte hangi önemli değişim yaşanmıştır?",
+  options: [
+    ["Birleştirici (Assembly) dillerin kullanımı tamamen sona ermiştir.", "Assembly dillerinin kullanımı azalmış olsa da, çok özel ve performansa dayalı durumlarda hala kullanılmaktadır, tamamen sona ermemiştir."],
+    ["Yüksek düzeyli programlama dillerinin kullanımı bu alanda yaygınlaşmıştır.", "1970'li yılların başında C dilinin geliştirilmesi ile, etkinlik gereksinimi nedeniyle daha önce birleştirici dillerin hakim olduğu sistem programlama alanında da yüksek düzeyli dillerin kullanımı yaygınlaşmıştır."],
+    ["Tüm sistem programları görsel arayüzlerle yazılmaya başlanmıştır.", "Sistem programlama genellikle görsel arayüzlerden çok, temel işlevsellik ve performans üzerine odaklanır."],
+    ["Sistem programlama sadece UNIX işletim sistemine özel hale gelmiştir.", "C, UNIX için geliştirilmiş olsa da, sonrasında diğer tüm işletim sistemleri için de sistem programlama dili olarak standartlaşmıştır."],
+    ["Programlama dillerinin donanıma bağımlılığı artmıştır.", "Tam tersine, C gibi yüksek seviyeli bir dilin kullanılması donanıma olan bağımlılığı azaltmıştır."]
+  ],
+  answer: 1,
+  summary: "C dilinden önce, sistem programlama performansı kritik olduğu için büyük ölçüde Assembly dili ile yapılıyordu. C'nin hem yüksek seviyeli özellikler sunması hem de donanıma yeterince yakın çalışabilmesi, bu alanda bir devrim yaratarak yüksek seviyeli dillerin kullanımını standart hale getirmiştir."
+},
+{
+  q: "26. Nesneye yönelik programlamanın temelini oluşturan ana prensip aşağıdaki seçeneklerden hangisinde doğru ifade edilmiştir?",
+  options: [
+    ["Programın bir dizi sıralı işlem olarak görülmesi", "Bu, Imperative (Emirsel) paradigmanın temel prensibidir."],
+    ["Problemin çözümünün fonksiyonel dönüşümlerle ifade edilmesi", "Bu, Fonksiyonel paradigmanın temel prensibidir."],
+    ["Nesnelerin sınıflara ve alt sınıflara gruplanması", "Nesneye yönelik programlamanın temel noktası, karmaşık veri nesnelerinin sınıflar ve alt sınıflar halinde gruplanarak organize edilmesidir."],
+    ["Programın 'koşul-hareket' çiftlerinden oluşması", "Bu, Mantık paradigmasının temel prensibidir."],
+    ["Programın donanıma en yakın komutlarla yazılması", "Bu, düşük seviyeli programlamanın bir özelliğidir, bir paradigma prensibi değildir."]
+  ],
+  answer: 2,
+  summary: "Nesneye yönelik programlama, karmaşık sistemleri daha yönetilebilir parçalara ayırmak için veri ve o veri üzerinde çalışan metotları 'sınıf' adı verilen şablonlarda birleştirir. Alt sınıflar ise bu şablonlardan özellik miras alır."
+},
+{
+  q: "27. Programlama dilleri literatürüne 'yığıt değiştirilebilir diziler (stack dynamic arrays)' kavramını kazandıran dil hangisidir?",
+  options: [
+    ["C", "C dili, güçlü dizi ve gösterge (pointer) yeteneklerine sahiptir ancak bu spesifik kavramı tanıtan dil değildir."],
+    ["PL/I", "PL/I, gösterge (pointer) veri tipini ve istisna işlemeyi tanıtmıştır."],
+    ["FORTRAN", "FORTRAN, ilk yüksek seviyeli dillerden biridir ve dizi yapıları içerir fakat 'yığıt değiştirilebilir' kavramı ALGOL ile gelmiştir."],
+    ["Pascal", "Pascal, öğretim amaçlı geliştirilmiş ve yapısal programlamayı destekleyen bir dildir."],
+    ["ALGOL", "ALGOL, programlama dilleri alanını önemli ölçüde etkilemiş ve blok kavramı, özyineleme gibi özelliklerin yanı sıra 'yığıt değiştirilebilir diziler' kavramını da tanıtmıştır."]
+  ],
+  answer: 4,
+  summary: "Yığıt değiştirilebilir diziler, bir alt program çalıştırıldığı anda boyutu belirlenen ve alt programın çalışması bittiğinde bellekten kalkan dizilerdir. Bu esnek yapı ilk olarak ALGOL dili tarafından tanıtılmıştır."
+},
+{
+  q: "28. Bir bilgisayarın doğrudan anladığı ve 'bilgisayarların ana dili' olarak nitelendirilen gösterim şekli aşağıdakilerden hangisidir?",
+  options: [
+    ["Assembly Dili", "Assembly dili, makine dilinin sembolik bir gösterimidir ancak bilgisayarın doğrudan anladığı dil değildir; 'assembler' ile çevrilmesi gerekir."],
+    ["Yüksek Düzeyli Dil", "Yüksek düzeyli dillerin insanlar tarafından anlaşılması kolaydır ancak bilgisayarın anlaması için derlenmesi veya yorumlanması gerekir."],
+    ["Makine Dili", "Makine dili, sadece 0 ve 1'lerden oluşan, bir bilgisayarın merkezi işlem biriminin (CPU) doğrudan yürütebildiği tek dildir."],
+    ["COBOL", "COBOL, ticari uygulamalar için geliştirilmiş yüksek düzeyli bir dildir."],
+    ["C++", "C++, genel amaçlı, yüksek düzeyli bir programlama dilidir."]
+  ],
+  answer: 2,
+  summary: "Tüm programlama dillerinin nihai amacı, bilgisayarın donanım seviyesinde anlayabildiği tek dil olan makine diline dönüştürülmektir. Bu dil, bilgisayarın ana dilidir."
+},
+{
+  q: "29. ALGOL dilinin programlama dilleri dünyasına kazandırdığı yenilikler arasında aşağıdakilerden hangisi yer almaz?",
+  options: [
+    ["Programlarda blok kavramı", "Bu, ALGOL tarafından tanıtılan önemli bir yeniliktir."],
+    ["Özyinelemeli (recursive) altprogramlar", "Bu, ALGOL tarafından tanıtılan önemli bir yeniliktir."],
+    ["Yığıt değiştirilebilir diziler", "Bu, ALGOL tarafından tanıtılan önemli bir yeniliktir."],
+    ["Değer ile çağırma ve isim ile çağırma yöntemleri", "Bu, alt programlara değer aktarma yöntemleri olarak ALGOL tarafından tanıtılmıştır."],
+    ["İstisnai durum işleme (exception handling)", "İstisnai durum işleme mekanizması, PL/I dilinin programlama dilleri alanına tanıttığı önemli bir özelliktir."]
+  ],
+  answer: 4,
+  summary: "ALGOL, blok yapısı, özyineleme ve farklı parametre aktarma yöntemleri gibi birçok yapısal programlama konseptini tanıtan çok etkili bir dil olmuştur. Ancak istisnai durum işleme, PL/I tarafından popüler hale getirilmiştir."
+},
+{
+  q: "30. Birden fazla programlama paradigmasını (örneğin hem imperative hem de nesneye yönelik) destekleyen C++ gibi dillere ne ad verilir?",
+  options: [
+    ["Paradigma-yönelik diller", "Bu terim, Smalltalk gibi özellikle tek bir paradigmayı desteklemek için tasarlanmış diller için kullanılır."],
+    ["Düşük seviyeli diller", "Bu, dilin donanıma yakınlığını belirtir, desteklediği paradigma sayısını değil."],
+    ["Paradigma-bağımsız diller", "Bazı diller belirli bir paradigmaya sıkı sıkıya bağlı kalmaz ve birden çok programlama stilini destekler. Bu tür dillere paradigma-bağımsız veya çok-paradigmalı diller denir."],
+    ["Betik dilleri", "Bu, genellikle bir çalışma zamanı sistemi içinde yorumlanan diller için kullanılan bir terimdir."],
+    ["Ezoterik diller", "Bu, pratik kullanım amacı gütmeyen, deneysel veya eğlence amaçlı diller için kullanılan bir terimdir."]
+  ],
+  answer: 2,
+  summary: "Bir dilin birden fazla paradigmayı desteklemesi, programcıya çözülecek probleme en uygun yaklaşımı seçme esnekliği tanır. C++, bu esnekliği sunan paradigma-bağımsız dillere iyi bir örnektir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

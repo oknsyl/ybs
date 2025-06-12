@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 7</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 7</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Bilgisayar biliminde 1 Kilobayt'ın, metrik sistemdeki gibi 1000 birim değil de 1024 bayt olarak kabul edilmesinin temel sebebi nedir?",
+  options: [
+    ["İlk bilgisayarların belleğinin 1024 bayt olması", "Bu tarihsel bir tesadüf değildir, teknik bir sebebi vardır."],
+    ["ASCII tablosunun 1024 karakter içermesi", "ASCII tablosu 256 karakter içerir ve bu 8 bitlik bayt kavramıyla ilgilidir."],
+    ["Bilgisayardaki bütün veri saklama ünitelerinin kapasitesinin 2'nin kuvvetleri ile ölçülmesi", "Bilgisayarlar ikilik tabanda çalıştığı için, depolama birimleri 2'nin kuvvetleri olarak ifade edilir. 1000'e en yakın 2'nin kuvveti 2^10 = 1024 olduğu için bu değer standart kabul edilmiştir."],
+    ["Uluslararası Standartlar Örgütü'nün (ISO) bu şekilde karar vermesi", "ISO bu standardı onaylamıştır ancak standardın temelindeki neden matematikseldir."],
+    ["Veri aktarım hızlarının bu sayının katları olması", "Veri aktarım hızları da bu temel üzerine kuruludur, sebep bu değildir."]
+  ],
+  answer: 2,
+  summary: "Bilgisayar dünyasında her şey ikilik taban ve 2'nin kuvvetleri etrafında döner. Depolama birimleri de bu kurala uyar. 1 Kilobayt = 2^10 Bayt = 1024 Bayt'tır."
+},
+{
+  q: "2. `SAYAÇ = SAYAÇ + 1` gibi bir değer aktarma ifadesinin programlamada geçerli ve anlamlı olmasının sebebi nedir?",
+  options: [
+    ["Matematiksel olarak bir sayının bir fazlasının kendisine eşit olabilmesi", "Bu matematiksel olarak imkansızdır, programlamadaki anlamı farklıdır."],
+    ["Değer aktarma işleminin sağdan sola doğru gerçekleştirilmesi", "Program, önce sağ taraftaki `SAYAÇ + 1` işlemini yapar, yeni bir sonuç bulur ve bu sonucu sol taraftaki `SAYAÇ` değişkeninin eski değerinin üzerine yazar. Bu nedenle işlem geçerlidir."],
+    ["`SAYAÇ` değişkeninin bir sabit olması", "Eğer `SAYAÇ` bir sabit olsaydı bu işlem geçersiz olurdu."],
+    ["`=` sembolünün mantıksal eşitlik anlamına gelmesi", "Eğer mantıksal eşitlik olsaydı bu ifade her zaman 'yanlış' sonucunu verirdi."],
+    ["Bu ifadenin sadece döngüler içinde kullanılabilmesi", "Bu ifade döngülerde sıkça kullanılsa da, herhangi bir yerde kullanılabilir."]
+  ],
+  answer: 1,
+  summary: "Değer aktarma (`=`), bir matematiksel eşitlik değil, bir 'kopyala ve üzerine yaz' eylemidir. Sağ taraf her zaman önce hesaplanır. Bu kural, sayaçları artırma ve azaltma gibi programlamadaki en temel işlemlerin temelini oluşturur."
+},
+{
+  q: "3. Bir bayt'ın (byte) 8 bit olarak standartlaşmasının arkasındaki temel neden nedir?",
+  options: [
+    ["1 baytın 8 farklı rakamı temsil edebilmesi", "Bu doğru bir neden değildir."],
+    ["İlk işlemcilerin 8 çekirdekli olması", "Bu ilgisiz bir bilgidir."],
+    ["Herhangi bir karakteri (harf, rakam, sembol) kodlamak için en fazla 8 bit'e ihtiyaç duyulması", "İlk standart karakter tablosu olan ASCII'de 256 karakter bulunur. 256 sayısı, 2^8'e eşittir ve bu sayıyı ikilik tabanda yazmak için tam olarak 8 bit (`11111111` = 255) gerekir. Bu nedenle 8 bit, bir karakteri saklamak için standart birim haline gelmiştir."],
+    ["Bir tamsayıyı (integer) saklamak için 8 bitin yeterli olması", "Standart bir tamsayı genellikle 16 veya 32 bit gerektirir."],
+    ["İnsan parmaklarının sayısıyla ilgili olması", "Bu onluk taban için geçerli bir açıklamadır, ikilik taban için değil."]
+  ],
+  answer: 2,
+  summary: "Klavyedeki her bir harf, rakam ve sembolün bilgisayar tarafından anlaşılması için sayısal bir koda ihtiyacı vardır. ASCII tablosu bu kodları içerir ve bu tablodaki en büyük kodu (255) saklamak için 8 bitlik bir alan yeterlidir. Bu pratik ihtiyaç, 1 Bayt = 8 Bit standardını doğurmuştur."
+},
+{
+  q: "4. A ve B adında iki değişkenin değerlerini karşılıklı olarak değiştirmek (takas etmek) için üçüncü bir C değişkeni kullanıldığında, izlenmesi gereken doğru adımlar hangisidir?",
+  options: [
+    ["`A = B; B = A;`", "Bu adımlar sonucunda A'nın orijinal değeri kaybolur ve her iki değişken de B'nin orijinal değerine sahip olur."],
+    ["`C = A; B = A; A = C;`", "Bu adımlarda B'nin değeri yanlış atanır."],
+    ["`A = B; B = C; C = A;`", "Bu adımlarda A'nın değeri en başta kaybolur."],
+    ["`C = A; A = B; B = C;`", "Önce A'nın değeri C'de yedeklenir. Sonra B'nin değeri A'ya atanır (A artık B'nin değerine sahiptir). Son olarak C'de yedeklenen orijinal A'nın değeri B'ye atanır. Bu, doğru takas işlemidir."],
+    ["`C = B; A = C; B = A;`", "Bu adımlar sonucunda da değişkenler yanlış değerlere sahip olur."]
+  ],
+  answer: 3,
+  summary: "İki dolu bardağın içindeki sıvıları değiştirmek için üçüncü bir boş bardağa ihtiyaç duyulması gibi, iki değişkenin değerini kaybetmeden takas etmek için de genellikle üçüncü bir geçici değişkene ihtiyaç duyulur. Bu, programlamadaki en klasik algoritmalardan biridir."
+},
+{
+  q: "5. PHP gibi 'Gevşek Türlü (Loosely Typed)' bir programlama dilinin en belirgin özelliği nedir?",
+  options: [
+    ["Tüm değişkenlerin kullanılmadan önce mutlaka bir tür belirtilerek deklare edilmesi gerekir.", "Bu, C veya Java gibi 'Katı Türlü (Strongly Typed)' dillerin bir özelliğidir."],
+    ["Değişkenlerin türü, ilk değer aktarımı sırasında otomatik olarak belirlenir ve sonradan değiştirilemez.", "Tür sonradan da değiştirilebilir."],
+    ["Değişkenlerin kullanılmadan önce deklare edilmesi zorunluluğu yoktur ve türleri çalışma zamanında değişebilir.", "Gevşek türlü dillerde, bir değişkene önce sayı, sonraki bir adımda ise metin atayabilirsiniz. Değişkenin türü, içine atanan değere göre dinamik olarak değişir."],
+    ["Sadece metin (string) ve tamsayı (integer) türünde değişkenlere izin verir.", "Hayır, diğer veri türlerini de desteklerler."],
+    ["Yazdığınız kodun her zaman daha hızlı çalışmasını sağlar.", "Dinamik tipleme, genellikle çalışma zamanında ek kontrollere neden olduğu için performansı bir miktar düşürebilir."]
+  ],
+  answer: 2,
+  summary: "Gevşek tipleme, programcıya esneklik ve daha hızlı kod yazma imkanı sunar. Ancak, değişkenin türünün beklenmedik bir şekilde değişmesi fark edilmesi zor hatalara yol açabileceği için dikkatli kullanılmalıdır."
+},
+{
+  q: "6. Bilgisayarların dünyayı doğru (true) ve yanlış (false) değerlerinden ibaret görmesi ve tüm işlemlerini bu iki değerin ikilik tabandaki karşılıkları olan hangi rakamlar üzerine kurmasıdır?",
+  options: [
+    ["1 ve 2", "İkilik taban sadece 0 ve 1'i kullanır."],
+    ["0 ve 1", "Bilgisayarın temel mantığı elektriğin 'var' (1) veya 'yok' (0) olması durumuna dayanır. Bu iki durum, sırasıyla doğru (true) ve yanlış (false) mantıksal değerlerine karşılık gelir."],
+    ["T ve F", "Bunlar 'true' ve 'false' kelimelerinin kısaltmalarıdır, sistemin kullandığı temel rakamlar değildir."],
+    ["10 ve 01", "Bunlar ikilik tabanda yazılmış sayılardır, temel rakamlar değildir."],
+    ["-1 ve 1", "Bu da yaygın bir gösterim değildir."]
+  ],
+  answer: 1,
+  summary: "İnsanların on parmağına dayalı onluk sistemi gibi, bilgisayarlar da elektriksel anahtarların 'açık' veya 'kapalı' olma durumuna dayalı ikilik bir sistem üzerine kurulmuştur. Tüm karmaşık işlemler, bu basit 0 ve 1'lerin milyarlarcasının bir araya gelmesiyle gerçekleşir."
+},
+{
+  q: "7. Aşağıdakilerden hangisi 'İlkel (primitive)' bir veri türü değildir?",
+  options: [
+    ["Tamsayı (Integer)", "Bu, en temel ilkel türlerden biridir."],
+    ["Ondalık Sayı (Float)", "Bu, ilkel bir veri tipidir."],
+    ["Karakter (Char)", "Bu, tek bir karakteri temsil eden ilkel bir tiptir."],
+    ["Dizi (Array)", "Dizi, aynı türden birden çok veriyi bir arada tutan bir 'Bileşik (composite)' veri türüdür."],
+    ["Long", "Long, daha büyük tamsayıları ifade eden bir ilkel tamsayı türü çeşididir."]
+  ],
+  answer: 3,
+  summary: "İlkel türler, tek bir veri parçasını temsil eder (bir sayı, bir harf gibi). Bileşik türler ise birden çok veri parçasını bir araya getiren yapılardır (bir grup sayı, bir grup harf gibi)."
+},
+{
+  q: "8. Sabitler ve değişkenler arasındaki en temel fark nedir?",
+  options: [
+    ["Sabitler sayısal, değişkenler metinsel değerler tutar.", "Her ikisi de farklı türlerde değerler tutabilir."],
+    ["Değişkenlerin değeri programın çalışması sırasında değişebilirken, sabitlerin değeri değiştirilemez.", "Bu, ikisi arasındaki temel ve tanımsal farktır. Bir sabit tanımlandığında, değeri program sonlanana kadar kilitlenir."],
+    ["Sabitler bellekte daha az yer kaplar.", "Genellikle aynı türdeki bir değişkenle aynı yeri kaplarlar."],
+    ["Değişkenler programın başında, sabitler ise sonunda tanımlanır.", "Tam tersine, sabitler genellikle programın başında tanımlanır."],
+    ["Sabitlerin bir ismi varken, değişkenlerin yoktur.", "Her ikisinin de bir ismi vardır."]
+  ],
+  answer: 1,
+  summary: "Sabitler ve değişkenler, programda veri saklamak için kullanılan isimlendirilmiş bellek alanlarıdır. Aralarındaki tek ve en önemli fark, değişkenlerin içeriğinin 'değişebilir', sabitlerin içeriğinin ise 'değişmez' olmasıdır."
+},
+{
+  q: "9. Aynı türden çok sayıda değişkeni tek bir isim altında toplayan ve her bir elemanına bir indis numarası ile erişilen bileşik veri türüne ne ad verilir?",
+  options: [
+    ["Nesne (Object)", "Nesne, farklı türlerden verileri ve fonksiyonları bir araya getirebilir."],
+    ["Katar (String)", "Katar, karakterlerden oluşan özel bir dizidir."],
+    ["Dizinli Değişken (Array)", "Dizinli değişken veya dizi, aynı türden verileri (tamsayı dizisi, karakter dizisi vb.) sıralı bir şekilde saklayan ve elemanlarına `Notlar[0]`, `Notlar[1]` gibi indislerle erişilen bir yapıdır."],
+    ["Sabit (Constant)", "Sabit, değeri değişmeyen tek bir veridir."],
+    ["İlkel Tip (Primitive Type)", "İlkel tipler tek bir değer tutar."]
+  ],
+  answer: 2,
+  summary: "100 öğrencinin notunu saklamak için 100 ayrı değişken tanımlamak yerine, 100 elemanlı tek bir 'notlar' dizisi tanımlamak çok daha verimli ve yönetilebilirdir. Diziler, bu tür toplu veri işleme görevleri için vazgeçilmezdir."
+},
+{
+  q: "10. Standart bir tamsayı (integer) değişkeni için bellekte genellikle ne kadar yer ayrılır?",
+  options: [
+    ["1 bit", "1 bit sadece 0 veya 1 değerini saklayabilir."],
+    ["8 bayt", "Bu genellikle bir 'double' veya 'long long' için ayrılan alandır."],
+    ["4 bayt", "Bu genellikle bir 'float' (ondalık sayı) için ayrılan alandır."],
+    ["1 bayt", "1 bayt genellikle bir 'char' (karakter) için ayrılan alandır."],
+    ["2 bayt", "Genel olarak standart bir tamsayı tanımlaması (integer) bellekte 2 baytlık, yani 16 bitlik yer işgal eder."]
+  ],
+  answer: 4,
+  summary: "Bir değişkenin tipi, bilgisayarın o değişken için bellekte ne kadar 'sandalye' ayıracağını belirler. Standart bir tamsayı için genellikle 2 baytlık (16 bit) bir alan yeterli görülür."
+},
+{
+  q: "11. İki değişkenin değerlerini üçüncü bir değişken kullanmadan, aritmetik işlemlerle takas etme algoritmasında, `A=7` ve `B=12` başlangıç değerleri için `A = A + B` ilk adımından sonra A'nın değeri ne olur?",
+  options: [
+    ["7", "Bu A'nın orijinal değeridir."],
+    ["12", "Bu B'nin orijinal değeridir."],
+    ["5", "Bu `B - A` işleminin sonucu olurdu."],
+    ["19", "İlk adımda her iki sayının toplamı geçici olarak A değişkenine atanır. `A = 7 + 12 = 19`."],
+    ["0", "Bu hatalı bir sonuçtur."]
+  ],
+  answer: 3,
+  summary: "Değişkenleri aritmetik ile takas etme, zekice bir algoritmadır. İlk adım, her iki değeri de kaybetmemek için toplamlarını bir değişkende birleştirmektir. Sonraki adımlar, bu toplamdan yola çıkarak diğer değişkenlerin değerlerini çıkarmaya dayanır."
+},
+{
+  q: "12. Aşağıdakilerden hangisi Java dilinde bir sabit tanımlama sözdizimine örnektir?",
+  options: [
+    ["`Public Const YildakiGunSayisi = 365`", "Bu, Visual Basic diline ait bir sözdizimidir."],
+    ["`#define YildakiGunSayisi 365`", "Bu, C diline ait bir sözdizimidir."],
+    ["`final int YildakiGunSayisi = 365`", "Java'da, bir değişkenin değerinin sonradan değiştirilemeyeceğini belirtmek için `final` anahtar kelimesi kullanılır."],
+    ["`define('YildakiGunSayisi', '365')`", "Bu, PHP diline ait bir sözdizimidir."],
+    ["`let YildakiGunSayisi = 365`", "Bu, JavaScript'te değişken tanımlama sözdizimidir."]
+  ],
+  answer: 2,
+  summary: "Farklı programlama dilleri, aynı kavram olan 'sabit'i ifade etmek için farklı anahtar kelimeler ve sözdizimleri kullanır. Java'nın tercihi `final` kelimesidir."
+},
+{
+  q: "13. Bilgisayarların kullandığı en küçük veri birimi olan ve içine 1 ya da 0 değeri alan hücrelere ne ad verilir?",
+  options: [
+    ["Bayt (Byte)", "Bayt, 8 bitten oluşan bir birimdir."],
+    ["Bit", "Bilgisayarların işlem yaparken ya da veri saklarken kullandıkları bu en küçük birime 'bit' adı verilir."],
+    ["Nibble", "Nibble, 4 bitten oluşan bir birimdir."],
+    ["Karakter (Char)", "Karakter, bir harf veya semboldür ve genellikle 1 bayt (8 bit) ile temsil edilir."],
+    ["Hücre (Cell)", "Bu genel bir terimdir, en küçük birimin özel adı 'bit'tir."]
+  ],
+  answer: 1,
+  summary: "Bit, 'Binary Digit' (İkili Rakam) kelimelerinin birleşiminden gelir ve bilgisayar dünyasının en temel atomudur. Her şey bu 0 ve 1'lerden oluşur."
+},
+{
+  q: "14. `Notlar: ARRAY(0..199) AS SHORTINT` şeklinde tanımlanan bir dizinin boyutu ve son elemanının indisi nedir?",
+  options: [
+    ["Boyut: 199, Son İndis: 199", "İndis 0'dan başladığı için boyut 199 değildir."],
+    ["Boyut: 200, Son İndis: 200", "İndis 199'da biter, 200'de değil."],
+    ["Boyut: 200, Son İndis: 199", "İndisler 0'dan 199'a kadar gittiği için toplamda `199 - 0 + 1 = 200` adet eleman vardır. Son elemanın indisi ise 199'dur."],
+    ["Boyut: 199, Son İndis: 200", "Hem boyut hem de son indis yanlıştır."],
+    ["Boyut: 201, Son İndis: 200", "Hem boyut hem de son indis yanlıştır."]
+  ],
+  answer: 2,
+  summary: "Programlamada dizilerin indislerinin genellikle 0'dan başlaması, sıkça yapılan 'off-by-one' (bir fazlalık/eksiklik) hatalarına neden olabilir. 0'dan başlayan N elemanlı bir dizinin son indisinin her zaman N-1 olduğunu unutmamak önemlidir."
+},
+{
+  q: "15. Değer aktarma işleminin yönü için aşağıdakilerden hangisi doğrudur?",
+  options: [
+    ["Soldan sağa doğrudur.", "Bu yanlıştır."],
+    ["Sağdan sola doğrudur; önce sağ taraf hesaplanır, sonuç sol tarafa aktarılır.", "Bu, değer aktarmanın temel kuralıdır."],
+    ["Yönü, kullanılan programlama diline göre değişir.", "Bu kural hemen hemen tüm imperative dillerde standarttır."],
+    ["Yönü yoktur, iki taraf eş zamanlı olarak eşitlenir.", "Bu fiziksel olarak mümkün değildir."],
+    ["Yukarıdan aşağıya doğrudur.", "Bu anlamsız bir ifadedir."]
+  ],
+  answer: 1,
+  summary: "`A = B + C` gibi bir ifadede, bilgisayar asla A'yı B'ye eşitleyip sonra C'yi eklemez. Her zaman önce sağdaki `B + C` işlemini bitirir, bir sonuç elde eder ve en son bu nihai sonucu A'nın içine yazar."
+},
+{
+  q: "16. `A=7`, `B=12`, `C=3` başlangıç değerleri için `A=A+B+C; B=A-B-C; C=A-B-C; A=A-B-C;` adımları sonunda C değişkeninin değeri ne olur?",
+  options: [
+    ["7", "Bu B'nin yeni değeridir."],
+    ["3", "Bu A'nın yeni değeridir."],
+    ["22", "Bu A'nın ilk adımdaki geçici değeridir."],
+    ["12", "İkinci adımda `B = 22-12-3 = 7` olur. Üçüncü adımda `C = 22-7-3 = 12` olur. C'nin son değeri 12'dir."],
+    [" bilinmez, işlem hatalıdır.", "İşlem geçerlidir."]
+  ],
+  answer: 3,
+  summary: "Bu algoritma, üç değişkenin değerini dördüncü bir değişken kullanmadan döngüsel olarak değiştirmeyi sağlar. A'nın değeri B'ye, B'nin değeri C'ye ve C'nin değeri A'ya geçer. Başlangıçta B=12 olduğu için, bu değer en sonunda C'ye aktarılır."
+},
+{
+  q: "17. Aşağıdaki veri türlerinden hangisi bellekte genellikle en fazla yeri kaplar?",
+  options: [
+    ["integer", "Bu 2 bayt yer kaplar."],
+    ["float", "Bu 4 bayt yer kaplar."],
+    ["char", "Bu genellikle 1 bayt yer kaplar."],
+    ["double", "`double`, `float`'a göre daha yüksek ondalık hassasiyeti sunduğu için genellikle onun iki katı, yani 8 bayt yer kaplar."],
+    ["short", "Bu da integer gibi genellikle 2 bayt yer kaplar."]
+  ],
+  answer: 3,
+  summary: "Farklı veri tipleri, farklı miktarda bilgiyi saklamak için tasarlanmıştır. `double` (çift hassasiyetli) ondalıklı sayılar, çok küçük veya çok büyük ondalıklı değerleri yüksek doğrulukla saklamak için daha fazla belleğe ihtiyaç duyar."
+},
+{
+  q: "18. Programlama dillerinde atama ve mantıksal eşitlik operatörlerinin karışmasını önlemek için farklı yöntemler kullanılır. Atama için ':=', mantıksal eşitlik için ise '=' sembollerini kullanan dil hangisidir?",
+  options: [
+    ["C", "C dilinde atama için '=', mantıksal eşitlik için '==' kullanılır."],
+    ["Java", "Java dilinde atama için '=', mantıksal eşitlik için '==' kullanılır."],
+    ["PHP", "PHP dilinde atama için '=', mantıksal eşitlik için '==' kullanılır."],
+    ["Pascal", "Pascal, atama eylemini belirtmek için özel ':=', matematiksel eşitliğe benzeyen mantıksal kontrol için ise '=' sembolünü kullanarak bu iki kavramı net bir şekilde ayırır."],
+    ["Python", "Python dilinde atama için '=', mantıksal eşitlik için '==' kullanılır."]
+  ],
+  answer: 3,
+  summary: "C ve ondan etkilenen diller, sık kullanılan atama işlemini tek karakter (`=`) ile bırakıp mantıksal eşitliği çift karakter (`==`) yapmıştır. Pascal ise tam tersi bir tasarım felsefesiyle, mantıksal kontrol için tek karakteri (`=`) korumuş ve farklı bir eylem olan atama için özel `:=` sembolünü kullanmıştır."
+},
+{
+  q: "19. Aşağıdakilerden hangisi bir 'Bileşik (kompozit)' veri türü değildir?",
+  options: [
+    ["Nesne (Object)", "Bu, farklı türden verileri ve metotları içeren bileşik bir türdür."],
+    ["Dizi (Array)", "Bu, aynı türden verileri içeren bileşik bir türdür."],
+    ["Katar/Karakter Dizisi (String)", "Bu, karakterlerden oluşan bileşik bir türdür."],
+    ["Gösterge (Pointer)", "Gösterge, bir bellek adresini tutan ve genellikle yapısal/bileşik kabul edilen bir türdür."],
+    ["Ondalık Sayı (Float)", "Bu, tek bir ondalıklı sayıyı temsil eden ilkel bir türdür."]
+  ],
+  answer: 4,
+  summary: "İlkel türler (tamsayı, ondalık sayı, karakter) verinin kendisini doğrudan tutarken; bileşik türler (nesne, dizi, katar) diğer verileri bir araya getiren bir 'koleksiyon' veya 'yapı' görevi görür."
+},
+{
+  q: "20. Bir değişkene yeni bir değer aktarıldığında, o değişkenin eski değerine ne olur?",
+  options: [
+    ["Eski değer yeni değerin sonuna eklenir.", "Bu metin birleştirme işlemine benzer, atama işlemi böyle çalışmaz."],
+    ["Eski değer korunur ve yeni değer bellekte başka bir yere yazılır.", "Bu, değişkenin adresinin değişmesi anlamına gelir ki bu atama işleminde olmaz."],
+    ["Eski değer tamamen kaybolur ve üzerine yeni değer yazılır.", "Bir değişkene yeni bir değer atandığında, eski değer kalıcı olarak silinir ve yerine yeni değer geçer. Değişkenler aynı anda sadece tek bir değer tutabilir."],
+    ["Eğer yeni değer eskisinden büyükse değişiklik yapılır, değilse yapılmaz.", "Böyle bir koşul yoktur."],
+    ["Program hata verir.", "Bu geçerli bir işlemdir, hata vermez."]
+  ],
+  answer: 2,
+  summary: "Bir değişkeni, üzerine yazı tahtası gibi düşünebilirsiniz. Tahtada '5' yazıyorsa ve siz üzerine '10' yazarsanız, eski '5' rakamı silinir ve artık tahtada sadece '10' yazar."
+},
+{
+  q: "21. 4 bitten oluşan ve nadiren kullanılan veri saklama biriminin adı nedir?",
+  options: [
+    ["Bit", "Bu 1 bitten oluşur."],
+    ["Bayt", "Bu 8 bitten oluşur."],
+    ["Kilobayt", "Bu 1024 bayttan oluşur."],
+    ["Nibble", "4 bitlik veri birimi 'nibble' olarak adlandırılır. Bir baytın yarısıdır."],
+    ["Word", "'Word', işlemci mimarisine göre değişen (16 bit, 32 bit vb.) bir veri birimidir."]
+  ],
+  answer: 3,
+  summary: "Veri saklama birimleri hiyerarşisinde 'bit' en küçük birim, 8 bitten oluşan 'bayt' ise en yaygın temel birimdir. Bu ikisinin arasında yer alan 4 bitlik 'nibble', daha az bilinir ancak özellikle düşük seviyeli programlamada ve veri iletişiminde karşınıza çıkabilir."
+},
+{
+  q: "22. `A=7`, `B=12` başlangıç değerleri için `A = A + B; B = A – B; A = A – B;` adımları sonunda A ve B'nin son değerleri ne olur?",
+  options: [
+    ["A = 7, B = 12", "Değerler değişmemiştir, bu yanlıştır."],
+    ["A = 19, B = 7", "Bu ara adımdaki bir değerdir, sonuç değildir."],
+    ["A = 12, B = 7", "Adım adım: 1) A=7+12=19. 2) B=19-12=7. 3) A=19-7=12. Sonuç olarak A=12 ve B=7 olur, yani değerler takas edilmiştir."],
+    ["A = 7, B = 19", "Bu hatalı bir sonuçtur."],
+    ["A = 12, B = 12", "Bu hatalı bir sonuçtur."]
+  ],
+  answer: 2,
+  summary: "Bu üç adımlı aritmetik algoritma, üçüncü bir geçici değişken kullanmadan iki değişkenin değerlerini takas etmenin klasik bir yoludur. Programlama mülakatlarında ve yetenek testlerinde sıkça sorulan bir mantık bulmacasıdır."
+},
+{
+  q: "23. Dizinli değişkenlerin (array) işlevselliğinin özellikle hangi programlama yapısıyla kullanıldığında daha iyi ortaya çıktığı belirtilmiştir?",
+  options: [
+    ["Sabitler (Constants)", "Sabitler dizilerle kullanılabilir ama asıl işlevselliğini ortaya çıkaran yapı bu değildir."],
+    ["Seçimli Deyimler (if/case)", "`if` ile dizi elemanları kontrol edilebilir ancak bu da asıl gücünü göstermez."],
+    ["Döngü Yapıları (while, for)", "Bir dizinin yüzlerce elemanını tek tek işlemek yerine, bir `for` döngüsü kurarak sadece birkaç satır kodla tüm elemanları gezmek ve işlemek mümkündür. Dizilerin asıl gücü döngülerle birleştiğinde ortaya çıkar."],
+    ["Altprogramlar (Subprograms)", "Diziler altprogramlara parametre olarak gönderilebilir ama bu da temel kullanım sinerjisi değildir."],
+    ["Değer Aktarma", "Dizi elemanlarına değer aktarılır, ancak bu da döngüler kadar güçlü bir sinerji oluşturmaz."]
+  ],
+  answer: 2,
+  summary: "Diziler ve döngüler, programlamanın en güçlü ikililerinden biridir. Diziler veriyi toplu halde saklar, döngüler ise bu toplu veriyi otomatik olarak işler. Bu ikili olmadan büyük veri setleriyle çalışmak neredeyse imkansız olurdu."
+},
+{
+  q: "24. Bilgisayarların onluk taban yerine ikilik taban aritmetiğini kullanmasının temel nedeni nedir?",
+  options: [
+    ["İkilik tabanın daha az bellek kullanması", "Bu doğrudan bir neden değildir."],
+    ["Bilgisayarın temelindeki elektronik devrelerin 'açık' ve 'kapalı' gibi iki duruma dayanması", "Bilgisayar donanımı, temelde elektrik akımının geçtiği (1) veya geçmediği (0) durumlara dayanan transistörlerden oluşur. Bu iki durumlu yapı, ikilik taban sistemini doğal ve verimli bir seçim haline getirir."],
+    ["Onluk tabanın patentli bir sistem olması", "Bu doğru değildir."],
+    ["İkilik tabandaki hesaplamaların insanlar için daha kolay olması", "Tam tersine, insanlar için daha zordur."],
+    ["Tüm programlama dillerinin ikilik tabanda yazılması", "Programlama dillerinin çoğu yüksek seviyelidir, ikilik tabanda yazılmaz."]
+  ],
+  answer: 1,
+  summary: "Donanım ve yazılım arasında bir uyum vardır. Bilgisayarın en temel donanım birimi olan transistör sadece iki durumu (açık/kapalı) bildiği için, üzerine kurulan tüm yazılım mantığı da bu iki duruma karşılık gelen 0 ve 1'ler üzerine inşa edilmiştir."
+},
+{
+  q: "25. Veri türlerinin, değişkenler ve fonksiyonlar gibi elemanlar için bellekte ne kadar alan ayrılacağını önceden belirlemesinin en önemli faydası nedir?",
+  options: [
+    ["Programın daha yavaş çalışmasını sağlamak", "Bu bir fayda değildir."],
+    ["Fiziksel kaynakların (belleğin) verimli kullanılmasını sağlamak", "Bir değişkenin tamsayı olduğunu bildiğimizde, ona tam olarak ihtiyacı kadar (örn: 2 bayt) yer ayırırız. Eğer tip kavramı olmasaydı, her değişken için en kötü senaryoya göre çok büyük bir alan ayırmak gerekirdi, bu da büyük bir bellek israfına yol açardı."],
+    ["Programcıların daha az kod yazmasını sağlamak", "Doğrudan bir etkisi yoktur."],
+    ["Programın her zaman hatasız olmasını garantilemek", "Hataları azaltmaya yardımcı olur ama garantilemez."],
+    ["Sadece sayısal verilerin saklanabilmesini sağlamak", "Hayır, farklı türde verilerin saklanmasını düzenler."]
+  ],
+  answer: 1,
+  summary: "Veri tipleri, bilgisayarın kısıtlı olan bellek kaynağını akıllıca yönetmesine yardımcı olur. Her veriye tam olarak 'ihtiyacı kadar' yer ayrılarak belleğin israf edilmesi önlenir ve programların daha verimli çalışması sağlanır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

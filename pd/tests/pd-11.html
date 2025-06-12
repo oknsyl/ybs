@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 11</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 11</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Sistem programlamayı diğer programlama türlerinden (yazılım, web vb.) ayıran en temel fark nedir?",
+  options: [
+    ["Sistem programlama daha yeni bir teknolojidir.", "Tam tersine, işletim sistemleri gibi temelleri oluşturduğu için en eski türlerden biridir."],
+    ["Sistem programlamanın hedefi doğrudan kullanıcı değil, üzerinde çalıştığı sistemin donanımıdır.", "Diğer programlama türleri son kullanıcıya yönelik arayüzler ve uygulamalar sunarken, sistem programlamanın amacı disk birleştirici, aygıt sürücüsü gibi doğrudan donanımla etkileşime giren hizmetler geliştirmektir."],
+    ["Sistem programlamada sadece Assembly dili kullanılır.", "Assembly sıkça kullanılsa da, C gibi yüksek seviyeli diller de sistem programlamanın standartı haline gelmiştir."],
+    ["Sistem programlama sadece Linux işletim sistemlerinde yapılır.", "Hayır, Windows, MacOS gibi tüm işletim sistemleri için sistem programlama yapılır."],
+    ["Sistem programlama daha kolay ve daha az uzmanlık gerektirir.", "Tam tersine, donanıma yakın çalışmayı gerektirdiği için genellikle daha fazla uzmanlık ister."]
+  ],
+  answer: 1,
+  summary: "Bir kelime işlemci programı 'kullanıcı' ile konuşurken, bir aygıt sürücüsü (driver) 'donanım' ile konuşur. Sistem programlamanın temel ayırt edici özelliği, hedef kitlesinin insan değil, makinenin kendisi olmasıdır."
+},
+{
+  q: "2. İstemci-taraflı (client-side) ve sunucu-taraflı (server-side) web programlama arasındaki temel fark nedir?",
+  options: [
+    ["İstemci-taraflı kodlar daha güvenlidir.", "Tam tersine, kod kullanıcının bilgisayarında çalıştığı için güvenlik zafiyetleri oluşturur."],
+    ["Sunucu-taraflı kodlar daha yavaş çalışır.", "Genellikle sunucuyla iletişim nedeniyle bir gecikme olsa da, bu temel fark değildir."],
+    ["İstemci-taraflı kodlar kullanıcının tarayıcısında, sunucu-taraflı kodlar ise web sunucusunda çalışır.", "Bu, aralarındaki en temel ayrımdır. JavaScript (istemci) sizin tarayıcınızda çalışırken, PHP (sunucu) web sitesinin barındığı sunucu bilgisayarda çalışır ve size sadece sonucunu gönderir."],
+    ["İstemci-taraflı diller veritabanı işlemleri yapabilir.", "Veritabanı gibi güvenli işlemler, veritabanına doğrudan erişimi olan sunucu-taraflı dillerle yapılır."],
+    ["İkisi arasında işlevsel olarak hiçbir fark yoktur.", "Aralarında güvenlik, performans ve yetenek açısından çok temel farklar vardır."]
+  ],
+  answer: 2,
+  summary: "Kodun nerede çalıştığı, web programlamadaki en önemli ayrımdır. Kullanıcı arayüzüyle ilgili anlık etkileşimler için istemci tarafı, veritabanı ve güvenlik gibi kritik işlemler için ise sunucu tarafı programlama kullanılır."
+},
+{
+  q: "3. Birçok farklı kaynak kod dosyasını ve 'çalışma-anı kütüphanesini' (runtime library) birleştirerek tek bir çalıştırılabilir program dosyası üreten derleyici bileşenine ne ad verilir?",
+  options: [
+    ["Yorumlayıcı (Interpreter)", "Yorumlayıcı kodu satır satır çalıştırır, dosyaları birleştirmez."],
+    ["Ön-işlemci (Preprocessor)", "Ön-işlemci, derlemeden önce kaynak kod üzerinde metinsel değişiklikler yapar."],
+    ["Hata Ayıklayıcı (Debugger)", "Debugger hataları bulmak için kullanılır."],
+    ["Bağlayıcı (Linker)", "Bağlayıcı, derleyicinin farklı kaynak dosyalardan ürettiği nesne kodlarını ve dilin standart fonksiyonlarını içeren kütüphaneleri birbirine 'bağlayarak' son çalıştırılabilir dosyayı oluşturur."],
+    ["Editör (Editor)", "Editör, kod yazmak için kullanılan bir araçtır."]
+  ],
+  answer: 3,
+  summary: "Bağlayıcı, bir inşaattaki farklı uzmanların (elektrikçi, su tesisatçısı, duvarcı) yaptığı işleri birleştirip tek bir bütünleşik ev ortaya çıkaran 'şantiye şefi' gibidir. Derlenmiş tüm parçaları ve gerekli kütüphaneleri bir araya getirir."
+},
+{
+  q: "4. Kalıcı veri saklama ihtiyacı için veritabanlarını kullanmamızın temel sebebi nedir?",
+  options: [
+    ["Değişkenler ve sabitler verileri kalıcı olarak sakladığı için.", "Tam tersine, değişkenler ve sabitler sadece program çalıştığı sürece veriyi bellekte tutar."],
+    ["Verileri düzenli ve kalıcı olarak saklamanın başka bir yolunun olmaması.", "Veriler metin dosyalarında da saklanabilir ancak büyük veri yığınlarında istenilen bilgiye ulaşmak güçleşir. Veritabanları, veriyi kalıcı saklamak ve ona hızlıca erişmek için en verimli yoldur."],
+    ["Veritabanlarının daha az bellek kullanması.", "Veritabanları disk üzerinde kalıcı depolama yapar, bellek kullanımıyla doğrudan ilgili değildir."],
+    ["SQL dilinin çok hızlı çalışması.", "SQL veriye erişimi sağlar, kalıcı saklamanın temel sebebi bu değildir."],
+    ["Tüm verilerin tek bir dosyada toplanması.", "Veritabanları verileri tablolarda düzenli bir şekilde saklar, tek bir dosya olmak zorunda değildir."]
+  ],
+  answer: 1,
+  summary: "Program kapandığında bilgisayarın belleğindeki (RAM) tüm veriler silinir. Verilerin program kapandıktan sonra bile kaybolmamasını sağlamak için onları disk gibi kalıcı bir ortama yazmak gerekir. Veritabanları, bu kalıcı saklama işini en organize ve verimli şekilde yapan sistemlerdir."
+},
+{
+  q: "5. Microsoft tarafından geliştirilen ve .NET programlama yapısı ile birlikte ASP'nin yeni yüzü olan web programlama teknolojisi hangisidir?",
+  options: [
+    ["Java", "Java, Sun/Oracle tarafından geliştirilmiştir."],
+    ["PHP", "PHP, Rasmus Lerdorf tarafından başlatılan bir açık kaynak projesidir."],
+    ["JavaScript", "Bu, tarayıcı tarafında çalışan bir betik dilidir."],
+    ["ASP.NET", "Microsoft, klasik ASP teknolojisini, .NET çatısı altında yeniden yapılandırarak çok daha güçlü ve modern bir web geliştirme platformu olan ASP.NET'i oluşturmuştur."],
+    ["ColdFusion", "Bu, farklı bir firmaya ait bir web geliştirme platformudur."]
+  ],
+  answer: 3,
+  summary: "ASP (Active Server Pages), Microsoft'un ilk sunucu taraflı web teknolojilerindendi. ASP.NET ise bu teknolojinin, C# ve Visual Basic gibi .NET dilleriyle tam entegre çalışabilen, çok daha gelişmiş ve modern bir versiyonudur."
+},
+{
+  q: "6. UNIX/Linux sistemlerinde, kullanıcı tarafından girilen komutları yorumlayıp çalıştıran ve betik dosyalarını yürütebilen programlara ne ad verilir?",
+  options: [
+    ["Çekirdek (Kernel)", "Çekirdek, işletim sisteminin en temel katmanıdır."],
+    ["Derleyici (Compiler)", "Derleyici, kaynak kodu makine koduna çevirir."],
+    ["Kabuk (Shell)", "Kabuk (sh, bash, csh gibi), kullanıcı ile işletim sisteminin çekirdeği arasında bir arayüz görevi gören komut yorumlayıcısıdır."],
+    ["Dizin (Directory)", "Dizin, dosyaları organize etmek için kullanılan bir yapıdır."],
+    ["Sürücü (Driver)", "Sürücü, donanımı kontrol eden bir yazılımdır."]
+  ],
+  answer: 2,
+  summary: "Kabuk (Shell), işletim sisteminin 'tercümanı' gibidir. Kullanıcının yazdığı `ls`, `cd` gibi komutları alır, çekirdeğin anlayacağı dile çevirir ve çalıştırır."
+},
+{
+  q: "7. HTML dilinin koşul, döngü gibi programatik yapılar ve veritabanı işlemleri konusundaki eksikliklerini kapatan teknolojiler hangileridir?",
+  options: [
+    ["Sadece CSS", "CSS, HTML'nin tasarım ve biçimlendirme eksikliklerini kapatır, programatik eksikliklerini değil."],
+    ["Web Programlama Dilleri (PHP, ASP.NET vb.)", "HTML, bir sayfanın iskeletini oluşturur. Bu iskeleti 'akıllandırmak', yani dinamik işlemler (koşullar, döngüler, veritabanı etkileşimi) eklemek için PHP, ASP.NET, Java gibi sunucu taraflı web programlama dillerine ihtiyaç duyulur."],
+    ["Sadece JavaScript", "JavaScript istemci tarafında bu tür yetenekler sunsa da, veritabanı gibi güvenli ve sunucu bazlı işlemler için yeterli değildir."],
+    ["SQL", "SQL, veritabanı ile konuşma dilidir, tek başına bir web sayfasını programlamak için kullanılmaz."],
+    ["Photoshop", "Bu bir resim düzenleme programıdır."]
+  ],
+  answer: 1,
+  summary: "HTML tek başına statik, yani 'durağan' bir broşür sayfası gibidir. Web programlama dilleri ise bu sayfaya 'beyin' ekleyerek onun kullanıcı etkileşimlerine cevap vermesini, veritabanından bilgi çekmesini ve dinamik içerik üretmesini sağlar."
+},
+{
+  q: "8. Mobil uygulama geliştirmenin iki temel yöntemi nedir?",
+  options: [
+    ["iOS için Objective-C ve Android için Java kullanmak", "Bunlar ikinci yöntemin (doğrudan uygulama geliştirme) alt dallarıdır, iki temel yöntem değildir."],
+    ["Web programlama ile 'Duyarlı Tasarım' yapmak veya cihaza özel 'Doğrudan Uygulama' geliştirmek", "Bir mobil uygulama ya tüm cihazlarda tarayıcı üzerinden çalışan bir web sitesi gibi (duyarlı tasarımla) ya da App Store/Google Play'den indirilip cihaza kurulan yerel bir uygulama (doğrudan geliştirme) olarak yapılabilir."],
+    ["JavaScript ve VBScript kullanmak", "Bunlar sadece istemci-taraflı betik dilleridir."],
+    ["Oyun motorları kullanmak veya sıfırdan kodlamak", "Bu, uygulama geliştirmenin daha spesifik bir alt ayrımıdır."],
+    ["Sadece Apple XCode veya Android SDK kullanmak", "Bunlar belirli platformlar için kullanılan geliştirme araçlarıdır."]
+  ],
+  answer: 1,
+  summary: "Mobil dünyaya açılmak isteyen bir geliştiricinin vermesi gereken ilk karar budur: 'Tek bir web tabanlı kod yazıp her telefonda çalışmasını mı sağlayayım (Duyarlı Tasarım), yoksa her telefonun kendi diliyle konuşan ayrı ayrı, daha performanslı uygulamalar mı yazayım (Doğrudan/Native Geliştirme)?'"
+},
+{
+  q: "9. Kaynak kodları yazım esnasında denetleyen ancak çalıştırmayan, sadece sözdizim denetimi, kod renklendirme gibi görevleri yerine getiren yorumlayıcı türü hangisidir?",
+  options: [
+    ["2. Tip Yorumlayıcılar", "2. Tip yorumlayıcılar kodu anlık olarak çalıştırırlar."],
+    ["Derleyiciler", "Derleyiciler kodun tamamını bir kerede denetler ve çevirir."],
+    ["Bağlayıcılar (Linkers)", "Bağlayıcılar derlenmiş kodları birleştirir."],
+    ["1. Tip Yorumlayıcılar", "Bu tür yorumlayıcılar, programcıya kod yazarken anlık geri bildirim vererek (sözdizimi hatalarını gösterme gibi) yardımcı olan, ancak kodu çalıştırma yeteneği olmayan araçlardır. Modern kod editörlerinin çoğu bu özelliği barındırır."],
+    ["Sistem Yorumlayıcıları", "Böyle bir sınıflandırma belirtilmemiştir."]
+  ],
+  answer: 3,
+  summary: "1. Tip yorumlayıcılar, bir metin editöründeki 'yazım denetimi' özelliğine benzer. Siz yazarken hatalı yazdığınız kelimelerin altını çizer ama cümlenin ne anlama geldiğiyle veya ne iş yapacağıyla ilgilenmez."
+},
+{
+  q: "10. İstemci/sunucu (client/server) mimarisinde 'verilerin tekliği ilkesi' nasıl korunur?",
+  options: [
+    ["Yazılımın her istemciye ayrı ayrı kurulmasıyla", "Yazılımın kurulması verinin nerede durduğunu etkilemez."],
+    ["Tüm verilerin istemci bilgisayarlarda saklanmasıyla", "Bu durum tam tersine veri tutarsızlığına ve dağınıklığına yol açar."],
+    ["Veritabanının merkezi bir sunucu bilgisayarda barındırılmasıyla", "Tüm istemciler aynı merkezi veritabanına bağlandığı için, herkes verinin en güncel ve tek bir kopyası üzerinde çalışmış olur. Bu da verilerin tekliğini ve tutarlılığını sağlar."],
+    ["TCP bağlantısının şifrelenmesiyle", "Şifreleme veri güvenliğini sağlar, verinin tekliği ile ilgili değildir."],
+    ["Gelişmiş editörlerin kullanılmasıyla", "Editörler kod yazma aracıdır, veri yönetim mimarisiyle ilgili değildir."]
+  ],
+  answer: 2,
+  summary: "İstemci/sunucu mimarisinin temel mantığı, 'uygulama dağıtık, veri merkezi' prensibine dayanır. Bu sayede, yüzlerce kullanıcı aynı anda işlem yapsa bile hepsi tek bir doğru veri kaynağına bakar ve veri bütünlüğü korunur."
+},
+{
+  q: "11. HTML dilinin tasarım konusundaki eksikliklerini kapatan ve içeriğin 'biçimlendirilmesine' yönelik geliştirilmiş olan teknoloji hangisidir?",
+  options: [
+    ["JavaScript", "JavaScript sayfalara etkileşim ve dinamizm katar."],
+    ["PHP", "PHP sunucu tarafında programlama yetenekleri sunar."],
+    ["SQL", "SQL veritabanı ile iletişim kurar."],
+    ["CSS (Cascading Style Sheets)", "HTML bir içeriğin ne olduğunu (başlık, paragraf vb.) tanımlarken, CSS o içeriğin nasıl görüneceğini (renk, boyut, konum vb.) tanımlar. Yani HTML iskeleti, CSS ise giysileri oluşturur."],
+    ["XML", "XML, veri saklamak ve taşımak için kullanılan bir işaretleme dilidir."]
+  ],
+  answer: 3,
+  summary: "CSS, web tasarımının temel taşıdır. HTML'nin 'anlam' odaklı yapısını, zengin görsel ve tasarımsal yeteneklerle birleştirerek modern web sitelerinin görünümünü oluşturmayı mümkün kılar."
+},
+{
+  q: "12. SQL (Structured Query Language) için aşağıdakilerden hangisi söylenemez?",
+  options: [
+    ["Veritabanları ile programlama dilleri arasında ortak bir dildir.", "Bu doğru bir ifadedir, neredeyse tüm veritabanları tarafından desteklenir."],
+    ["Açıklayıcı (deklaratif) bir dildir.", "Bu doğru bir ifadedir, 'nasıl yapılacağını' değil 'ne yapılacağını' belirtirsiniz."],
+    ["Sadece veri sorgulama (query) amacıyla kullanılır.", "Bu ifade yanlıştır. Adında 'sorgulama' kelimesi geçse de SQL; yeni tablo oluşturma, veri ekleme, güncelleme, silme ve kullanıcı haklarını yönetme gibi çok geniş işlemleri yapabilir."],
+    ["Koşul ve döngü gibi ileri düzey programatik yapılardan mahrumdur.", "Bu doğru bir ifadedir, bu tür yapılara ihtiyacı yoktur."],
+    ["Birçok veritabanı yönetim sistemi tarafından desteklenir.", "Bu doğru bir ifadedir."]
+  ],
+  answer: 2,
+  summary: "SQL, sadece bir 'soru sorma' dili değil, bir veritabanını baştan sona yönetmek için kullanılan tam teşekküllü bir 'veritabanı yönetim' dilidir."
+},
+{
+  q: "13. JavaScript ve VBScript gibi istemci-taraflı (client-side) betik dillerinin en önemli dezavantajı nedir?",
+  options: [
+    ["Yavaş çalışmaları", "Tam tersine, sunucuya gitmedikleri için genellikle hızlı sonuç üretirler."],
+    ["Güvenlik açıkları oluşturmaları", "Kodlar kullanıcının bilgisayarına indirildiği ve tarayıcıda çalıştığı için kötü niyetli kişiler tarafından görüntülenebilir ve manipüle edilebilir. Bu nedenle veritabanı şifresi gibi kritik bilgilerin işlenmesinde asla kullanılmazlar."],
+    ["Öğrenmelerinin çok zor olması", "Genellikle öğrenmeleri sunucu-taraflı dillere göre daha kolaydır."],
+    ["Sadece eski tarayıcılarda çalışmaları", "Tam tersine, tüm modern tarayıcıların temel bir parçasıdırlar."],
+    ["Veritabanı işlemleri yapabilmeleri", "Bu bir yetenekleri değil, yapamadıkları bir işlemdir."]
+  ],
+  answer: 1,
+  summary: "İstemci-taraflı kodlar, 'cam bir kutu' içinde çalışmaya benzer; içindeki her şey dışarıdan görülebilir. Bu nedenle, bu kutunun içine asla değerli veya gizli eşyalar (şifreler, özel veriler) konulmamalıdır."
+},
+{
+  q: "14. Görsel işletim sistemleri konusunda, rakibi Windows'tan yaklaşık 10 yıl önce ortaya çıktığı belirtilen öncü işletim sistemi hangisidir?",
+  options: [
+    ["UNIX", "UNIX, metin tabanlı çok güçlü bir işletim sistemidir, görsel değildir."],
+    ["MS-DOS", "MS-DOS, metin tabanlı bir komut satırı işletim sistemidir."],
+    ["Linux", "Linux, UNIX tabanlıdır ve daha sonra çeşitli görsel arayüzler kazanmıştır, ancak ilk öncü değildir."],
+    ["Mac OS", "Apple'ın Macintosh bilgisayarlarında kullandığı Mac OS, Windows 95'ten çok önce, 1985'lerde gelişmiş bir görsel arayüz sunan öncü bir işletim sistemi olarak belirtilmiştir."],
+    ["Android", "Android, çok daha sonra ortaya çıkan bir mobil işletim sistemidir."]
+  ],
+  answer: 3,
+  summary: "Bilgisayar tarihinde, modern pencereli, fareli ve ikonlu kullanıcı arayüzünü popülerleştiren ilk ticari işletim sistemlerinden biri Apple'ın Mac OS'idir. Bu, kişisel bilgisayar kullanımında bir devrim yaratmıştır."
+},
+{
+  q: "15. Bir kaynak kodun derlendikten sonra makine kodunun, kullanıcının her seferinde yeniden derleme yapmaması için kalıcı bir saklama birimine (diske) aktarılması işlemine ne ad verilir?",
+  options: [
+    ["Bağlama (Linking)", "Bu, farklı kod modüllerini birleştirme işlemidir."],
+    ["Yorumlama (Interpretation)", "Bu, kodu satır satır çalıştırma işlemidir."],
+    ["Diske Derleme", "Geliştirilen yazılımın son kullanıcıya teslim edilebilmesi için, makine kodunun bellekte kalmayıp `.EXE` gibi çalıştırılabilir bir dosya olarak diske kaydedilmesi gerekir. Bu işleme 'diske derleme' denir."],
+    ["Kaynak Kodlama", "Bu, programın yazılma eylemidir."],
+    ["Belleğe Derleme", "Bu, kodun sadece bellekte çalıştırılmak üzere geçici olarak çevrilmesidir."]
+  ],
+  answer: 2,
+  summary: "Bir programı indirip kurduğunuzda, aslında geliştiricinin 'diske derlediği' çalıştırılabilir dosyayı (örn: setup.exe) kendi bilgisayarınıza kopyalamış olursunuz. Bu sayede programı çalıştırmak için kaynak koduna veya derleyiciye ihtiyacınız olmaz."
+},
+{
+  q: "16. Mobil uygulama geliştirmenin iki temel yöntemi olan 'Duyarlı Tasarım' ile 'Doğrudan Uygulama Geliştirme' arasındaki temel fark nedir?",
+  options: [
+    ["Duyarlı tasarım daha güvenlidir.", "Güvenlik seviyeleri farklılık gösterebilir ama temel fark bu değildir."],
+    ["Duyarlı tasarım web teknolojileriyle, doğrudan geliştirme ise cihaza özel kodlarla yapılır.", "Duyarlı tasarım, aslında farklı ekranlara uyum sağlayan bir web sitesi yapmaktır. Doğrudan (native) geliştirme ise o cihaza (örn: iPhone veya Android) özel bir programlama dili ve araçlarla uygulama yazmaktır."],
+    ["Duyarlı tasarım daha verimlidir.", "Tam tersine, doğrudan geliştirilen uygulamalar genellikle cihazın donanımına daha iyi eriştikleri için daha verimlidir."],
+    ["Doğrudan geliştirme daha kolaydır.", "Tam tersine, her platform için ayrı ayrı kod yazmayı gerektirdiği için daha zordur ('meşakkatlidir')."],
+    ["Aralarında bir fark yoktur, ikisi de aynı anlama gelir.", "Hayır, iki farklı geliştirme felsefesidir."]
+  ],
+  answer: 1,
+  summary: "Duyarlı tasarım 'tek bir web sitesi yap, her yerde çalışsın' mantığına dayanırken, doğrudan (native) geliştirme 'her cihaza kendi dilinde, özel bir uygulama yap' mantığına dayanır. İlki daha kolay ve hızlı, ikincisi ise daha performanslıdır."
+},
+{
+  q: "17. Sözdizim denetiminin yanı sıra, her bir ifadeyi anlık olarak çalıştırıp sonucunu gösterebilen ve genellikle Maple gibi kendine özgü betik dili olan paket programlarda bulunan yorumlayıcı türü hangisidir?",
+  options: [
+    ["1. Tip Yorumlayıcılar", "1. Tip yorumlayıcılar kodu çalıştırmaz, sadece sözdizim denetimi yapar."],
+    ["2. Tip Yorumlayıcılar", "Bu tür yorumlayıcılar, yazılan her komutu anında çalıştırır ve sonucunu gösterir. Bu, interaktif bir çalışma ortamı sağlar ve genellikle bilimsel hesaplama yazılımlarında bulunur."],
+    ["Derleyiciler", "Derleyiciler kodu bir bütün olarak çevirir, anlık çalıştırmaz."],
+    ["Bağlayıcılar", "Bağlayıcılar derlenmiş kodları birleştirir."],
+    ["Kabuk (Shell)", "Kabuk da komutları anlık çalıştırır ancak bu terim daha çok işletim sistemi komut yorumlayıcıları için kullanılır."]
+  ],
+  answer: 1,
+  summary: "2. Tip yorumlayıcılar, bir 'interaktif not defteri' gibi çalışır. Bir matematiksel formül yazdığınız anda 'Enter'a basarsınız ve sonucu hemen alt satırda görürsünüz. Derleme gibi bir bekleme süreci yoktur."
+},
+{
+  q: "18. Java'nın web programlamada çok tercih edilmesinin en önemli nedeni olarak belirtilen ve sanal makine (JVM) sayesinde kazandığı özellik nedir?",
+  options: [
+    ["Öğrenilmesinin çok kolay olması", "Tam tersine, öğrenilmesinin nispeten zor olduğu bir handikap olarak belirtilmiştir."],
+    ["Açık kaynak kodlu olması", "PHP bu özelliği ile öne çıkar, Java'nın temel avantajı bu değildir."],
+    ["Farklı donanım ve işletim sistemlerinde aynı kararlılıkta çalışabilmesi (Platform Bağımsızlığı)", "Java'nın 'anlık derleme' ve 'sanal makine' mimarisi, yazılan kodun hiçbir değişiklik yapılmadan Windows, Linux, MacOS gibi farklı sistemlerde çalışabilmesini sağlar. Bu, en büyük gücüdür."],
+    ["Gelişmiş bir editöre sahip olması", "Kendisine ait özel bir editörü olmadığı, farklı editörlerin geliştirildiği belirtilmiştir."],
+    ["Veritabanı işlemlerini hızlı yapması", "Bu bir sonuç olabilir ama temel neden platform bağımsızlığıdır."]
+  ],
+  answer: 2,
+  summary: "Java'nın en büyük vaadi 'bir kere yaz, her yerde çalıştır' (write once, run anywhere) felsefesidir. Bu, Java Sanal Makinesi (JVM) adı verilen bir 'tercüman' yazılımı sayesinde mümkün olur. Bu tercüman her işletim sistemi için ayrı ayrı yazılmıştır ve Java kodunun hepsiyle aynı şekilde konuşmasını sağlar."
+},
+{
+  q: "19. SQL dili hangi diller sınıfına girer ve bu nedenle hangi yapılardan mahrumdur?",
+  options: [
+    ["Yapısal diller sınıfına girer ve nesnelerden mahrumdur.", "Bu yanlıştır."],
+    ["Betik dilleri sınıfına girer ve değişkenlerden mahrumdur.", "Değişken kullanabilir ancak temel sınıflandırması bu değildir."],
+    ["Açıklayıcı (deklaratif) diller sınıfına girer ve koşul/döngü gibi programatik yapılardan mahrumdur.", "SQL'de bir programcı 'veriyi nasıl bulacağını' adım adım tarif etmez, sadece 'hangi veriyi istediğini' açıklar. Bu nedenle deklaratif bir dildir ve `if`, `for` gibi klasik programatik akış kontrol yapılarından yoksundur."],
+    ["Nesneye yönelik diller sınıfına girer ve fonksiyonlardan mahrumdur.", "Bu yanlıştır."],
+    ["Sistem programlama dilleri sınıfına girer ve kütüphanelerden mahrumdur.", "Bu yanlıştır."]
+  ],
+  answer: 2,
+  summary: "SQL, bir 'emir verme' dili değil, bir 'istek belirtme' dilidir. 'Öğrenciler tablosundan notu 80'den büyük olanları getir' dersiniz, veritabanı bu isteği nasıl yerine getireceğine kendi karar verir. Bu deklaratif yapı, onu çok güçlü ama programatik olarak sınırlı kılar."
+},
+{
+  q: "20. PHP dilinin ortaya çıkışındaki ilk amaç nedir?",
+  options: [
+    ["Microsoft'a rakip bir web dili oluşturmak.", "Bu bir sonuçtur, başlangıç amacı değildir."],
+    ["Büyük kurumsal uygulamalar geliştirmek.", "Başlangıçta çok daha basit bir amacı vardı."],
+    ["Yaratıcısı Rasmus Lerdorf'un, kişisel özgeçmiş sayfasına kimlerin baktığını takip etmesi.", "PHP, çok pratik ve kişisel bir ihtiyaçtan doğmuştur: bir web sayfasının ziyaretçi trafiğini izlemek. Daha sonra geliştirilerek günümüzdeki güçlü dil haline gelmiştir."],
+    ["Mobil cihazlar için uygulama geliştirmek.", "Mobil cihazlar o dönemde yaygın değildi."],
+    ["UNIX sistemlerini yönetmek için bir betik dili yazmak.", "Bu, shell script dillerinin amacıdır."]
+  ],
+  answer: 2,
+  summary: "Birçok büyük teknoloji gibi, PHP de küçük ve kişisel bir problemi çözmek için başlatılmış bir projenin zamanla büyüyüp milyonlarca web sitesine güç veren devasa bir ekosisteme dönüşmesine güzel bir örnektir."
+},
+{
+  q: "21. Web programlamada güvenlik açısından programcının alması gereken en temel önlem nedir?",
+  options: [
+    ["Tüm kodları istemci tarafında (client-side) yazmak.", "Bu, en güvensiz yaklaşımdır."],
+    ["Mümkün olduğunca sunucu taraflı (server-side) programlamaya ağırlık vermek.", "Kritik işlemlerin ve kod mantığının sunucuda tutulması, kodun ve veritabanı gibi kaynakların kötü niyetli kullanıcılardan gizlenmesini sağlar. Bu en temel güvenlik prensibidir."],
+    ["Kullanıcının bilgisayarında çok sayıda kurabiye (cookie) saklamak.", "Kurabiyeler dikkatli kullanılmalıdır, çünkü istemci tarafında veri saklarlar ve güvenlik riski oluşturabilirler."],
+    ["Güvenlik duvarı (firewall) ayarlarını tamamen kapatmak.", "Bu felaketle sonuçlanır."],
+    ["Güvenlik konusunu tamamen sunucu yöneticisine bırakmak.", "Programcının da kodlama sırasında alması gereken güvenlik önlemleri vardır."]
+  ],
+  answer: 1,
+  summary: "Web güvenliğinde temel kural şudur: 'Kullanıcıya asla güvenme'. Bu, kullanıcının kötü niyetli olduğu anlamına gelmez, ancak kullanıcının bilgisayarının (ve tarayıcısının) kontrol edilemeyen bir ortam olduğu anlamına gelir. Bu nedenle, tüm önemli işlemler güvenli olan sunucu tarafında yapılmalıdır."
+},
+{
+  q: "22. HTML ve CSS kodları, web programlamanın hangi tarafında çalışır?",
+  options: [
+    ["Sunucu Tarafı (Server-Side)", "Sunucu bu kodları istemciye gönderir, çalıştırmaz."],
+    ["İstemci Tarafı (Client-Side)", "HTML ve CSS kodları sunucudan kullanıcının tarayıcısına indirilir ve doğrudan tarayıcı tarafından yorumlanarak ekranda görsel bir sayfa oluşturulur. Bu nedenle istemci taraflı teknolojilerdir."],
+    ["Veritabanı Tarafı", "Veritabanı veri saklar."],
+    ["Hem istemci hem de sunucu tarafı", "Bu kodların çalıştığı yer istemcinin tarayıcısıdır."],
+    ["Ağ Tarafı (Network-Side)", "Ağ, bu kodların taşındığı ortamdır."]
+  ],
+  answer: 1,
+  summary: "Bir web sitesinin 'kaynağını görüntüle' dediğinizde gördüğünüz kodlar, istemci tarafında çalışan kodlardır. Sunucu tarafında çalışan PHP veya ASP.NET kodlarını asla göremezsiniz, çünkü onlar sunucuda kalır."
+},
+{
+  q: "23. UNIX'in orijinal komut yorumlayıcısı (shell) olan ve standart bir yazılım olduğu için çok fazla özellik bulundurmayan kabuk programı hangisidir?",
+  options: [
+    ["bash", "`bash`, `sh`'den sonra geliştirilen daha gelişmiş bir kabuktur ve GNU'nun standart kabuğudur."],
+    ["csh", "Bu, C diline benzer sözdizimiyle bilinen bir kabuktur."],
+    ["ksh", "Bu, `sh`'nin daha geliştirilmiş bir sürümüdür."],
+    ["tcsh", "Bu, `csh`'nin daha kullanıcı dostu bir sürümüdür."],
+    ["sh", "`sh` (Bourne shell), UNIX'in ilk ve orijinal komut yorumlayıcısıdır. Diğer birçok kabuk, onun temel özelliklerini miras alarak geliştirilmiştir."]
+  ],
+  answer: 4,
+  summary: "UNIX/Linux dünyasında birçok farklı 'kabuk' bulunur ve her biri farklı özellikler sunar. `sh`, en temel ve en evrensel olanıdır; bir betiğin tüm sistemlerde çalışması isteniyorsa genellikle `sh` sözdizimiyle yazılır."
+},
+{
+  q: "24. Duyarlı tasarımın (responsive design) temel işlevi nedir?",
+  options: [
+    ["Web sitesini daha güvenli hale getirmek", "Doğrudan bir güvenlik işlevi yoktur."],
+    ["Web sitesinin sunucuda daha hızlı çalışmasını sağlamak", "Sunucu performansıyla ilgili değildir."],
+    ["Web sayfasının, görüntülendiği cihazın ekran çözünürlüğüne göre kendini dinamik olarak ayarlamasını sağlamak", "Duyarlı tasarımın amacı, aynı web sayfasının büyük bir masaüstü ekranda, bir tablette veya küçük bir telefon ekranında, her birine uygun bir yerleşimle ve okunabilir bir şekilde görüntülenmesidir."],
+    ["Veritabanı bağlantılarını yönetmek", "Bu, sunucu taraflı bir iştir."],
+    ["Kullanıcının işletim sistemini algılamak", "İşletim sisteminden çok ekran çözünürlüğünü ve tarayıcı genişliğini denetler."]
+  ],
+  answer: 2,
+  summary: "Duyarlı tasarım, bir web sayfasının 'bukalemun' gibi davranmasını sağlar. İçeriği aynı kalsa da, bulunduğu ortama (ekran boyutuna) göre görünümünü ve yerleşimini anında değiştirerek en iyi kullanıcı deneyimini sunar."
+},
+{
+  q: "25. Apple'ın iOS işletim sistemine sahip cihazları (iPhone, iPad) için uygulama geliştirmede kullanılan ve C dilinin bir üst kümesi olan programlama dili hangisidir?",
+  options: [
+    ["Java", "Java, Android uygulama geliştirmede yaygın olarak kullanılır."],
+    ["C#", "C#, genellikle Microsoft platformları ve oyun geliştirmede kullanılır."],
+    ["Swift", "Swift, Apple'ın daha sonra geliştirdiği modern bir dildir, ancak slaytta belirtilen Objective-C'dir."],
+    ["Objective-C", "Objective-C, C diline Smalltalk benzeri nesneye yönelik özellikler ekleyen bir dildir ve uzun yıllar Apple'ın MacOS ve iOS platformları için ana geliştirme dili olmuştur."],
+    ["PHP", "PHP bir web programlama dilidir."]
+  ],
+  answer: 3,
+  summary: "Her mobil platformun kendine özgü bir ana programlama dili vardır. Android'in ana dili Java iken, Apple ekosisteminin uzun yıllar boyunca ana dili Objective-C olmuştur. Apple daha sonra Swift adında yeni bir dil daha geliştirmiştir."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

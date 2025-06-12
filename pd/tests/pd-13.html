@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 13</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 13</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Nesneye yönelik tasarımın, geleneksel 'yapılması gereken işlemlere göre tasarım' yaklaşımından en temel farkı nedir?",
+  options: [
+    ["Daha az kod yazılmasını sağlamasıdır.", "Bu bir sonuç olabilir ama temel fark değildir."],
+    ["Tasarımın odak noktasını işlemlerden nesnelere, yani veriye kaydırmasıdır.", "Geleneksel yaklaşım 'program ne yapacak?' sorusuna odaklanırken, nesneye yönelik yaklaşım 'programdaki aktörler (nesneler) kimler ve sorumlulukları nelerdir?' sorusuna odaklanır."],
+    ["Daha hızlı çalışacak programlar üretmesidir.", "Bu bir hedef olsa da temel felsefe farkı değildir."],
+    ["Sadece C++ ve Java dillerinde uygulanabilmesidir.", "Bu bir sonuçtur, felsefe farkı değildir."],
+    ["Programcılar tarafından daha zor öğrenilmesidir.", "Tam tersine, gerçek hayata benzediği için daha kolay öğrenildiği öne sürülür."]
+  ],
+  answer: 1,
+  summary: "Nesneye yönelik tasarım, problemi 'fiiller' (işlemler) üzerinden değil, 'isimler' (nesneler) üzerinden modelleyerek daha modüler ve değişikliklere daha dayanıklı sistemler kurmayı hedefler."
+},
+{
+  q: "2. UML (Birleşik Modelleme Dili) için aşağıdakilerden hangisi doğrudur?",
+  options: [
+    ["Sadece nesneye yönelik diller için kullanılan bir programlama dilidir.", "UML bir programlama dili değildir."],
+    ["Yazılımın, diyagram şeklinde ifade edilmesi için oluşturulmuş standart bir modelleme dilidir.", "UML, bir projenin analiz ve tasarımını görselleştirmek için kullanılan, endüstri standardı bir diyagram ve notasyon setidir."],
+    ["Sadece veritabanı şemalarını çizmek için kullanılır.", "Veritabanı şemaları (sınıf diyagramları gibi) çizilebilse de tek kullanım alanı bu değildir."],
+    ["Microsoft tarafından geliştirilmiş kapalı kaynak kodlu bir araçtır.", "UML, bir standartlar komitesi (OMG) tarafından oluşturulmuş bir standarttır, bir araç değildir."],
+    ["Programın test aşamasında kullanılır.", "Daha çok analiz ve tasarım aşamalarında kullanılır."]
+  ],
+  answer: 1,
+  summary: "UML, bir projenin 'mimari çizimi' gibidir. İnşaata başlamadan önce (kodlama), sistemin parçalarını, bu parçaların birbiriyle ilişkisini ve sistemin davranışını bu standart çizim diliyle herkesin anlayacağı bir şekilde modellemeye yarar."
+},
+{
+  q: "3. Nesneye yönelik programlamanın temel kavramlarından olan ve bir sınıftan yeni bir sınıf türetilmesini sağlayan kavrama ne ad verilir?",
+  options: [
+    ["Çokyapılılık (Polymorphism)", "Çokyapılılık, bir nesnenin birden çok formda davranabilme yeteneğidir."],
+    ["Soyutlama (Abstraction)", "Soyutlama, karmaşık detayları gizleyip sadece gerekli bilgileri sunmaktır."],
+    ["Kapsülleme (Encapsulation)", "Kapsülleme, veri ve metotları bir arada tutmaktır."],
+    ["Kalıtım (Inheritance)", "Kalıtım, var olan bir sınıfın özelliklerini ve metotlarını alarak yeni bir sınıf oluşturma mekanizmasıdır. Bu, kod tekrarını önler ve yeniden kullanımı destekler."],
+    ["Mesajlaşma (Messaging)", "Bu, nesnelerin birbiriyle etkileşim kurma yöntemidir."]
+  ],
+  answer: 3,
+  summary: "Kalıtım, tıpkı biyolojideki gibi, bir 'çocuk' sınıfın 'ebeveyn' sınıftan özelliklerini miras almasıdır. Örneğin, 'Otomobil' sınıfı, 'Kara Taşıtı' sınıfından 'tekerlek sayısı' gibi özellikleri miras alabilir."
+},
+{
+  q: "4. C++ ve Java gibi dillerde, bir sınıfın veri ve metotlarının dışarıdan erişilebilirliğini kontrol etmek için kullanılan `public`, `private` ve `protected` gibi ifadelere genel olarak ne ad verilir?",
+  options: [
+    ["Erişim Belirteçleri (Access Modifiers)", "Bu ifadeler, bir sınıf üyesine (değişken veya metot) kimlerin erişebileceğini belirleyen anahtar kelimelerdir."],
+    ["Tip Belirteçleri", "Tip belirteçleri (`int`, `string` gibi) bir verinin türünü belirtir."],
+    ["Döngü Kontrolleri", "Bunlar `break`, `continue` gibi ifadelerdir."],
+    ["İstisna İşleyicileri", "Bunlar `try`, `catch` gibi ifadelerdir."],
+    ["Kalıtım Anahtarları", "Bunlar `extends` gibi kalıtımı belirten anahtar kelimelerdir."]
+  ],
+  answer: 0,
+  summary: "Erişim belirteçleri, bir sınıfın 'mahremiyet' seviyelerini ayarlar. `public` üyeler 'herkese açık', `private` üyeler 'sadece kendine özel', `protected` üyeler ise 'sadece kendine ve ailesine (alt sınıflara) özel'dir."
+},
+{
+  q: "5. 'Metod Yüklemesi (Method Overloading)' ve 'Metod Üzerine Yazma (Method Overriding)' arasındaki en temel fark nedir?",
+  options: [
+    ["Overloading kalıtımla, Overriding ise arayüzlerle ilgilidir.", "Her ikisi de kalıtımla yakından ilgilidir."],
+    ["Overloading çalışma zamanında, Overriding ise derleme zamanında çözülür.", "Tam tersi doğrudur."],
+    ["Overloading'de metot isimleri farklı, Overriding'de aynıdır.", "Her ikisinde de metot isimleri aynıdır."],
+    ["Overloading'de metotların parametre listeleri farklı, Overriding'de ise aynı olmak zorundadır.", "Bu, aralarındaki en kritik ve temel farktır. Overloading aynı isimli metotların farklı işler yapması, Overriding ise alt sınıfın üst sınıfın aynı işini farklı şekilde yapmasıdır."],
+    ["Overloading C++'da, Overriding ise Java'da bulunur.", "Her iki kavram da her iki dilde de bulunur."]
+  ],
+  answer: 3,
+  summary: "Overloading (Yükleme): `topla(int, int)` ve `topla(double, double)` gibi, aynı isimli ama farklı 'aletlerle' çalışan metotlar. Overriding (Üzerine Yazma): Üst sınıftaki `alanHesapla()` metodunun, alt sınıf olan 'Daire'de `pi*r*r` ile, 'Kare'de ise `a*a` ile yeniden yazılarak farklı çalışması."
+},
+{
+  q: "6. Bir sınıfın özelliklerine sadece o sınıf içinden erişim yapılabilmesini sağlayan, dışarıya tamamen kapatan erişim belirteci hangisidir?",
+  options: [
+    ["public", "`public`, erişim için hiçbir sınırlama olmadığını belirtir."],
+    ["protected", "`protected`, sadece o sınıf ve ondan türeyen alt sınıflar içinden erişime izin verir."],
+    ["private", "`private`, bir özelliğe veya metoda sadece ve sadece tanımlandığı sınıfın içinden erişilebileceğini belirtir. Bu, en katı koruma seviyesidir."],
+    ["friend", "Bu, C++'a özgü bir kavramdır ve sınıf dışından özel erişim izni verir."],
+    ["internal", "Bu, C#'a özgü bir erişim belirtecidir."]
+  ],
+  answer: 2,
+  summary: "`private` erişim belirteci, bir sınıfın iç işleyişini ve verilerini dış dünyanın müdahalelerinden tamamen korumak için kullanılır. Bu, kapsülleme (encapsulation) ilkesinin temel bir parçasıdır."
+},
+{
+  q: "7. Nesneye yönelik programlamada, bir metodun çalıştırılmasını istemek için bir nesneye yapılan çağrıya ne ad verilir?",
+  options: [
+    ["Değişken", "Değişken veri saklar."],
+    ["Sınıf", "Sınıf, nesnelerin tanımıdır."],
+    ["Mesaj (Message)", "Nesneler birbirlerine 'mesaj' yollayarak etkileşirler. Bir nesneye mesaj yollamak, aslında o nesnenin bir metodunu çağırmak anlamına gelir. Örneğin: `y1.cikar()`"],
+    ["Kalıtım", "Kalıtım bir türetme mekanizmasıdır."],
+    ["Atama", "Atama bir değer aktarma işlemidir."]
+  ],
+  answer: 2,
+  summary: "Nesneye yönelik programlamada, nesneler birbiriyle doğrudan 'konuşmazlar', bunun yerine birbirlerine 'mektup' (mesaj) yollarlar. Her mektup, alıcı nesnenin yapması gereken bir işi (metodu) belirtir."
+},
+{
+  q: "8. Bir alt sınıfın, üst sınıfının bir metodunu kendi ihtiyaçlarına göre yeniden tanımlaması işlemine ne denir?",
+  options: [
+    ["Metod Yüklemesi (Method Overloading)", "Bu, aynı isimli ama farklı parametreli metotlar tanımlamaktır."],
+    ["Metod Gizleme (Method Hiding)", "Bu, statik metotlarla ilgili farklı bir kavramdır."],
+    ["Metod Üzerine Yazma (Method Overriding)", "Bir alt sınıf, üst sınıftan kalıttığı bir metodu beğenmeyip, aynı isim ve parametrelerle kendi farklı versiyonunu yazdığında 'üzerine yazma' yapmış olur."],
+    ["Metod Soyutlama (Method Abstraction)", "Bu, bir metodun sadece tanımının yapılıp içinin boş bırakılmasıdır."],
+    ["Metod Çağırma (Method Invocation)", "Bu, bir metodu çalıştırma eylemidir."]
+  ],
+  answer: 2,
+  summary: "Örneğin, bir `Hayvan` sınıfının `sesCikar()` metodu olabilir. `Kedi` alt sınıfı bu metodu 'Miyav' diye, `Kopek` alt sınıfı ise 'Hav' diye yeniden tanımlayarak üzerine yazar. Bu, her alt sınıfın ortak bir eylemi kendine özgü bir şekilde yapmasını sağlar."
+},
+{
+  q: "9. Dinamik bağlama ile aynı mesajın farklı sınıflara ilişkin nesneler tarafından farklı şekillerde yanıtlanabilmesi ve farklı davranışlar gösterebilmesi özelliğine ne ad verilir?",
+  options: [
+    ["Kalıtım (Inheritance)", "Kalıtım, bu özelliğin altyapısını oluşturur ama özelliğin kendisi değildir."],
+    ["Çokyapılılık (Polymorphism)", "Kelime anlamı 'birçok şekle sahip olma' olan çokyapılılık, aynı `alanHesapla()` mesajının, Daire nesnesine gönderildiğinde daire alanı, Kare nesnesine gönderildiğinde ise kare alanı hesaplaması gibi, nesnenin gerçek tipine göre farklı davranışlar sergilemesi yeteneğidir."],
+    ["Sınıf (Class)", "Sınıf, nesnelerin tanımıdır."],
+    ["Nesne (Object)", "Nesne, sınıfın bir örneğidir."],
+    ["Kapsülleme (Encapsulation)", "Bu, veri ve metotları bir arada paketlemektir."]
+  ],
+  answer: 1,
+  summary: "Çokyapılılık, nesneye yönelik programlamanın en güçlü özelliklerinden biridir. Bir kod parçasının, hangi nesneyle çalıştığını bilmeden, o nesneye genel bir komut göndermesine ve nesnenin kendi türüne uygun doğru işi yapmasına olanak tanır. Bu, esnek ve genişletilebilir kodlar yazmayı sağlar."
+},
+{
+  q: "10. Hangi programlama dili, bir sınıfın birden çok üst sınıftan türetilmesine olanak tanıyan 'çoklu kalıtımı (multiple inheritance)' destekler?",
+  options: [
+    ["Java", "Java, çoklu kalıtımın getirdiği karmaşıklığı önlemek için bu özelliği desteklemez; yerine 'arayüz (interface)' kullanır."],
+    ["Smalltalk", "Smalltalk da tekli kalıtım modelini benimser."],
+    ["C#", "C# da Java gibi çoklu kalıtımı desteklemez ve arayüzleri kullanır."],
+    ["C++", "C++ ve Eiffel, bir sınıfın birden fazla ebeveyn sınıftan özellik ve metot miras almasına olanak tanıyan çoklu kalıtımı destekleyen dillerdendir."],
+    ["Python", "Python da çoklu kalıtımı destekler ancak slaytta belirtilen örnek C++'dır."]
+  ],
+  answer: 3,
+  summary: "Çoklu kalıtım, bir 'çocuğun' hem 'annesinden' hem de 'babasından' özellikler alması gibi güçlü bir yapı sunar. Ancak aynı zamanda, her iki ebeveynde de aynı isimli bir özellik varsa hangisinin kullanılacağı gibi karmaşıklıklara (diamond problem) yol açabilir."
+},
+{
+  q: "11. 'Yapılması gereken işlemlere göre tasarım' yaklaşımının en önemli dezavantajı nedir?",
+  options: [
+    ["Programın daha hızlı çalışması", "Bu bir dezavantaj değildir."],
+    ["Programcılar tarafından daha kolay anlaşılması", "Bu bir avantajdır."],
+    ["Veri paylaşımının çok olması sebebiyle küçük değişikliklerin bile kapsamlı değişiklikler gerektirmesi", "İşlemlerin merkezde olduğu bu yaklaşımda, birçok işlem aynı verileri kullanır. Veri yapısında yapılacak en küçük bir değişiklik, o veriyi kullanan tüm işlemlerin de değiştirilmesini gerektirir. Bu da sistemin bakımını zorlaştırır."],
+    ["Nesnelerin ve sınıfların kullanılmasını zorunlu kılması", "Bu yaklaşımda nesne ve sınıf kavramı yoktur."],
+    ["Sadece küçük projelerde uygulanabilmesi", "Büyük projelerde de uygulanabilir ancak bakımı zordur."]
+  ],
+  answer: 2,
+  summary: "Geleneksel işlem odaklı tasarımda, veri 'herkesin kullandığı ortak bir depo' gibidir. Deponun yapısını değiştirmek, depoyu kullanan herkesin işini bozar. Nesneye yönelik tasarım ise her birime kendi 'özel deposunu' vererek bu sorunu çözer."
+},
+{
+  q: "12. Bir sınıfın işlemlerini gerçekleştiren kod bloklarına ne ad verilir?",
+  options: [
+    ["Özellik (Property)", "Özellik, sınıfın verilerini (değişkenlerini) temsil eder."],
+    ["Nesne (Object)", "Nesne, sınıfın bir örneğidir."],
+    ["Mesaj (Message)", "Mesaj, bir metodu çalıştırmak için yapılan çağrıdır."],
+    ["Metod (Method)", "Metod, bir sınıfın 'sorumluluklarını' veya 'yeteneklerini' gerçekleştiren, o sınıfa ait fonksiyonlardır. Örneğin, bir `Yigit` sınıfının `ekle()` ve `cikar()` gibi metotları vardır."],
+    ["Altsınıf (Subclass)", "Altsınıf, başka bir sınıftan türetilmiş bir sınıftır."]
+  ],
+  answer: 3,
+  summary: "Eğer bir 'Araba' bir sınıf ise, onun 'rengi' ve 'modeli' gibi özellikleri, 'çalıştır()', 'durdur()' ve 'hızlan()' gibi de metotları (yapabildiği eylemler) vardır."
+},
+{
+  q: "13. Dinamik bağlama ile aynı mesajın farklı sınıflara ilişkin nesneler tarafından farklı şekillerde yanıtlanabilmesi ve farklı davranışlar gösterebilmesi özelliğine ne ad verilir?",
+  options: [
+    ["Kalıtım (Inheritance)", "Kalıtım, bu özelliğin altyapısını oluşturur ama özelliğin kendisi değildir."],
+    ["Sınıf (Class)", "Sınıf, nesnelerin tanımıdır."],
+    ["Kapsülleme (Encapsulation)", "Bu, veri ve metotları bir arada paketlemektir."],
+    ["Çokyapılılık (Polymorphism)", "Kelime anlamı 'birçok şekle sahip olma' olan çokyapılılık, aynı `alanHesapla()` mesajının, Daire nesnesine gönderildiğinde daire alanı, Kare nesnesine gönderildiğinde ise kare alanı hesaplaması gibi, nesnenin gerçek tipine göre farklı davranışlar sergilemesi yeteneğidir."],
+    ["Nesne (Object)", "Nesne, sınıfın bir örneğidir."]
+  ],
+  answer: 3,
+  summary: "Çokyapılılık, nesneye yönelik programlamanın en güçlü özelliklerinden biridir. Bir kod parçasının, hangi nesneyle çalıştığını bilmeden, o nesneye genel bir komut göndermesine ve nesnenin kendi türüne uygun doğru işi yapmasına olanak tanır. Bu, esnek ve genişletilebilir kodlar yazmayı sağlar."
+},
+{
+  q: "14. `private`, `public` ve `protected` gibi ifadelere genel olarak ne ad verilir ve temel işlevleri nedir?",
+  options: [
+    ["Döngü Kontrolleri; program akışını yönetirler.", "Bunlar `break`, `continue` gibi ifadelerdir."],
+    ["Erişim Belirteçleri (Access Modifiers); bir sınıf üyesine kimlerin erişebileceğini kontrol ederler.", "Bu ifadeler, bir sınıfın üyelerinin (değişkenler ve metotlar) ne kadar 'özel' veya 'halka açık' olduğunu belirleyerek kapsülleme ilkesini uygular."],
+    ["Tip Belirteçleri; bir verinin türünü belirtirler.", "Bunlar `int`, `string` gibi ifadelerdir."],
+    ["İstisna İşleyicileri; hata durumlarını yönetirler.", "Bunlar `try`, `catch` gibi ifadelerdir."],
+    ["Atama Operatörleri; bir değişkene değer atarlar.", "Bunlar `=` veya `:=` gibi sembollerdir."]
+  ],
+  answer: 1,
+  summary: "Erişim belirteçleri, bir sınıfın 'mahremiyet' seviyelerini ayarlar. `public` üyeler 'herkese açık', `private` üyeler 'sadece kendine özel', `protected` üyeler ise 'sadece kendine ve ailesine (alt sınıflara) özel'dir."
+},
+{
+  q: "15. Bir alt sınıfın, üst sınıfındaki bir metotla aynı isim ve aynı parametrelere sahip yeni bir metot tanımlayarak üst sınıfın metodunu geçersiz kılması işlemine ne denir?",
+  options: [
+    ["Metod Yüklemesi (Method Overloading)", "Bu, aynı isimli ama farklı parametreli metotlar tanımlamaktır."],
+    ["Metod Üzerine Yazma (Method Overriding)", "Bir alt sınıf, üst sınıftan kalıttığı bir metodu beğenmeyip, aynı isim ve parametrelerle kendi farklı versiyonunu yazdığında 'üzerine yazma' yapmış olur."],
+    ["Metod Gizleme (Method Hiding)", "Bu, statik metotlarla ilgili farklı bir kavramdır."],
+    ["Metod Soyutlama (Method Abstraction)", "Bu, bir metodun sadece tanımının yapılıp içinin boş bırakılmasıdır."],
+    ["Metod Çağırma (Method Invocation)", "Bu, bir metodu çalıştırma eylemidir."]
+  ],
+  answer: 1,
+  summary: "Örneğin, bir `Hayvan` sınıfının `sesCikar()` metodu olabilir. `Kedi` alt sınıfı bu metodu 'Miyav' diye, `Kopek` alt sınıfı ise 'Hav' diye yeniden tanımlayarak üzerine yazar. Bu, her alt sınıfın ortak bir eylemi kendine özgü bir şekilde yapmasını sağlar."
+},
+{
+  q: "16. Aşağıdakilerden hangisi çoklu kalıtımın (multiple inheritance) potansiyel bir sorunudur?",
+  options: [
+    ["Kod tekrarını artırması", "Kalıtımın amacı tam tersine kod tekrarını azaltmaktır."],
+    ["Sadece soyut sınıflarla kullanılabilmesi", "Somut sınıflarla da kullanılabilir."],
+    ["Alt sınıfın, farklı üst sınıflarındaki aynı isimli metotlar arasında hangisini miras alacağı konusunda belirsizlik yaşanması.", "Eğer bir alt sınıf, hem 'A' sınıfından hem de 'B' sınıfından kalıtım alıyorsa ve her iki üst sınıfta da `hesapla()` adında bir metot varsa, bu durum bir belirsizlik yaratır. Bu, çoklu kalıtımın en bilinen problemidir."],
+    ["Programların her zaman daha yavaş çalışmasına neden olması", "Bu doğrudan bir neden değildir."],
+    ["Sadece C++ diline özgü olması", "Eiffel gibi başka diller de destekler."]
+  ],
+  answer: 2,
+  summary: "Çoklu kalıtımın getirdiği 'diamond problem' gibi belirsizlik durumları, dil tasarımını karmaşıklaştırır ve hatalara yol açabilir. Bu nedenle Java ve C# gibi diller, bu özelliği desteklemek yerine 'arayüz (interface)' kullanır."
+},
+{
+  q: "17. Nesneye yönelik programlamada, verileri ve o veriler üzerinde çalışan işlemleri (metotları) bir bütün olarak bir araya getiren yapıya ne ad verilir?",
+  options: [
+    ["Fonksiyon", "Fonksiyon sadece bir işlem bloğudur."],
+    ["Değişken", "Değişken sadece veri tutar."],
+    ["Nesne (Object)", "Nesne, kendi içinde hem durumu (verileri, özellikleri) hem de davranışı (işlemleri, metotları) barındıran bir bütünleşik birimdir."],
+    ["Döngü", "Döngü bir akış kontrol yapısıdır."],
+    ["Parametre", "Parametre, bir metoda dışarıdan gönderilen veridir."]
+  ],
+  answer: 2,
+  summary: "Nesneye yönelik programlamanın merkezindeki fikir, birbiriyle ilişkili olan veri ve işlemleri ayırmak yerine, onları tek bir 'kapsül' veya 'nesne' içinde birleştirmektir. Bu, programın daha modüler ve anlaşılır olmasını sağlar."
+},
+{
+  q: "18. `int topla(int a, int b)` ve `double topla(double a, double b)` şeklinde iki ayrı metodun aynı sınıf içinde tanımlanabilmesi hangi kavrama örnektir?",
+  options: [
+    ["Metod Üzerine Yazma (Method Overriding)", "Üzerine yazmada parametre tipleri aynı olmalıdır."],
+    ["Metod Yüklemesi (Method Overloading)", "`topla` ismi aynı olmasına rağmen, metotlar farklı parametre tipleri (`int` ve `double`) ile tanımlanmıştır. Bu, metod yüklemesinin tipik bir örneğidir. Derleyici, çağrılırken verilen parametrelerin tipine göre hangi metodun çalışacağına karar verir."],
+    ["Dinamik Bağlama", "Metod yüklemesi genellikle derleme zamanında (statik bağlama ile) çözülür."],
+    ["Tekli Kalıtım", "Bu metotlar aynı sınıf içinde tanımlanmıştır, kalıtımla ilgili değildir."],
+    ["Soyut Metot", "Bu metotların gövdeleri tanımlanmıştır, soyut değillerdir."]
+  ],
+  answer: 1,
+  summary: "Metod yüklemesi, aynı eylemin farklı veri türleri için nasıl yapılacağını tanımlama kolaylığı sağlar. Programcı, tamsayılar için ayrı, ondalıklı sayılar için ayrı isimler düşünmek yerine, hepsine `topla` diyebilir; derleyici doğru metodu parametrelerin tipine bakarak kendisi seçer."
+},
+{
+  q: "19. Doğrudan örneği (nesnesi) oluşturulamayan, sadece alt sınıflar üretmek için bir şablon olarak kullanılan sınıflara ne ad verilir?",
+  options: [
+    ["Somut Sınıf (Concrete Class)", "Somut sınıfların doğrudan nesneleri oluşturulabilir."],
+    ["Alt Sınıf (Subclass)", "Alt sınıf, başka bir sınıftan türetilen sınıftır ve genellikle somuttur."],
+    ["Soyut Sınıf (Abstract Class)", "Soyut sınıflar, ortak özellikleri bir araya getiren ancak tek başlarına bir anlam ifade etmeyen (nesnesi oluşturulamayan) şablon sınıflardır. Örneğin 'Taşıt' soyut bir sınıf olabilir."],
+    ["Üst Sınıf (Superclass)", "Üst sınıf, kendisinden başka sınıfların türetildiği sınıftır ve soyut olmak zorunda değildir."],
+    ["Dost Sınıf (Friend Class)", "Bu, C++'a özgü bir kavramdır."]
+  ],
+  answer: 2,
+  summary: "Soyut sınıflar, bir hiyerarşinin en tepesinde yer alan genel kavramları temsil eder. Örneğin, bir 'Taşıt' nesnesi anlamsızdır, ancak ondan türetilen 'Otomobil' veya 'Uçak' gibi somut nesneler anlamlıdır. Soyut sınıflar bu somut nesneler için ortak bir temel sağlar."
+},
+{
+  q: "20. Aşağıdakilerden hangisi kalıtımın (inheritance) belirtilen kullanım amaçlarından biri değildir?",
+  options: [
+    ["Özelleşme için kalıtım", "Bu, bir alt sınıfın üst sınıfı daha özel bir hale getirmesidir ve en yaygın kullanımdır."],
+    ["Genişletme için kalıtım", "Bu, bir alt sınıfın üst sınıfa yeni davranışlar eklemesidir."],
+    ["Kısıtlama için kalıtım", "Bu, bir alt sınıfın üst sınıfın bazı davranışlarını kısıtlamasıdır."],
+    ["Birleştirme için kalıtım", "Bu, çoklu kalıtım ile birden çok sınıfın özelliklerini birleştirmektir."],
+    ["Basitleştirme için kalıtım", "Kalıtımın amaçları arasında 'basitleştirme' adıyla bir kategori belirtilmemiştir. Amaç genellikle var olan yapıyı özelleştirmek, genişletmek veya birleştirmektir."]
+  ],
+  answer: 4,
+  summary: "Kalıtım, var olan bir kodu yeniden kullanmak ve genişletmek için çeşitli stratejiler sunar. Bu stratejiler; Özelleşme, Spesifikasyon, Genişletme, Kısıtlama ve Birleştirme olarak sınıflandırılmıştır."
+},
+{
+  q: "21. Tekli kalıtım (single inheritance) ve çoklu kalıtım (multiple inheritance) arasındaki temel fark nedir?",
+  options: [
+    ["Tekli kalıtım Java'da, çoklu kalıtım C++'da bulunur.", "Bu bir sonuçtur, temel farkın tanımı değildir."],
+    ["Tekli kalıtımda bir sınıf birden çok sınıftan, çoklu kalıtımda ise sadece bir sınıftan türer.", "Tam tersi doğrudur."],
+    ["Tekli kalıtımda bir sınıf sadece tek bir üst sınıftan, çoklu kalıtımda ise birden çok üst sınıftan türer.", "Bu, ikisi arasındaki temel tanımsal farktır. Java tekli kalıtımı, C++ ise çoklu kalıtımı destekler."],
+    ["Tekli kalıtım daha karmaşıktır.", "Genellikle çoklu kalıtım daha karmaşıktır."],
+    ["Aralarında bir fark yoktur.", "Aralarında çok önemli bir tasarım felsefesi farkı vardır."]
+  ],
+  answer: 2,
+  summary: "Tekli kalıtım, bir çocuğun sadece bir ebeveyni olabilmesi gibidir (daha basit ve net bir soy ağacı). Çoklu kalıtım ise bir çocuğun birden fazla ebeveynden özellikler alabilmesi gibidir (daha güçlü ama potansiyel olarak daha karmaşık bir soy ağacı)."
+},
+{
+  q: "22. Çoklu kalıtımın (multiple inheritance) neden olabildiği ve bazı dillerin bu özelliği desteklememesinin bir sebebi olan problem nedir?",
+  options: [
+    ["Kod tekrarının artması", "Kalıtımın amacı tam tersine kod tekrarını azaltmaktır."],
+    ["Alt sınıfın, farklı üst sınıflarında bulunan aynı isimli metotlar arasında hangisini kullanacağını bilememesi (belirsizlik).", "Eğer bir alt sınıf, hem 'A' sınıfından hem de 'B' sınıfından kalıtım alıyorsa ve her iki üst sınıfta da `hesapla()` adında bir metot varsa, alt sınıf nesnesi bu metodu çağırdığında hangi versiyonun çalışacağı belirsizleşir. Bu, çoklu kalıtımın en bilinen problemlerindendir."],
+    ["Programların daha yavaş çalışması.", "Bu doğrudan bir neden değildir."],
+    ["Sadece soyut sınıflarla kullanılabilmesi.", "Somut sınıflarla da kullanılabilir."],
+    ["Derleme süresinin çok uzaması.", "Ana sorun derleme süresi değil, dilin anlamsal karmaşıklığıdır."]
+  ],
+  answer: 1,
+  summary: "Çoklu kalıtımın getirdiği 'diamond problem' gibi belirsizlik durumları, dil tasarımını karmaşıklaştırır ve hatalara yol açabilir. Bu nedenle Java ve C# gibi diller, çoklu kalıtıma izin vermek yerine, 'arayüz (interface)' kullanarak benzer bir esnekliği daha güvenli bir şekilde sağlamayı tercih etmiştir."
+},
+{
+  q: "23. Aynı isme sahip, ancak farklı parametre listelerine (sayı veya tip olarak) sahip birden çok metodun aynı sınıf içinde tanımlanması hangi kavrama örnektir?",
+  options: [
+    ["Metod Üzerine Yazma (Method Overriding)", "Üzerine yazmada metot imzası (isim ve parametreler) tamamen aynı olmalıdır."],
+    ["Metod Yüklemesi (Method Overloading)", "`topla(int, int)` ve `topla(double, double)` gibi, aynı `topla` ismine sahip ama farklı parametreler alan metotlar tanımlamak 'metod yüklemesi'dir."],
+    ["Çokyapılılık (Polymorphism)", "Metod yüklemesi, çokyapılılığın bir türüdür (statik çokyapılılık), ancak bu durumun özel adı yüklemedir."],
+    ["Kalıtım (Inheritance)", "Bu metotlar aynı sınıf içinde de tanımlanabilir, kalıtım zorunlu değildir."],
+    ["Kapsülleme (Encapsulation)", "Bu, veri ve metotları bir araya getirmektir."]
+  ],
+  answer: 1,
+  summary: "Metod yüklemesi, aynı eylemin farklı veri türleri için nasıl yapılacağını tanımlama kolaylığı sağlar. Programcı, tamsayılar için ayrı, ondalıklı sayılar için ayrı isimler düşünmek yerine, hepsine `topla` diyebilir; derleyici doğru metodu parametrelerin tipine bakarak kendisi seçer."
+},
+{
+  q: "24. Çokyapılı bir değişken (polymorphic variable) için aşağıdakilerden hangisi doğrudur?",
+  options: [
+    ["Sadece tanımlandığı sınıfın bir nesnesini tutabilir.", "Bu çokyapılı olmayan bir değişkendir."],
+    ["Sadece ilkel veri tiplerini tutabilir.", "Nesneleri tutar."],
+    ["Bir sınıfın nesnesini veya o sınıftan türetilmiş herhangi bir alt sınıfın nesnesini tutabilir.", "Çokyapılılığın gücü budur. `Taşıt` tipinde bir değişken, hem bir `Otomobil` nesnesini hem de bir `Uçak` nesnesini tutabilir."],
+    ["Bellekteki yeri derleme zamanında belirlenir.", "Hangi tipte bir nesne tutacağı çalışma zamanında belli olduğu için, bu tür değişkenler genellikle yığın (heap) bellekte bulunur."],
+    ["Hiçbir zaman bir değere sahip olamaz.", "Bir nesneye referans olarak bir değere sahip olur."]
+  ],
+  answer: 2,
+  summary: "Çokyapılı değişkenler, programlara büyük bir esneklik katar. Bir listenin, içinde hem 'Daire' hem de 'Kare' nesnelerini aynı anda barındırabilmesi ve listedeki her elemana 'alanını hesapla' komutu gönderilebilmesi bu sayede mümkün olur."
+},
+{
+  q: "25. Bir mesaja karşılık olarak hangi metodun çalışacağının, mesajı alan nesnenin çalışma zamanındaki gerçek tipine göre belirlenmesi işlemine ne denir?",
+  options: [
+    ["Statik Bağlama (Static Binding)", "Statik bağlamada hangi metodun çalışacağı derleme zamanında belirlenir. Metod yüklemesi buna bir örnektir."],
+    ["Dinamik Bağlama (Dynamic Binding)", "Çokyapılı bir değişkene gönderilen bir mesaja hangi metodun yanıt vereceğinin, o değişkenin o an tuttuğu nesnenin gerçek tipine göre çalışma zamanında belirlenmesine dinamik bağlama denir. Bu, metod üzerine yazma (overriding) ile birlikte çalışır."],
+    ["Tip Denetimi (Type Checking)", "Bu, tiplerin uyumluluğunu kontrol etme işlemidir."],
+    ["Derleme (Compilation)", "Bu, kodun çevrilme işlemidir."],
+    ["Kalıtım (Inheritance)", "Kalıtım, bu mekanizmanın çalışması için bir altyapı sağlar."]
+  ],
+  answer: 1,
+  summary: "Dinamik bağlama, nesneye yönelik programlamanın 'sihrini' oluşturan mekanizmadır. Kod, `sekil.ciz()` dediğinde, derleme zamanında hangi `ciz` metodunun çalışacağını bilmez. Program çalışırken `sekil` değişkeninin içinde bir `Daire` mi yoksa `Kare` mi olduğuna bakar ve o anki doğru `ciz` metodunu çağırır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
-  <title>Elektronik Ticaret</title>
+  <title>ybs</title>
   <!-- Google Fonts: PT Sans -->
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
   <style>
@@ -27,14 +28,21 @@
       color: #2c3e50;
     }
 
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+	.button-container {
+	padding: 0 16px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 24px;
+	width: 100%;        /* kapsayıcı tüm alana yayılır */
+    max-width: 400px;   /* desktop’ta bu değeri geçmez */
+    box-sizing: border-box;
+    margin-left: auto;  /* ortalamak için */
+    margin-right: auto;
+	  }
 
     .btn {
-      display: inline-block;
+      display: block;
       padding: 15px 30px;
       text-decoration: none;
       background-color: #4285f4;
@@ -42,6 +50,10 @@
       font-size: 1.1rem;
       border-radius: 5px;
       transition: background-color 0.2s ease;
+      width: 100%;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      text-align: center;
     }
 
     .btn:hover {
@@ -50,14 +62,16 @@
   </style>
 </head>
 <body>
-  <h1>Elektronik Ticaret</h1>
   <div class="button-container">
-    <a class="btn" href="et/tests/index.html">Deneme Testleri</a>
-    <a class="btn" href="et/voice-summaries/index.html">Sesli Ünite Özetleri</a>
+    <a class="btn" href="et/tests/index.html">Elektronik Ticaret Deneme Testleri</a>
+    <a class="btn" href="et/voice-summaries/index.html">Elektronik Ticaret Sesli Ünite Özetleri</a>
   </div>
-    <h1>Sistem Modelleme ve Tasarım</h1>
+  <div 
   <div class="button-container">
-    <a class="btn" href="smt/tests/index.html">Deneme Testleri</a>
+    <a class="btn" href="smt/tests/index.html">Sistem Modelleme ve Tasarım Deneme Testleri</a>
+  </div>
+  <div class="button-container">
+    <a class="btn" href="pd/tests/index.html">Programlama Dilleri Deneme Testleri</a>
   </div>
 </body>
 </html>

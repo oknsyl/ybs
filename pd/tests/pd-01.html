@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 1</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 1</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Tarihteki ilk bilgisayar programcısı olarak kabul edilen ve adına özel bir programlama dili geliştirilen matematikçi kimdir?",
+      options: [
+        ["Charles Babbage", "Charles Babbage, 'Fark Makinesi' ve 'Analitik Makine' gibi icatlarıyla modern bilgisayarların babası sayılsa da ilk programcı olarak anılmaz."],
+        ["Blaise Pascal", "Blaise Pascal, 'Pascalline' adını verdiği mekanik hesap makinesini icat eden önemli bir matematikçidir, ancak ilk programcı değildir."],
+        ["Augusta Ada Lovelace", "Charles Babbage ile birlikte Analitik Makine üzerine çalışan, programlamanın temel kavramlarına dair notlar bırakan ve bu nedenle ilk programcı olarak kabul edilen kişidir."],
+        ["Gottfried Wilhelm Leibniz", "Leibniz, Pascalline'ı geliştirerek daha fazla fonksiyon ekleyen 'Leibniz Çarkı'nı icat etmiştir fakat ilk programcı değildir."],
+        ["Herman Hollerith", "Herman Hollerith, delikli kartlarla veri saklamayı sağlayan 'Tablolama Makinesi'ni geliştirmiştir, programcı olarak anılmaz."]
+      ],
+      answer: 2,
+      summary: "Augusta Ada Lovelace, Babbage'ın Analitik Makinesi üzerine yazdığı notlarla modern programlama yaklaşımlarına ışık tuttuğu için tarihteki ilk bilgisayar programcısı olarak kabul edilir. ADA programlama dili de kendisine ithafen isimlendirilmiştir."
+    },
+    {
+      q: "2. Gottfried Leibniz tarafından icat edilen 'Leibniz Çarkı'nın, Blaise Pascal'ın 'Pascalline' adlı makinesine göre temel üstünlüğü neydi?",
+      options: [
+        ["Buhar gücüyle çalışması", "Buhar gücüyle çalışma fikri Charles Babbage'ın 'Analitik Makine' projesiyle ilişkilidir."],
+        ["Sadece 0 ve 1'leri kullanması", "Sadece 0 ve 1'lerden oluşan ikili sayı sistemi, makine dilinde programlama ile ilgili bir kavramdır."],
+        ["Toplama ve çıkarmanın yanı sıra çarpma, bölme ve karekök alma yapabilmesi", "Leibniz Çarkı, Pascalline'ın temel fonksiyonlarını geliştirerek çarpma, bölme ve karekök gibi daha karmaşık işlemleri de yapabilir hale getirmiştir."],
+        ["Delikli kartlarla veri saklayabilmesi", "Delikli kartlarla veri saklama teknolojisi Herman Hollerith'in 'Tablolama Makinesi' ile ilişkilidir."],
+        ["Programlanabilir olması", "Programlanabilirlik kavramı daha çok Charles Babbage'ın Analitik Makinesi ve Ada Lovelace'ın çalışmalarıyla gündeme gelmiştir."]
+      ],
+      answer: 2,
+      summary: "Leibniz Çarkı, Pascalline'ın sadece toplama ve çıkarma yapabilen fonksiyonlarını geliştirmiş; bunlara ek olarak bölme, çarpma ve karekök alma işlemlerini de mekanik olarak yapabilme yeteneği kazandırmıştır."
+    },
+    {
+      q: "3. Bir programlama dilinin 'yüksek seviyeli' olarak nitelendirilmesinin temel ölçütü nedir?",
+      options: [
+        ["Sadece uzman programcılar tarafından kullanılabilmesi", "Yüksek seviyeli diller genellikle öğrenmesi daha kolay olduğu için daha geniş bir kitleye hitap eder."],
+        ["Makine koduna (0 ve 1'lere) çok yakın olması", "Makine koduna yakınlık, 'düşük seviyeli' dillerin bir özelliğidir."],
+        ["Sadece bilimsel hesaplamalar için kullanılması", "Yüksek seviyeli diller bilimsel, ticari, web gibi çok çeşitli alanlarda kullanılır."],
+        ["İnsanların konuştuğu dile daha yakın olması", "Bir dil, konuşma diline ne kadar yakınsa o kadar 'yüksek seviyeli' olarak kabul edilir."],
+        ["Derleme işleminin çok hızlı olması", "Derleme hızı dilin seviyesinden çok derleyicinin verimliliğine ve kodun karmaşıklığına bağlıdır, seviye için bir ölçüt değildir."]
+      ],
+      answer: 3,
+      summary: "Programlama dilleri, insan konuşma dilinden uzaklaştıkça 'düşük seviyeli', yaklaştıkça ise 'yüksek seviyeli' olarak nitelendirilir."
+    },
+    {
+      q: "4. Aşağıdaki dillerden hangisi, makine koduna en yakın olması sebebiyle 'en düşük seviyeli programlama dili' olarak kabul edilir?",
+      options: [
+        ["C", "C, güçlü ve esnek bir dil olmasına rağmen Assembly'ye göre daha yüksek seviyeli bir dildir."],
+        ["Pascal", "Pascal, yapısal programlama özellikleriyle bilinen ve Assembly'den daha yüksek seviyeli bir dildir."],
+        ["Java", "Java, internet programlama dilleri arasında sayılan, oldukça yüksek seviyeli bir dildir."],
+        ["Assembly", "Assembly, makine dilindeki 0 ve 1'lerle kodlama zorunluluğunu ortadan kaldıran ilk sözdizimsel dil olmasına rağmen, günümüz dillerine göre en düşük seviyeli olarak anılır."],
+        ["BASIC", "BASIC, Assembly'ye göre oldukça yüksek seviyeli ve öğrenmesi basit yapısıyla popüler olmuş bir dildir."]
+      ],
+      answer: 3,
+      summary: "Programlama dilleri hiyerarşisinde Assembly, makine dilinin hemen üzerinde yer alır ve donanıma en yakın dil olduğu için en düşük seviyeli programlama dili olarak kabul edilir."
+    },
+    {
+      q: "5. Bilgisayar programcılığı mesleği ile ilgili yapılan sınıflandırmada aşağıdakilerden hangisi yer almaz?",
+      options: [
+        ["Uygulama Programcıları", "Bu, son kullanıcıya yönelik yazılımlar geliştiren ana gruplardan biridir."],
+        ["Sistem Programcıları", "Bu, işletim sistemleri gibi temel yazılımları geliştiren ana gruplardan biridir."],
+        ["Veritabanı Programcıları", "Bu bir uzmanlık alanı olsa da, temel dört ana sınıflandırma arasında doğrudan bu isimle bir grup belirtilmemiştir."],
+        ["Oyun Programcıları", "Bu, hızla büyüyen ve kendine has uzmanlıklar gerektiren ana gruplardan biridir."],
+        ["Web Programcıları", "Bu, internet teknolojileri üzerine çalışan ana gruplardan biridir."]
+      ],
+      answer: 2,
+      summary: "Bilgisayar programcıları meslek olarak dört ana grup altında sınıflandırılmıştır: Uygulama Programcıları, Sistem Programcıları, Web Programcıları ve Oyun Programcıları."
+    },
+    {
+      q: "6. Hangi programcı grubu, geliştirdikleri yazılımlarda maksimum performans ve verimlilik elde etmek amacıyla öncelikli olarak düşük seviyeli dilleri kullanır?",
+      options: [
+        ["Uygulama Programcıları", "Uygulama programcıları genellikle son kullanıcıya yönelik işlerde çalıştıkları için yüksek seviyeli dilleri tercih ederler."],
+        ["Web Programcıları", "Web programcıları genellikle HTML gibi betik dilleri ve PHP, Java gibi yüksek seviyeli dilleri kullanırlar."],
+        ["Sistem Programcıları", "Sistem programcıları, işletim sistemi gibi temel yazılımlarda milisaniyelerin bile önemli olması nedeniyle olabildiğince düşük seviyeli dilleri kullanırlar."],
+        ["Veri Analistleri", "Bu bir programcı sınıflandırması değildir ve genellikle veri analizi için Python gibi yüksek seviyeli dilleri kullanırlar."],
+        ["Son Kullanıcılar", "Son kullanıcılar programcı değil, yazılımları kullanan kişilerdir."]
+      ],
+      answer: 2,
+      summary: "Sistem programcıları, doğrudan donanımla etkileşen ve performansı kritik olan işletim sistemi, sürücü gibi yazılımlar geliştirdikleri için düşük seviyeli dilleri kullanmak zorundadırlar. Oyun programcıları için de benzer bir durum geçerlidir."
+    },
+    {
+      q: "7. Bilgisayar programlama tarihçesinin başlangıcı olarak kabul edilen 'otomatik hesaplama mekanizması' fikri hangi döneme kadar dayanmaktadır?",
+      options: [
+        ["M.S. 1950'ler", "Bu dönem, bilgisayar teknolojisinin geliştiği ancak fikrin kökeninin çok daha eskiye dayandığı bir dönemdir."],
+        ["M.S. 1642", "Bu tarih, Blaise Pascal'ın 'Pascalline'ı icat ettiği tarihtir, ancak fikir daha eskidir."],
+        ["M.Ö. 1000", "Hesaplama işlemini hızlandırmak için otomatik bir mekanizma kullanma fikrinin kökeni M.Ö. 1000'li yıllara kadar dayanmaktadır."],
+        ["M.S. 1890", "Bu tarih, Herman Hollerith'in nüfus sayımında makinesini kullandığı tarihtir."],
+        ["M.S. 1970'ler", "Bu dönem, C gibi dillerin geliştirildiği programlama dillerinin hızla evrimleştiği bir dönemdir."]
+      ],
+      answer: 2,
+      summary: "İnsanoğlunun artan 'hesap yapma' gereksinimini karşılamak için otomatik bir mekanizma kullanma fikrinin M.Ö. 1000 yıllarına kadar uzandığı ifade edilmektedir."
+    },
+    {
+      q: "8. Aşağıdaki mucit ve icat eşleştirmelerinden hangisi doğrudur?",
+      options: [
+        ["Charles Babbage - Leibniz Çarkı", "Yanlış. Leibniz Çarkı, Gottfried Wilhelm Leibniz tarafından icat edilmiştir. Babbage, Fark ve Analitik Makineleri tasarlamıştır."],
+        ["Herman Hollerith - Pascalline", "Yanlış. Pascalline, Blaise Pascal tarafından icat edilmiştir. Hollerith, Tablolama Makinesi'ni geliştirmiştir."],
+        ["Blaise Pascal - Pascalline", "Doğru. Fransız matematikçi Blaise Pascal, 1642 yılında 'Pascalline' adını verdiği mekanik hesap makinesini icat etmiştir."],
+        ["Ada Lovelace - Fark Makinesi", "Yanlış. Fark Makinesi, Charles Babbage tarafından tasarlanmıştır. Ada Lovelace, bu makinenin programlanması üzerine çalışmıştır."],
+        ["Bill Gates - C Programlama Dili", "Yanlış. C dili, Bell Laboratuvarlarında Dennis Richer ve David Kerningham tarafından geliştirilmiştir. Bill Gates, BASIC dilinin gelişimine katkıda bulunmuştur."]
+      ],
+      answer: 2,
+      summary: "Sunulan mucit ve icat eşleştirmeleri arasında doğru olan, 1642'de Blaise Pascal'ın Pascalline'ı icat etmiş olmasıdır."
+    },
+    {
+      q: "9. Özellikle gömülü sistemlerde (embedded systems) başarılı uygulamaları olan ve adını tarihteki ilk bilgisayar programcısından alan programlama dili hangisidir?",
+      options: [
+        ["Pascal", "Pascal dili adını mucit Blaise Pascal'dan alır, Ada Lovelace'dan değil."],
+        ["C", "C dili, ismini belirli bir kişiden almamıştır ve Bell laboratuvarlarında geliştirilmiştir."],
+        ["BASIC", "BASIC, belirli bir kişiye atfen isimlendirilmemiştir."],
+        ["ADA", "ADA programlama dili, Augusta Ada Lovelace'a ithafen bu ismi almıştır ve özellikle gömülü sistemlerde yaygın olarak kullanılır."],
+        ["Assembly", "Assembly, belirli bir kişiye atfen isimlendirilmemiştir ve en düşük seviyeli dil olarak anılır."]
+      ],
+      answer: 3,
+      summary: "1980'lerde geliştirilmeye başlanan ADA programlama dili, adını Augusta Ada Lovelace'dan alır ve geniş bir mekanik veya elektronik sistem içinde özel bir fonksiyonu olan gömülü sistemlerde oldukça başarılıdır."
+    },
+    {
+      q: "10. Hangi programcı grubu, genellikle son kullanıcılar ile doğrudan temas kurmaz ancak uygulama programcıları ve diğer teknik personel ile sürekli iletişim halindedir?",
+      options: [
+        ["Uygulama Programcıları", "Uygulama programcıları, tam tersine, son kullanıcıların ihtiyaçlarını anlamak için onlarla sürekli temas halinde olabilirler."],
+        ["Sistem Programcıları", "Sistem programcıları, son kullanıcılar ile temas kurmazlar fakat geliştirdikleri sistemleri kullanacak olan uygulama programcıları gibi teknik personelle iletişimde olurlar."],
+        ["Oyun Programcıları", "Oyun programcılarının son kullanıcılarla (oyuncularla) test ve geri bildirim süreçlerinde temas kurması yaygındır."],
+        ["Web Programcıları", "Web programcıları, bir projenin gereksinimlerine göre müşteri veya son kullanıcılarla doğrudan iletişim kurabilir."],
+        ["Proje Yöneticileri", "Bu bir programcı grubu değildir, ancak tüm gruplar ve son kullanıcılarla iletişim kuran bir roldür."]
+      ],
+      answer: 1,
+      summary: "Sistem programcılarının görevi, son kullanıcıya yönelik uygulamalar değil, temel sistem yazılımlarıdır. Bu nedenle son kullanıcılarla temasları olmaz, ancak diğer teknik personelle sürekli iletişim halinde olmaları gerekir."
+    },
+	{
+      q: "11. 'Assembly' programlama dilinin geliştirilmesinin temel nedeni aşağıdakilerden hangisidir?",
+      options: [
+        ["İnternet üzerinde çalışan programlar yazmak", "İnternet programcılığı çok daha sonra Java, PHP gibi dillerle ortaya çıkmıştır."],
+        ["Makine dilinde (sadece 0 ve 1'ler) programlama yapmanın zorluğunu ortadan kaldırmak", "Assembly, sadece 0 ve 1 rakamlarından oluşan makine dilinde programlamanın gerektirdiği zorlukları ortadan kaldıran ilk sözdizimsel dil olarak kabul edilir."],
+        ["Görsel arayüzler tasarlamayı kolaylaştırmak", "Görsel programlama, Visual Basic gibi dillerle ortaya çıkan daha sonraki bir kuşaktır."],
+        ["Nesne yönelimli programlama yapabilmek", "Nesne yönelimli programlama (OOP), daha sonraki yıllarda gelişen bir programlama paradigmasıdır."],
+        ["BASIC diline bir alternatif oluşturmak", "Assembly, BASIC'ten çok daha önce geliştirilmiş ve ondan daha düşük seviyeli bir dildir."]
+      ],
+      answer: 1,
+      summary: "Programlamanın evriminde, sadece 0 ve 1'lerden oluşan makine dilinde kod yazmanın zorluğu, daha anlaşılır komutlar içeren ilk sözdizimsel dil olan Assembly'nin geliştirilmesine yol açmıştır."
+    },
+    {
+      q: "12. Charles Babbage tarafından tasarlanan ancak hayattayken yapımı tamamlanamayan, buharla otomatik çalışması ve çok fonksiyonlu olması planlanan makinenin adı nedir?",
+      options: [
+        ["Pascalline", "Bu makine Blaise Pascal tarafından icat edilmiştir."],
+        ["Leibniz Çarkı", "Bu makine Gottfried Wilhelm Leibniz tarafından icat edilmiştir."],
+        ["Tablolama Makinesi", "Bu makine Herman Hollerith tarafından geliştirilmiştir."],
+        ["Analitik Makine", "Babbage, 'Fark Makinesi'nden sonra buhar gücüyle çalışacak ve daha fazla fonksiyona sahip olacak 'Analitik Makine' projesi üzerinde çalışmıştır."],
+        ["Abaküs", "Abaküs, ilk mekanik hesaplayıcı olarak kabul edilir ve antik çağlara dayanır."]
+      ],
+      answer: 3,
+      summary: "Charles Babbage, 'Fark Makinesi' adlı icadından sonra, buhar gücüyle çalışacak ve daha gelişmiş fonksiyonlara sahip olacak 'Analitik Makine' adını verdiği bir proje üzerinde çalışmaya başlamıştır."
+    },
+    {
+      q: "13. 'Son Kullanıcı' için kelime işlemci, tablolama veya ihtiyaca yönelik özel sipariş yazılımı gibi uygulamalar geliştiren programcı grubu hangisidir?",
+      options: [
+        ["Sistem Programcıları", "Sistem programcıları, son kullanıcıya yönelik uygulamalar yerine işletim sistemi gibi temel yazılımlarla ilgilenirler."],
+        ["Uygulama Programcıları", "'Son Kullanıcı' için ihtiyaç olan uygulamaları geliştirmek üzere görev alan programcılar uygulama programcılarıdır."],
+        ["Web Programcıları", "Web programcıları, web siteleri ve web tabanlı uygulamalar geliştirirler."],
+        ["Oyun Programcıları", "Oyun programcıları, eğlence sektörüne yönelik ticari bilgisayar oyunları geliştirirler."],
+        ["Donanım Mühendisleri", "Bu grup, yazılımdan çok bilgisayarın fiziksel bileşenleriyle ilgilenir."]
+      ],
+      answer: 1,
+      summary: "Uygulama programcıları, herkesin kullanabileceği genel yazılımları veya belirli ihtiyaçlara yönelik (sipariş yazılımı gibi) özel programları 'Son Kullanıcı' için geliştirirler."
+    },
+    {
+      q: "14. Web sitelerinin oluşturulmasında rol alan ve sunucudan kullanıcı bilgisayarına HTTP protokolü ile aktarılan sayfaları kodlayan temel betik (işaretleme) dili hangisidir?",
+      options: [
+        ["Java", "Java, web sitelerine dinamiklik kazandırmak için kullanılabilen yüksek seviyeli bir dildir, temel işaretleme dili değildir."],
+        ["C++", "C++, genellikle sistem ve uygulama programlamada kullanılan bir dildir, web sayfalarının temel dili değildir."],
+        ["HTML", "HTML (Hyper Text Markup Language), web sitelerinin oluşturulmasında rol alan ve HTTP protokolü ile aktarılan temel betik (işaretleme) dilidir."],
+        ["Assembly", "Assembly, en düşük seviyeli dildir ve web programlama için kullanılmaz."],
+        ["SQL", "SQL, veritabanlarını yönetmek için kullanılan bir sorgulama dilidir, web sayfası kodlama dili değildir."]
+      ],
+      answer: 2,
+      summary: "HTML, 'Betik diller' grubuna giren ve HTTP protokolü aracılığıyla tarayıcıların ortak olarak algıladığı sayfaları kodlamak için kullanılan temel web programlama dilidir."
+    },
+    {
+      q: "15. Pascal programlama dilinin BASIC ve türevlerine karşı üstünlük kurarak popüler olmasını sağlayan en önemli özelliği neydi?",
+      options: [
+        ["Görsel bir arayüze sahip olması", "Görsel programlama dilleri Pascal'dan sonraki bir döneme aittir."],
+        ["Nesne yönelimli olması", "Pascal'ın temel gücü nesne yönelimli olmasından değil, yapısal programlama özelliklerinden gelir."],
+        ["Sahip olduğu yapısal programlama özellikleri", "Pascal, sahip olduğu yapısal programlama özellikleri ve öğrenilmesinin kolay olması sayesinde uzun süre popülerliğini korumuştur."],
+        ["Sadece gömülü sistemlerde çalışması", "Gömülü sistemlerdeki başarısıyla bilinen dil ADA'dır."],
+        ["Bill Gates tarafından geliştirilmiş olması", "Bill Gates, Pascal'ı değil, BASIC dilinin gelişimini desteklemiştir."]
+      ],
+      answer: 2,
+      summary: "Pascal, sahip olduğu yapısal programlama özellikleri sayesinde BASIC'in yerini almış ve hem yetenekli hem de öğrenilmesi kolay bir dil olarak uzun süre popüler kalmıştır."
+    },
+    {
+      q: "16. Bilgisayarın atası olarak kabul edilen ve ilk kez Çinliler tarafından kullanıldığı düşünülen mekanik hesaplayıcı aşağıdakilerden hangisidir?",
+      options: [
+        ["Pascalline", "Pascalline, 1642'de icat edilen ilk ciddi hesap makinesi olmasına rağmen, bilgisayarın atası olarak daha eskiye dayanan bir icat vardır."],
+        ["Fark Makinesi", "Fark Makinesi, Charles Babbage tarafından 19. yüzyılda tasarlanmış çok daha gelişmiş bir makinedir."],
+        ["Leibniz Çarkı", "Leibniz Çarkı, 1671'de Pascalline'ı geliştirmek üzere icat edilmiştir."],
+        ["Analitik Makine", "Analitik Makine, programlanabilir bilgisayar fikrinin temelini oluşturan, Babbage tarafından tasarlanmış bir makinedir."],
+        ["Abaküs", "İlk kez Çinlilerin kullandığı kabul edilen Abaküs, ilk mekanik hesaplayıcı olarak görülür ve bilgisayarın atası olarak kabul edilebilir."]
+      ],
+      answer: 4,
+      summary: "Bilgisayar tarihçesi, hesap yapma amacıyla icat edilen makinelerle başlar ve ilk mekanik hesaplayıcı olarak kabul edilen Abaküs, bilgisayarın atası olarak görülmektedir."
+    },
+    {
+      q: "17. Hangi iki programcı grubunun, geliştirdikleri yazılımların olabildiğince hızlı ve etkili olması için düşük seviyeli programlama tekniklerini kullandıkları özellikle belirtilmiştir?",
+      options: [
+        ["Uygulama ve Web Programcıları", "Uygulama programcıları genellikle yüksek seviyeli diller, web programcıları ise betik ve yüksek seviyeli diller kullanır."],
+        ["Sistem ve Oyun Programcıları", "Hem sistem programcılarının hem de oyun programcılarının performans zorunlulukları nedeniyle düşük seviyeli programlama tekniklerini kullandıkları ifade edilmiştir."],
+        ["Web ve Oyun Programcıları", "Web programcıları genellikle düşük seviyeli diller kullanmazlar."],
+        ["Sistem ve Uygulama Programcıları", "Uygulama programcıları genellikle düşük seviyeli diller kullanmazlar."],
+        ["Veri Bilimcileri ve Web Programcıları", "Bu gruplar genellikle Python, R, Java gibi yüksek seviyeli dilleri tercih ederler."]
+      ],
+      answer: 1,
+      summary: "Hem sistem yazılımlarındaki hem de oyunlardaki hız ve etkinlik ihtiyacının bir zorunluluk olduğu, bu nedenle bu iki alandaki programcıların düşük seviyeli teknikleri kullandığı vurgulanmıştır."
+    },
+    {
+      q: "18. Pascal ve C gibi yapısal dillerin ardından ortaya çıkan ve Microsoft'un 'Visual Basic' dili ile başarılı bir örneğini sunduğu yeni kuşak programlama yaklaşımı hangisidir?",
+      options: [
+        ["İnternet Programlama", "İnternet programlama daha çok Java, PHP gibi dillerle anılır ve daha sonraki bir gelişmedir."],
+        ["Görsel Programlama", "Yapısal dillerin ardından, yeni bir kuşak olarak görsel programlama dilleri geliştirilmiş ve Visual Basic bunun en başarılı örneklerinden biri olmuştur."],
+        ["Düşük Seviyeli Programlama", "Bu, Assembly gibi dilleri tanımlar ve yapısal dillerden daha önceki bir döneme aittir."],
+        ["Makine Dilinde Programlama", "Bu, programlamanın en ilkel halidir ve yapısal dillerden çok öncedir."],
+        ["Betik Programlama", "Bu, HTML gibi dilleri tanımlar ve genellikle web programcılığı ile ilişkilidir."]
+      ],
+      answer: 1,
+      summary: "Pascal ve C gibi yapısal dillerden sonraki yeni kuşak, 'görsel programlama dilleri' olarak adlandırılmıştır. Microsoft tarafından geliştirilen 'Visual Basic', bu yaklaşımın en başarılı örneklerinden biridir."
+    },
+    {
+      q: "19. Herman Hollerith tarafından geliştirilen 'Tablolama Makinesi', 1890 yılında hangi önemli amaç için kullanılmıştır?",
+      options: [
+        ["İlk bilgisayar oyununu çalıştırmak için", "Bilgisayar oyunları çok daha sonraki bir teknolojidir."],
+        ["Pascal dilini derlemek için", "Bu makine, program derleme yeteneğine sahip değildi."],
+        ["Ülke çapında gerçekleştirilen nüfus sayımının verilerini işlemek için", "İstatistikçi Herman Hollerith, 1890 yılındaki nüfus sayımında kendi geliştirdiği 'Tablolama Makinesi'ni kullanmıştır."],
+        ["Buhar gücünü elektriğe çevirmek için", "Bu makinenin amacı hesaplama ve veri işlemektir, enerji üretimi değil."],
+        ["Lord Byron'un şiirlerini analiz etmek için", "Bu, Ada Lovelace'in babasıyla ilgili bir çeldiricidir ve makinenin kullanım amacı değildir."]
+      ],
+      answer: 2,
+      summary: "İstatistikçi Herman Hollerith, delikli kart teknolojisini kullanan 'Tablolama Makinesi'ni 1890 yılındaki ülke çapında yapılan nüfus sayımında veri işlemek amacıyla başarılı bir şekilde kullanmıştır."
+    },
+    {
+  q: "20. Bir programlama dilinin uygulama alanı olarak belirtilen 'gömülü sistem (embedded system)' kavramı, aşağıdakilerden hangisini doğru olarak tanımlamaktadır?",
+  options: [
+    ["Sadece internet tarayıcıları üzerinde çalışan web uygulamaları", "Bu tanım web uygulamalarını ifade eder, gömülü sistemleri değil."],
+    ["Kullanıcının bilgisayarına kurulan ve bağımsız çalışan masaüstü yazılımları", "Bu, genel amaçlı bir masaüstü uygulamasını tanımlar. Gömülü sistemler genellikle daha büyük bir sistemin parçasıdır."],
+    ["Daha geniş bir mekanik veya elektronik sistem içinde özel bir fonksiyonu olan bilgisayar sistemi", "Bu, gömülü sistemlerin doğru tanımıdır. Bir otomobilin fren sistemi veya bir çamaşır makinesinin kontrol paneli gibi, daha büyük bir sistem içinde belirli bir görevi yerine getirirler."],
+    ["Bilgisayarın tüm donanım kaynaklarını yöneten genel amaçlı işletim sistemleri", "Bu, Windows veya Linux gibi genel amaçlı işletim sistemlerinin tanımıdır, özel amaçlı bir gömülü sistemin değil."],
+    ["İnsan benzeri zeka ve öğrenme yeteneklerine sahip yapay zeka modelleri", "Bu, yapay zeka alanına ait bir tanımdır."]
+  ],
+  answer: 2,
+  summary: "Gömülü sistemler, çamaşır makinelerinden otomotiv kontrol ünitelerine kadar daha büyük bir sistemin parçası olarak belirli bir görevi yerine getiren özel amaçlı bilgisayar sistemleridir. ADA dili bu alandaki uygulamalarıyla bilinir."
+},
+	{
+      q: "21. Assembly dilinde yazılan kodları makine diline (0 ve 1'lere) çeviren özel araca ne ad verilir?",
+      options: [
+        ["Compiler (Derleyici)", "Derleyici, genellikle yüksek seviyeli dilleri doğrudan çalıştırılabilir makine koduna çeviren daha genel bir araçtır."],
+        ["Interpreter (Yorumlayıcı)", "Yorumlayıcı, kodları satır satır okuyup anında çalıştıran bir araçtır, Assembly için kullanılan spesifik araç bu değildir."],
+        ["Debugger (Hata Ayıklayıcı)", "Hata ayıklayıcı, bir programdaki hataları bulmak ve düzeltmek için kullanılan bir araçtır."],
+        ["Assembler", "Assembly dilinde yazılan kodları makine diline çevirmek için 'assembler' adı verilen özel bir araç kullanılır."],
+        ["Linker (Bağlayıcı)", "Bağlayıcı, farklı kod parçalarını ve kütüphaneleri birleştirerek tek bir çalıştırılabilir dosya oluşturan bir araçtır."]
+      ],
+      answer: 3,
+      summary: "Assembly dilini makine diline dönüştürme işlemi, bu iş için özel olarak tasarlanmış 'assembler' adı verilen bir yazılım aracı ile gerçekleştirilir."
+    },
+    {
+      q: "22. 1969-1973 yılları arasında Bell Laboratuvarlarında geliştirilen ve daha sonraki birçok programlama diline esin kaynağı olan yapısal dil hangisidir?",
+      options: [
+        ["Pascal", "Pascal, yapısal bir dil olmasına rağmen bu tanım C dili için kullanılmaktadır."],
+        ["BASIC", "BASIC, daha basit ve öğrenmesi kolay bir dildir, ancak C kadar etkili bir esin kaynağı olmamıştır."],
+        ["C", "Dennis Richer ve David Kerningham tarafından Bell Laboratuvarlarında geliştirilen C programlama dili, daha sonra ortaya çıkan birçok dile esin kaynağı olmasıyla bilinir."],
+        ["Java", "Java, C ve C++'dan etkilenmiş daha modern bir dildir, ancak bahsedilen dönemde geliştirilmemiştir."],
+        ["Visual Basic", "Visual Basic, Microsoft tarafından geliştirilen görsel bir programlama dilidir ve daha sonraki bir döneme aittir."]
+      ],
+      answer: 2,
+      summary: "1970'li yılların başında Bell Laboratuvarlarında geliştirilen C programlama dili, programlama dünyasında bir dönüm noktası olmuş ve kendisinden sonra gelen birçok dile temel oluşturmuştur."
+    },
+    {
+      q: "23. Bir şirketin, çalışanlarının kullanması amacıyla özel bir fatura kesme ve stok takip yazılımı geliştirmesi için hangi tür programcıya ihtiyacı vardır?",
+      options: [
+        ["Oyun Programcısı", "Oyun programcıları eğlence sektörüne yönelik oyunlar geliştirir, bu görev onların uzmanlık alanı değildir."],
+        ["Sistem Programcısı", "Sistem programcıları işletim sistemi gibi temel altyapı yazılımları geliştirir, son kullanıcı uygulamaları değil."],
+        ["Uygulama Programcısı", "Belirli bir ihtiyaca yönelik (fatura, stok takibi vb.) son kullanıcıya özel programlar geliştirmek, uygulama programcılarının temel görevidir."],
+        ["Web Programcısı", "Eğer bu yazılım web tabanlı olacaksa bir web programcısına da ihtiyaç duyulabilir, ancak temel rol uygulama geliştirmektir."],
+        ["Donanım Programcısı", "Donanım programcıları, fiziksel cihazların yazılımları üzerinde çalışır, bu tür bir ticari uygulama onların alanı değildir."]
+      ],
+      answer: 2,
+      summary: "Son kullanıcıların belirli bir ihtiyacını karşılamaya yönelik özel yazılımlar (sipariş, fatura, stok vb.) geliştirmek, uygulama programcılarının ana sorumluluk alanına girer."
+    },
+    {
+      q: "24. Microsoft tarafından geliştirilen 'Visual Basic' dilinin evrimleşerek, içinde başka dilleri de barındıran bir 'görsel programlama çerçevesi' haline gelmiş olan ürünün adı nedir?",
+      options: [
+        ["Visual Studio", "Visual Basic'in daha da geliştirilerek farklı dilleri de içeren bir görsel programlama çerçevesi haline getirilmiş haline 'Visual Studio' adı verilmiştir."],
+        ["VS Code", "Visual Studio Code, daha hafif ve genel amaçlı bir kod editörüdür, Visual Studio'nun doğrudan devamı olan tam bir çerçeve (framework) değildir."],
+        [".NET Framework", ".NET, Visual Studio'nun kullandığı temel bir yazılım geliştirme platformudur, ancak ürünün kendisi Visual Studio'dur."],
+        ["Microsoft Office", "Microsoft Office, kelime işlemci ve tablolama gibi ofis uygulamaları içeren bir pakettir."],
+        ["Windows OS", "Windows, bir işletim sistemidir, bir programlama çerçevesi değildir."]
+      ],
+      answer: 0,
+      summary: "Visual Basic, zamanla geliştirilerek içerisinde başka programlama dillerini de barındıran ve kullanıcılara bir görsel programlama çerçevesi sunan 'Visual Studio' adını almıştır."
+    },
+    {
+      q: "25. Bilgisayar ve programlama tarihçesinin en başından itibaren, otomatik hesaplayıcıların icadının arkasındaki temel itici güç ne olarak belirtilmiştir?",
+      options: [
+        ["Oyun oynama ve eğlence ihtiyacı", "Bu, modern bilgisayar endüstrisinin önemli bir parçası olsa da, ilk icatların arkasındaki temel neden değildir."],
+        ["Artan 'hesap yapma' gereksinimi", "İnsanoğlunun zihinsel yöntemlerle karşılayamadığı, gün geçtikçe artan 'hesap yapma' gereksinimi, ilk makinelerin icadının arkasındaki temel güçtür."],
+        ["Veri depolama ve saklama ihtiyacı", "Veri depolama önemli bir ihtiyaç olsa da, hesap yapma gereksiniminin bir sonucu olarak ortaya çıkmıştır."],
+        ["Ülkeler arası iletişim kurma isteği", "İletişim, telefon ve daha sonra internet gibi teknolojilerin temel amacıdır, ilk hesaplayıcıların değil."],
+        ["Sanatsal ifade ve tasarım yapma arzusu", "Bu, grafik ve tasarım yazılımlarının bir amacıdır, ilk hesaplayıcıların değil."]
+      ],
+      answer: 1,
+      summary: "İnsanoğlunun zihinsel veya elle yapılan hesaplamalarda yetersiz kalması ve artan hesap yapma ihtiyacı, Abaküs'ten başlayarak tüm mekanik hesaplayıcıların icadının arkasındaki ana motivasyon olmuştur."
+    }
+];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>

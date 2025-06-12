@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Programlama Dilleri - 6</title>
+  <style>
+    body { font-family: 'PT Sans', 'Trebuchet MS', sans-serif; background: #f9f9f9; padding: 20px; color: #333; }
+    h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    .question-container { background: #fff; padding: 20px; margin-bottom: 25px; border-left: 5px solid #007BFF; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; }
+    .option { padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; transition: background-color 0.2s ease-in-out; }
+    .option:hover { background: #e9ecef; }
+    .option.selected { background-color: #cce5ff; border-color: #b8daff; }
+    .feedback { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; }
+    .correct { background: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .incorrect { background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+    .summary { display: none; background: #fff3cd; padding: 12px; margin-top: 10px; border-left: 5px solid #ffc107; border-radius: 4px; color: #856404; }
+    button#submit-all {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    button#submit-all:hover {
+        background-color: #218838;
+    }
+    .results { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px; text-align: center;}
+  </style>
+</head>
+<body>
+<h1>Programlama Dilleri - 6</h1>
+<div id="quiz">
+  </div>
+<button id="submit-all" onclick="showResults()">Tüm Testi Bitir ve Sonuçları Gör</button>
+<div id="results-summary" class="results" style="display:none;">
+    <h2>Test Sonucu</h2>
+    <p>Toplam Soru: <span id="total-questions"></span></p>
+    <p>Doğru Cevap Sayısı: <span id="correct-answers"></span></p>
+    <p>Başarı Yüzdesi: <span id="score-percentage"></span>%</p>
+</div>
+
+<script>
+  const questions = [
+{
+  q: "1. Bir işlemcinin anlamının, işlenenlerinin sayısına ve tipine bağlı olarak belirlenmesi durumuna ne ad verilir?",
+  options: [
+    ["İşlemci Önceliği (Operator Precedence)", "Bu, işlem sırasını belirleyen bir kuraldır."],
+    ["İşlemci İlişkiselliği (Operator Associativity)", "Bu, aynı öncelikli işlemcilerin işlenme yönünü belirleyen kuraldır."],
+    ["İşlemci Yüklemesi (Operator Overloading)", "Bir işlemcinin, işlenenlerinin tipine göre farklı görevler yapması (örn: '+' nın hem sayıları toplaması hem de metinleri birleştirmesi) işlemci yüklemesidir."],
+    ["İşlemci Ataması (Operator Assignment)", "Bu, atama işlemiyle ilgili bir kavramdır."],
+    ["İşlemci Soyutlaması (Operator Abstraction)", "Bu genel bir programlama kavramıdır, bu duruma verilen özel isim değildir."]
+  ],
+  answer: 2,
+  summary: "İşlemci yüklemesi, `+` gibi tek bir sembolün birden çok anlama gelmesini sağlar. Bu, dilin ifade yeteneğini artırır ancak bazen hangi işlemin yapıldığının anında anlaşılamaması nedeniyle kodun okunabilirliğini ve güvenilirliğini azaltabilir."
+},
+{
+  q: "2. `NOT`, `AND` ve `OR` mantıksal işlemcileri için çoğu dilde geçerli olan öncelik sıralaması aşağıdakilerden hangisidir?",
+  options: [
+    ["OR > AND > NOT", "Bu sıralama yanlıştır, en düşük öncelikli olan genellikle OR'dur."],
+    ["AND > OR > NOT", "Bu sıralama yanlıştır."],
+    ["NOT > AND > OR", "Birçok dilde, en yüksek öncelik tek işlenen alan `NOT` işlemcisine, ardından `AND` işlemcisine ve en son `OR` işlemcisine aittir."],
+    ["AND = OR = NOT", "Bu işlemcilerin öncelikleri genellikle birbirinden farklıdır."],
+    ["OR > NOT > AND", "Bu sıralama yanlıştır."]
+  ],
+  answer: 2,
+  summary: "Bu öncelik sıralaması, karmaşık mantıksal ifadelerin doğru değerlendirilmesi için kritiktir. `false OR true AND true` gibi bir ifadenin sonucu, önce `true AND true` işleminin yapılmasıyla `true` olarak bulunur."
+},
+{
+  q: "3. Sayısal, ilişkisel ve mantıksal işlemci grupları arasındaki genel öncelik kuralı nasıldır?",
+  options: [
+    ["Mantıksal > İlişkisel > Sayısal", "Bu sıralama genellikle yanlıştır. Pascal'da bunun bir istisnası vardır."],
+    ["Sayısal > İlişkisel > Mantıksal", "Genellikle, bir ifadede önce matematiksel işlemler (sayısal), sonra karşılaştırmalar (ilişkisel) ve en son olarak da bu karşılaştırmaların sonuçlarının mantıksal olarak birleştirilmesi yapılır."],
+    ["İlişkisel > Sayısal > Mantıksal", "Bu sıralama yanlıştır."],
+    ["Hepsinin önceliği eşittir.", "Hayır, aralarında net bir öncelik hiyerarşisi vardır."],
+    ["Sayısal > Mantıksal > İlişkisel", "Bu sıralama yanlıştır."]
+  ],
+  answer: 1,
+  summary: "`a*5 + 2 > b AND c` gibi karmaşık bir ifadede, işlem sırası bu genel öncelik kuralına göre belirlenir: Önce `a*5` hesaplanır, sonra `+ 2` eklenir (sayısal), sonra sonuç `b` ile karşılaştırılır (ilişkisel), ve en son bu karşılaştırmanın sonucu `c` ile `AND` işlemine tabi tutulur (mantıksal)."
+},
+{
+  q: "4. Bir programdaki işlemleri göstermek ve programın akışını yönlendirmek için kullanılan `if`, `while`, `a:=b` gibi yapılara genel olarak ne ad verilir?",
+  options: [
+    ["İfadeler (Expressions)", "İfadeler bir değer üretir (örn: `a+b`). Deyimler ise bir eylem gerçekleştirir."],
+    ["Deyimler (Statements)", "Deyimler, bir programdaki eylemleri (atama gibi) veya akış kontrolünü (seçim, yineleme gibi) belirleyen komutlardır."],
+    ["Değişkenler (Variables)", "Değişkenler veri tutan bellek konumlarıdır."],
+    ["İşlemciler (Operators)", "İşlemciler, ifadelerin içinde değerler üzerinde işlem yapan sembollerdir."],
+    ["Tipler (Types)", "Tipler, verilerin türünü belirler."]
+  ],
+  answer: 1,
+  summary: "Programlar temelde deyimlerden oluşur. Bir program, bilgisayara 'şunu yap, sonra bunu yap, eğer şu doğruysa bunu yap, değilse diğerini yap' diyen bir dizi deyimdir."
+},
+{
+  q: "5. `5 MOD 2` işleminin sonucu nedir?",
+  options: [
+    ["2.5", "Bu, `/` (bölme) işleminin sonucudur."],
+    ["2", "Bu, `\` (tam bölme) işleminin sonucudur."],
+    ["1", "`MOD` (modül) işlemcisi, bir sayının başka bir sayıya bölünmesinden elde edilen kalanı verir. 5'in 2'ye bölümünden kalan 1'dir."],
+    ["0", "Eğer ilk sayı ikinciye tam bölünüyorsa sonuç 0 olurdu (örn: `4 MOD 2`)."],
+    ["3", "Bu anlamsız bir sonuçtur."]
+  ],
+  answer: 2,
+  summary: "`MOD` işlemcisi, özellikle bir sayının çift mi tek mi olduğunu kontrol etmek (sayi MOD 2), döngüsel işlemlerde belirli bir aralıkta kalmak gibi birçok algoritmik durumda kullanılan çok faydalı bir sayısal işlemcidir."
+},
+{
+  q: "6. Pascal dilinde `a>0 or b<100` gibi bir ifadenin parantezsiz kullanımının geçersiz olmasının sebebi nedir?",
+  options: [
+    ["Pascal'da 'or' işlemcisinin bulunmaması", "Hayır, Pascal'da 'or' işlemcisi vardır."],
+    ["Pascal'da mantıksal işlemcilerin önceliğinin ilişkisel işlemcilerden yüksek olması", "Diğer birçok dilden farklı olarak Pascal'da `or` gibi mantıksal işlemcilerin önceliği `>` gibi ilişkisel işlemcilerden daha yüksektir. Bu nedenle derleyici ifadeyi `(a > (0 or b)) < 100` gibi anlamaya çalışır ve bu da anlamsız olduğu için hata verir."],
+    ["Pascal'da sayısal ve mantıksal ifadelerin bir arada kullanılamaması", "Kullanılabilirler, ancak doğru öncelik ve gruplama ile."],
+    ["Pascal'da büyüktür `>` sembolünün farklı bir anlama gelmesi", "Hayır, anlamı aynıdır."],
+    ["İfadede en fazla iki değişken kullanılmasına izin verilmesi", "Böyle bir kural yoktur."]
+  ],
+  answer: 1,
+  summary: "Bu, diller arasındaki öncelik kuralı farklılıklarına güzel bir örnektir. Çoğu dilde sorunsuz çalışacak bu ifade, Pascal'ın kendine özgü işlemci öncelik sırası nedeniyle `(a>0) or (b<100)` şeklinde parantezlerle gruplanmayı zorunlu kılar."
+},
+{
+  q: "7. `if-then-else` ve `case (switch)` gibi yapılar, belirli bir ifadenin değerine göre programda izlenecek yolu belirledikleri için ne tür deyimler olarak sınıflandırılırlar?",
+  options: [
+    ["Yinelemeli Deyimler (Iterative Statements)", "Yinelemeli deyimler (`while`, `for`) bir kod bloğunu tekrarlamak için kullanılır."],
+    ["Atama Deyimleri (Assignment Statements)", "Atama deyimleri bir değişkene değer aktarır."],
+    ["Seçimli Deyimler (Selection Statements)", "`if` ve `case` yapıları, bir veya daha fazla koşula bağlı olarak, programın hangi kod bloğunu çalıştıracağını 'seçmesini' sağlar."],
+    ["Basit Deyimler (Simple Statements)", "`if` ve `case` genellikle içlerinde başka deyimler barındıran birleşik deyimlerdir."],
+    ["Altprogram Çağrıları (Subprogram Calls)", "Bu, bir fonksiyonu veya yordamı çalıştırma işlemidir."]
+  ],
+  answer: 2,
+  summary: "Seçimli deyimler, programlara karar verme yeteneği kazandırır. Programın akışı, bu deyimler sayesinde tek bir doğrusal yol yerine, karşılaşılan durumlara göre farklı yollara sapan bir yol ağına dönüşür."
+},
+{
+  q: "8. C dilinde 'eşitlik' kontrolü için `==` sembolü kullanılırken, Pascal dilinde hangi sembol kullanılır?",
+  options: [
+    ["!=", "`!=` sembolü C'de 'eşit değil' anlamına gelir."],
+    ["<>", "`<>` sembolü Pascal'da 'eşit değil' anlamına gelir."],
+    ["=", "Pascal dilinde, hem atama için (`:=`) hem de eşitlik kontrolü için (`=`) farklı semboller kullanılır. Eşitlik kontrolü tek bir `=` işareti ile yapılır."],
+    [":=", "`:=` sembolü Pascal'da atama işlemi için kullanılır."],
+    ["equals", "Bu genellikle bir fonksiyon adıdır, bir işlemci değildir."]
+  ],
+  answer: 2,
+  summary: "Programlama dillerinin sözdizimleri arasındaki küçük farklar, programcılar için kafa karıştırıcı olabilir. C'de atama için `=`, karşılaştırma için `==` kullanılırken; Pascal'da atama için `:=`, karşılaştırma için `=` kullanılır. Bu, dillerin tasarım felsefelerindeki farklılıkları yansıtır."
+},
+{
+  q: "9. İşlemcilerin, işlenenlerin niteliğine (türüne) göre sınıflandırıldığı üç temel grup hangisidir?",
+  options: [
+    ["Prefix, Infix, Postfix", "Bu, işlemcinin konumuna göre sınıflandırmadır."],
+    ["Unary, Binary, Ternary", "Bu, işlemcinin işlenen sayısına göre sınıflandırmadır."],
+    ["Sayısal, İlişkisel, Mantıksal", "İşlemciler; üzerinde çalıştıkları veri türüne ve ürettikleri sonuca göre sayısal (aritmetik), ilişkisel (karşılaştırma) ve mantıksal (Boolean) olarak üçe ayrılır."],
+    ["Basit, Birleşik, Yapısal", "Bunlar deyimler ve tiplerle ilgili kavramlardır."],
+    ["Keyword, Reserved, Identifier", "Bunlar dildeki isimlerle ilgili kavramlardır."]
+  ],
+  answer: 2,
+  summary: "Bir işlemcinin ne yaptığını anlamak için hangi tür verilerle çalıştığına bakılır. Sayılarla mı (`+`, `*`), karşılaştırmalarla mı (`>`, `<`), yoksa doğru/yanlış değerleriyle mi (`AND`, `OR`) çalıştığına göre sınıflandırılır."
+},
+{
+  q: "10. Bir programda bir dizi deyimin `begin` ve `end` anahtar kelimeleri arasında gruplanarak tek bir deyim gibi davranmasının sağlanması, ne tür bir deyim oluşturur?",
+  options: [
+    ["Basit Deyim", "Basit deyimler genellikle tek bir işlemden oluşur (örn: atama)."],
+    ["Yinelemeli Deyim", "Bu, döngü yapılarıdır."],
+    ["Seçimli Deyim", "Bu, `if` veya `case` gibi karar yapılarıdır."],
+    ["Birleşik Deyim (Compound Statement)", "Birleşik deyimler, birden çok basit veya birleşik deyimin bir araya getirilerek mantıksal bir bütün oluşturmasını sağlar. Pascal'daki `begin...end` bloğu bunun en tipik örneğidir."],
+    ["Atama Deyimi", "Atama deyimi genellikle basit bir deyimdir."]
+  ],
+  answer: 3,
+  summary: "Birleşik deyimler, `if` veya `while` gibi kontrol yapılarının tek bir eylem yerine birden çok eylemi kontrol etmesine olanak tanır. Bu, yapısal programlamanın temel taşlarından biridir."
+},
+{
+  q: "11. `while`, `until` ve `for` gibi yapılar, belirli bir koşul sağlandığı sürece bir kod bloğunu tekrarladıkları için ne tür deyimler olarak adlandırılırlar?",
+  options: [
+    ["Seçimli Deyimler", "Seçimli deyimler bir kod bloğunu bir kez çalıştırmayı veya atlamayı seçer."],
+    ["Yinelemeli Deyimler (Iterative Statements)", "`while`, `for` gibi döngüler, bir kod bloğunun tekrar tekrar çalıştırılmasını sağlayan yinelemeli deyimlerdir."],
+    ["Atama Deyimleri", "Atama deyimleri değer aktarır."],
+    ["Birleşik Deyimler", "Döngüler genellikle bir birleşik deyimi tekrarlar, ancak kendileri yinelemeli deyim olarak sınıflandırılır."],
+    ["Altprogramlar", "Altprogramlar, çağrıldıklarında çalışan isimlendirilmiş kod bloklarıdır."]
+  ],
+  answer: 1,
+  summary: "Yinelemeli deyimler veya döngüler, programların en güçlü özelliklerinden biridir. Binlerce kaydı işlemek veya bir animasyonu sürekli oynatmak gibi tekrarlı görevleri, sadece birkaç satır kodla otomatikleştirmeyi sağlarlar."
+},
+{
+  q: "12. `+` işlemcisinin, `2 + 3` ifadesinde tamsayı toplama, `\"a\" + \"b\"` ifadesinde ise karakter dizisi birleştirme anlamına gelmesi hangi kavrama örnektir?",
+  options: [
+    ["İşlemci Önceliği", "Bu, farklı işlemciler arasındaki işlem sırasıdır."],
+    ["İşlemci Yüklemesi (Operator Overloading)", "Aynı işlemci sembolünün (`+`), farklı veri tipleriyle (tamsayı, karakter dizisi) kullanıldığında farklı işlemler yapması, işlemci yüklemesinin klasik bir örneğidir."],
+    ["İşlemci İlişkiselliği (Associativity)", "Bu, aynı öncelikli işlemcilerin işlenme yönüdür."],
+    ["Tip Dönüşümü (Type Casting)", "Tip dönüşümü, bir veriyi bir tipten diğerine çevirme işlemidir, işlemcinin anlamının değişmesi değildir."],
+    ["Sözdizim Hatası", "Bu bir hata değil, dilin bir özelliğidir."]
+  ],
+  answer: 1,
+  summary: "Operatör yüklemesi, operatörlere 'bağlama göre konuşma' yeteneği verir. `+` operatörü, yanında sayılar görünce toplama yapacağını, metinler görünce ise birleştirme yapacağını anlar."
+},
+{
+  q: "13. Bir dizi deyimin gruplanarak bir isim ile gösterilmesini sağlayan ve bir başlık ile gövdeden oluşan yapıya ne denir?",
+  options: [
+    ["Döngü (Loop)", "Döngü, kod tekrarı için kullanılır."],
+    ["Değişken (Variable)", "Değişken, veri saklar."],
+    ["Altprogram (Subprogram)", "Altprogramlar (fonksiyonlar veya yordamlar), belirli bir işi yapan ve bir isimle çağrılabilen, yeniden kullanılabilir kod bloklarıdır. Bir başlıkları (isim, parametreler) ve bir gövdeleri (işlemler) vardır."],
+    ["İfade (Expression)", "İfade, bir değer üretir."],
+    ["Sabit (Constant)", "Sabit, değeri değişmeyen bir veridir."]
+  ],
+  answer: 2,
+  summary: "Altprogramlar, 'bir kere yaz, her yerden çağır' prensibiyle çalışır. Karmaşık programları daha küçük, yönetilebilir ve yeniden kullanılabilir parçalara ayırmanın temel yoludur."
+},
+{
+  q: "14. `XOR` (dışlayan veya) mantıksal işlemcisinin tanımı nedir?",
+  options: [
+    ["İşlenenlerden en az birinin doğru olması durumunda DOĞRU döndürür.", "Bu, OR işlemcisinin tanımıdır."],
+    ["Sadece tüm işlenenlerin doğru olduğu durumda DOĞRU döndürür.", "Bu, AND işlemcisinin tanımıdır."],
+    ["İşlenen değerinin tersini verir.", "Bu, NOT işlemcisinin tanımıdır."],
+    ["Aynı değere sahip işlenenler için YANLIŞ, diğer durumlarda DOĞRU döndürür.", "`XOR`, işlenenler birbirinden farklıysa DOĞRU, aynıysa YANLIŞ sonuç verir. 'İkisinden sadece biri doğruysa doğru' olarak da düşünülebilir."],
+    ["Her zaman YANLIŞ değerini döndürür.", "Bu anlamsız bir işlemci olurdu."]
+  ],
+  answer: 3,
+  summary: "`XOR` (exclusive OR), 'ya o ya da bu, ama ikisi birden değil' mantığını temsil eder. Örneğin, bir ışık anahtarı ya açık ya da kapalı olabilir, ikisi birden olamaz. Bu tür durumlar için `XOR` mantığı kullanılır."
+},
+{
+  q: "15. İlişkisel işlemciler (`>`, `<`, `==` vb.) ile yapılan bir karşılaştırma işlemi sonucunda ne tür bir değer oluşur?",
+  options: [
+    ["Sayısal (integer veya float)", "Sayısal değerler aritmetik işlemler sonucunda oluşur."],
+    ["Mantıksal (Boolean - doğru veya yanlış)", "Bir ilişkisel ifade, örneğin `sayac >= 10`, her zaman bir karşılaştırma yapar ve bu karşılaştırmanın sonucu 'evet, doğru' veya 'hayır, yanlış' şeklinde bir mantıksal değerdir."],
+    ["Karakter Dizisi (String)", "Karakter dizileri metinsel verilerdir."],
+    ["Hiçbir değer oluşmaz, sadece bir eylem gerçekleşir.", "Hayır, ilişkisel ifadeler mutlaka bir değer üretir."],
+    ["İşlenenlerin tipine bağlı olarak herhangi bir tipte değer oluşabilir.", "Hayır, sonuç her zaman mantıksal bir değerdir."]
+  ],
+  answer: 1,
+  summary: "İlişkisel işlemciler, programlara soru sorma yeteneği kazandırır. 'x, 10'dan büyük mü?' sorusunun cevabı sayısal bir değer değil, 'evet' (doğru) veya 'hayır' (yanlış) olabilir. Bu mantıksal sonuç, `if` gibi karar yapılarında kullanılır."
+},
+{
+  q: "16. `5 \ 2` (tam bölme) işleminin sonucu nedir?",
+  options: [
+    ["2.5", "Bu, `/` (ondalıklı bölme) işleminin sonucudur."],
+    ["1", "Bu, `MOD` (kalan) işleminin sonucudur."],
+    ["2", "`\` (tam bölme) işlemcisi, bölme işleminin ondalık kısmını atarak sadece tam sayı kısmını sonuç olarak verir. 5'in içinde 2, tam olarak 2 kez vardır."],
+    ["0", "Bu hatalı bir sonuçtur."],
+    ["3", "Bu hatalı bir sonuçtur."]
+  ],
+  answer: 2,
+  summary: "Tam bölme, bir miktarın içinden başka bir miktarın 'kaç tam adet' çıktığını bulmak için kullanılır. Örneğin, 25 kişilik bir sınıfta 3'erli kaç tam grup oluşturulabilir sorusunun cevabı `25 \ 3 = 8`'dir."
+},
+{
+  q: "17. İşlemci yüklemesinin (operator overloading) potansiyel bir dezavantajı olarak ne belirtilmiştir?",
+  options: [
+    ["Programların ifade yeteneğini artırması", "Bu, bir avantajıdır."],
+    ["Programların daha yavaş çalışmasına neden olması", "Bu her zaman geçerli bir dezavantaj değildir."],
+    ["Okunabilirliği ve güvenilirliği azaltabilmesi", "Bir işlemci birden çok anlama geldiğinde, programcının o anki bağlamda hangi işlemin yapıldığını anlaması zorlaşabilir. Bu durum, fark edilmesi güç hatalara yol açarak kodun okunabilirliğini ve güvenilirliğini azaltabilir."],
+    ["Sadece sayısal işlemcilerle sınırlı olması", "Hayır, `+`'nın metin birleştirmesi gibi farklı türlerde de uygulanabilir."],
+    ["Derleme süresini çok uzatması", "Derleme süresine etkisi genellikle ihmal edilebilir düzeydedir."]
+  ],
+  answer: 2,
+  summary: "İşlemci yüklemesi güçlü bir özellik olsa da, 'kötüye kullanıldığında' kafa karıştırıcı kodlara yol açabilir. Bir sembolün beklenmedik bir iş yapması, programdaki hataları bulmayı zorlaştırır. Bu nedenle dikkatli kullanılmalıdır."
+},
+{
+  q: "18. Bir altprogramın ismini ve varsa tipleriyle birlikte parametrelerini belirten kısmına ne denir?",
+  options: [
+    ["Altprogram Gövdesi", "Gövde, altprogram çalıştığında yürütülecek olan deyimleri içerir."],
+    ["Altprogram Başlığı", "Altprogram başlığı, o altprogramın 'kimliğini' ve 'dış dünyadan ne beklediğini' tanımlar. İsmi ve alacağı parametreler bu başlıkta belirtilir."],
+    ["Altprogram Değişkeni", "Bu, altprogram içinde tanımlanmış yerel bir değişkendir."],
+    ["Altprogram Döngüsü", "Döngü, altprogram içinde yer alabilen bir yapıdır, başlığın kendisi değildir."],
+    ["Altprogram Kapsamı", "Kapsam, altprogramın geçerlilik alanıdır."]
+  ],
+  answer: 1,
+  summary: "Bir altprogram iki ana bölümden oluşur. Başlık, altprogramın 'imzası' gibidir; nasıl çağrılacağını belirtir. Gövde ise bu imzanın arkasındaki 'iş mantığı'dır; çağrıldığında ne yapacağını belirtir."
+},
+{
+  q: "19. Aşağıdakilerden hangisi bir 'ifade (expression)' değildir?",
+  options: [
+    ["`a + b`", "Bu, bir toplama işlemi sonucu yeni bir sayısal değer üreten bir ifadedir."],
+    ["`sayac >= 10`", "Bu, bir karşılaştırma sonucu `true` veya `false` değeri üreten bir ifadedir."],
+    ["`'Merhaba'`", "Bu, kendi başına bir karakter dizisi değeri olan bir ifadedir (sabit ifade)."],
+    ["`x = 5;`", "Bu, bir eylem gerçekleştiren (atama) bir 'deyim (statement)'dir. Kendi başına yeni bir değer üretmez, var olan bir değişkenin değerini değiştirir."],
+    ["`hesapla()`", "Bu, bir fonksiyon çağrısıdır ve eğer `hesapla` fonksiyonu bir değer döndürüyorsa, bu da bir ifadedir."]
+  ],
+  answer: 3,
+  summary: "İfade ve deyim arasındaki temel fark şudur: İfadeler 'değerlendirilir' ve bir sonuca ulaşır (sonuç bir sayı, metin veya mantıksal değer olabilir). Deyimler ise 'yürütülür' ve bir eylem gerçekleştirir."
+},
+{
+  q: "20. `-` sembolünün, `-5` ifadesinde tekli (unary) işlemci, `10 - 5` ifadesinde ise ikili (binary) işlemci olarak kullanılması, hangi kavrama doğrudan bir örnektir?",
+  options: [
+    ["İşlemci Önceliği", "Bu durum öncelikle ilgili değildir."],
+    ["İşlemci Yüklemesi (Operator Overloading)", "Aynı sembolün (`-`), işlenen sayısına bağlı olarak farklı görevler (negatif yapma ve çıkarma) üstlenmesi, işlemci yüklemesinin bir başka tipik örneğidir."],
+    ["Sözdizim Hatası", "Bu bir hata değil, dilin geçerli bir özelliğidir."],
+    ["Sağ Associativity", "Bu durum birleşme yönüyle ilgili değildir."],
+    ["Tip Uyumsuzluğu", "Bu durum tip uyumsuzluğu ile ilgili değildir."]
+  ],
+  answer: 1,
+  summary: "Birçok dilde `-` işlemcisi, hem bir sayının işaretini değiştirmek hem de iki sayıyı birbirinden çıkarmak için 'yüklenmiştir'. Derleyici, işlemcinin yanında bir mi yoksa iki mi işlenen olduğuna bakarak hangi görevi yapacağına karar verir."
+},
+{
+  q: "21. Birleşik deyimlerin temel amacı nedir?",
+  options: [
+    ["Programı daha yavaş hale getirmek", "Böyle bir amacı yoktur."],
+    ["Sadece bir deyimin çalışmasını sağlamak", "Tam tersine, birden çok deyimin bir bütün olarak çalışmasını sağlar."],
+    ["Bir dizi deyimin mantıksal olarak tek bir deyim gibi soyutlanmasını sağlamak", "Bir `if` koşulu sağlandığında sadece tek bir satırın değil, bir dizi işlemin yapılmasını istiyorsak, o işlemleri birleşik bir deyim (örn: `begin...end` bloğu) içine alırız."],
+    ["Tüm basit deyimleri ortadan kaldırmak", "Basit deyimlerin gruplanması için kullanılırlar, onları ortadan kaldırmazlar."],
+    ["Programın bellek kullanımını azaltmak", "Doğrudan bir bellek azaltma amacı yoktur."]
+  ],
+  answer: 2,
+  summary: "Birleşik deyimler, programlamada 'paketleme' işlevi görür. Birden çok komutu tek bir paket haline getirerek, bu paketin kontrol yapıları (`if`, `while` vb.) tarafından tek bir birim olarak yönetilmesini sağlarlar."
+},
+{
+  q: "22. `(a>0) and (b<100)` gibi bir yapı, hangi ifade türüne girer?",
+  options: [
+    ["Sayısal İfade", "Sonucu sayısal bir değer değildir."],
+    ["İlişkisel İfade", "Bu yapı, iki ilişkisel ifadenin birleşiminden oluşur, ancak kendisi daha genel bir kategoriye aittir."],
+    ["Mantıksal İfade", "İki veya daha fazla ilişkisel ifadenin `AND`, `OR` gibi mantıksal işlemcilerle birleştirilmesiyle oluşan ve sonuçta `true` veya `false` değeri üreten yapılara mantıksal ifade denir."],
+    ["Basit İfade", "Bu, birden çok parça içerdiği için basit bir ifade değildir."],
+    ["Atama İfadesi", "Bu bir atama işlemi değildir."]
+  ],
+  answer: 2,
+  summary: "Mantıksal ifadeler, programların karmaşık kararlar almasını sağlar. Sadece tek bir koşula değil, 'hem bu doğruysa hem de şu doğruysa' gibi birden çok koşulun aynı anda değerlendirilmesine olanak tanırlar."
+},
+{
+  q: "23. Aşağıdakilerden hangisi bir yinelemeli (iterative) deyim örneği değildir?",
+  options: [
+    ["`while`", "While döngüsü, bir koşul doğru olduğu sürece tekrarlanan bir yinelemeli deyimdir."],
+    ["`for`", "For döngüsü, genellikle belirli bir sayıda tekrarlanan bir yinelemeli deyimdir."],
+    ["`until`", "Until döngüsü, bir koşul doğru olana kadar tekrarlanan bir yinelemeli deyimdir."],
+    ["`case` (`switch`)", "`case`, bir değişkenin değerine göre farklı kod yollarından birini seçen bir seçimli deyimdir, yineleme yapmaz."],
+    ["Tümü yinelemeli deyimdir.", "Hayır, `case` seçimli bir deyimdir."]
+  ],
+  answer: 3,
+  summary: "Program akışını kontrol eden deyimler temel olarak ikiye ayrılır: Karar verenler (seçimli deyimler) ve tekrar edenler (yinelemeli deyimler). `if` ve `case` karar verirken, `while` ve `for` tekrar eder."
+},
+{
+  q: "24. C dilinde 'eşit değil' kontrolü için `!=` sembolü kullanılırken, Pascal dilinde hangi sembol kullanılır?",
+  options: [
+    ["=", "Bu, Pascal'da 'eşit' kontrolü için kullanılır."],
+    ["==", "Bu, C'de 'eşit' kontrolü için kullanılır."],
+    ["<>", "Pascal dilinde, 'eşit değil' anlamı için küçüktür ve büyüktür işaretlerinden oluşan `<>` sembolü kullanılır."],
+    ["NOT=", "Bu genellikle bir dil işlemcisi değildir."],
+    [":=", "Bu, Pascal'da atama için kullanılır."]
+  ],
+  answer: 2,
+  summary: "Dillerin sözdizimsel farklılıkları, 'eşit değil' gibi temel bir işlemde bile kendini gösterir. C ve ondan türeyen birçok dil `!=` kullanırken, Pascal ve SQL gibi diller `<>` sembolünü tercih eder."
+},
+{
+  q: "25. `a + b > c` ifadesindeki işlem sırası nasıldır?",
+  options: [
+    ["Önce `b > c` karşılaştırması, sonra `a` ile toplama yapılır.", "Bu, öncelik kurallarına aykırıdır."],
+    ["Önce `a + b` toplaması, sonra `c` ile karşılaştırma yapılır.", "Sayısal işlemcilerin (`+`) önceliği, ilişkisel işlemcilerden (`>`) daha yüksek olduğu için, önce toplama işlemi yapılır, ardından çıkan sonuç `c` ile karşılaştırılır."],
+    ["İşlemler soldan sağa sırayla yapılır.", "Bu sadece aynı öncelikli işlemciler için geçerlidir."],
+    ["İfade geçersizdir, çünkü sayısal ve ilişkisel işlemciler bir arada kullanılamaz.", "Hayır, bu geçerli bir ifadedir."],
+    ["Önce `a > c` karşılaştırması yapılır.", "Bu mantıksal olarak hatalıdır."]
+  ],
+  answer: 1,
+  summary: "Derleyicinin bir ifadeyi nasıl 'gördüğünü' anlamak önemlidir. `a + b > c` ifadesini gördüğünde, önce daha yüksek öncelikli olan `+` işlemini yapmak için `(a + b)`'yi gruplar, daha sonra bu grubun sonucunu `> c` ile karşılaştırır."
+}    
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+  const userAnswers = new Array(questions.length).fill(null);
+
+
+  questions.forEach((qObj, index) => {
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    questionContainer.id = `question-${index}`;
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.textContent = qObj.q;
+    questionContainer.appendChild(qText);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options-group';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    feedbackDiv.style.display = 'none'; // Initially hidden
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+    summaryDiv.style.display = 'none'; // Initially hidden
+
+
+    qObj.options.forEach((opt, i) => {
+      const optDiv = document.createElement('div');
+      optDiv.className = 'option';
+      optDiv.textContent = `${optionLabels[i]} ${opt[0]}`;
+      optDiv.onclick = () => {
+        // Clear previous selection visuals for this question
+        const allOptsInGroup = optsDiv.querySelectorAll('.option');
+        allOptsInGroup.forEach(el => el.classList.remove('selected'));
+        optDiv.classList.add('selected'); // Mark as selected
+
+        userAnswers[index] = i; // Store user's answer
+
+        // Show feedback immediately
+        const feedbackText = opt[1] || (i === qObj.answer ? "Doğru cevap!" : "Yanlış cevap."); // Fallback feedback
+        feedbackDiv.className = 'feedback ' + (i === qObj.answer ? 'correct' : 'incorrect');
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.textContent = (i === qObj.answer ? '✔️ Doğru: ' : '❌ Yanlış: ') + feedbackText;
+
+
+        if (i === qObj.answer && qObj.summary) {
+          summaryDiv.style.display = 'block';
+          summaryDiv.textContent = '💡 ' + qObj.summary;
+        } else {
+          summaryDiv.style.display = 'none';
+        }
+      };
+      optsDiv.appendChild(optDiv);
+    });
+
+    questionContainer.appendChild(optsDiv);
+    questionContainer.appendChild(feedbackDiv);
+    questionContainer.appendChild(summaryDiv);
+    quizDiv.appendChild(questionContainer);
+  });
+
+  function showResults() {
+    let correctCount = 0;
+    userAnswers.forEach((answer, index) => {
+        if (answer !== null && answer === questions[index].answer) {
+            correctCount++;
+        }
+    });
+
+    const totalQuestions = questions.length;
+    const scorePercentage = totalQuestions > 0 ? ((correctCount / totalQuestions) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-questions').textContent = totalQuestions;
+    document.getElementById('correct-answers').textContent = correctCount;
+    document.getElementById('score-percentage').textContent = scorePercentage;
+    document.getElementById('results-summary').style.display = 'block';
+
+    // Scroll to results
+    document.getElementById('results-summary').scrollIntoView({ behavior: 'smooth' });
+  }
+
+</script>
+</body>
+</html>
